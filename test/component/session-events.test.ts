@@ -268,11 +268,11 @@ test('PiAcpSession: cancels unsupported input and editor extension UI requests w
   assert.match((conn.updates[1]!.update as any).content.text, /editor UI request is not supported/)
 })
 
-test('PiAcpSession: emits agent_message_chunk for auto_retry_start with attempt/maxAttempts and rounded delay', async () => {
+test('PiAcpSession: emits structured activity for auto_retry_start', async () => {
   const conn = new FakeAgentSideConnection()
   const proc = new FakePiRpcProcess()
 
-  new PiAcpSession({
+  const session = new PiAcpSession({
     sessionId: 's1',
     cwd: process.cwd(),
     mcpServers: [],
@@ -281,22 +281,22 @@ test('PiAcpSession: emits agent_message_chunk for auto_retry_start with attempt/
     fileCommands: []
   })
 
+  const prompt = session.prompt('retry')
   proc.emit({ type: 'auto_retry_start', attempt: 2, maxAttempts: 5, delayMs: 2400 })
 
   await new Promise(r => setTimeout(r, 0))
 
-  assert.equal(conn.updates.length, 1)
-  assert.deepEqual(conn.updates[0]!.update, {
-    sessionUpdate: 'agent_message_chunk',
-    content: { type: 'text', text: 'Retrying (attempt 2/5, waiting 2s)...' }
-  })
+  const retry = conn.updates.find(entry => (entry.update as any)?._meta?.piAcp?.activity?.state === 'retrying')
+  assert.equal((retry?.update as any)?._meta?.piAcp?.activity?.label, 'Retrying (attempt 2/5, waiting 2s)...')
+  proc.emit({ type: 'agent_end' })
+  await prompt
 })
 
 test('PiAcpSession: formats a positive sub-second auto_retry_start delay as waiting 1s', async () => {
   const conn = new FakeAgentSideConnection()
   const proc = new FakePiRpcProcess()
 
-  new PiAcpSession({
+  const session = new PiAcpSession({
     sessionId: 's1',
     cwd: process.cwd(),
     mcpServers: [],
@@ -305,22 +305,22 @@ test('PiAcpSession: formats a positive sub-second auto_retry_start delay as wait
     fileCommands: []
   })
 
+  const prompt = session.prompt('retry')
   proc.emit({ type: 'auto_retry_start', attempt: 1, maxAttempts: 3, delayMs: 1 })
 
   await new Promise(r => setTimeout(r, 0))
 
-  assert.equal(conn.updates.length, 1)
-  assert.deepEqual(conn.updates[0]!.update, {
-    sessionUpdate: 'agent_message_chunk',
-    content: { type: 'text', text: 'Retrying (attempt 1/3, waiting 1s)...' }
-  })
+  const retry = conn.updates.find(entry => (entry.update as any)?._meta?.piAcp?.activity?.state === 'retrying')
+  assert.equal((retry?.update as any)?._meta?.piAcp?.activity?.label, 'Retrying (attempt 1/3, waiting 1s)...')
+  proc.emit({ type: 'agent_end' })
+  await prompt
 })
 
 test('PiAcpSession: falls back to a generic retry message when auto_retry_start fields are missing or malformed', async () => {
   const conn = new FakeAgentSideConnection()
   const proc = new FakePiRpcProcess()
 
-  new PiAcpSession({
+  const session = new PiAcpSession({
     sessionId: 's1',
     cwd: process.cwd(),
     mcpServers: [],
@@ -329,22 +329,22 @@ test('PiAcpSession: falls back to a generic retry message when auto_retry_start 
     fileCommands: []
   })
 
+  const prompt = session.prompt('retry')
   proc.emit({ type: 'auto_retry_start', attempt: 'oops', maxAttempts: null, delayMs: 'bad' } as any)
 
   await new Promise(r => setTimeout(r, 0))
 
-  assert.equal(conn.updates.length, 1)
-  assert.deepEqual(conn.updates[0]!.update, {
-    sessionUpdate: 'agent_message_chunk',
-    content: { type: 'text', text: 'Retrying...' }
-  })
+  const retry = conn.updates.find(entry => (entry.update as any)?._meta?.piAcp?.activity?.state === 'retrying')
+  assert.equal((retry?.update as any)?._meta?.piAcp?.activity?.label, 'Retrying...')
+  proc.emit({ type: 'agent_end' })
+  await prompt
 })
 
 test('PiAcpSession: omits raw errorMessage content from surfaced auto_retry_start status text', async () => {
   const conn = new FakeAgentSideConnection()
   const proc = new FakePiRpcProcess()
 
-  new PiAcpSession({
+  const session = new PiAcpSession({
     sessionId: 's1',
     cwd: process.cwd(),
     mcpServers: [],
@@ -353,6 +353,7 @@ test('PiAcpSession: omits raw errorMessage content from surfaced auto_retry_star
     fileCommands: []
   })
 
+  const prompt = session.prompt('retry')
   proc.emit({
     type: 'auto_retry_start',
     attempt: 1,
@@ -363,17 +364,18 @@ test('PiAcpSession: omits raw errorMessage content from surfaced auto_retry_star
 
   await new Promise(r => setTimeout(r, 0))
 
-  assert.equal(conn.updates.length, 1)
-  assert.equal(conn.updates[0]!.update.sessionUpdate, 'agent_message_chunk')
-  assert.equal((conn.updates[0]!.update as any).content.text, 'Retrying (attempt 1/4, waiting 2s)...')
-  assert.equal((conn.updates[0]!.update as any).content.text.includes('provider overloaded'), false)
+  const retry = conn.updates.find(entry => (entry.update as any)?._meta?.piAcp?.activity?.state === 'retrying')
+  assert.equal((retry?.update as any)?._meta?.piAcp?.activity?.label, 'Retrying (attempt 1/4, waiting 2s)...')
+  assert.equal((retry?.update as any)?._meta?.piAcp?.activity?.label.includes('provider overloaded'), false)
+  proc.emit({ type: 'agent_end' })
+  await prompt
 })
 
-test('PiAcpSession: emits agent_message_chunk for auto_retry_end', async () => {
+test('PiAcpSession: returns activity to thinking after auto_retry_end', async () => {
   const conn = new FakeAgentSideConnection()
   const proc = new FakePiRpcProcess()
 
-  new PiAcpSession({
+  const session = new PiAcpSession({
     sessionId: 's1',
     cwd: process.cwd(),
     mcpServers: [],
@@ -382,22 +384,23 @@ test('PiAcpSession: emits agent_message_chunk for auto_retry_end', async () => {
     fileCommands: []
   })
 
+  const prompt = session.prompt('retry')
+  proc.emit({ type: 'auto_retry_start', attempt: 1, maxAttempts: 2, delayMs: 1000 } as any)
   proc.emit({ type: 'auto_retry_end' } as any)
 
   await new Promise(r => setTimeout(r, 0))
 
-  assert.equal(conn.updates.length, 1)
-  assert.deepEqual(conn.updates[0]!.update, {
-    sessionUpdate: 'agent_message_chunk',
-    content: { type: 'text', text: 'Retry finished, resuming.' }
-  })
+  const states = conn.updates.map(entry => (entry.update as any)?._meta?.piAcp?.activity?.state).filter(Boolean)
+  assert.deepEqual(states, ['thinking', 'retrying', 'thinking'])
+  proc.emit({ type: 'agent_end' })
+  await prompt
 })
 
-test('PiAcpSession: emits agent_message_chunk for auto_compaction_start', async () => {
+test('PiAcpSession: emits compacting activity for auto_compaction_start', async () => {
   const conn = new FakeAgentSideConnection()
   const proc = new FakePiRpcProcess()
 
-  new PiAcpSession({
+  const session = new PiAcpSession({
     sessionId: 's1',
     cwd: process.cwd(),
     mcpServers: [],
@@ -406,22 +409,22 @@ test('PiAcpSession: emits agent_message_chunk for auto_compaction_start', async 
     fileCommands: []
   })
 
+  const prompt = session.prompt('compact')
   proc.emit({ type: 'auto_compaction_start' } as any)
 
   await new Promise(r => setTimeout(r, 0))
 
-  assert.equal(conn.updates.length, 1)
-  assert.deepEqual(conn.updates[0]!.update, {
-    sessionUpdate: 'agent_message_chunk',
-    content: { type: 'text', text: 'Context nearing limit, running automatic compaction...' }
-  })
+  const compacting = conn.updates.find(entry => (entry.update as any)?._meta?.piAcp?.activity?.state === 'compacting')
+  assert.equal((compacting?.update as any)?._meta?.piAcp?.activity?.label, 'Compacting context')
+  proc.emit({ type: 'agent_end' })
+  await prompt
 })
 
-test('PiAcpSession: emits agent_message_chunk for auto_compaction_end', async () => {
+test('PiAcpSession: returns activity to thinking after auto_compaction_end', async () => {
   const conn = new FakeAgentSideConnection()
   const proc = new FakePiRpcProcess()
 
-  new PiAcpSession({
+  const session = new PiAcpSession({
     sessionId: 's1',
     cwd: process.cwd(),
     mcpServers: [],
@@ -430,25 +433,23 @@ test('PiAcpSession: emits agent_message_chunk for auto_compaction_end', async ()
     fileCommands: []
   })
 
+  const prompt = session.prompt('compact')
+  proc.emit({ type: 'auto_compaction_start' } as any)
   proc.emit({ type: 'auto_compaction_end' } as any)
 
   await new Promise(r => setTimeout(r, 0))
 
-  assert.equal(conn.updates.length, 1)
-  assert.deepEqual(conn.updates[0]!.update, {
-    sessionUpdate: 'agent_message_chunk',
-    content: {
-      type: 'text',
-      text: 'Automatic compaction finished; context was summarized to continue the session.'
-    }
-  })
+  const states = conn.updates.map(entry => (entry.update as any)?._meta?.piAcp?.activity?.state).filter(Boolean)
+  assert.deepEqual(states, ['thinking', 'compacting', 'thinking'])
+  proc.emit({ type: 'agent_end' })
+  await prompt
 })
 
-test('PiAcpSession: preserves ordering when auto_retry_start is interleaved with text_delta events', async () => {
+test('PiAcpSession: keeps retry activity separate from assistant text', async () => {
   const conn = new FakeAgentSideConnection()
   const proc = new FakePiRpcProcess()
 
-  new PiAcpSession({
+  const session = new PiAcpSession({
     sessionId: 's1',
     cwd: process.cwd(),
     mcpServers: [],
@@ -457,23 +458,23 @@ test('PiAcpSession: preserves ordering when auto_retry_start is interleaved with
     fileCommands: []
   })
 
+  const prompt = session.prompt('retry')
   proc.emit({ type: 'message_update', assistantMessageEvent: { type: 'text_delta', delta: 'before ' } })
   proc.emit({ type: 'auto_retry_start', attempt: 1, maxAttempts: 2, delayMs: 2000 } as any)
   proc.emit({ type: 'message_update', assistantMessageEvent: { type: 'text_delta', delta: 'after' } })
 
   await new Promise(r => setTimeout(r, 0))
 
-  assert.deepEqual(
-    conn.updates.map(u => u.update),
-    [
-      { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'before ' } },
-      {
-        sessionUpdate: 'agent_message_chunk',
-        content: { type: 'text', text: 'Retrying (attempt 1/2, waiting 2s)...' }
-      },
-      { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'after' } }
-    ]
+  const text = conn.updates
+    .filter(entry => entry.update.sessionUpdate === 'agent_message_chunk')
+    .map(entry => (entry.update as any).content.text)
+  assert.deepEqual(text, ['before ', 'after'])
+  assert.equal(
+    conn.updates.some(entry => (entry.update as any)?._meta?.piAcp?.activity?.state === 'retrying'),
+    true
   )
+  proc.emit({ type: 'agent_end' })
+  await prompt
 })
 
 test('PiAcpSession: emits streamed tool locations from pi path args', async () => {

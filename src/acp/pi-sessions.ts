@@ -1,6 +1,16 @@
-import { readdirSync, readFileSync, statSync, openSync, readSync, closeSync, existsSync } from 'node:fs'
+import {
+  readdirSync,
+  readFileSync,
+  statSync,
+  openSync,
+  readSync,
+  closeSync,
+  existsSync,
+  realpathSync,
+  unlinkSync
+} from 'node:fs'
 import { homedir } from 'node:os'
-import { join, resolve, isAbsolute } from 'node:path'
+import { join, resolve, isAbsolute, relative, sep } from 'node:path'
 
 export type PiSessionListItem = {
   sessionId: string
@@ -330,4 +340,28 @@ export function findPiSession(sessionId: string): PiSessionListItem | null {
 
 export function findPiSessionFile(sessionId: string): string | null {
   return findPiSession(sessionId)?.sessionFile ?? null
+}
+
+/**
+ * Delete a session discovered from Pi's own session directory.
+ *
+ * WHY: ACP session/delete must not accept a caller-supplied file path. Resolve
+ * the ID through Pi's index and re-check the canonical target remains below the
+ * configured session root before unlinking it.
+ */
+export function deletePiSession(sessionId: string): boolean {
+  const session = findPiSession(sessionId)
+  if (!session) return false
+
+  const root = realpathSync(getPiSessionsDir())
+  const target = realpathSync(session.sessionFile)
+  const fromRoot = relative(root, target)
+  const firstSegment = fromRoot.split(sep)[0]
+
+  if (!fromRoot || firstSegment === '..' || isAbsolute(fromRoot) || !statSync(target).isFile()) {
+    throw new Error(`Refusing to delete session outside Pi session directory: ${sessionId}`)
+  }
+
+  unlinkSync(target)
+  return true
 }

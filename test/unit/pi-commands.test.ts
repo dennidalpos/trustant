@@ -5,7 +5,7 @@ import { toAvailableCommandsFromPiGetCommands } from '../../src/acp/pi-commands.
 test('toAvailableCommandsFromPiGetCommands: hides extension commands by default and filters skill commands', () => {
   const data = {
     commands: [
-      { name: 'x', description: 'X', source: 'extension' },
+      { name: 'x', description: 'X', source: 'extension', argumentHint: '<target>' },
       { name: 'skill:foo', description: 'Foo', source: 'skill', location: 'user' },
       { name: 'y', source: 'prompt', location: 'project' }
     ]
@@ -22,7 +22,7 @@ test('toAvailableCommandsFromPiGetCommands: hides extension commands by default 
     includeExtensionCommands: true
   }).commands
   assert.deepEqual(includeExt, [
-    { name: 'x', description: 'X' },
+    { name: 'x', description: 'X', input: { hint: '<target>' } },
     { name: 'skill:foo', description: 'Foo' },
     { name: 'y', description: '(prompt:project)' }
   ])
