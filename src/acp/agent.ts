@@ -4,6 +4,7 @@ import {
   type AgentSideConnection,
   type AuthenticateRequest,
   type CancelNotification,
+  type DeleteSessionRequest,
   type InitializeRequest,
   type InitializeResponse,
   type ListSessionsRequest,
@@ -25,7 +26,7 @@ import { getAuthMethods } from './auth.js'
 import { SessionManager, type PiAcpSession } from './session.js'
 import { SessionStore } from './session-store.js'
 import { PiRpcProcess } from '../pi-rpc/process.js'
-import { listPiSessions, findPiSession } from './pi-sessions.js'
+import { listPiSessions, findPiSession, deletePiSession } from './pi-sessions.js'
 import { normalizePiAssistantText, normalizePiMessageText } from './translate/pi-messages.js'
 import { toolResultToText } from './translate/pi-tools.js'
 import {
@@ -48,6 +49,7 @@ import { existsSync, readFileSync, realpathSync, readdirSync, statSync, unlinkSy
 import type { AvailableCommand } from '@agentclientprotocol/sdk'
 import { join, dirname, basename } from 'node:path'
 import { spawnSync } from 'node:child_process'
+import { parseTrustablePiLaunch, type EffectivePiLaunchConfig } from '../pi-rpc/launch-config.js'
 
 type ThinkingLevel = 'off' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh'
 type AdvertisedModel = {
@@ -178,7 +180,11 @@ export class PiAcpAgent implements ACPAgent {
 
   private async restoreSession(
     sessionId: string,
-    opts?: { cwd?: string; mcpServers?: LoadSessionRequest['mcpServers'] }
+    opts?: {
+      cwd?: string
+      mcpServers?: LoadSessionRequest['mcpServers']
+      launchConfig?: EffectivePiLaunchConfig
+    }
   ): Promise<PiAcpSession> {
     const existing = this.sessions.maybeGet(sessionId)
     if (existing) return existing
@@ -199,7 +205,8 @@ export class PiAcpAgent implements ACPAgent {
         proc = await PiRpcProcess.spawn({
           cwd,
           sessionPath: stored.sessionFile,
-          piCommand: process.env.PI_ACP_PI_COMMAND
+          piCommand: process.env.PI_ACP_PI_COMMAND,
+          ...(opts?.launchConfig ? { launchConfig: opts.launchConfig } : {})
         })
       } catch (e: any) {
         if (e?.name === 'PiRpcSpawnError') {
@@ -260,8 +267,12 @@ export class PiAcpAgent implements ACPAgent {
         sessionCapabilities: {
           // **UNSTABLE** ACP capability used by Zed's codex-acp adapter.
           // Enables a native session picker in clients that support it.
-          list: {}
-        }
+          list: {},
+          delete: {}
+        },
+        // WHY: clients negotiate the versioned launch extension before using
+        // product-specific Pi options; clients that omit it retain defaults.
+        _meta: { trustable: { piLaunch: { versions: [1] } } }
       }
     }
   }
@@ -275,6 +286,7 @@ export class PiAcpAgent implements ACPAgent {
 
     const fileCommands = loadSlashCommands(params.cwd)
     const enableSkillCommands = getEnableSkillCommands(params.cwd)
+    const launchConfig = parseTrustablePiLaunch((params as any)._meta, params.cwd)
 
     // Pi doesn't support mcpServers, but we accept and store.
     const session = await this.sessions.create({
@@ -282,7 +294,8 @@ export class PiAcpAgent implements ACPAgent {
       mcpServers: params.mcpServers,
       conn: this.conn,
       fileCommands,
-      piCommand: process.env.PI_ACP_PI_COMMAND
+      piCommand: process.env.PI_ACP_PI_COMMAND,
+      launchConfig
     })
 
     // Fetch state + models once (parallel) to reduce startup latency.
@@ -380,7 +393,8 @@ export class PiAcpAgent implements ACPAgent {
       modes,
       _meta: {
         piAcp: {
-          startupInfo: preludeText || null
+          startupInfo: preludeText || null,
+          effectiveLaunchConfig: launchConfig
         }
       }
     }
@@ -398,7 +412,7 @@ export class PiAcpAgent implements ACPAgent {
           const pi = (await session.proc.getCommands()) as any
           const { commands } = toAvailableCommandsFromPiGetCommands(pi, {
             enableSkillCommands,
-            includeExtensionCommands: false
+            includeExtensionCommands: true
           })
 
           await this.conn.sessionUpdate({
@@ -924,6 +938,19 @@ export class PiAcpAgent implements ACPAgent {
     return { sessions, nextCursor, _meta: {} }
   }
 
+  async deleteSession(params: DeleteSessionRequest): Promise<void> {
+    // WHY: deleting the loaded session would leave the ACP client pointing to a
+    // dead conversation. Clients must switch/create a session first.
+    if (this.sessions.maybeGet(params.sessionId)) {
+      throw RequestError.invalidParams(undefined, `Cannot delete active session: ${params.sessionId}`)
+    }
+
+    if (!deletePiSession(params.sessionId)) {
+      throw RequestError.invalidParams(undefined, `Unknown sessionId: ${params.sessionId}`)
+    }
+    this.store.delete(params.sessionId)
+  }
+
   async loadSession(params: LoadSessionRequest): Promise<LoadSessionResponse> {
     if (!isAbsolute(params.cwd)) {
       throw RequestError.invalidParams(`cwd must be an absolute path: ${params.cwd}`)
@@ -942,9 +969,11 @@ export class PiAcpAgent implements ACPAgent {
     }
 
     const enableSkillCommands = getEnableSkillCommands(params.cwd)
+    const launchConfig = parseTrustablePiLaunch((params as any)._meta, params.cwd)
     const session = await this.restoreSession(params.sessionId, {
       cwd: params.cwd,
-      mcpServers: params.mcpServers
+      mcpServers: params.mcpServers,
+      launchConfig
     })
     const proc = session.proc
     const fileCommands = loadSlashCommands(params.cwd)
@@ -1065,7 +1094,8 @@ export class PiAcpAgent implements ACPAgent {
       modes,
       _meta: {
         piAcp: {
-          startupInfo: null
+          startupInfo: null,
+          effectiveLaunchConfig: launchConfig
         }
       }
     }
@@ -1077,7 +1107,7 @@ export class PiAcpAgent implements ACPAgent {
           const pi = (await proc.getCommands()) as any
           const { commands } = toAvailableCommandsFromPiGetCommands(pi, {
             enableSkillCommands,
-            includeExtensionCommands: false
+            includeExtensionCommands: true
           })
 
           await this.conn.sessionUpdate({
@@ -1428,6 +1458,11 @@ function compareSemver(a: string, b: string): number {
 }
 
 function buildUpdateNotice(): string | null {
+  // WHY: managed/offline runtimes pin upgrades in their own manifest. Respect
+  // the same flags as Pi so the adapter never performs an unsolicited registry
+  // lookup or injects an update banner into a product chat.
+  if (process.env.PI_SKIP_VERSION_CHECK || process.env.PI_OFFLINE) return null
+
   // Best-effort update check against npm registry.
   // Important: keep it fast to not slow down session/new.
   try {

@@ -6,6 +6,8 @@ export type PiRpcCommandInfo = {
   source?: unknown
   location?: unknown
   path?: unknown
+  argumentHint?: unknown
+  inputHint?: unknown
 }
 
 function describeFallback(c: PiRpcCommandInfo): string {
@@ -49,9 +51,17 @@ export function toAvailableCommandsFromPiGetCommands(
 
     const desc = typeof c?.description === 'string' ? c.description.trim() : ''
 
+    const hint =
+      typeof c.argumentHint === 'string'
+        ? c.argumentHint.trim()
+        : typeof c.inputHint === 'string'
+          ? c.inputHint.trim()
+          : ''
+
     out.push({
       name,
-      description: desc || describeFallback(c)
+      description: desc || describeFallback(c),
+      ...(hint ? { input: { hint } } : {})
     })
   }
 

@@ -1,21 +1,21 @@
 {
   "name": "pi-acp",
-  "version": "0.0.31",
-  "description": "ACP adapter for pi coding agent",
+  "version": "0.0.31-trustable.1",
+  "description": "Trustable ACP adapter fork for the pi coding agent",
   "license": "MIT",
   "author": "Sergii Kozak <svkozak@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/svkozak/pi-acp.git"
+    "url": "https://github.com/trustable-ai/pi-acp.git"
   },
   "publishConfig": {
     "access": "public",
     "provenance": true
   },
   "bugs": {
-    "url": "https://github.com/svkozak/pi-acp/issues"
+    "url": "https://github.com/trustable-ai/pi-acp/issues"
   },
-  "homepage": "https://github.com/svkozak/pi-acp#readme",
+  "homepage": "https://github.com/trustable-ai/pi-acp#readme",
   "keywords": [
     "acp",
     "agent-client-protocol",

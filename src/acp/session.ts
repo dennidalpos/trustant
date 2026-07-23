@@ -12,6 +12,7 @@ import { RequestError } from '@agentclientprotocol/sdk'
 import { readFileSync } from 'node:fs'
 import { isAbsolute, resolve as resolvePath } from 'node:path'
 import { PiRpcProcess, PiRpcSpawnError, type PiRpcEvent } from '../pi-rpc/process.js'
+import type { EffectivePiLaunchConfig } from '../pi-rpc/launch-config.js'
 import { maybeAuthRequiredError } from './auth-required.js'
 import { SessionStore } from './session-store.js'
 import { expandSlashCommand, type FileSlashCommand } from './slash-commands.js'
@@ -34,6 +35,7 @@ type SessionCreateParams = {
   conn: AgentSideConnection
   fileCommands?: import('./slash-commands.js').FileSlashCommand[]
   piCommand?: string
+  launchConfig?: EffectivePiLaunchConfig
 }
 
 export type StopReason = 'end_turn' | 'cancelled' | 'error'
@@ -191,7 +193,8 @@ export class SessionManager {
     try {
       proc = await PiRpcProcess.spawn({
         cwd: params.cwd,
-        piCommand: params.piCommand
+        piCommand: params.piCommand,
+        launchConfig: params.launchConfig
       })
     } catch (e) {
       if (e instanceof PiRpcSpawnError) {
@@ -282,6 +285,7 @@ export class PiAcpSession {
   // pi can emit multiple `turn_end` events for a single user prompt (e.g. after tool_use).
   // The overall agent loop completes when `agent_end` is emitted.
   private inAgentLoop = false
+  private activityState = 'idle'
 
   // For ACP diff support: capture file contents before edit/write mutations,
   // then emit ToolCallContent {type:"diff"}. Compatible structured edit/write
@@ -374,6 +378,7 @@ export class PiAcpSession {
   async cancel(): Promise<void> {
     // Cancel current and clear any queued prompts.
     this.cancelRequested = true
+    this.emitActivity('stopping', 'Stopping', true)
 
     if (this.turnQueue.length) {
       const queued = this.turnQueue.splice(0, this.turnQueue.length)
@@ -475,6 +480,7 @@ export class PiAcpSession {
     this.inAgentLoop = false
 
     this.pendingTurn = { resolve: t.resolve, reject: t.reject }
+    this.emitActivity('thinking', 'Thinking', true)
 
     // Publish queue depth (0 because we're starting the turn now).
     this.emit({
@@ -500,6 +506,7 @@ export class PiAcpSession {
 
         this.pendingTurn = null
         this.inAgentLoop = false
+        this.emitActivity('idle', 'Idle', false)
 
         // If the prompt failed, do not automatically proceed—pi may be unhealthy.
         // But we still clear the queueDepth metadata.
@@ -521,6 +528,7 @@ export class PiAcpSession {
 
         // Stream assistant text.
         if (ame?.type === 'text_delta' && typeof ame.delta === 'string') {
+          this.emitActivity('responding', 'Writing response', true)
           this.emit({
             sessionUpdate: 'agent_message_chunk',
             content: { type: 'text', text: ame.delta } satisfies ContentBlock
@@ -529,6 +537,7 @@ export class PiAcpSession {
         }
 
         if (ame?.type === 'thinking_delta' && typeof ame.delta === 'string') {
+          this.emitActivity('thinking', 'Thinking', true)
           this.emit({
             sessionUpdate: 'agent_thought_chunk',
             content: { type: 'text', text: ame.delta } satisfies ContentBlock
@@ -613,6 +622,7 @@ export class PiAcpSession {
         const toolCallId = String((ev as any).toolCallId ?? crypto.randomUUID())
         const toolName = String((ev as any).toolName ?? 'tool')
         const args = (ev as any).args
+        this.emitActivity(toolActivityState(toolName), toolActivityLabel(toolName), true)
         let line: number | undefined
 
         if (isBashTool(toolName)) {
@@ -764,6 +774,9 @@ export class PiAcpSession {
         })
 
         this.cleanupToolCall(toolCallId)
+        // WHY: after the concrete tool has completed, keep the user-visible
+        // activity aligned with Pi returning to its model reasoning loop.
+        this.emitActivity('thinking', 'Thinking', true)
         break
       }
 
@@ -780,45 +793,31 @@ export class PiAcpSession {
       }
 
       case 'auto_retry_start': {
-        this.emit({
-          sessionUpdate: 'agent_message_chunk',
-          content: { type: 'text', text: formatAutoRetryMessage(ev) } satisfies ContentBlock
-        })
+        // WHY: retry is control-plane state, not assistant-authored prose.
+        // Publishing metadata keeps the transcript clean while still making
+        // provider recovery visible in Trustable.
+        this.emitActivity('retrying', formatAutoRetryMessage(ev), true)
         break
       }
 
       case 'auto_retry_end': {
-        this.emit({
-          sessionUpdate: 'agent_message_chunk',
-          content: { type: 'text', text: 'Retry finished, resuming.' } satisfies ContentBlock
-        })
+        this.emitActivity('thinking', 'Thinking', true)
         break
       }
 
       case 'auto_compaction_start': {
-        this.emit({
-          sessionUpdate: 'agent_message_chunk',
-          content: {
-            type: 'text',
-            text: 'Context nearing limit, running automatic compaction...'
-          } satisfies ContentBlock
-        })
+        this.emitActivity('compacting', 'Compacting context', true)
         break
       }
 
       case 'auto_compaction_end': {
-        this.emit({
-          sessionUpdate: 'agent_message_chunk',
-          content: {
-            type: 'text',
-            text: 'Automatic compaction finished; context was summarized to continue the session.'
-          } satisfies ContentBlock
-        })
+        this.emitActivity('thinking', 'Thinking', true)
         break
       }
 
       case 'agent_start': {
         this.inAgentLoop = true
+        this.emitActivity('thinking', 'Thinking', true)
         break
       }
 
@@ -831,6 +830,7 @@ export class PiAcpSession {
       case 'agent_end': {
         // Ensure all updates derived from pi events are delivered before we resolve
         // the ACP `session/prompt` request.
+        this.emitActivity('idle', 'Idle', false)
         void this.flushEmits().finally(() => {
           const reason: StopReason = this.cancelRequested ? 'cancelled' : 'end_turn'
           this.pendingTurn?.resolve(reason)
@@ -858,6 +858,28 @@ export class PiAcpSession {
       default:
         break
     }
+  }
+
+  private emitActivity(state: string, label: string, active: boolean): void {
+    // Ignore replay/diagnostic events that arrive without an active prompt;
+    // activity is a live execution signal, not persisted conversation content.
+    if (active && !this.pendingTurn) return
+    if (this.activityState === state && state !== 'retrying') return
+    this.activityState = state
+    this.emit({
+      sessionUpdate: 'session_info_update',
+      _meta: {
+        piAcp: {
+          activity: {
+            version: 1,
+            state,
+            label,
+            active,
+            timestamp: new Date().toISOString()
+          }
+        }
+      }
+    })
   }
 
   private async handleExtensionUiRequest(ev: PiRpcEvent): Promise<void> {
@@ -1008,6 +1030,29 @@ function formatAutoRetryMessage(ev: PiRpcEvent): string {
   if (delayMs > 0 && delaySeconds === 0) delaySeconds = 1
 
   return `Retrying (attempt ${attempt}/${maxAttempts}, waiting ${delaySeconds}s)...`
+}
+
+function toolActivityState(toolName: string): string {
+  if (toolName === 'read' || toolName === 'grep' || toolName === 'find' || toolName === 'ls') return 'reading'
+  if (toolName === 'edit' || toolName === 'write') return 'editing'
+  if (toolName === 'bash') return 'running'
+  if (toolName.includes('mcp') || toolName.includes('_')) return 'calling_mcp'
+  return 'using_tool'
+}
+
+function toolActivityLabel(toolName: string): string {
+  switch (toolActivityState(toolName)) {
+    case 'reading':
+      return 'Reading files'
+    case 'editing':
+      return 'Editing code'
+    case 'running':
+      return 'Running command'
+    case 'calling_mcp':
+      return 'Calling MCP'
+    default:
+      return `Using ${toolName}`
+  }
 }
 
 function toToolKind(toolName: string): ToolKind {

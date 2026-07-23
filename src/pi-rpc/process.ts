@@ -1,6 +1,7 @@
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process'
 import * as readline from 'node:readline'
 import { getPiCommand, shouldUseShellForPiCommand } from './command.js'
+import { piLaunchArgs, type EffectivePiLaunchConfig } from './launch-config.js'
 
 export class PiRpcSpawnError extends Error {
   /** Underlying spawn error code, e.g. ENOENT, EACCES */
@@ -74,6 +75,8 @@ type SpawnParams = {
   piCommand?: string
   /** If set, pi will persist the session to this exact file (via `--session <path>`). */
   sessionPath?: string
+  /** Validated product-owned Pi options. Raw argv is intentionally unsupported. */
+  launchConfig?: EffectivePiLaunchConfig
 }
 
 export class PiRpcProcess {
@@ -135,6 +138,9 @@ export class PiRpcProcess {
     // Keep extensions + prompt templates enabled because ACP users may rely on them
     // (e.g. MCP extensions, prompt templates for workflows).
     const args = ['--mode', 'rpc', '--no-themes']
+    // WHY: append only values accepted by the typed launch contract; `--mode`
+    // remains adapter-owned and every path stays a distinct argv element.
+    if (params.launchConfig) args.push(...piLaunchArgs(params.launchConfig))
     if (params.sessionPath) args.push('--session', params.sessionPath)
 
     const child = spawn(cmd, args, {
@@ -236,7 +242,10 @@ export class PiRpcProcess {
   }
 
   async abort(): Promise<void> {
-    const res = await this.request({ type: 'abort' })
+    // WHY: Stop is user-facing and must not leave the HTTP/UI request hanging
+    // forever if Pi or a provider is wedged. The process remains alive so a
+    // successful abort can be followed by another prompt in the same session.
+    const res = await this.request({ type: 'abort' }, 5_000)
     if (!res.success) throw new Error(`pi abort failed: ${res.error ?? JSON.stringify(res.data)}`)
   }
 
@@ -323,16 +332,37 @@ export class PiRpcProcess {
     await this.writeLine(`${JSON.stringify({ type: 'extension_ui_response', ...response })}\n`)
   }
 
-  private request(cmd: PiRpcCommand): Promise<PiRpcResponse> {
+  private request(cmd: PiRpcCommand, timeoutMs?: number): Promise<PiRpcResponse> {
     const id = crypto.randomUUID()
     const withId = { ...cmd, id }
 
     const line = `${JSON.stringify(withId)}\n`
 
     return new Promise<PiRpcResponse>((resolve, reject) => {
-      this.pending.set(id, { resolve, reject })
+      let timer: NodeJS.Timeout | undefined
+      const clear = () => {
+        if (timer) clearTimeout(timer)
+      }
+      this.pending.set(id, {
+        resolve: response => {
+          clear()
+          resolve(response)
+        },
+        reject: error => {
+          clear()
+          reject(error)
+        }
+      })
+
+      if (timeoutMs) {
+        timer = setTimeout(() => {
+          if (!this.pending.delete(id)) return
+          reject(new Error(`pi ${cmd.type} timed out after ${timeoutMs}ms`))
+        }, timeoutMs)
+      }
 
       void this.writeLine(line).catch(error => {
+        clear()
         this.pending.delete(id)
         reject(error)
       })

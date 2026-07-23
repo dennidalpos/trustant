@@ -4,6 +4,10 @@ ACP ([Agent Client Protocol](https://agentclientprotocol.com/overview/introducti
 
 `pi-acp` communicates **ACP JSON-RPC 2.0 over stdio** to an ACP client (e.g. Zed editor) and spawns `pi --mode rpc`, bridging requests/events between the two.
 
+This repository is the Trustable fork of upstream `pi-acp` v0.0.31. The
+upstream baseline and maintained patch set are recorded in
+[TRUSTABLE_FORK.md](TRUSTABLE_FORK.md).
+
 ## Status
 
 This is an MVP-style adapter intended to be useful today and easy to iterate on. Some ACP features may be not implemented or are not supported (see [Limitations](#limitations)). Development is centered around [Zed](https://zed.dev) editor support, other clients may have varying levels of compatibility.
@@ -13,6 +17,9 @@ Expect some minor breaking changes.
 ## Features
 
 - Streams assistant output as ACP `agent_message_chunk`
+- Streams reasoning as ACP `agent_thought_chunk`
+- Publishes versioned `piAcp.activity` metadata for thinking, tool execution,
+  retry, compaction, stopping, and idle states
 - Maps pi tool execution to ACP `tool_call` / `tool_call_update`
   - Tool call locations are surfaced when available for ACP clients that support opening the referenced file/context
   - Relative file paths from pi are resolved against the session cwd before being emitted as ACP tool locations, which enables follow-along features in clients like Zed
@@ -25,9 +32,15 @@ Expect some minor breaking changes.
   - Loads file-based slash commands compatible with pi’s conventions
   - Adds a small set of built-in commands for headless/editor usage
   - Supports skill commands (if enabled in pi settings, they appear as `/skill:skill-name` in the ACP client)
+  - Includes commands contributed by loaded Pi extensions
+- Accepts the versioned `_meta.trustable.piLaunch` ACP extension to configure
+  extension, skill, prompt-template, and session discovery without accepting
+  arbitrary process arguments
+- Bounds the Pi abort request so an unresponsive process cannot leave the ACP
+  cancellation path waiting forever
 - Skills are loaded by pi directly and are available in ACP sessions
-- (Zed) `pi-acp` emits “startup info” block into the session (pi version, context, skills, prompts, extensions - similar to `pi` in the terminal). You can disable it by setting `quietStartup: true` in pi settings (`~/.pi/agent/settings.json` or `<project>/.pi/settings.json`). When `quietStartup` is enabled, `pi-acp` will still emit a 'New version available' message if the installed pi version is outdated.
-- (Zed) Session history is supported in Zed starting with [`v0.225.0`](https://zed.dev/releases/preview/0.225.0). Session loading / history maps to pi's session files. Sessions can be resumed both in `pi` and in the ACP client.
+- (Zed) `pi-acp` emits “startup info” block into the session (pi version, context, skills, prompts, extensions - similar to `pi` in the terminal). You can disable it by setting `quietStartup: true` in pi settings (`~/.pi/agent/settings.json` or `<project>/.pi/settings.json`). Set `PI_SKIP_VERSION_CHECK=1` or `PI_OFFLINE=1` to suppress the adapter's update notice as well.
+- (Zed) Session history is supported in Zed starting with [`v0.225.0`](https://zed.dev/releases/preview/0.225.0). Session loading / history maps to pi's session files. Sessions can be resumed both in `pi` and in the ACP client. The Trustable fork also advertises standard ACP `session/delete` for inactive sessions.
 
 ## Prerequisites
 
@@ -163,7 +176,7 @@ Other built-in commands:
 
 - Skill commands can be enabled in pi settings and will appear in the slash command list in ACP client as `/skill:skill-name`.
 
-**Note**: Slash commands provided by pi extensions are not currently supported.
+Pi extension commands are included in the ACP command list.
 
 ## Authentication (ACP Registry support)
 
@@ -196,7 +209,8 @@ Project layout:
 
 - No ACP filesystem delegation (`fs/*`) and no ACP terminal delegation (`terminal/*`). pi reads/writes and executes locally.
 - MCP servers are accepted in ACP params and stored in session state, but not wired through to pi in this adapter. If you use [pi MCP adapter](https://github.com/nicobailon/pi-mcp-adapter) it will be available in the ACP client.
-- Assistant streaming is currently sent as `agent_message_chunk` (no separate thought stream).
+- Trustable-specific launch and activity fields use versioned ACP `_meta`
+  extensions; ACP clients that ignore them retain the upstream behavior.
 - Queue is implemented client-side and should work like pi's `one-at-a-time`
 - ~~ACP clients don't yet suport session history, but ACP sessions from `pi-acp` can be `/resume`d in pi directly~~
 
