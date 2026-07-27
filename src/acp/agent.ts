@@ -1525,11 +1525,8 @@ function buildStartupInfo(opts: {
     md.push('')
   }
 
-  // Context
-  const contextItems: string[] = []
-  const contextPath = join(opts.cwd, 'AGENTS.md')
-  if (existsSync(contextPath)) contextItems.push(contextPath)
-  addSection('Context', contextItems)
+  // AGENTS.md remains Pi-owned project context; do not mirror its absolute
+  // host path into the user-visible startup prelude.
 
   // Skills
   const skillsItems: string[] = []
