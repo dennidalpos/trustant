@@ -1152,11 +1152,15 @@ export class PiAcpAgent implements ACPAgent {
     await session.proc.setThinkingLevel(mode)
 
     // Let the client know the current mode changed (keeps the dropdown in sync).
+    // Re-read the effective level instead of echoing the request: pi clamps to
+    // the active model's capabilities, so the requested mode may not be the one
+    // now in force.
+    const applied = await getThinkingState(session.proc)
     void this.conn.sessionUpdate({
       sessionId: session.sessionId,
       update: {
         sessionUpdate: 'current_mode_update',
-        currentModeId: mode
+        currentModeId: applied.currentModeId
       }
     })
 
@@ -1182,11 +1186,15 @@ export class PiAcpAgent implements ACPAgent {
 
       await session.proc.setThinkingLevel(params.value)
 
+      // Report the level pi actually applied, not the one requested: pi clamps
+      // silently, and a client that verifies the echo would otherwise be told a
+      // reasoning effort was honored when it was not.
+      const applied = await getThinkingState(session.proc)
       void this.conn.sessionUpdate({
         sessionId: session.sessionId,
         update: {
           sessionUpdate: 'current_mode_update',
-          currentModeId: params.value
+          currentModeId: applied.currentModeId
         }
       })
     } else {
@@ -1202,6 +1210,60 @@ function isThinkingLevel(x: string): x is ThinkingLevel {
   return x === 'off' || x === 'minimal' || x === 'low' || x === 'medium' || x === 'high' || x === 'xhigh'
 }
 
+const THINKING_LEVEL_ORDER: ThinkingLevel[] = ['off', 'minimal', 'low', 'medium', 'high', 'xhigh']
+
+/**
+ * Mirror of pi-ai getSupportedThinkingLevels() applied to the model object
+ * get_state already returns. Used when pi is too old to answer
+ * get_available_thinking_levels, so no extra round trip is needed.
+ * Pi's `max` level is deliberately excluded: it is outside the ACP surface this
+ * adapter exposes, so advertising it would invite a request it cannot send.
+ */
+function thinkingLevelsFromModel(model: any): ThinkingLevel[] | null {
+  if (!model || typeof model !== 'object') return null
+  if (model.reasoning !== true) return ['off']
+
+  const map = model.thinkingLevelMap
+  return THINKING_LEVEL_ORDER.filter(level => {
+    const mapped = map?.[level]
+    if (mapped === null) return false
+    // Extended levels exist only when the model maps them explicitly.
+    if (level === 'xhigh') return mapped !== undefined
+    return true
+  })
+}
+
+/**
+ * Mirror of pi-ai clampThinkingLevel(): prefer the next higher supported level,
+ * then the next lower, then whatever is available.
+ */
+function clampThinkingLevel(requested: ThinkingLevel, available: ThinkingLevel[]): ThinkingLevel {
+  if (available.includes(requested)) return requested
+
+  const requestedIndex = THINKING_LEVEL_ORDER.indexOf(requested)
+  if (requestedIndex !== -1) {
+    for (let i = requestedIndex; i < THINKING_LEVEL_ORDER.length; i++) {
+      const candidate = THINKING_LEVEL_ORDER[i]
+      if (available.includes(candidate)) return candidate
+    }
+    for (let i = requestedIndex - 1; i >= 0; i--) {
+      const candidate = THINKING_LEVEL_ORDER[i]
+      if (available.includes(candidate)) return candidate
+    }
+  }
+  return available[0] ?? 'off'
+}
+
+/**
+ * WHY: pi clamps set_thinking_level to the active model's real capabilities and
+ * still reports success — a non-reasoning model silently collapses every level
+ * to 'off'. Publishing a fixed list therefore promised efforts pi would never
+ * apply, and ACP clients that verify the echoed value failed with a false
+ * compatibility error. Levels are resolved from pi itself, falling back to the
+ * model metadata pi already returned, and only then to the legacy fixed list for
+ * an unknown pi. currentModeId is clamped to the resolved list so the advertised
+ * current value is always one of the advertised choices.
+ */
 async function getThinkingState(
   proc: PiRpcProcess,
   pre?: { state?: any | null }
@@ -1213,9 +1275,6 @@ async function getThinkingState(
   }>
   currentModeId: string
 }> {
-  // Ask pi for current thinking level.
-  let current: ThinkingLevel = 'medium'
-
   const state =
     pre?.state ??
     (await (async () => {
@@ -1226,13 +1285,25 @@ async function getThinkingState(
       }
     })())
 
-  const tl = typeof state?.thinkingLevel === 'string' ? state.thinkingLevel : null
-  if (tl && isThinkingLevel(tl)) current = tl
+  const reported = await (async (): Promise<ThinkingLevel[] | null> => {
+    try {
+      const data = (await proc.getAvailableThinkingLevels()) as any
+      const levels: unknown[] = Array.isArray(data?.levels) ? data.levels : []
+      const known = levels.filter((level): level is ThinkingLevel => typeof level === 'string' && isThinkingLevel(level))
+      return known.length ? known : null
+    } catch {
+      return null
+    }
+  })()
 
-  const available: ThinkingLevel[] = ['off', 'minimal', 'low', 'medium', 'high', 'xhigh']
+  const resolved = reported ?? thinkingLevelsFromModel(state?.model)
+  const available = resolved?.length ? resolved : THINKING_LEVEL_ORDER
+
+  const tl = typeof state?.thinkingLevel === 'string' ? state.thinkingLevel : null
+  const current = tl && isThinkingLevel(tl) ? tl : 'medium'
 
   return {
-    currentModeId: current,
+    currentModeId: clampThinkingLevel(current, available),
     availableModes: available.map(id => ({
       id,
       name: `Thinking: ${id}`,

@@ -18,6 +18,11 @@ and merged deliberately.
   compaction, stopping, and idle states. Retry and compaction status remains
   control-plane metadata instead of appearing as assistant prose.
 - Bound Pi abort requests so Stop has a deterministic adapter-side timeout.
+- Derive the advertised `thought_level` choices from Pi's
+  `get_available_thinking_levels`, falling back to the active model metadata
+  Pi already returns, and report the level Pi actually applied instead of the
+  one requested. Pi clamps silently and still reports success, so a fixed list
+  told ACP clients a reasoning effort was honored when it was not.
 - Advertise standard ACP `session/delete`, resolve deletion by session ID
   inside Pi's configured session root, and reject deletion of a loaded session.
 - Honor `PI_SKIP_VERSION_CHECK` and `PI_OFFLINE` when producing the adapter

@@ -37,6 +37,7 @@ type PiRpcCommand =
   | { type: 'set_model'; id?: string; provider: string; modelId: string }
   // Thinking
   | { type: 'set_thinking_level'; id?: string; level: 'off' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh' }
+  | { type: 'get_available_thinking_levels'; id?: string }
   // Modes
   | { type: 'set_follow_up_mode'; id?: string; mode: 'all' | 'one-at-a-time' }
   | { type: 'set_steering_mode'; id?: string; mode: 'all' | 'one-at-a-time' }
@@ -270,6 +271,21 @@ export class PiRpcProcess {
   async setThinkingLevel(level: 'off' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh'): Promise<void> {
     const res = await this.request({ type: 'set_thinking_level', level })
     if (!res.success) throw new Error(`pi set_thinking_level failed: ${res.error ?? JSON.stringify(res.data)}`)
+  }
+
+  /**
+   * WHY: Pi silently clamps set_thinking_level to the active model's real
+   * capabilities and still reports success, so asking Pi which levels it will
+   * honor is the only way to advertise a truthful ACP list. Pi builds without
+   * this command answer with an error response, and a very old build could
+   * ignore it entirely, so the request is bounded and callers must treat any
+   * rejection as "unsupported" and fall back to model metadata.
+   */
+  async getAvailableThinkingLevels(): Promise<unknown> {
+    const res = await this.request({ type: 'get_available_thinking_levels' }, 5_000)
+    if (!res.success)
+      throw new Error(`pi get_available_thinking_levels failed: ${res.error ?? JSON.stringify(res.data)}`)
+    return res.data
   }
 
   async setFollowUpMode(mode: 'all' | 'one-at-a-time'): Promise<void> {
