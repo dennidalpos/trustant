@@ -795,7 +795,7 @@ export class PiAcpSession {
       case 'auto_retry_start': {
         // WHY: retry is control-plane state, not assistant-authored prose.
         // Publishing metadata keeps the transcript clean while still making
-        // provider recovery visible in Trustable.
+        // provider recovery visible in Trustant.
         this.emitActivity('retrying', formatAutoRetryMessage(ev), true)
         break
       }

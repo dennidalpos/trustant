@@ -1,9 +1,9 @@
 import { isAbsolute, resolve } from 'node:path'
 
-export const TRUSTABLE_PI_LAUNCH_VERSION = 1 as const
+export const TRUSTANT_PI_LAUNCH_VERSION = 1 as const
 
 export type EffectivePiLaunchConfig = {
-  version: typeof TRUSTABLE_PI_LAUNCH_VERSION
+  version: typeof TRUSTANT_PI_LAUNCH_VERSION
   extensions: { discover: boolean; paths: string[] }
   skills: { discover: boolean; paths: string[] }
   promptTemplates: { paths: string[] }
@@ -29,29 +29,29 @@ function optionalBoolean(value: unknown, field: string, fallback: boolean): bool
 }
 
 /**
- * Read the versioned Trustable launch extension without accepting raw argv.
+ * Read the versioned Trustant launch extension without accepting raw argv.
  *
  * WHY: ACP clients must not replace adapter-owned flags such as `--mode rpc`;
  * converting a small typed object here keeps process launch deterministic and
  * prevents shell/argument injection.
  */
-export function parseTrustablePiLaunch(meta: unknown, cwd: string): EffectivePiLaunchConfig {
+export function parseTrustantPiLaunch(meta: unknown, cwd: string): EffectivePiLaunchConfig {
   const root = record(meta)
-  const trustable = record(root?.trustable)
-  const raw = record(trustable?.piLaunch)
+  const trustant = record(root?.trustant)
+  const raw = record(trustant?.piLaunch)
 
   if (!raw) {
     return {
-      version: TRUSTABLE_PI_LAUNCH_VERSION,
+      version: TRUSTANT_PI_LAUNCH_VERSION,
       extensions: { discover: true, paths: [] },
       skills: { discover: true, paths: [] },
       promptTemplates: { paths: [] }
     }
   }
 
-  if (raw.version !== TRUSTABLE_PI_LAUNCH_VERSION) {
+  if (raw.version !== TRUSTANT_PI_LAUNCH_VERSION) {
     throw new Error(
-      `Unsupported trustable.piLaunch version: ${String(raw.version)} (expected ${TRUSTABLE_PI_LAUNCH_VERSION})`
+      `Unsupported trustant.piLaunch version: ${String(raw.version)} (expected ${TRUSTANT_PI_LAUNCH_VERSION})`
     )
   }
 
@@ -61,21 +61,21 @@ export function parseTrustablePiLaunch(meta: unknown, cwd: string): EffectivePiL
   const rawSessionDir = raw.sessionDir
 
   if (rawSessionDir !== undefined && (typeof rawSessionDir !== 'string' || !rawSessionDir.trim())) {
-    throw new Error('trustable.piLaunch.sessionDir must be a non-empty path')
+    throw new Error('trustant.piLaunch.sessionDir must be a non-empty path')
   }
 
   return {
-    version: TRUSTABLE_PI_LAUNCH_VERSION,
+    version: TRUSTANT_PI_LAUNCH_VERSION,
     extensions: {
-      discover: optionalBoolean(extensions?.discover, 'trustable.piLaunch.extensions.discover', true),
-      paths: paths(extensions?.paths, cwd, 'trustable.piLaunch.extensions.paths')
+      discover: optionalBoolean(extensions?.discover, 'trustant.piLaunch.extensions.discover', true),
+      paths: paths(extensions?.paths, cwd, 'trustant.piLaunch.extensions.paths')
     },
     skills: {
-      discover: optionalBoolean(skills?.discover, 'trustable.piLaunch.skills.discover', true),
-      paths: paths(skills?.paths, cwd, 'trustable.piLaunch.skills.paths')
+      discover: optionalBoolean(skills?.discover, 'trustant.piLaunch.skills.discover', true),
+      paths: paths(skills?.paths, cwd, 'trustant.piLaunch.skills.paths')
     },
     promptTemplates: {
-      paths: paths(promptTemplates?.paths, cwd, 'trustable.piLaunch.promptTemplates.paths')
+      paths: paths(promptTemplates?.paths, cwd, 'trustant.piLaunch.promptTemplates.paths')
     },
     ...(typeof rawSessionDir === 'string'
       ? { sessionDir: isAbsolute(rawSessionDir) ? rawSessionDir : resolve(cwd, rawSessionDir) }

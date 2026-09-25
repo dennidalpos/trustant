@@ -4,9 +4,9 @@ ACP ([Agent Client Protocol](https://agentclientprotocol.com/overview/introducti
 
 `pi-acp` communicates **ACP JSON-RPC 2.0 over stdio** to an ACP client (e.g. Zed editor) and spawns `pi --mode rpc`, bridging requests/events between the two.
 
-This repository is the Trustable fork of upstream `pi-acp` v0.0.31. The
+This repository is the Trustant fork of upstream `pi-acp` v0.0.31. The
 upstream baseline and maintained patch set are recorded in
-[TRUSTABLE_FORK.md](TRUSTABLE_FORK.md).
+[TRUSTANT_FORK.md](TRUSTANT_FORK.md).
 
 ## Status
 
@@ -33,14 +33,14 @@ Expect some minor breaking changes.
   - Adds a small set of built-in commands for headless/editor usage
   - Supports skill commands (if enabled in pi settings, they appear as `/skill:skill-name` in the ACP client)
   - Includes commands contributed by loaded Pi extensions
-- Accepts the versioned `_meta.trustable.piLaunch` ACP extension to configure
+- Accepts the versioned `_meta.trustant.piLaunch` ACP extension to configure
   extension, skill, prompt-template, and session discovery without accepting
   arbitrary process arguments
 - Bounds the Pi abort request so an unresponsive process cannot leave the ACP
   cancellation path waiting forever
 - Skills are loaded by pi directly and are available in ACP sessions
 - (Zed) `pi-acp` emits “startup info” block into the session (pi version, context, skills, prompts, extensions - similar to `pi` in the terminal). You can disable it by setting `quietStartup: true` in pi settings (`~/.pi/agent/settings.json` or `<project>/.pi/settings.json`). Set `PI_SKIP_VERSION_CHECK=1` or `PI_OFFLINE=1` to suppress the adapter's update notice as well.
-- (Zed) Session history is supported in Zed starting with [`v0.225.0`](https://zed.dev/releases/preview/0.225.0). Session loading / history maps to pi's session files. Sessions can be resumed both in `pi` and in the ACP client. The Trustable fork also advertises standard ACP `session/delete` for inactive sessions.
+- (Zed) Session history is supported in Zed starting with [`v0.225.0`](https://zed.dev/releases/preview/0.225.0). Session loading / history maps to pi's session files. Sessions can be resumed both in `pi` and in the ACP client. The Trustant fork also advertises standard ACP `session/delete` for inactive sessions.
 
 ## Prerequisites
 
@@ -209,7 +209,7 @@ Project layout:
 
 - No ACP filesystem delegation (`fs/*`) and no ACP terminal delegation (`terminal/*`). pi reads/writes and executes locally.
 - MCP servers are accepted in ACP params and stored in session state, but not wired through to pi in this adapter. If you use [pi MCP adapter](https://github.com/nicobailon/pi-mcp-adapter) it will be available in the ACP client.
-- Trustable-specific launch and activity fields use versioned ACP `_meta`
+- Trustant-specific launch and activity fields use versioned ACP `_meta`
   extensions; ACP clients that ignore them retain the upstream behavior.
 - Queue is implemented client-side and should work like pi's `one-at-a-time`
 - ~~ACP clients don't yet suport session history, but ACP sessions from `pi-acp` can be `/resume`d in pi directly~~

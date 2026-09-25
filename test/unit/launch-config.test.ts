@@ -1,9 +1,9 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { parseTrustablePiLaunch, piLaunchArgs } from '../../src/pi-rpc/launch-config.js'
+import { parseTrustantPiLaunch, piLaunchArgs } from '../../src/pi-rpc/launch-config.js'
 
-test('Trustable Pi launch config defaults preserve normal discovery', () => {
-  const parsed = parseTrustablePiLaunch(undefined, '/workspace/app')
+test('Trustant Pi launch config defaults preserve normal discovery', () => {
+  const parsed = parseTrustantPiLaunch(undefined, '/workspace/app')
   assert.deepEqual(parsed, {
     version: 1,
     extensions: { discover: true, paths: [] },
@@ -13,10 +13,10 @@ test('Trustable Pi launch config defaults preserve normal discovery', () => {
   assert.deepEqual(piLaunchArgs(parsed), [])
 })
 
-test('Trustable Pi launch config produces discrete validated argv entries', () => {
-  const parsed = parseTrustablePiLaunch(
+test('Trustant Pi launch config produces discrete validated argv entries', () => {
+  const parsed = parseTrustantPiLaunch(
     {
-      trustable: {
+      trustant: {
         piLaunch: {
           version: 1,
           extensions: { discover: false, paths: ['extensions/my extension.ts'] },
@@ -43,9 +43,9 @@ test('Trustable Pi launch config produces discrete validated argv entries', () =
   ])
 })
 
-test('Trustable Pi launch config rejects unknown versions', () => {
+test('Trustant Pi launch config rejects unknown versions', () => {
   assert.throws(
-    () => parseTrustablePiLaunch({ trustable: { piLaunch: { version: 2 } } }, '/workspace/app'),
-    /Unsupported trustable\.piLaunch version/
+    () => parseTrustantPiLaunch({ trustant: { piLaunch: { version: 2 } } }, '/workspace/app'),
+    /Unsupported trustant\.piLaunch version/
   )
 })

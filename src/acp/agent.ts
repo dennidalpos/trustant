@@ -49,7 +49,7 @@ import { existsSync, readFileSync, realpathSync, readdirSync, statSync, unlinkSy
 import type { AvailableCommand } from '@agentclientprotocol/sdk'
 import { join, dirname, basename } from 'node:path'
 import { spawnSync } from 'node:child_process'
-import { parseTrustablePiLaunch, type EffectivePiLaunchConfig } from '../pi-rpc/launch-config.js'
+import { parseTrustantPiLaunch, type EffectivePiLaunchConfig } from '../pi-rpc/launch-config.js'
 
 type ThinkingLevel = 'off' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh'
 type AdvertisedModel = {
@@ -272,7 +272,7 @@ export class PiAcpAgent implements ACPAgent {
         },
         // WHY: clients negotiate the versioned launch extension before using
         // product-specific Pi options; clients that omit it retain defaults.
-        _meta: { trustable: { piLaunch: { versions: [1] } } }
+        _meta: { trustant: { piLaunch: { versions: [1] } } }
       }
     }
   }
@@ -286,7 +286,7 @@ export class PiAcpAgent implements ACPAgent {
 
     const fileCommands = loadSlashCommands(params.cwd)
     const enableSkillCommands = getEnableSkillCommands(params.cwd)
-    const launchConfig = parseTrustablePiLaunch((params as any)._meta, params.cwd)
+    const launchConfig = parseTrustantPiLaunch((params as any)._meta, params.cwd)
 
     // Pi doesn't support mcpServers, but we accept and store.
     const session = await this.sessions.create({
@@ -969,7 +969,7 @@ export class PiAcpAgent implements ACPAgent {
     }
 
     const enableSkillCommands = getEnableSkillCommands(params.cwd)
-    const launchConfig = parseTrustablePiLaunch((params as any)._meta, params.cwd)
+    const launchConfig = parseTrustantPiLaunch((params as any)._meta, params.cwd)
     const session = await this.restoreSession(params.sessionId, {
       cwd: params.cwd,
       mcpServers: params.mcpServers,
