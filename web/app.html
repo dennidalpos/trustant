@@ -1102,6 +1102,18 @@
             const leftFrame = document.getElementById('leftFrame');
             const rightFrame = document.getElementById('rightFrame');
             let isDragging = false;
+            // The chat header never wraps; the TruACP frame reports the width
+            // at which its dropdowns hit their minimum, and the panel stops
+            // there (#211). Set as min-width so the sidebar restore and the
+            // default 50% width are clamped too, not just the drag.
+            let chatMinWidth = 100;
+            window.addEventListener('message', (e) => {
+                if (e.source !== leftFrame.contentWindow) return;
+                const d = e.data;
+                if (!d || d.type !== 'trustant-chat-min-width' || !Number.isFinite(d.px)) return;
+                chatMinWidth = Math.max(100, Math.ceil(d.px));
+                leftFrame.style.minWidth = chatMinWidth + 'px';
+            });
 
             divider.addEventListener('mousedown', (e) => {
                 isDragging = true;
@@ -1117,9 +1129,8 @@
                 const rect = container.getBoundingClientRect();
                 const dividerWidth = divider.offsetWidth;
                 const offset = e.clientX - rect.left;
-                const minWidth = 100;
-                const maxWidth = rect.width - dividerWidth - minWidth;
-                const newWidth = Math.max(minWidth, Math.min(offset, maxWidth));
+                const maxWidth = rect.width - dividerWidth - 100;
+                const newWidth = Math.max(chatMinWidth, Math.min(offset, maxWidth));
                 leftFrame.style.width = newWidth + 'px';
             });
 
