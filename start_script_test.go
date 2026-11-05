@@ -141,9 +141,9 @@ func TestStartScriptDownloadsPackageFromTrustantPub(t *testing.T) {
 	}
 	script := string(content)
 
-	if !strings.Contains(script, `OPENSERVERLESS_BASE_URL="https://pub.trustant.ai/openserverless"`) ||
-		!strings.Contains(script, `DEB_URL="${OPENSERVERLESS_BASE_URL}/openserverless_${OPENSERVERLESS_VERSION}_${DEB_ARCH}.deb"`) {
-		t.Error("start.sh must download openserverless_<version>_<arch>.deb from pub.trustant.ai")
+	if !strings.Contains(script, `TRUSERVERLESS_BASE_URL="https://pub.trustant.ai/truserverless"`) ||
+		!strings.Contains(script, `DEB_URL="${TRUSERVERLESS_BASE_URL}/truserverless_${TRUSERVERLESS_VERSION}_${DEB_ARCH}.deb"`) {
+		t.Error("start.sh must download truserverless_<version>_<arch>.deb from pub.trustant.ai")
 	}
 	if strings.Contains(script, "nuvolaris.download") {
 		t.Error("start.sh must not download from openserverless.nuvolaris.download")
@@ -158,14 +158,14 @@ func TestStartScriptDownloadsPackageFromTrustantPub(t *testing.T) {
 		t.Error("start.sh must not use landing2.nuvolaris.org — it serves an older release")
 	}
 
-	// openserverless.txt selects what actually gets installed, so unlike
+	// truserverless.txt selects what actually gets installed, so unlike
 	// version.txt it must be a hard pin: no "unknown" fallback, and no silent
 	// fallback onto another version.
-	if !strings.Contains(script, `OPENSERVERLESS_VERSION="$(head -n1 openserverless.txt`) {
-		t.Error("start.sh must read the pinned package version from openserverless.txt")
+	if !strings.Contains(script, `TRUSERVERLESS_VERSION="$(head -n1 truserverless.txt`) {
+		t.Error("start.sh must read the pinned package version from truserverless.txt")
 	}
-	if !strings.Contains(script, `|| fail "openserverless.txt not found or empty`) {
-		t.Error("start.sh must fail (not warn) when openserverless.txt is missing or empty")
+	if !strings.Contains(script, `|| fail "truserverless.txt not found or empty`) {
+		t.Error("start.sh must fail (not warn) when truserverless.txt is missing or empty")
 	}
 	if !strings.Contains(script, `could not be downloaded.`) {
 		t.Error("start.sh must fail loudly when the pinned version cannot be downloaded")
@@ -173,7 +173,7 @@ func TestStartScriptDownloadsPackageFromTrustantPub(t *testing.T) {
 
 	// The cache is keyed by the pinned version, and a cache hit must not need
 	// the network: a fully-cached run cannot depend on the bucket being up.
-	if !strings.Contains(script, `DEB_FILE="${DIST_DIR}/openserverless_${OPENSERVERLESS_VERSION}_${DEB_ARCH}.deb"`) {
+	if !strings.Contains(script, `DEB_FILE="${DIST_DIR}/truserverless_${TRUSERVERLESS_VERSION}_${DEB_ARCH}.deb"`) {
 		t.Error("start.sh must cache the deb under its pinned version and arch")
 	}
 	if !strings.Contains(script, `ok "Using cached package: $DEB_FILE"
@@ -181,11 +181,16 @@ func TestStartScriptDownloadsPackageFromTrustantPub(t *testing.T) {
 		t.Error("a cache hit must return before downloading (no network on cached runs)")
 	}
 
-	// The package installed is now openserverless, so every installed-check must
-	// name it; a leftover `dpkg -l trustant` would never match and would
-	// re-run the ~3GB install on every invocation.
-	if strings.Contains(script, "dpkg -l trustant") {
-		t.Error("start.sh must check for the openserverless package, not trustant")
+	// The package installed is now truserverless, so every installed-check must
+	// name it; a leftover check for an older package name would never match and
+	// would re-run the ~3GB install on every invocation.
+	if !strings.Contains(script, "dpkg -l truserverless") {
+		t.Error("start.sh must check for the truserverless package")
+	}
+	for _, old := range []string{"dpkg -l trustant", "dpkg -l openserverless"} {
+		if strings.Contains(script, old) {
+			t.Errorf("start.sh must check for the truserverless package, not %q", old)
+		}
 	}
 
 	if !strings.Contains(script, "curl -fL --retry 3") {
