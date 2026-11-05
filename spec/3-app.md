@@ -143,7 +143,7 @@ spotlights the toggle first and continues once the assistant is back — the
 controls it waits on cannot report while the frame is hidden. This is why
 `sidebarToggleBtn` and `leftFrame` are part of the tutorial's page contract.
 
-In the body there are two iframes, 50% width and 90% height (full page except for the top bar), resizable horizontally. The right iframe sits inside a preview pane that can constrain it to a device viewport — see "Device Preview" below.
+In the body there are two iframes, 50% width and 90% height (full page except for the top bar), resizable horizontally. The chat iframe cannot be narrower than the width its header needs: TruACP posts `{type: "trustant-chat-min-width", px}` (the width at which its dropdowns reach their minimum; the header never wraps), and the host applies it as the `#leftFrame` `min-width` and as the divider's drag floor (default 100px until a value arrives). The preview keeps its 100px floor. The right iframe sits inside a preview pane that can constrain it to a device viewport — see "Device Preview" below.
 
 # Sidebar Toggle
 
