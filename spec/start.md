@@ -29,29 +29,29 @@ than duplicated per host.
 
 ## Download + cache the package (host side, before booting the VM)
 
-The cluster package is the Apache OpenServerless deb, published on
+The cluster package is the Trustant Serverless deb, published on
 `pub.trustant.ai` under a fixed naming scheme:
 
-    https://pub.trustant.ai/openserverless/openserverless_<version>_<arch>.deb
+    https://pub.trustant.ai/truserverless/truserverless_<version>_<arch>.deb
 
-where `<version>` is the content of `openserverless.txt` (e.g. `0.9.0+455258`,
+where `<version>` is the content of `truserverless.txt` (e.g. `0.9.0+455258`,
 the `+` sent literally) and `<arch>` is `amd64` or `arm64`. There is no index:
 the URL is built directly from the pin and the HOST arch.
 
-`openserverless.txt` pins the version and is a **hard pin**. If the file is
+`truserverless.txt` pins the version and is a **hard pin**. If the file is
 missing or empty, `start.sh` fails immediately — it must never install an
 unpinned package. If the pinned version is not published, the download fails
 (HTTP 404) and `start.sh` fails with a message naming the requested version, the
 arch and the URL. It must never fall back to another version.
 
-Cache as `dist/openserverless_<version>_<arch>.deb`, mirroring the published
+Cache as `dist/truserverless_<version>_<arch>.deb`, mirroring the published
 naming. If it already exists, skip the ~3GB download — a fully-cached run must
 not depend on `pub.trustant.ai` being reachable. Download to a `.part` file and
 move into place so an interrupted download never leaves a truncated cache entry.
 
 Two separate version files, deliberately not conflated:
 
-- `openserverless.txt` — the **cluster package** version (`0.1.0+f1553b`). Selects
+- `truserverless.txt` — the **cluster package** version (`0.1.0+f1553b`). Selects
   what gets installed. Hard pin, no fallback.
 - `version.txt` — the **Trustant app** release identity in tagged form (`v0.4.0`),
   the single source shared with `build.sh`/`hotfix.sh`/`run.sh`; `TRUSTANT_VERSION`
@@ -479,7 +479,7 @@ does not apply there.
 Abort with an actionable message unless all of the following hold:
 
 - `/etc/os-release` identifies Ubuntu or Debian (`ID`/`ID_LIKE`). Every install
-  step below is `apt-get`/`dpkg`, and the OpenServerless package is a `.deb`.
+  step below is `apt-get`/`dpkg`, and the Trustant Serverless package is a `.deb`.
 - the architecture reported by `dpkg --print-architecture` is amd64 or arm64.
   This is the same source `ensure_deb` uses, so the preflight gate and the
   package actually selected can never disagree.
@@ -515,15 +515,20 @@ The macOS path is unaffected by all of this.
 
 ## Cluster
 
-If `dpkg -l openserverless` does not report `ii`, download and cache the `.deb`
+If `dpkg -l truserverless` does not report `ii`, download and cache the `.deb`
 in `dist/`, then copy it into a fresh `mktemp -d /tmp/trustant-deb.XXXXXX`
 directory (`0755`, file `0644`, so apt's `_apt` sandbox user can read it),
 install it from there with sudo, and remove the `/tmp` copy — right after the
 install, and via the EXIT trap if the install fails. This mirrors the VM path,
-which copies the cached deb to `/tmp/openserverless.deb` in the guest, installs
+which copies the cached deb to `/tmp/truserverless.deb` in the guest, installs
 it and removes it. The installed-package check names the package
-actually being installed (`openserverless`); a host still carrying the older
-`trustant` package is therefore treated as uninstalled and gets the new one.
+actually being installed (`truserverless`), so a host still carrying the older
+`openserverless` or `trustant` package is treated as uninstalled. The install
+then stops at the package's own `preinst` error, because
+`/var/lib/rancher/k3s` already exists. `start.sh` never purges the old package,
+since that could destroy cluster data: recreate the VM (`./start.sh -k`, then
+`./start.sh`), or uninstall the old package on a Linux host. A previously cached
+`dist/openserverless_*.deb` is no longer used and can be deleted by hand.
 
 The package must match the host architecture. On Linux, detect it with
 `dpkg --print-architecture` — that is what governs whether `apt-get install`
@@ -531,8 +536,8 @@ will accept the package, and it stays correct on a multiarch host where `uname`
 reports the kernel's architecture. It emits exactly the strings the filenames
 use, so:
 
-- arm64 -> `dist/openserverless_<version>_arm64.deb` (URL suffix `_arm64.deb`)
-- amd64 -> `dist/openserverless_<version>_amd64.deb` (URL suffix `_amd64.deb`)
+- arm64 -> `dist/truserverless_<version>_arm64.deb` (URL suffix `_arm64.deb`)
+- amd64 -> `dist/truserverless_<version>_amd64.deb` (URL suffix `_amd64.deb`)
 
 macOS has no `dpkg` — the `.deb` is installed inside the VM, which runs the host
 architecture under vz — so the macOS path keeps mapping from `uname -m`
