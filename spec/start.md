@@ -29,29 +29,29 @@ than duplicated per host.
 
 ## Download + cache the package (host side, before booting the VM)
 
-The cluster package is the Apache OpenServerless deb, published on
+The cluster package is the Trustant Serverless deb, published on
 `pub.trustant.ai` under a fixed naming scheme:
 
-    https://pub.trustant.ai/openserverless/openserverless_<version>_<arch>.deb
+    https://pub.trustant.ai/truserverless/truserverless_<version>_<arch>.deb
 
-where `<version>` is the content of `openserverless.txt` (e.g. `0.9.0+455258`,
+where `<version>` is the content of `truserverless.txt` (e.g. `0.9.0+455258`,
 the `+` sent literally) and `<arch>` is `amd64` or `arm64`. There is no index:
 the URL is built directly from the pin and the HOST arch.
 
-`openserverless.txt` pins the version and is a **hard pin**. If the file is
+`truserverless.txt` pins the version and is a **hard pin**. If the file is
 missing or empty, `start.sh` fails immediately — it must never install an
 unpinned package. If the pinned version is not published, the download fails
 (HTTP 404) and `start.sh` fails with a message naming the requested version, the
 arch and the URL. It must never fall back to another version.
 
-Cache as `dist/openserverless_<version>_<arch>.deb`, mirroring the published
+Cache as `dist/truserverless_<version>_<arch>.deb`, mirroring the published
 naming. If it already exists, skip the ~3GB download — a fully-cached run must
 not depend on `pub.trustant.ai` being reachable. Download to a `.part` file and
 move into place so an interrupted download never leaves a truncated cache entry.
 
 Two separate version files, deliberately not conflated:
 
-- `openserverless.txt` — the **cluster package** version (`0.1.0+f1553b`). Selects
+- `truserverless.txt` — the **cluster package** version (`0.1.0+f1553b`). Selects
   what gets installed. Hard pin, no fallback.
 - `version.txt` — the **Trustant app** release identity in tagged form (`v0.4.0`),
   the single source shared with `build.sh`/`hotfix.sh`/`run.sh`; `TRUSTANT_VERSION`
@@ -81,7 +81,7 @@ virtiofs-mounted checkout, so the guest can see its own disk files — harmless.
 `setup.sh`'s `sudo apt-get install` lines and the `start.ps1` bootstrap. These
 apt runs have no pty, and needrestart's "Restarting services..." report then
 prints as a staircase (LF without CR); restarting services is pointless on a
-fresh machine anyway. Before `run.sh`, `restore_tty` runs `stty sane` when stdin
+fresh machine anyway. Before `setup.sh` and before `run.sh`, `restore_tty` runs `stty sane` when stdin
 is a terminal, so no provisioning child can leave it in a raw mode.
 
 ## Boot the VM, then install (NOT via cloud-init provision)
@@ -393,6 +393,11 @@ stage that timed out (the second one also reporting the last description seen).
 
 `start.sh` must explicitly ensure GitHub CLI is installed in the VM with
 `apt-get install gh` during provisioning, for both fresh and reused VMs.
+Not every distro archive carries `gh`, so `ensure_gh_apt` first adds GitHub's
+own apt repository (keyring at `/etc/apt/keyrings/githubcli-archive-keyring.gpg`,
+source `https://cli.github.com/packages stable main` in
+`/etc/apt/sources.list.d/github-cli.list`, `wget` installed if missing), then
+installs `gh` from it. An already-installed `gh` package skips all of this.
 
 Before printing the final "VM ready" summary, `start.sh` must also verify that
 `gh` resolves and matches the pinned runtime version. Runtime convergence is
@@ -474,7 +479,7 @@ does not apply there.
 Abort with an actionable message unless all of the following hold:
 
 - `/etc/os-release` identifies Ubuntu or Debian (`ID`/`ID_LIKE`). Every install
-  step below is `apt-get`/`dpkg`, and the OpenServerless package is a `.deb`.
+  step below is `apt-get`/`dpkg`, and the Trustant Serverless package is a `.deb`.
 - the architecture reported by `dpkg --print-architecture` is amd64 or arm64.
   This is the same source `ensure_deb` uses, so the preflight gate and the
   package actually selected can never disagree.
@@ -510,15 +515,20 @@ The macOS path is unaffected by all of this.
 
 ## Cluster
 
-If `dpkg -l openserverless` does not report `ii`, download and cache the `.deb`
+If `dpkg -l truserverless` does not report `ii`, download and cache the `.deb`
 in `dist/`, then copy it into a fresh `mktemp -d /tmp/trustant-deb.XXXXXX`
 directory (`0755`, file `0644`, so apt's `_apt` sandbox user can read it),
 install it from there with sudo, and remove the `/tmp` copy — right after the
 install, and via the EXIT trap if the install fails. This mirrors the VM path,
-which copies the cached deb to `/tmp/openserverless.deb` in the guest, installs
+which copies the cached deb to `/tmp/truserverless.deb` in the guest, installs
 it and removes it. The installed-package check names the package
-actually being installed (`openserverless`); a host still carrying the older
-`trustant` package is therefore treated as uninstalled and gets the new one.
+actually being installed (`truserverless`), so a host still carrying the older
+`openserverless` or `trustant` package is treated as uninstalled. The install
+then stops at the package's own `preinst` error, because
+`/var/lib/rancher/k3s` already exists. `start.sh` never purges the old package,
+since that could destroy cluster data: recreate the VM (`./start.sh -k`, then
+`./start.sh`), or uninstall the old package on a Linux host. A previously cached
+`dist/openserverless_*.deb` is no longer used and can be deleted by hand.
 
 The package must match the host architecture. On Linux, detect it with
 `dpkg --print-architecture` — that is what governs whether `apt-get install`
@@ -526,8 +536,8 @@ will accept the package, and it stays correct on a multiarch host where `uname`
 reports the kernel's architecture. It emits exactly the strings the filenames
 use, so:
 
-- arm64 -> `dist/openserverless_<version>_arm64.deb` (URL suffix `_arm64.deb`)
-- amd64 -> `dist/openserverless_<version>_amd64.deb` (URL suffix `_amd64.deb`)
+- arm64 -> `dist/truserverless_<version>_arm64.deb` (URL suffix `_arm64.deb`)
+- amd64 -> `dist/truserverless_<version>_amd64.deb` (URL suffix `_amd64.deb`)
 
 macOS has no `dpkg` — the `.deb` is installed inside the VM, which runs the host
 architecture under vz — so the macOS path keeps mapping from `uname -m`
@@ -695,14 +705,13 @@ Windows-aware, and none of them may be taught to be.
     npm into the distribution; a leaking Windows `PATH` would make `node` and
     `go` resolve to Windows `.exe` files inside Linux builds.
 - The base packages the native path shells out to and the WSL image may lack:
-  `sudo curl ca-certificates git iproute2 iptables zstd unzip gh`. `iptables` is
+  `sudo curl ca-certificates git iproute2 iptables zstd unzip`. `iptables` is
   what the package's postinst builds its `:80/:443/:6443` firewall dropin with;
-  `zstd` and `unzip` unpack what the flow downloads. `gh` is belt and braces:
-  the bootstrap runs as root before `start.sh` is invoked at all, so the
-  distribution has the CLI whatever `start.sh`'s internal ordering does.
-  If the Ubuntu archive ever stops carrying `gh`, `ensure_gh_apt` is what gets
-  fixed, not this list; `setup.sh` still owns the pinned-version convergence
-  from the release tarball afterwards.
+  `zstd` and `unzip` unpack what the flow downloads. `gh` is deliberately not
+  in this list: not every distro archive carries it, and a missing package
+  would fail the whole install. `start.sh`'s `ensure_gh_apt` installs it from
+  GitHub's own apt repository; `setup.sh` still owns the pinned-version
+  convergence from the release tarball afterwards.
 
 ## The mount
 

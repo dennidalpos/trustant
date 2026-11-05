@@ -23,14 +23,17 @@ if [ ! -t 0 ] && [ -r /dev/tty ]
 then TTY=/dev/tty
 fi
 if [ -n "${TRUSTANT_DIR:-}" ]
-then DEST="$TRUSTANT_DIR"
+then
+   DEST="$TRUSTANT_DIR"
+   TARGET="$(dirname "$DEST")"
 else
    TARGET="$(pwd)"
    # Ask only when there is a terminal to answer: reading /dev/stdin under a
    # bare pipe would swallow the rest of this script.
    if [ -t 0 ] || [ "$TTY" = /dev/tty ]
    then
-      printf 'Install Trustant in [%s]: ' "$TARGET"
+      echo "Trustant will be installed in $TARGET/trustant."
+      printf 'Type ENTER to accept the proposed path or specify another full path [%s]: ' "$TARGET"
       { read -r ANSWER <"$TTY"; } 2>/dev/null || { ANSWER=""; echo; }
       case "$ANSWER" in
       ("~") ANSWER="$HOME" ;;
@@ -38,13 +41,29 @@ else
       esac
       [ -n "$ANSWER" ] && TARGET="$ANSWER"
    fi
-   if ! mkdir -p "$TARGET" || ! cd "$TARGET"
-   then
-      echo "cannot use $TARGET - exiting"
-      exit 1
-   fi
-   DEST="$(pwd)/trustant"
+   [ "$TARGET" != / ] && TARGET="${TARGET%/}"
+   DEST="$TARGET/trustant"
 fi
+# The target must be a full, existing folder: trustant is created inside it,
+# and only there - never on top of an existing checkout.
+case "$TARGET" in
+(/*) ;;
+(*)
+   echo "ERROR: $TARGET is not a full path - it must start with /"
+   exit 1
+;;
+esac
+if [ ! -d "$TARGET" ]
+then
+   echo "ERROR: $TARGET does not exist - create it first or choose another folder"
+   exit 1
+fi
+if [ -e "$DEST" ]
+then
+   echo "ERROR: $DEST already exists - remove it (rm -rf $DEST) or cd there and run ./start.sh"
+   exit 1
+fi
+cd "$TARGET" || exit 1
 
 case "$(uname -s)" in
 (Darwin)
@@ -87,9 +106,56 @@ case "$(uname -s)" in
 ;;
 esac
 
-if [ -e "$DEST" ]
+# Requirements, checked before anything is cloned: report every problem, then
+# stop. Memory allows 7.5 GiB because an "8 GB" machine reports a bit less.
+FAIL=0
+fail() { echo "ERROR: $*"; FAIL=1; }
+if [ "$(uname -s)" = Darwin ]
 then
-   echo "$DEST already exists - remove it, or cd there and run ./start.sh"
+   MEM_KB=$(( $(sysctl -n hw.memsize) / 1024 ))
+   CPUS=$(sysctl -n hw.ncpu)
+   MINIOPS=$(dscacheutil -q host -a name miniops.me | awk '/^ip_address:/{print $2; exit}')
+else
+   MEM_KB=$(awk '/^MemTotal:/{print $2}' /proc/meminfo)
+   CPUS=$(nproc)
+   MINIOPS=$(getent ahostsv4 miniops.me | awk '{print $1; exit}')
+fi
+DIR="$(dirname "$DEST")"
+while [ ! -d "$DIR" ]
+do DIR="$(dirname "$DIR")"
+done
+DISK_KB=$(df -Pk "$DIR" | awk 'NR==2{print $4}')
+[ "${MEM_KB:-0}" -ge 7864320 ] \
+   || fail "at least 8 GB of memory is required (found $(( ${MEM_KB:-0} / 1048576 )) GB)"
+[ "${CPUS:-0}" -ge 4 ] \
+   || fail "at least 4 CPUs are required (found ${CPUS:-0})"
+[ "${DISK_KB:-0}" -ge 52428800 ] \
+   || fail "at least 50 GB of free disk space is required in $DIR (found $(( ${DISK_KB:-0} / 1048576 )) GB)"
+if [ "$MINIOPS" != "127.0.0.1" ]
+then
+   fail "miniops.me resolves to ${MINIOPS:-nothing}, not 127.0.0.1: your router is blocking miniops.me.
+    Please either change your DNS to 8.8.8.8 and 1.1.1.1, or add an exception for miniops.me to the router."
+fi
+# Linux runs k3s on this host, which needs :80 and :443 - unless it is
+# Trustant's own k3s already holding them.
+if [ "$(uname -s)" = Linux ] && ! systemctl is-active --quiet k3s 2>/dev/null
+then
+   if command -v ss >/dev/null
+   then
+      BUSY=$(sudo ss -ltnpH '( sport = :80 or sport = :443 )' </dev/null | awk '{print "      " $4 "  " $NF}' | sort -u)
+      if [ -n "$BUSY" ]
+      then
+         fail "ports 80 and 443 must be free, but they are in use:
+$BUSY
+    Stop the service using them, e.g.: sudo systemctl stop nginx"
+      fi
+   else
+      echo "WARNING: ss not found - cannot check that ports 80 and 443 are free"
+   fi
+fi
+if [ "$FAIL" = 1 ]
+then
+   echo "This machine does not meet the Trustant requirements - exiting"
    exit 1
 fi
 
@@ -149,11 +215,20 @@ echo > /dev/null <<"out-null" ###
     # [IO.Path]::GetFullPath would use: they differ, e.g. after a cd to D:\.
     $Resolve = { param($p) $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($p) }
     if ($env:TRUSTANT_DIR) {
+        if ($env:TRUSTANT_DIR -notmatch '^[A-Za-z]:') {
+            Write-Host "ERROR: $env:TRUSTANT_DIR is not a full path - it must start with a drive letter, e.g. C:\"
+            return
+        }
         $Dest = & $Resolve $env:TRUSTANT_DIR
         $Target = Split-Path -Parent $Dest
     } else {
         $Target = (Get-Location).ProviderPath
-        $Answer = "$(Read-Host "Install Trustant in [$Target]")".Trim().Trim('"')
+        Write-Host "Trustant will be installed in $(Join-Path $Target 'trustant')."
+        $Answer = "$(Read-Host "Type ENTER to accept the proposed path or specify another full path [$Target]")".Trim().Trim('"')
+        if ($Answer -and $Answer -notmatch '^[A-Za-z]:') {
+            Write-Host "ERROR: $Answer is not a full path - it must start with a drive letter, e.g. C:\"
+            return
+        }
         # A bare drive (D:) means its root, not that drive's current folder.
         if ($Answer -match '^[A-Za-z]:$') { $Answer += '\' }
         if ($Answer) { $Target = & $Resolve $Answer }
@@ -173,11 +248,48 @@ echo > /dev/null <<"out-null" ###
         Write-Host "Drive $($Dest.Substring(0, 2)) is not available on this machine"
         return
     }
+    # The target must be an existing folder: trustant is created inside it,
+    # and only there - never on top of an existing checkout.
+    if (-not (Test-Path -PathType Container $Target)) {
+        Write-Host "ERROR: $Target does not exist - create it first or choose another folder"
+        return
+    }
+    if (Test-Path $Dest) {
+        Write-Host "ERROR: $Dest already exists - remove it (Remove-Item -Recurse -Force $Dest) or cd there and run .\start.ps1"
+        return
+    }
+
+    # Requirements, checked before anything is cloned: report every problem,
+    # then stop. Memory allows 7.5 GiB because an "8 GB" machine reports a bit less.
+    $Failed = $false
+    $GB = 1024 * 1024 * 1024
+    $Mem = (Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory
+    if ($Mem -lt 7.5 * $GB) {
+        Write-Host "ERROR: at least 8 GB of memory is required (found $([math]::Floor($Mem / $GB)) GB)"; $Failed = $true
+    }
+    $Cpus = [Environment]::ProcessorCount
+    if ($Cpus -lt 4) {
+        Write-Host "ERROR: at least 4 CPUs are required (found $Cpus)"; $Failed = $true
+    }
+    $Free = ([System.IO.DriveInfo]::new($Dest.Substring(0, 1))).AvailableFreeSpace
+    if ($Free -lt 50 * $GB) {
+        Write-Host "ERROR: at least 50 GB of free disk space is required on $($Dest.Substring(0, 2)) (found $([math]::Floor($Free / $GB)) GB)"; $Failed = $true
+    }
+    $Miniops = try {
+        [System.Net.Dns]::GetHostAddresses('miniops.me') |
+            Where-Object { $_.AddressFamily -eq 'InterNetwork' } | Select-Object -First 1
+    } catch { $null }
+    if ("$Miniops" -ne '127.0.0.1') {
+        $Got = if ($Miniops) { "$Miniops" } else { 'nothing' }
+        Write-Host "ERROR: miniops.me resolves to $Got, not 127.0.0.1: your router is blocking miniops.me."
+        Write-Host "    Please either change your DNS to 8.8.8.8 and 1.1.1.1, or add an exception for miniops.me to the router."
+        $Failed = $true
+    }
+    if ($Failed) {
+        Write-Host "This machine does not meet the Trustant requirements"
+        return
+    }
     try {
-        # New-Item rejects a drive root (D:\) even with -Force: create only if missing.
-        if (-not (Test-Path -PathType Container $Target)) {
-            New-Item -ItemType Directory -Force -Path $Target -ErrorAction Stop | Out-Null
-        }
         Set-Location $Target -ErrorAction Stop
     } catch {
         Write-Host "cannot use $Target - $_"
@@ -198,11 +310,6 @@ echo > /dev/null <<"out-null" ###
             Write-Host "git installed but not found - open a new PowerShell and retry"
             return
         }
-    }
-
-    if (Test-Path $Dest) {
-        Write-Host "$Dest already exists - remove it, or cd there and run .\start.ps1"
-        return
     }
 
     Write-Host "Cloning Trustant into $Dest"

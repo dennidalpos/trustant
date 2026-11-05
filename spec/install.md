@@ -18,16 +18,43 @@ scripts as ANSI.
 
 ## Common behaviour
 
-- **Target folder**: the installer asks `Install Trustant in [<cwd>]:`,
-  defaulting to the current directory (Enter keeps it; `~` is expanded in
-  bash). A folder that does not exist is created, and the installer `cd`s
-  (`Set-Location`, which also switches drive) into it. The checkout is
-  `<target>/trustant`. Bash asks only when a terminal is available (stdin or
-  `/dev/tty`); otherwise the default is used.
+- **Target folder**: the installer prints `Trustant will be installed in
+  <cwd>/trustant.` and asks `Type ENTER to accept the proposed path or specify
+  another full path [<cwd>]:` (Enter keeps the current directory; `~` is
+  expanded in bash). The checkout is `<target>/trustant`. Bash asks only when a
+  terminal is available (stdin or `/dev/tty`); otherwise the default is used.
 - `TRUSTANT_DIR` names the checkout directly and skips the question
-  (non-interactive installs).
-- If `<target>/trustant` already exists the installer refuses and says to run
-  `start.sh`/`start.ps1` there.
+  (non-interactive installs); its parent is the target.
+- **Path checks**, right after the answer and before anything is installed,
+  each exiting with an `ERROR: ...`:
+  - the target must be a full path: starting with `/` (bash) or a drive letter
+    `X:` (PowerShell);
+  - the target folder must already exist - it is never created; only
+    `trustant` is created inside it;
+  - `<target>/trustant` must not exist; the error suggests removing it
+    (`rm -rf <dest>` / `Remove-Item -Recurse -Force <dest>`) or running
+    `start.sh`/`start.ps1` there.
+
+  The installer then `cd`s (`Set-Location`, which also switches drive) into
+  the target.
+- **Requirements**, checked before anything is cloned (bash: after the
+  per-host prerequisites; PowerShell: after the path checks). Every failing
+  check is reported (`ERROR: ...`), then the installer stops:
+  - at least **8 GB of memory**: the threshold is 7.5 GiB, because an "8 GB"
+    machine reports a bit less (`hw.memsize`, `/proc/meminfo` `MemTotal`,
+    `Win32_ComputerSystem.TotalPhysicalMemory`);
+  - at least **4 CPUs** (`hw.ncpu`, `nproc`, `[Environment]::ProcessorCount`);
+  - at least **50 GB free** where the checkout goes (`df -Pk` on the nearest
+    existing ancestor of `<target>`; on Windows, the drive of the checkout);
+  - **`miniops.me` resolves to `127.0.0.1`** (`dscacheutil`, `getent
+    ahostsv4`, `[Net.Dns]::GetHostAddresses`). Otherwise the router is
+    blocking it, and the user is told to change their DNS to 8.8.8.8 and
+    1.1.1.1 or to add an exception for `miniops.me` to the router;
+  - **Linux only: ports 80 and 443 are free** (`sudo ss -ltnp`), since k3s runs
+    on the host. The listeners are printed and the user is pointed to e.g.
+    `sudo systemctl stop nginx`. The check is skipped when the `k3s` unit is
+    already active (Trustant's own k3s holds those ports), and only warns when
+    `ss` is missing.
 - **Preloaded `dist/`**: after the clone, if `<target>/dist` exists its content
   is copied (not moved) into `<target>/trustant/dist`, the cache `start.sh`
   reads, so the `.deb` and ollama tarball are not downloaded again. A failed
@@ -45,7 +72,8 @@ Hosts are told apart by `uname -s`:
 - **Darwin**: requires `brew` (otherwise it points to https://brew.sh), then runs
   `brew install lima` if `limactl` is missing and `brew install git` if `git` is
   missing.
-- **Linux**: requires `apt-get` and `sudo` (`sudo -v` unless already root), then
+- **Linux**: requires `apt-get` and `sudo` (`sudo -v` unless already root; the
+  port check below relies on it), then
   runs `apt-get install -y git` if `git` is missing.
 - **MINGW/MSYS/CYGWIN**: tells the user to use PowerShell and exits.
 - Anything else: exits.
@@ -57,10 +85,8 @@ Under `curl | bash`, stdin is the script itself. Every prompt (sudo, brew, and
 
 - Refuses on anything other than Windows (`OSVersion.Platform -eq 'Win32NT'`).
 - Paths are resolved against the PowerShell location
-  (`GetUnresolvedProviderPathFromPSPath`), not the process directory, so a
-  relative answer after a `cd D:\` lands on `D:`. A bare drive (`D:`) means its
-  root (`D:\`), and an existing folder (a drive root included) is used as-is:
-  `New-Item` is called only when it is missing, since it rejects `D:\`.
+  (`GetUnresolvedProviderPathFromPSPath`), not the process directory. A bare
+  drive (`D:`) means its root (`D:\`).
 - Refuses if the checkout path contains a space, or is not a drive-letter path
   (any drive: `C:\`, `D:\`...). The folder is used from WSL over
   `/mnt/<drive>`, and a space breaks `.env` and the scripts.

@@ -97,19 +97,19 @@ fi
 export LIMA_HOME="$(pwd)/data/lima"
 LIMA_KEY="$LIMA_HOME/_config/user"           # shared identity limactl ssh uses
 # The cluster package is published on pub.trustant.ai under a fixed naming
-# scheme, openserverless_<version>_<arch>.deb, so the URL is built directly from
+# scheme, truserverless_<version>_<arch>.deb, so the URL is built directly from
 # the pinned version and the host arch — there is no index to resolve.
-OPENSERVERLESS_BASE_URL="https://pub.trustant.ai/openserverless"
-# openserverless.txt pins WHICH package version gets installed, so it is a hard
+TRUSERVERLESS_BASE_URL="https://pub.trustant.ai/truserverless"
+# truserverless.txt pins WHICH package version gets installed, so it is a hard
 # pin: unlike TRUSTANT_VERSION below there is no "unknown" fallback, because an
 # empty value here would silently install something other than what the repo
 # declares. A missing or bogus pin must fail loudly instead.
-OPENSERVERLESS_VERSION="$(head -n1 openserverless.txt 2>/dev/null | tr -d '[:space:]')"
-[[ -n "$OPENSERVERLESS_VERSION" ]] \
-  || fail "openserverless.txt not found or empty — it must pin the OpenServerless package version (e.g. 0.1.0+f1553b)"
+TRUSERVERLESS_VERSION="$(head -n1 truserverless.txt 2>/dev/null | tr -d '[:space:]')"
+[[ -n "$TRUSERVERLESS_VERSION" ]] \
+  || fail "truserverless.txt not found or empty — it must pin the Trustant Serverless package version (e.g. 0.1.0+f1553b)"
 # The release identity lives in version.txt (tagged form, e.g. v0.4.0) and is the
 # single source shared with build.sh/hotfix.sh/run.sh. It identifies the Trustant
-# APP release and is unrelated to OPENSERVERLESS_VERSION above, which identifies
+# APP release and is unrelated to TRUSERVERLESS_VERSION above, which identifies
 # the cluster package — the two version files are deliberately separate. The
 # numeric form is used, so strip the leading "v".
 TRUSTANT_VERSION="$(head -n1 version.txt 2>/dev/null | tr -d '[:space:]')"
@@ -596,6 +596,16 @@ if dpkg-query -W -f='${Status}' gh 2>/dev/null | grep -q 'install ok installed';
   echo "gh apt package already installed"
   exit 0
 fi
+# Some distro archives do not carry gh: use GitHub's own apt repository.
+type -p wget >/dev/null || { apt-get update -qq && apt-get install -y -qq wget; }
+mkdir -p -m 755 /etc/apt/keyrings
+out="$(mktemp)"
+wget -nv -O "$out" https://cli.github.com/packages/githubcli-archive-keyring.gpg
+install -m 0644 "$out" /etc/apt/keyrings/githubcli-archive-keyring.gpg
+rm -f "$out"
+mkdir -p -m 755 /etc/apt/sources.list.d
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+  > /etc/apt/sources.list.d/github-cli.list
 apt-get update -qq
 apt-get install -y -qq gh
 GUEST
@@ -1013,6 +1023,7 @@ finish() {
   # Provision the in-VM toolchain (ops/go/air/uv/node/pi + MCP servers) by
   # running setup.sh INSIDE the VM as the mirrored current user, in this repo dir
   # (Lima mounts it at the same path). Idempotent — re-runs just verify.
+  restore_tty
   echo "--- Running setup.sh in the VM as $HOST_USER ---"
   limactl shell --workdir "$MOUNT_DIR" "$VM_NAME" bash ./setup.sh \
     || fail "setup.sh failed in the VM"
@@ -1047,8 +1058,8 @@ finish_native() {
   ensure_source_submodules
 
   # Install the cluster only when it is absent; otherwise just confirm it runs.
-  if run_guest dpkg -l openserverless 2>/dev/null | grep -q '^ii'; then
-    ok "OpenServerless package already installed"
+  if run_guest dpkg -l truserverless 2>/dev/null | grep -q '^ii'; then
+    ok "Trustant Serverless package already installed"
   else
     ensure_deb   # sets DEB_FILE
     install_package_native
@@ -1074,6 +1085,7 @@ finish_native() {
 
   # Provision the toolchain (ops/go/air/uv/node/pi + MCP servers). Same script
   # the VM path runs, just invoked directly. Idempotent — re-runs just verify.
+  restore_tty
   echo "--- Running setup.sh as $(id -un) ---"
   bash ./setup.sh || fail "setup.sh failed"
   ok "setup.sh completed"
@@ -1113,7 +1125,7 @@ finish_native() {
 # Sets the global DEB_FILE. The deb arch matches the HOST arch (the VM runs the
 # host arch under vz): arm64 on Apple Silicon, amd64 on Intel.
 #
-# The version installed is pinned by openserverless.txt (OPENSERVERLESS_VERSION)
+# The version installed is pinned by truserverless.txt (TRUSERVERLESS_VERSION)
 # and names the file on pub.trustant.ai, so what lands on the machine is
 # reproducible — a given checkout always installs the same package.
 ensure_deb() {
@@ -1136,24 +1148,24 @@ ensure_deb() {
   esac
   ok "package architecture: $DEB_ARCH (detected: $HOST_ARCH)"
 
-  DEB_FILE="${DIST_DIR}/openserverless_${OPENSERVERLESS_VERSION}_${DEB_ARCH}.deb"
+  DEB_FILE="${DIST_DIR}/truserverless_${TRUSERVERLESS_VERSION}_${DEB_ARCH}.deb"
   mkdir -p "$DIST_DIR"
   if [[ -s "$DEB_FILE" ]]; then
     ok "Using cached package: $DEB_FILE"
     return 0
   fi
 
-  DEB_URL="${OPENSERVERLESS_BASE_URL}/openserverless_${OPENSERVERLESS_VERSION}_${DEB_ARCH}.deb"
+  DEB_URL="${TRUSERVERLESS_BASE_URL}/truserverless_${TRUSERVERLESS_VERSION}_${DEB_ARCH}.deb"
 
-  echo "--- Downloading OpenServerless package (~3GB) -> $DEB_FILE ---"
+  echo "--- Downloading Trustant Serverless package (~3GB) -> $DEB_FILE ---"
   # Download to a temp file then move into place, so an interrupted download
   # never leaves a truncated cache entry.
   TMP_DEB="${DEB_FILE}.part"
-  # Hard pin: a stale or mistyped openserverless.txt 404s here and must fail
+  # Hard pin: a stale or mistyped truserverless.txt 404s here and must fail
   # loudly, never fall back to some other version.
   curl -fL --retry 3 -o "$TMP_DEB" "$DEB_URL" \
-    || { rm -f "$TMP_DEB"; fail "OpenServerless version '$OPENSERVERLESS_VERSION' ($DEB_ARCH) could not be downloaded.
-    Requested by: openserverless.txt
+    || { rm -f "$TMP_DEB"; fail "Trustant Serverless version '$TRUSERVERLESS_VERSION' ($DEB_ARCH) could not be downloaded.
+    Requested by: truserverless.txt
     URL:          $DEB_URL"; }
   mv "$TMP_DEB" "$DEB_FILE"
   ok "Downloaded $DEB_FILE"
@@ -1165,15 +1177,15 @@ ensure_deb() {
 # Requires DEB_FILE (call ensure_deb first) and a running VM.
 install_package() {
   echo "--- Copying package into the VM ---"
-  limactl copy "$DEB_FILE" "${VM_NAME}:/tmp/openserverless.deb" \
+  limactl copy "$DEB_FILE" "${VM_NAME}:/tmp/truserverless.deb" \
     || fail "failed to copy $DEB_FILE into the VM"
 
-  echo "--- Installing the OpenServerless package ---"
+  echo "--- Installing the Trustant Serverless package ---"
   limactl shell "$VM_NAME" sudo env "${APT_QUIET[@]}" bash -euo pipefail -s <<'GUEST'
 export DEBIAN_FRONTEND=noninteractive
 
-if dpkg -l openserverless 2>/dev/null | grep -q '^ii'; then
-  echo "openserverless already installed"; exit 0
+if dpkg -l truserverless 2>/dev/null | grep -q '^ii'; then
+  echo "truserverless already installed"; exit 0
 fi
 
 apt-get update -qq
@@ -1204,9 +1216,9 @@ DEF_IFACE=$(ip -4 route show default | awk 'NR==1{print $5}')
 echo "default-route interface is now: ${DEF_IFACE}"
 [ "$DEF_IFACE" = eth0 ] || echo "WARNING: default route is $DEF_IFACE, not eth0 — port 80 may be blocked from host" >&2
 
-[ -s /tmp/openserverless.deb ] || { echo "package not found in guest" >&2; exit 1; }
-apt-get install -y /tmp/openserverless.deb
-rm -f /tmp/openserverless.deb
+[ -s /tmp/truserverless.deb ] || { echo "package not found in guest" >&2; exit 1; }
+apt-get install -y /tmp/truserverless.deb
+rm -f /tmp/truserverless.deb
 
 # ssh.sh reaches the VM as trustant@<ip> with the Lima identity, so authorize
 # the Lima pubkey(s) for the package-created 'trustant' user.
@@ -1223,7 +1235,7 @@ chown -R trustant:trustant /home/trustant/.ssh
 chmod 0600 /home/trustant/.ssh/authorized_keys
 echo "install complete"
 GUEST
-  ok "OpenServerless package installed and ssh key authorized"
+  ok "Trustant Serverless package installed and ssh key authorized"
 }
 
 # Native-Linux counterpart of install_package: install the cached .deb straight
@@ -1242,7 +1254,7 @@ GUEST
 # Requires DEB_FILE (call ensure_deb first). No-op if already installed.
 install_package_native() {
   echo
-  warn "About to install the OpenServerless package on THIS machine:"
+  warn "About to install the Trustant Serverless package on THIS machine:"
   warn "  package:  $DEB_FILE"
   warn "  installs: k3s + the Trustant service stack, and a firewall dropin"
   warn "            that DROPs :80/:443/:6443 on the default-route interface"
@@ -1253,15 +1265,15 @@ install_package_native() {
   trap cleanup_deb EXIT
   # mktemp -d is 0700; apt's _apt sandbox user must be able to read the file.
   chmod 755 "$DEB_TMP_DIR"
-  local tmp_deb="$DEB_TMP_DIR/openserverless.deb"
+  local tmp_deb="$DEB_TMP_DIR/truserverless.deb"
   cp "$DEB_FILE" "$tmp_deb" || fail "could not copy $DEB_FILE to $tmp_deb"
   chmod 644 "$tmp_deb"
 
   run_privileged DEB_FILE="$tmp_deb" <<'GUEST'
 export DEBIAN_FRONTEND=noninteractive
 
-if dpkg -l openserverless 2>/dev/null | grep -q '^ii'; then
-  echo "openserverless already installed"; exit 0
+if dpkg -l truserverless 2>/dev/null | grep -q '^ii'; then
+  echo "truserverless already installed"; exit 0
 fi
 
 apt-get update -qq
@@ -1275,7 +1287,7 @@ apt-get install -y "$DEB_FILE"
 echo "install complete"
 GUEST
   cleanup_deb
-  ok "OpenServerless package installed on this host"
+  ok "Trustant Serverless package installed on this host"
 }
 
 # Remove the /tmp copy of the .deb made by install_package_native. Idempotent.
@@ -1302,7 +1314,7 @@ wait_for_local_k3s() {
   elif command -v kubectl >/dev/null 2>&1; then
     kubectl_cmd=(sudo -n kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml)
   else
-    fail "neither k3s nor kubectl is installed — the OpenServerless package did not install correctly"
+    fail "neither k3s nor kubectl is installed — the Trustant Serverless package did not install correctly"
   fi
 
   local ready=false
@@ -1328,7 +1340,7 @@ wait_for_local_k3s() {
     fi
     sleep 2
   done
-  $ready || fail "the openserverless namespace never appeared — is the OpenServerless package healthy?"
+  $ready || fail "the openserverless namespace never appeared — is the Trustant Serverless package healthy?"
   ok "openserverless namespace is present"
 }
 
@@ -1510,9 +1522,9 @@ GUEST
   ok "guest user '$HOST_USER' ready (mount owner)"
 }
 
-# True if the openserverless package is installed in the running VM.
+# True if the truserverless package is installed in the running VM.
 package_installed() {
-  limactl shell "$VM_NAME" dpkg -l openserverless 2>/dev/null | grep -q '^ii'
+  limactl shell "$VM_NAME" dpkg -l truserverless 2>/dev/null | grep -q '^ii'
 }
 
 # -s and -k are VM lifecycle operations. On a native host there is no VM, and
@@ -1663,7 +1675,7 @@ ensure_deb   # sets DEB_FILE
 # vz gives the guest two interfaces:
 #   * lima0 (192.168.252.x) — Lima's shared bridge, REACHABLE from the macOS host
 #   * eth0  (vzNAT)         — outbound NAT, NOT host-reachable
-# The OpenServerless .deb installs a firewall dropin that DROPs :80/:443/:6443
+# The Trustant Serverless .deb installs a firewall dropin that DROPs :80/:443/:6443
 # on the DEFAULT-route interface. We therefore force the vzNAT interface to hold the
 # default route (see the routefix provision below) so the DROP lands there and
 # lima0:80 stays reachable — that lima0 address is what we publish as the apihost.

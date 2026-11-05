@@ -202,7 +202,7 @@ password are registered with `redactSecrets`.
   button is shown above the fields.
 - Clicking it without a stored token opens an inline panel: "Please add your
   provisioning Token for <host>. To provision an app you have to install the
-  OpenServerless package on the server pointed by <host> then get the token
+  Trustant Serverless package on the server pointed by <host> then get the token
   with the command trulicense", a token field and "You can change this token
   later on Configuration". Confirming calls the endpoint with the token.
 - During the call the modal shows the progress view. On success the form comes
