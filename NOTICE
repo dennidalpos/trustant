@@ -1583,6 +1583,10 @@ mcp (Python MCP SDK, <2) 1.x (MIT)
 mcp-server-milvus (fork, a7e624f) a7e624f (Apache-2.0)
   Copyright 2019 Zilliz
 
+pglast (postgres-mcp dependency, bundles libpg_query) 7.21 (GPL-3.0-or-later AND BSD-3-Clause AND PostgreSQL)
+  Copyright (c) 2015, Lukas Fittl <lukas@fittl.com>
+  Copyright (c) 2016-2023, Duboce Labs, Inc. (pganalyze) <team@pganalyze.com>
+
 postgres-mcp 0.3.0 (MIT)
   Copyright (c) 2025, Crystal Corp.
 

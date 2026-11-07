@@ -830,7 +830,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 ===============================================================================
 License: BSD-3-Clause
 ===============================================================================
-Used by 29 components (see DEPS), including: 7zz (7-Zip), click, cloudpickle,
+Used by 30 components (see DEPS), including: 7zz (7-Zip), click, cloudpickle,
 diff, fast-uri, Go standard library and runtime, httpcore, httpcore2, httpx,
 httpx2, idna, iputils-ping, ...
 -------------------------------------------------------------------------------
@@ -1562,7 +1562,8 @@ The GNU General Public License does not permit incorporating your program into p
 ===============================================================================
 License: GPL-3.0-or-later
 ===============================================================================
-Used by: inetutils-telnet, less, libatomic1
+Used by: inetutils-telnet, less, libatomic1, pglast (postgres-mcp dependency,
+bundles libpg_query)
 -------------------------------------------------------------------------------
 
 GNU GENERAL PUBLIC LICENSE
@@ -2984,7 +2985,8 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
 ===============================================================================
 License: PostgreSQL
 ===============================================================================
-Used by: postgresql-client-16
+Used by: pglast (postgres-mcp dependency, bundles libpg_query),
+postgresql-client-16
 -------------------------------------------------------------------------------
 
 PostgreSQL Database Management System

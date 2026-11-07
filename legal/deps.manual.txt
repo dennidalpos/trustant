@@ -108,6 +108,7 @@ pytool | milvus-cli | 1.2.1 | Apache-2.0 | https://github.com/zilliztech/milvus_
 pytool | python-lsp-server | latest | MIT | https://github.com/python-lsp/python-lsp-server | pypi:python-lsp-server
 pytool | yapf | latest | Apache-2.0 | https://github.com/google/yapf | pypi:yapf
 pytool | postgres-mcp | 0.3.0 | MIT | https://github.com/crystaldba/postgres-mcp | pypi:postgres-mcp==0.3.0
+pytool | pglast (postgres-mcp dependency, bundles libpg_query) | 7.21 | GPL-3.0-or-later AND BSD-3-Clause AND PostgreSQL | https://github.com/lelit/pglast | url:https://raw.githubusercontent.com/pganalyze/libpg_query/c2c27b1e5b13584b594e5dee082f9d007b5e721b/LICENSE
 pytool | redis-mcp-server | 0.5.0 | MIT | https://github.com/redis/mcp-redis | url:https://raw.githubusercontent.com/redis/mcp-redis/main/LICENSE
 pytool | mcp-server-milvus (fork, a7e624f) | a7e624f | Apache-2.0 | https://github.com/trustable-ai/mcp-server-milvus | url:https://raw.githubusercontent.com/trustable-ai/mcp-server-milvus/a7e624f3057a0d739528bca3ed92504943224ceb/LICENSE
 pytool | mcp (Python MCP SDK, <2) | 1.x | MIT | https://github.com/modelcontextprotocol/python-sdk | pypi:mcp<2

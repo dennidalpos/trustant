@@ -503,15 +503,16 @@ typescript-language-server              latest   Apache-2.0  https://github.com/
 
 Each tool runs in its own uv-managed virtualenv under /opt/uv/tools.
 
-NAME                               VERSION  LICENSE     HOMEPAGE
-----                               -------  -------     --------
-mcp (Python MCP SDK, <2)           1.x      MIT         https://github.com/modelcontextprotocol/python-sdk
-mcp-server-milvus (fork, a7e624f)  a7e624f  Apache-2.0  https://github.com/trustable-ai/mcp-server-milvus
-milvus-cli                         1.2.1    Apache-2.0  https://github.com/zilliztech/milvus_cli
-postgres-mcp                       0.3.0    MIT         https://github.com/crystaldba/postgres-mcp
-python-lsp-server                  latest   MIT         https://github.com/python-lsp/python-lsp-server
-redis-mcp-server                   0.5.0    MIT         https://github.com/redis/mcp-redis
-yapf                               latest   Apache-2.0  https://github.com/google/yapf
+NAME                                                   VERSION  LICENSE                                           HOMEPAGE
+----                                                   -------  -------                                           --------
+mcp (Python MCP SDK, <2)                               1.x      MIT                                               https://github.com/modelcontextprotocol/python-sdk
+mcp-server-milvus (fork, a7e624f)                      a7e624f  Apache-2.0                                        https://github.com/trustable-ai/mcp-server-milvus
+milvus-cli                                             1.2.1    Apache-2.0                                        https://github.com/zilliztech/milvus_cli
+pglast (postgres-mcp dependency, bundles libpg_query)  7.21     GPL-3.0-or-later AND BSD-3-Clause AND PostgreSQL  https://github.com/lelit/pglast
+postgres-mcp                                           0.3.0    MIT                                               https://github.com/crystaldba/postgres-mcp
+python-lsp-server                                      latest   MIT                                               https://github.com/python-lsp/python-lsp-server
+redis-mcp-server                                       0.5.0    MIT                                               https://github.com/redis/mcp-redis
+yapf                                                   latest   Apache-2.0                                        https://github.com/google/yapf
 
 
 13. PYTHON PACKAGES FOR USER APPS (acp/extensions/requirements.txt)
