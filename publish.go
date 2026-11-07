@@ -428,7 +428,7 @@ func handlePublishRemote(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Run ops ide login --mode=production
-	reportProgress(w, 5, "Connecting to OpenServerless...")
+	reportProgress(w, 5, "Connecting to Trustant Serverless...")
 	log.Printf("Running ops ide login --mode=production for %s...", req.Name)
 	removeOpsConfig()
 	loginCmd := exec.Command("ops", "ide", "login", "--mode=production")

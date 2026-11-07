@@ -38,7 +38,7 @@ func TestPublishProgressSSEContract(t *testing.T) {
 	if !ok {
 		t.Fatal("expected streaming response writer")
 	}
-	reportProgress(writer, 5, "Connecting to OpenServerless...")
+	reportProgress(writer, 5, "Connecting to Trustant Serverless...")
 	reportOutput(writer, "deploying action hello")
 	if err := json.NewEncoder(writer).Encode(map[string]interface{}{"message": "Published successfully", "output": "done"}); err != nil {
 		t.Fatalf("encode publish result: %v", err)
@@ -48,7 +48,7 @@ func TestPublishProgressSSEContract(t *testing.T) {
 		"event: progress",
 		"\"stage\":5",
 		"\"total\":6",
-		"Connecting to OpenServerless...",
+		"Connecting to Trustant Serverless...",
 		"event: output",
 		"\"line\":\"deploying action hello\"",
 		"event: done",

@@ -1371,7 +1371,7 @@ func handleLaunchGet(w http.ResponseWriter, r *http.Request, app string) {
 		}
 	}
 
-	reportLaunchProgress(w, 3, "Connecting to OpenServerless...")
+	reportLaunchProgress(w, 3, "Connecting to Trustant Serverless...")
 	// Run ops ide login (always, even when reusing workbench)
 	log.Printf("Running ops ide login for %s...", app)
 	// ops ide login merges into the single global ~/.ops/config.json, so a

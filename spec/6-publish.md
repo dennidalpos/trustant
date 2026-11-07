@@ -79,7 +79,7 @@ Stages for `/api/publish/remote` (total 6):
 3. Installing dependencies — reported as skipped when there is no
    `package.json` or the workbench already exists
 4. Generating environment files
-5. Connecting to OpenServerless
+5. Connecting to Trustant Serverless
 6. Deploying application
 
 # POST /api/publish/push

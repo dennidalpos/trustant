@@ -527,7 +527,7 @@ the app list so repository metadata remains current.
 Each app card has a "Publish" button. Clicking it calls `POST /api/publish/remote` with the app name.
 
 If the backend returns `{"needs_config": true}`, show a popup asking for:
-- OPS_APIHOST (placeholder: "https://your-openserverless-host.com")
+- OPS_APIHOST (placeholder: "https://your-truserverless-host.n7s.co")
 - OPS_USER
 - OPS_PASSWORD
 - A note: "You need a Nuvolaris OpenServerless for publishing. Get yours with Development or Enterprise on https://trustant.ai or contact us at sales@trustant.ai"

@@ -29,10 +29,10 @@ func TestLaunchProgressSSEContract(t *testing.T) {
 	request.Header.Set("Accept", "text/event-stream")
 	writer, ok := prepareLaunchResponseWriter(recorder, request)
 	if !ok { t.Fatal("expected streaming response writer") }
-	reportLaunchProgress(writer, 3, "Connecting to OpenServerless...")
+	reportLaunchProgress(writer, 3, "Connecting to Trustant Serverless...")
 	if err := json.NewEncoder(writer).Encode(map[string]interface{}{"browser_url": "http://localhost:5173"}); err != nil { t.Fatalf("encode launch result: %v", err) }
 	body := recorder.Body.String()
-	for _, expected := range []string{"event: progress", "\"stage\":3", "\"total\":8", "Connecting to OpenServerless...", "event: done", "\"browser_url\":\"http://localhost:5173\""} {
+	for _, expected := range []string{"event: progress", "\"stage\":3", "\"total\":8", "Connecting to Trustant Serverless...", "event: done", "\"browser_url\":\"http://localhost:5173\""} {
 		if !strings.Contains(body, expected) { t.Errorf("stream does not contain %q: %s", expected, body) }
 	}
 	if got := recorder.Header().Get("Content-Type"); got != "text/event-stream" { t.Fatalf("Content-Type = %q, want text/event-stream", got) }

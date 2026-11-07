@@ -112,7 +112,7 @@
             this.importEditor.load(this.appName);
         }
         this.showTab(this.activeTab || 'import');
-        this.el('Tree').innerHTML = '<div class="text-xs text-[color:var(--nu-muted)] py-4">Connecting to OpenServerless…</div>';
+        this.el('Tree').innerHTML = '<div class="text-xs text-[color:var(--nu-muted)] py-4">Connecting to Trustant Serverless…</div>';
         this.renderSelection();
 
         try {

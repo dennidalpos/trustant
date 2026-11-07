@@ -598,7 +598,7 @@
                     <div>
                         <label class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">API Host</label>
                         <input type="text" id="publishApiHost" oninput="updatePublishButton()"
-                            placeholder="https://your-openserverless-host.com"
+                            placeholder="https://your-truserverless-host.n7s.co"
                             class="nu-input w-full px-3 py-2">
                     </div>
                     <div>
@@ -811,7 +811,7 @@
                 title.textContent = 'Host not licensed';
                 body.textContent = detail
                     ? detail.replace(/^.*?Host not licensed:\s*/, 'Your license does not cover ')
-                    : 'Your license does not cover this OpenServerless host.';
+                    : 'Your license does not cover this Trustant Serverless host.';
                 // List the hosts the current license does cover.
                 fetch('/api/license')
                     .then(r => r.json())
