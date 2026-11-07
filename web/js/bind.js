@@ -58,6 +58,10 @@
         return document.getElementById(this.prefix + suffix);
     };
 
+    ImportEditor.prototype.url = function () {
+        return '/api/imports/' + encodeURIComponent(this.appName);
+    };
+
     ImportEditor.prototype.load = async function (appName) {
         this.appName = appName;
         try {
