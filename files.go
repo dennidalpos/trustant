@@ -77,9 +77,6 @@ type FileEntry struct {
 // returns that file's content. The endpoint is read-only by design: there is no
 // write path, which is what makes it safe to expose over the whole workbench.
 func handleFiles(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)

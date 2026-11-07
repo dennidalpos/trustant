@@ -17,10 +17,9 @@ Upgrades to a WebSocket and attaches it to a PTY-backed shell.
 
 Preamble, matching every other handler:
 
-1. `expiredGuard`
-2. `namePattern.MatchString(name)` — otherwise 400 `Invalid app name`
-3. `$WORKBENCH_DIR/<name>` must exist — otherwise 404 `Workbench not found`
-4. origin check — `Origin` must fall under the domain the request arrived on
+1. `namePattern.MatchString(name)` — otherwise 400 `Invalid app name`
+2. `$WORKBENCH_DIR/<name>` must exist — otherwise 404 `Workbench not found`
+3. origin check — `Origin` must fall under the domain the request arrived on
    (direct), or carry a valid routing label when the request came through the
    proxy, otherwise 403 `Forbidden origin`
 

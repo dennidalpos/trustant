@@ -1320,9 +1320,6 @@ func writePiGlobalConfig(cfg *trustantConfig) error {
 
 // handleConfigure handles GET /api/configure - pulls models and materializes Pi's global config, streaming progress.
 func handleConfigure(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -2306,9 +2303,6 @@ func truncateForWarning(s string) string {
 }
 
 func handleTestModel(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -2379,9 +2373,6 @@ func isOllamaSigninRequired(message string) bool {
 // `ollama signin` and scrapes its output for the first https://ollama.com/connect
 // URL — query strings from the calling page are not forwarded.
 func handleOllamaConnect(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -2546,9 +2537,6 @@ func handleDiscoverModels(w http.ResponseWriter, r *http.Request) {
 
 // handleConfiguration handles GET and POST /api/configuration
 func handleConfiguration(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	switch r.Method {
 	case http.MethodGet:
 		handleGetConfiguration(w, r)
@@ -2960,9 +2948,6 @@ func regenerateAllAppEnvFiles() {
 
 // handleAppConfig handles GET and POST /api/appconfig/<name>
 func handleAppConfig(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 
 	name := strings.TrimPrefix(r.URL.Path, "/api/appconfig/")
 	name = strings.TrimPrefix(name, "/api/appconfig")
@@ -3252,9 +3237,6 @@ type PredefinedEnvVar struct {
 }
 
 func handlePredefinedEnv(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	switch r.Method {
 	case http.MethodGet:
 		handleGetPredefinedEnv(w, r)

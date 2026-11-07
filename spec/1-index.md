@@ -2,9 +2,7 @@ This file describes the index splash screen page, put the code in file `index.ht
 
 # Version
 
-When the page loads invoke the version api.
-
-If it expired show a page with only a centered message saying "This version expired. Please Update. For info email: info@nuvolaris.io"
+When the page loads invoke the version api and show the version.
 
 # Splash Screen
 

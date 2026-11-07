@@ -56,13 +56,12 @@ func generateAppPassword() (string, error) {
 	return string(out), nil
 }
 
-// Version and expiry info parsed from _build.txt
+// Version info parsed from _build.txt
 var (
 	appVersion string
 	appBuild   string
 	appBranch  string
 	appStream  string
-	expiryDate time.Time
 	gitBranch  = currentGitBranch
 )
 
@@ -158,7 +157,6 @@ func parseVersion(content string) {
 	appBuild = ""
 	appBranch = ""
 	appStream = ""
-	expiryDate = time.Time{}
 	lines := strings.Split(content, "\n")
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
@@ -170,14 +168,6 @@ func parseVersion(content string) {
 			appBranch = strings.TrimSpace(strings.TrimPrefix(line, "Branch:"))
 		} else if strings.HasPrefix(line, "Stream:") {
 			appStream = strings.TrimSpace(strings.TrimPrefix(line, "Stream:"))
-		} else if strings.HasPrefix(line, "Expiry:") {
-			dateStr := strings.TrimSpace(strings.TrimPrefix(line, "Expiry:"))
-			t, err := time.Parse("2006/01/02", dateStr)
-			if err != nil {
-				log.Printf("Warning: failed to parse expiry date %q: %v", dateStr, err)
-			} else {
-				expiryDate = t
-			}
 		}
 	}
 	// "detached" is what the build scripts record for a checkout with no branch
@@ -198,24 +188,12 @@ func parseVersion(content string) {
 	if appStream == "" {
 		appStream = appBranch
 	}
-	log.Printf("Version: %s, Build: %s, Branch: %s, Stream: %s, Expiry: %s", appVersion, appBuild, appBranch, appStream, expiryDate.Format("2006/01/02"))
-}
-
-// isExpired checks if the current date is past the expiration date
-func isExpired() bool {
-	if expiryDate.IsZero() {
-		return false
-	}
-	return time.Now().After(expiryDate)
+	log.Printf("Version: %s, Build: %s, Branch: %s, Stream: %s", appVersion, appBuild, appBranch, appStream)
 }
 
 // handleVersion handles GET /api/version
 func handleVersion(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	if isExpired() {
-		json.NewEncoder(w).Encode(map[string]interface{}{"expired": true})
-		return
-	}
 	// The two feature flags ride along here because every page already fetches
 	// /api/version on boot. See spec/0-preflight.md.
 	// "tasks" is the short OPS_OLARIS hash for the footer; "opsinfo" carries the
@@ -226,22 +204,11 @@ func handleVersion(w http.ResponseWriter, r *http.Request) {
 		"build":   appBuild,
 		"branch":  appBranch,
 		"stream":  appStream,
-		"expire":  expiryDate.Format("2006/01/02"),
 		"license": EnableLicense,
 		"regolo":  EnableRegolo,
 		"tasks":   opsTasks,
 		"opsinfo": opsInfo,
 	})
-}
-
-// expiredGuard returns true (and writes expired JSON response) if the app is expired
-func expiredGuard(w http.ResponseWriter) bool {
-	if isExpired() {
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]interface{}{"expired": true})
-		return true
-	}
-	return false
 }
 
 // Application represents a repo/application entry
@@ -727,9 +694,6 @@ func handleDeleteRepo(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleRepo(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	switch r.Method {
 	case http.MethodGet:
 		handleGetRepo(w, r)
@@ -743,9 +707,6 @@ func handleRepo(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleUpload(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return

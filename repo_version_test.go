@@ -20,20 +20,20 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
-	"time"
 )
 
 func TestVersionMetadata(t *testing.T) {
 	oldVersion, oldBuild := appVersion, appBuild
-	oldBranch, oldStream, oldExpiry := appBranch, appStream, expiryDate
+	oldBranch, oldStream := appBranch, appStream
 	oldGitBranch := gitBranch
 	t.Cleanup(func() {
 		appVersion, appBuild = oldVersion, oldBuild
-		appBranch, appStream, expiryDate = oldBranch, oldStream, oldExpiry
+		appBranch, appStream = oldBranch, oldStream
 		gitBranch = oldGitBranch
 	})
 
-	parseVersion("Version: v0.3.11\nBuild: local-42\nBranch: feature/runtime\nStream: trustant-code\nExpiry: 2099/08/31\n")
+	// A pre-#217 _build.txt still carries an Expiry: line; it must be ignored.
+	parseVersion("Version: v0.3.11\nBuild: local-42\nBranch: feature/runtime\nStream: trustant-code\nExpiry: 2000/01/01\n")
 
 	recorder := httptest.NewRecorder()
 	handleVersion(recorder, httptest.NewRequest("GET", "/api/version", nil))
@@ -47,29 +47,26 @@ func TestVersionMetadata(t *testing.T) {
 		"build":   "local-42",
 		"branch":  "feature/runtime",
 		"stream":  "trustant-code",
-		"expire":  "2099/08/31",
 	}
 	for key, value := range want {
 		if got[key] != value {
 			t.Errorf("%s = %v, want %v", key, got[key], value)
 		}
 	}
-	if expiryDate != time.Date(2099, time.August, 31, 0, 0, 0, 0, time.UTC) {
-		t.Fatalf("expiryDate = %v", expiryDate)
+	for _, key := range []string{"expire", "expired"} {
+		if _, ok := got[key]; ok {
+			t.Errorf("%s must no longer be reported", key)
+		}
 	}
 }
 
 // The web pages read the two feature flags off /api/version, so they must be
 // present as real booleans mirroring EnableLicense / EnableRegolo.
 func TestVersionReportsFeatureFlags(t *testing.T) {
-	oldExpiry := expiryDate
 	oldLicense, oldRegolo := EnableLicense, EnableRegolo
 	t.Cleanup(func() {
-		expiryDate = oldExpiry
 		EnableLicense, EnableRegolo = oldLicense, oldRegolo
 	})
-	expiryDate = time.Date(2099, time.August, 31, 0, 0, 0, 0, time.UTC)
-
 	for _, tc := range []struct{ license, regolo bool }{
 		{false, false}, {true, false}, {false, true}, {true, true},
 	} {
@@ -130,7 +127,7 @@ func TestVersionMetadataFallsBackToDevelopmentBranch(t *testing.T) {
 	gitBranch = func() string { return "trustant-code" }
 	t.Cleanup(func() { gitBranch = oldGitBranch })
 
-	parseVersion("Version: v0.3.11\nBuild: local\nExpiry: 2099/08/31\n")
+	parseVersion("Version: v0.3.11\nBuild: local\n")
 
 	if appBranch != "trustant-code" {
 		t.Fatalf("branch = %q, want trustant-code", appBranch)
@@ -185,9 +182,8 @@ func TestParseOpsInfoSkipsSeparatorlessLines(t *testing.T) {
 // The footer shows only the shortened tasks hash, so the truncation is a
 // contract, not a formatting detail.
 func TestVersionReportsOpsInfoAndShortTasks(t *testing.T) {
-	oldExpiry, oldInfo, oldTasks := expiryDate, opsInfo, opsTasks
-	t.Cleanup(func() { expiryDate, opsInfo, opsTasks = oldExpiry, oldInfo, oldTasks })
-	expiryDate = time.Date(2099, time.August, 31, 0, 0, 0, 0, time.UTC)
+	oldInfo, oldTasks := opsInfo, opsTasks
+	t.Cleanup(func() { opsInfo, opsTasks = oldInfo, oldTasks })
 
 	opsInfo = parseOpsInfo(opsInfoFixture)
 	full := opsInfoValue(opsInfo, "OPS_OLARIS")
@@ -220,9 +216,8 @@ func TestVersionReportsOpsInfoAndShortTasks(t *testing.T) {
 // ops may be absent entirely; /api/version must still answer, just without the
 // two fields carrying content.
 func TestVersionOmitsOpsInfoWhenProbeFailed(t *testing.T) {
-	oldExpiry, oldInfo, oldTasks := expiryDate, opsInfo, opsTasks
-	t.Cleanup(func() { expiryDate, opsInfo, opsTasks = oldExpiry, oldInfo, oldTasks })
-	expiryDate = time.Date(2099, time.August, 31, 0, 0, 0, 0, time.UTC)
+	oldInfo, oldTasks := opsInfo, opsTasks
+	t.Cleanup(func() { opsInfo, opsTasks = oldInfo, oldTasks })
 	opsInfo, opsTasks = nil, ""
 
 	recorder := httptest.NewRecorder()
@@ -248,7 +243,7 @@ func TestVersionMetadataHidesDetachedBranch(t *testing.T) {
 	gitBranch = func() string { return "" }
 	t.Cleanup(func() { gitBranch = oldGitBranch })
 
-	parseVersion("Version: v0.3.11\nBuild: local\nBranch: detached\nStream: detached\nExpiry: 2099/08/31\n")
+	parseVersion("Version: v0.3.11\nBuild: local\nBranch: detached\nStream: detached\n")
 
 	if appBranch != "" || appStream != "" {
 		t.Fatalf("branch = %q, stream = %q, want both empty", appBranch, appStream)

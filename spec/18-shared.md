@@ -320,7 +320,7 @@ binding — but a failed restore leaves the file absent until the next login.
 
 ## Endpoints
 
-All go through `expiredGuard` and validate the app name with `namePattern`.
+All validate the app name with `namePattern`.
 
 | Route | Method | Purpose |
 |---|---|---|

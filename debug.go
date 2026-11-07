@@ -34,9 +34,6 @@ import (
 // It runs in the app workbench with the generated development .env appended to
 // the process environment, matching the user context used by the editor.
 func handleActivationPoll(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return

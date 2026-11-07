@@ -2017,16 +2017,6 @@
                 initCredits(cfg.register_url);
             }
 
-            try {
-                const resp = await fetch('/api/version');
-                const data = await resp.json();
-                if (data.expired) {
-                    document.body.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;"><p style="font-size:1.5rem;text-align:center;">This version expired. Please Update. For info email: info@nuvolaris.io</p></div>';
-                    return;
-                }
-            } catch (e) {
-                console.error('Failed to check version:', e);
-            }
         })();
     </script>
 </body>

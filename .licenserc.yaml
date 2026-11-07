@@ -109,7 +109,6 @@ header:
     # Generated / data files with no comment syntax
     - '_build.txt'
     - 'version.txt'
-    - 'expiry.txt'
     - '**/*.json'
     - '**/*.txt'
     - '**/*.svg'

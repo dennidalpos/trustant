@@ -36,7 +36,7 @@ tmp_dir = "tmp"
   follow_symlink = false
   # `js` is deliberately absent: web/ is served from disk by the running binary
   # (embedded only at build time), so a frontend edit needs a browser reload,
-  # never a rebuild. `txt` is here for version.txt/expiry.txt, which parseVersion
+  # never a rebuild. `txt` is here for version.txt, which parseVersion
   # reads at startup.
   include_ext = ["go", "txt"]
   kill_delay = "0s"

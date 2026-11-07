@@ -536,9 +536,6 @@ func writeGitHubJSON(w http.ResponseWriter, status int, payload interface{}) {
 }
 
 func handleGitHubStatus(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -549,9 +546,6 @@ func handleGitHubStatus(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleGitHubLogin(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	switch r.Method {
 	case http.MethodGet:
 		snapshot := managedGitHubLogin.snapshot()
@@ -581,9 +575,6 @@ func handleGitHubLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleGitHubLoginCancel(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -596,9 +587,6 @@ func handleGitHubLoginCancel(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleGitHubLogout(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -641,9 +629,6 @@ func handleGitHubLogout(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleGitHubRepos(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return

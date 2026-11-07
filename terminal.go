@@ -232,9 +232,6 @@ func isRoutingLabelHost(host string) bool {
 // handleTerminal handles GET /api/terminal/<name>, and GET /api/terminal/ with
 // no name for the global workbench shell.
 func handleTerminal(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 
 	// An empty name is the global terminal: a shell in $WORKBENCH_DIR itself,
 	// opened from the app list where most apps have no checkout yet. Named

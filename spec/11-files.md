@@ -10,8 +10,8 @@ that is what makes it safe to expose over the whole workbench.
 
 # API
 
-Both endpoints are `GET` only. Any other method returns 405. Each call starts
-with the expiry guard and validates `<name>` against `namePattern`; an invalid
+Both endpoints are `GET` only. Any other method returns 405. Each call
+validates `<name>` against `namePattern`; an invalid
 name is 400 and a missing workbench directory is 404.
 
 ## `GET /api/files/<name>`

@@ -31,7 +31,6 @@
         <img src="trustant-logo.svg" alt="Trustant Logo" class="w-32 h-32">
         <h1 class="text-4xl font-light text-[color:var(--nu-ink)] mt-6">Trustant Cloud</h1>
         <h2 id="versionText" class="text-xl font-medium text-[color:var(--nu-muted)] mt-3"></h2>
-        <p id="expireText" class="text-sm text-[color:var(--nu-muted)] mt-2"></p>
         <p id="initText" class="text-sm text-[color:var(--nu-muted)] mt-4 hidden"></p>
     </div>
 
@@ -768,15 +767,8 @@
             try {
                 const resp = await fetch('/api/version');
                 const data = await resp.json();
-                if (data.expired) {
-                    document.body.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;"><p style="font-size:1.5rem;text-align:center;">This version expired. Please Update. For info email: info@nuvolaris.io</p></div>';
-                    return;
-                }
                 if (data.version) {
                     document.getElementById('versionText').textContent = data.version;
-                }
-                if (data.expire) {
-                    document.getElementById('expireText').textContent = 'Expiration date: ' + data.expire;
                 }
                 // ENABLE_REGOLO off: drop the Sovereign AI card entirely and
                 // let the two remaining providers share the row.

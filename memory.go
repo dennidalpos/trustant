@@ -28,9 +28,6 @@ import (
 // GET: returns { "content": "<file contents>" }
 // POST: saves content to AGENTS.md, creates and git-adds if new
 func handleMemory(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 
 	name := strings.TrimPrefix(r.URL.Path, "/api/memory/")
 	if name == "" || !namePattern.MatchString(name) {
