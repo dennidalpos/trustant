@@ -37,7 +37,6 @@ fi
 
 KEY=trustant
 VERSION="$(cat version.txt)"
-EXPIRY="$(cat expiry.txt)"
 IMAGE="${TRUSTANT_IMAGE:-ghcr.io/trustant/trustant}"
 OPSROOT="./oplugins-truinst/opsroot.json"
 
@@ -101,8 +100,8 @@ write_build_txt() {
     branch="${TRUSTANT_BUILD_BRANCH:-$(git branch --show-current 2>/dev/null || true)}"
     branch="${branch:-detached}"
     stream="${TRUSTANT_BUILD_STREAM:-$branch}"
-    printf "Version: %s\nBuild: %s\nBranch: %s\nStream: %s\nExpiry: %s\n" \
-        "$VERSION" "$tag" "$branch" "$stream" "$EXPIRY" >_build.txt
+    printf "Version: %s\nBuild: %s\nBranch: %s\nStream: %s\n" \
+        "$VERSION" "$tag" "$branch" "$stream" >_build.txt
 }
 
 usage() {

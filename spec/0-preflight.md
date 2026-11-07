@@ -164,7 +164,7 @@ a one-line change in a shell script and invisible at runtime.
 ## GET /api/initstatus
 
 The browser cannot read the filesystem, so the server reports the lock. The
-endpoint is **not gated by license or expiry** — it must answer before anything
+endpoint is **not gated by license** — it must answer before anything
 else works — and returns:
 
 ```json

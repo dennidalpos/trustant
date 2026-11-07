@@ -232,9 +232,6 @@ func listSkills(appName string) ([]SkillInfo, error) {
 
 // handleSkills handles GET /api/skills/<name> and POST /api/skills/<name>/update
 func handleSkills(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 
 	path := strings.TrimPrefix(r.URL.Path, "/api/skills/")
 	parts := strings.SplitN(path, "/", 2)

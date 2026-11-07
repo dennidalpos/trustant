@@ -204,7 +204,7 @@ env files, and resumes the launch that was blocked.
 
 ## Endpoints
 
-Both go through `expiredGuard` and validate the app name with `namePattern`.
+Both validate the app name with `namePattern`.
 
 | Route | Method | Purpose |
 |---|---|---|

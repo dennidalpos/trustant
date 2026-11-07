@@ -30,9 +30,8 @@ cd "$(dirname "$0")"
 # checkout. Inside Lima/WSL the mounted .git indirection may be unavailable, so
 # an explicit override or a truthful development fallback is used there.
 write_dev_build_metadata() {
-    local version expiry branch stream build worktree
+    local version branch stream build worktree
     version="$(cat version.txt 2>/dev/null || printf 'dev')"
-    expiry="$(cat expiry.txt 2>/dev/null || printf '2099/12/31')"
     branch="${TRUSTANT_BUILD_BRANCH:-$(git branch --show-current 2>/dev/null || true)}"
     if [[ -z "$branch" ]]; then
         worktree="$(basename "$PWD")"
@@ -43,8 +42,8 @@ write_dev_build_metadata() {
     fi
     stream="${TRUSTANT_BUILD_STREAM:-$branch}"
     build="${TRUSTANT_BUILD_TAG:-local_$(date +%y.%j.%H%M)}"
-    printf 'Version: %s\nBuild: %s\nBranch: %s\nStream: %s\nExpiry: %s\n' \
-        "$version" "$build" "$branch" "$stream" "$expiry" > _build.txt
+    printf 'Version: %s\nBuild: %s\nBranch: %s\nStream: %s\n' \
+        "$version" "$build" "$branch" "$stream" > _build.txt
 }
 
 # Keep release metadata when the checkout is exactly the commit that produced

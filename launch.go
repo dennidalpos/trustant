@@ -1796,9 +1796,6 @@ func waitForPortFree(port int, timeout time.Duration) error {
 
 // handleRedeploy handles GET /api/redeploy?name=<app> - restarts ops ide devel, streaming progress via SSE
 func handleRedeploy(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -1975,9 +1972,6 @@ func handleRedeploy(w http.ResponseWriter, r *http.Request) {
 // checkout of app and writes the JSON result. The workbench must already exist —
 // both Undeploy and Clean operate on a launched app and never provision one.
 func runOpsIdeInWorkbench(w http.ResponseWriter, r *http.Request, subcommand, doneMessage string) {
-	if expiredGuard(w) {
-		return
-	}
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -2050,9 +2044,6 @@ func handleClean(w http.ResponseWriter, r *http.Request) {
 
 // handleLaunch routes launch API requests
 func handleLaunch(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	// Extract app name from URL path /api/launch/<app>
 	app := strings.TrimPrefix(r.URL.Path, "/api/launch/")
 	app = strings.TrimPrefix(app, "/api/launch")

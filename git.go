@@ -113,9 +113,6 @@ func gitSaveResetGeneratedArgs(workbenchPath string) []string {
 
 // handleGitStatus handles GET /api/git/status/<name>
 func handleGitStatus(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -436,9 +433,6 @@ func runOpsIdeRefresh(workbenchPath string, output *bytes.Buffer) error {
 
 // handleGitDeploy handles POST /api/git/deploy
 func handleGitDeploy(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -483,9 +477,6 @@ func handleGitDeploy(w http.ResponseWriter, r *http.Request) {
 
 // handleGitPull handles POST /api/git/pull
 func handleGitPull(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -652,9 +643,6 @@ func handleGitPull(w http.ResponseWriter, r *http.Request) {
 
 // handleGitSave handles POST /api/git/save
 func handleGitSave(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -776,9 +764,6 @@ func handleGitSave(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleGit(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return

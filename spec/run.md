@@ -9,7 +9,7 @@ is initialized by the native path of `./start.sh` (see
 toolchain the VM path provides.
 
 Before Air starts, a development invocation regenerates `_build.txt` from
-`version.txt` and `expiry.txt`, with exactly one exception: when `git describe
+`version.txt`, with exactly one exception: when `git describe
 --exact-match --tags HEAD` names a tag and that tag already appears in
 `_build.txt`, the existing metadata is kept. The checkout is then the very
 commit that produced the release build, so its metadata is the truthful

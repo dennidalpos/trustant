@@ -1,9 +1,5 @@
 This file describe the code for the application page, put the code in `app.html`
 
-# check the version
-
-Invoke the version api at the end of the page and if it expired show a page with only a centered message saying "This version expired. Please Update. For info email: info@nuvolaris.io"
-
 # Application
 
 This page shows the current application

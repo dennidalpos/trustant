@@ -138,7 +138,6 @@
         </div>
         <p class="text-sm text-slate-500 text-center mt-2">
             <span id="buildText"></span>
-            <span id="expireText"></span>
             <span id="taskText"></span>
         </p>
         <footer class="text-sm text-center mt-1 mb-6">
@@ -3358,10 +3357,6 @@
             try {
                 const resp = await fetch('/api/version');
                 const data = await resp.json();
-                if (data.expired) {
-                    document.body.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;"><p style="font-size:1.5rem;text-align:center;">This version expired. Please Update. For info email: info@nuvolaris.io</p></div>';
-                    return;
-                }
                 const releaseTag = document.getElementById('releaseTag');
                 const shortVersion = String(data.version || '').replace(/^Trustant\s+/, '');
                 const stream = data.stream || data.branch || '';
@@ -3375,14 +3370,10 @@
                 if (data.build) {
                     document.getElementById('buildText').textContent = 'Build: ' + data.build;
                 }
-                if (data.expire) {
-                    var sep = data.build ? ' \u2014 ' : '';
-                    document.getElementById('expireText').textContent = sep + 'Expires: ' + data.expire;
-                }
                 // Only the short task hash goes here — it identifies the tasks in
                 // use at a glance. The full ops -info lives on the Configure page.
                 if (data.tasks) {
-                    var taskSep = (data.build || data.expire) ? ' \u2014 ' : '';
+                    var taskSep = data.build ? ' \u2014 ' : '';
                     document.getElementById('taskText').textContent = taskSep + 'Task: ' + data.tasks;
                 }
             } catch (e) {

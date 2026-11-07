@@ -108,16 +108,15 @@ resolve_tag() {
 # there is no way to tell from the running UI whether the hotfix is live.
 # _build.txt is gitignored, so writing it cannot dirty the tree.
 write_build_txt() {
-    local tag="$1" version expiry branch stream
+    local tag="$1" version branch stream
     version="$(cat version.txt)"
-    expiry="$(cat expiry.txt)"
     branch="${TRUSTANT_BUILD_BRANCH:-$(git branch --show-current 2>/dev/null || true)}"
     branch="${branch:-detached}"
     stream="${TRUSTANT_BUILD_STREAM:-$branch}"
-    # Five lines, matching build.sh: parseVersion reads Branch and Stream, and
+    # Four lines, matching build.sh: parseVersion reads Branch and Stream, and
     # without them the UI falls back to the mounted repo's branch.
-    printf "Version: %s\nBuild: %s\nBranch: %s\nStream: %s\nExpiry: %s\n" \
-        "$version" "$tag" "$branch" "$stream" "$expiry" >_build.txt
+    printf "Version: %s\nBuild: %s\nBranch: %s\nStream: %s\n" \
+        "$version" "$tag" "$branch" "$stream" >_build.txt
 }
 
 host_arch() {

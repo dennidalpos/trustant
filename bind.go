@@ -615,9 +615,6 @@ func applyImportChoices(appName string, choices map[string]string, literals map[
 //	POST — either a full rewrite of .env.dist (the Import tab's Save), or the
 //	       user's answers from the launch popup.
 func handleImports(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	app := strings.Trim(strings.TrimPrefix(r.URL.Path, "/api/imports"), "/")
 	if !namePattern.MatchString(app) {
 		http.Error(w, "Invalid app name", http.StatusBadRequest)

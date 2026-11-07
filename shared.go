@@ -796,12 +796,8 @@ type sharedVarRequest struct {
 	Path string `json:"path"`
 }
 
-// handleShared dispatches /api/shared and /api/shared/... It is the only
-// expiredGuard call site for the feature.
+// handleShared dispatches /api/shared and /api/shared/...
 func handleShared(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	rest := strings.Trim(strings.TrimPrefix(r.URL.Path, "/api/shared"), "/")
 
 	if rest == "" {

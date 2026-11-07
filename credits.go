@@ -60,9 +60,6 @@ func aipURLsFromConfig() (aipURLs, error) {
 //   - on 2xx from the proxy: return the JSON body verbatim
 //   - on non-2xx from the proxy: 502 with {"error": "<status>: <body>"}
 func handleCredits(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -126,9 +123,6 @@ var allowedTopUpAmounts = map[int64]bool{
 //   - 2xx: return the proxy body verbatim
 //   - other non-2xx: 502 with {"error": "<status>: <body>"}
 func handleTopUp(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return

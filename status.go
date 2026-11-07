@@ -33,9 +33,6 @@ const defaultStatusURL = "https://trustant.ai/status.json"
 // version (see resolveStatus). Used by the splash and applist pages to receive
 // per-provider model catalogs (`ollama`, `trustant`) and the operator banner.
 func handleStatus(w http.ResponseWriter, r *http.Request) {
-	if expiredGuard(w) {
-		return
-	}
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
