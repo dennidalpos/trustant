@@ -24,7 +24,7 @@ Pi share one set.
 5. `git add .agents/skills`
 6. `git commit -m "added skills"`
 7. `git push origin`
-8. The launch API returns `"skills_added": true` and the UI shows a popup informing "Added skills"
+8. The launch progress bar shows "Setting up agent skills..." while this runs (no separate popup); the launch API still returns `"skills_added": true`
 
 # API
 

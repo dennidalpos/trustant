@@ -238,7 +238,8 @@ later commit picks up and that revert's `git clean -fd` deletes.
 
 Clone/refresh the app's bundled skills into `<workbenchdir>/<name>/.agents/skills/`
 (see [7-skills.md](7-skills.md)). Track whether anything was added so it can be
-reported in the launch response (`skills_added`).
+reported in the launch response (`skills_added`). The step is shown inside the
+launch progress bar as "Setting up agent skills..."; the UI shows no separate popup.
 
 The `.claude` → `.agents` symlink is created **after** this step, never before:
 skills setup is skipped when `.agents` already exists and is non-empty, so

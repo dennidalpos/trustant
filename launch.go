@@ -1295,6 +1295,7 @@ func handleLaunchGet(w http.ResponseWriter, r *http.Request, app string) {
 
 	// Skills remain project-local rather than being baked into Pi's global state,
 	// so each generated app carries the capabilities appropriate to its repo.
+	reportLaunchProgress(w, 1, "Setting up agent skills...")
 	skillsAdded := ensureSkills(app)
 
 	reportLaunchProgress(w, 2, "Checking application account...")
