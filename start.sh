@@ -1656,7 +1656,9 @@ if limactl list --quiet 2>/dev/null | grep -qx "$VM_NAME"; then
   STATUS="$(limactl list --format '{{.Status}}' "$VM_NAME" 2>/dev/null)"
   if [[ "$STATUS" != "Running" ]]; then
     echo "--- VM '$VM_NAME' exists ($STATUS) — starting it ---"
+    restore_tty
     limactl start "$VM_NAME" || fail "failed to start existing VM '$VM_NAME'"
+    restore_tty
   else
     echo "--- VM '$VM_NAME' already running ---"
   fi
@@ -1718,8 +1720,10 @@ YAML
 
 # --- create + start (fast: no heavy install here) --------------------------
 echo "--- Booting Trustant VM ---"
+restore_tty
 limactl start --name "$VM_NAME" --tty=false "$LIMA_CONFIG" \
   || fail "limactl start failed"
+restore_tty
 ok "VM '$VM_NAME' booted"
 
 # Install the package (copy the cached .deb in + apt install), then read the IP
