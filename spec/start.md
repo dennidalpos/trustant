@@ -91,6 +91,14 @@ and only `setup.sh` and `run.sh` keep the terminal. `restore_tty` (`stty sane`
 when stdin is a terminal) runs before and after both, on their failure path,
 and from an INT/TERM trap.
 
+Both `limactl start` calls go through `start_vm`, which traps ^C (SIGINT/SIGTERM)
+for the duration of the boot only. `limactl start` hands the VM to a detached
+hostagent, so interrupting the client alone would leave the VM booting. On ^C the
+trap restores the tty, force-stops the VM and exits 130. When the VM was created
+by this run it is also deleted: otherwise the next `./start.sh` would find it,
+take the existing-VM path and skip provisioning. After the boot, `start_vm`
+reinstalls the global INT/TERM trap.
+
 ## Boot the VM, then install (NOT via cloud-init provision)
 
 The Lima config turns off Lima's own containerd (`containerd: {system: false,
