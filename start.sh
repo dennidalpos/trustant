@@ -207,9 +207,10 @@ normalize_submodule_eol() {
 #   run_privileged VAR=val ... <<'GUEST'   — as root, in the VM (macOS) or here (Linux)
 #   run_guest      <cmd> [args...]         — as the normal user, same choice
 #
-# APT_QUIET is passed to every payload: these blocks run with no pty, and apt's
-# needrestart hook then prints its "Restarting services..." report as a
-# staircase (bare LF, no CR) — besides being pointless on a fresh machine.
+# APT_QUIET is passed to every payload: these blocks run with no pty, so
+# apt's needrestart hook would print its "Restarting services..." report with
+# bare LFs (a staircase whenever the host tty is raw) — besides being pointless
+# on a fresh machine.
 APT_QUIET=(DEBIAN_FRONTEND=noninteractive NEEDRESTART_SUSPEND=1 NEEDRESTART_MODE=a)
 run_privileged() {
   if $NATIVE_LINUX; then
@@ -221,9 +222,16 @@ run_privileged() {
 
 # Defensive: a provisioning child that leaves the terminal in a raw mode would
 # garble everything after it, run.sh included. No-op without a terminal.
+# Under `curl | bash` install.sh hands us /dev/tty as stdin, so any
+# `limactl shell` that inherits it runs `ssh -t` and switches the host tty to
+# raw; an ssh that dies uncleanly leaves it raw and every later line
+# staircases. Non-interactive calls therefore read </dev/null, and only
+# setup.sh and run.sh keep the terminal, with restore_tty before and after.
 restore_tty() {
   [[ -t 0 ]] && stty sane 2>/dev/null || true
 }
+# On Ctrl-C/TERM restore the tty too; the EXIT traps below still run.
+trap 'restore_tty; exit 130' INT TERM
 
 run_guest() {
   if $NATIVE_LINUX; then
@@ -726,7 +734,7 @@ ensure_openserverless_proxy() {
   else
     # Same invocation style as the setup.sh call: as the mirrored user, in the
     # mounted repo dir, so the script is the worktree's own copy.
-    limactl shell --workdir "$MOUNT_DIR" "$VM_NAME" bash ./proxy.sh \
+    limactl shell --workdir "$MOUNT_DIR" "$VM_NAME" bash ./proxy.sh </dev/null \
       || fail "proxy.sh failed in the VM"
   fi
   ok "host-rewrite proxy catch-all installed"
@@ -828,12 +836,12 @@ ensure_env_file() {
 refresh_support_files() {
   echo "--- Reading VM IP ---"
   local IP
-  IP="$(limactl shell "$VM_NAME" hostname -I 2>/dev/null | tr ' ' '\n' \
+  IP="$(limactl shell "$VM_NAME" hostname -I </dev/null 2>/dev/null | tr ' ' '\n' \
           | grep -E '^192\.168\.252\.' | head -1 || true)"
   if [[ -z "$IP" ]]; then
     # Fallback: address on the lima0 interface, whatever its subnet.
     IP="$(limactl shell "$VM_NAME" bash -c \
-      "ip -4 -o addr show lima0 2>/dev/null | awk '{print \$4}' | cut -d/ -f1" 2>/dev/null || true)"
+      "ip -4 -o addr show lima0 2>/dev/null | awk '{print \$4}' | cut -d/ -f1" </dev/null 2>/dev/null || true)"
   fi
   [[ -n "$IP" ]] || fail "could not determine host-reachable VM IP"
   ok "VM IP: $IP"
@@ -1026,7 +1034,8 @@ finish() {
   restore_tty
   echo "--- Running setup.sh in the VM as $HOST_USER ---"
   limactl shell --workdir "$MOUNT_DIR" "$VM_NAME" bash ./setup.sh \
-    || fail "setup.sh failed in the VM"
+    || { restore_tty; fail "setup.sh failed in the VM"; }
+  restore_tty
   ok "setup.sh completed"
   ensure_openserverless_proxy
   ensure_gh
@@ -1058,7 +1067,7 @@ finish_native() {
   ensure_source_submodules
 
   # Install the cluster only when it is absent; otherwise just confirm it runs.
-  if run_guest dpkg -l truserverless 2>/dev/null | grep -q '^ii'; then
+  if run_guest dpkg -l truserverless </dev/null 2>/dev/null | grep -q '^ii'; then
     ok "Trustant Serverless package already installed"
   else
     ensure_deb   # sets DEB_FILE
@@ -1087,7 +1096,8 @@ finish_native() {
   # the VM path runs, just invoked directly. Idempotent — re-runs just verify.
   restore_tty
   echo "--- Running setup.sh as $(id -un) ---"
-  bash ./setup.sh || fail "setup.sh failed"
+  bash ./setup.sh || { restore_tty; fail "setup.sh failed"; }
+  restore_tty
   ok "setup.sh completed"
   ensure_openserverless_proxy
   ensure_gh
@@ -1524,7 +1534,7 @@ GUEST
 
 # True if the truserverless package is installed in the running VM.
 package_installed() {
-  limactl shell "$VM_NAME" dpkg -l truserverless 2>/dev/null | grep -q '^ii'
+  limactl shell "$VM_NAME" dpkg -l truserverless </dev/null 2>/dev/null | grep -q '^ii'
 }
 
 # -s and -k are VM lifecycle operations. On a native host there is no VM, and
@@ -1608,7 +1618,10 @@ run_in_vm() {
   restore_tty
   echo "--- Running ./run.sh in the VM as $HOST_USER ---"
   echo "Press Control-C to stop. Use ./start.sh to start again."
-  limactl shell --workdir "$MOUNT_DIR" "$VM_NAME" bash ./run.sh
+  local rc=0
+  limactl shell --workdir "$MOUNT_DIR" "$VM_NAME" bash ./run.sh || rc=$?
+  restore_tty
+  return "$rc"
 }
 
 # --- teardown: ./start.sh -k -----------------------------------------------
