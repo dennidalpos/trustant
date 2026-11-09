@@ -79,10 +79,17 @@ virtiofs-mounted checkout, so the guest can see its own disk files — harmless.
 `run_privileged` (and the `install_package` block) always pass
 `DEBIAN_FRONTEND=noninteractive NEEDRESTART_SUSPEND=1 NEEDRESTART_MODE=a`, as do
 `setup.sh`'s `sudo apt-get install` lines and the `start.ps1` bootstrap. These
-apt runs have no pty, and needrestart's "Restarting services..." report then
-prints as a staircase (LF without CR); restarting services is pointless on a
-fresh machine anyway. Before `setup.sh` and before `run.sh`, `restore_tty` runs `stty sane` when stdin
-is a terminal, so no provisioning child can leave it in a raw mode.
+apt runs have no pty, so needrestart's "Restarting services..." report prints
+bare LFs; restarting services is pointless on a fresh machine anyway.
+
+A staircase (LF without CR) appears only when the **host** tty is raw. Under
+`curl | bash`, `install` runs `exec ./start.sh </dev/tty`, so any `limactl shell`
+inheriting that stdin runs `ssh -t` and switches the host tty to raw while it
+runs; an ssh that dies uncleanly leaves it raw. Therefore every non-interactive
+`limactl shell` (IP lookup, `dpkg -l` checks, `proxy.sh`) reads `</dev/null`,
+and only `setup.sh` and `run.sh` keep the terminal. `restore_tty` (`stty sane`
+when stdin is a terminal) runs before and after both, on their failure path,
+and from an INT/TERM trap.
 
 ## Boot the VM, then install (NOT via cloud-init provision)
 
