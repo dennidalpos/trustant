@@ -225,6 +225,31 @@ restore_tty() {
   [[ -t 0 ]] && stty sane 2>/dev/null || true
 }
 
+# ^C during limactl start leaves Lima's detached hostagent booting the VM.
+# Shut it down; a VM created by this run is deleted, since the next run would
+# otherwise take the existing-VM path and skip provisioning. See issue #220.
+start_vm() {
+  local on_abort="$1"; shift
+  trap "start_vm_abort $on_abort" INT TERM
+  restore_tty
+  local rc=0
+  limactl start "$@" || rc=$?
+  trap - INT TERM
+  restore_tty
+  return $rc
+}
+
+start_vm_abort() {
+  trap - INT TERM
+  restore_tty
+  echo; warn "interrupted — shutting down VM '$VM_NAME'"
+  limactl stop -f "$VM_NAME" >/dev/null 2>&1 || true
+  if [[ "$1" == delete ]]; then
+    limactl delete -f "$VM_NAME" >/dev/null 2>&1 || true
+  fi
+  exit 130
+}
+
 run_guest() {
   if $NATIVE_LINUX; then
     "$@"
@@ -1656,9 +1681,7 @@ if limactl list --quiet 2>/dev/null | grep -qx "$VM_NAME"; then
   STATUS="$(limactl list --format '{{.Status}}' "$VM_NAME" 2>/dev/null)"
   if [[ "$STATUS" != "Running" ]]; then
     echo "--- VM '$VM_NAME' exists ($STATUS) — starting it ---"
-    restore_tty
-    limactl start "$VM_NAME" || fail "failed to start existing VM '$VM_NAME'"
-    restore_tty
+    start_vm stop "$VM_NAME" || fail "failed to start existing VM '$VM_NAME'"
   else
     echo "--- VM '$VM_NAME' already running ---"
   fi
@@ -1720,10 +1743,8 @@ YAML
 
 # --- create + start (fast: no heavy install here) --------------------------
 echo "--- Booting Trustant VM ---"
-restore_tty
-limactl start --name "$VM_NAME" --tty=false "$LIMA_CONFIG" \
+start_vm delete --name "$VM_NAME" --tty=false "$LIMA_CONFIG" \
   || fail "limactl start failed"
-restore_tty
 ok "VM '$VM_NAME' booted"
 
 # Install the package (copy the cached .deb in + apt install), then read the IP
