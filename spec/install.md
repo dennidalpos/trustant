@@ -1,7 +1,8 @@
 # Repository-root `install`
 
 One file that is both a bash and a PowerShell script (a polyglot), so a single
-URL installs Trustant on every host:
+URL prepares a Trustant checkout on every host: it clones, downloads the big
+artifacts into `trustant/dist`, and stops. Starting is left to the user:
 
     curl -fsSL get.trustant.ai | bash      # macOS, Linux
     irm get.trustant.ai | iex              # Windows
@@ -58,12 +59,35 @@ scripts as ANSI.
 - **Preloaded `dist/`**: after the clone, if `<target>/dist` exists its content
   is copied (not moved) into `<target>/trustant/dist`, the cache `start.sh`
   reads, so the `.deb` and ollama tarball are not downloaded again. A failed
-  copy only warns: `start.sh` downloads whatever is missing. With
+  copy only warns: the download step fetches whatever is missing. With
   `TRUSTANT_DIR`, `<target>` is its parent directory.
 - `TRUSTANT_REF` is an optional branch or tag, passed to `git clone --branch`.
 - Clone: `git clone --recurse-submodules https://github.com/trustant/trustant`.
   If the clone fails, the partial folder is removed.
-- It then runs `./start.sh` (bash) or `.\start.ps1` (PowerShell) in the folder.
+- **Downloads**, after `.env` is written, into `<target>/trustant/dist` with
+  the exact names and URLs `start.sh` uses (`ensure_deb`,
+  `ensure_ollama_tarball`), so `start.sh` finds them and downloads nothing:
+  - `truserverless_<ver>_<arch>.deb` from
+    `https://pub.trustant.ai/truserverless/`, `<ver>` being the first line of
+    the checkout's `truserverless.txt`. Missing pin or failed download: error,
+    stop.
+  - `ollama-<ver>-linux-<arch>.tar.zst` from the ollama GitHub release,
+    `<ver>` from `ARG OLLAMA_VERSION=` in `image/Dockerfile`. A missing version
+    or failed download only warns: `start.sh` then uses the ollama installer.
+  - `<arch>` is `arm64` or `amd64`: `dpkg --print-architecture` on Linux,
+    `uname -m` on macOS, `RuntimeInformation.OSArchitecture` (falling back to
+    `PROCESSOR_ARCHITEW6432`/`PROCESSOR_ARCHITECTURE`) on Windows, since the
+    VM and the WSL guest run the host arch.
+  - A non-empty file already there (e.g. from the preloaded `dist/`) is kept.
+    Downloads go to `<file>.part` and are moved into place only when complete
+    (`curl`, `curl.exe` on Windows - much faster than `Invoke-WebRequest`).
+- **It does not start Trustant.** It ends with
+  `Trustant download is ready, please cd <dir> and type ./start.sh`
+  (PowerShell: `... type .\start.ps1`, plus a hint to use
+  `powershell -ExecutionPolicy Bypass -File .\start.ps1` if the default policy
+  refuses a local `.ps1`). Under `curl | bash` a `start.sh` run
+  could leave the terminal in raw mode (staircase output, no Ctrl-C); run
+  from a normal shell it does not.
 
 ## Bash part
 
@@ -78,8 +102,9 @@ Hosts are told apart by `uname -s`:
 - **MINGW/MSYS/CYGWIN**: tells the user to use PowerShell and exits.
 - Anything else: exits.
 
-Under `curl | bash`, stdin is the script itself. Every prompt (sudo, brew, and
-`start.sh`) therefore reads `/dev/tty` when stdin is not a terminal.
+Under `curl | bash`, stdin is the script itself. Every prompt (the path
+question, sudo, brew) therefore reads `/dev/tty` when stdin is not a terminal;
+`curl` reads `/dev/null`.
 
 ## PowerShell part
 
@@ -93,15 +118,13 @@ Under `curl | bash`, stdin is the script itself. Every prompt (sudo, brew, and
 - If `git` is missing it runs `winget install --id Git.Git -e`, then reloads
   `$env:Path` from the Machine and User registry values so the new `git`
   resolves in this session. If `winget` is missing, it points to git-scm.com.
-- Runs `start.ps1` in a child process of the same PowerShell executable with
-  `-ExecutionPolicy Bypass`, because the default policy may refuse a local `.ps1`.
 - It never calls `exit`: under `irm | iex` that would close the user's window.
   The body is a scriptblock that stops with `return`.
 
 
 ## .env
 
-Both parts write `<install>/.env` after the clone and before `start.sh`/`start.ps1`,
+Both parts write `<install>/.env` after the clone and before the downloads,
 then create `<install>/workspace` and `<install>/workbench`. All three are
 git-ignored, so the checkout stays clean.
 

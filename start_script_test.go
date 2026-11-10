@@ -266,4 +266,22 @@ func TestStartScriptsKeepVMInDataAndSeedDist(t *testing.T) {
 		!strings.Contains(inst, `Copy-Item -Recurse -Force -ErrorAction Stop (Join-Path $Src '*') (Join-Path $Dest 'dist')`) {
 		t.Error("install must copy a preloaded <target>/dist into trustant/dist (bash and PowerShell)")
 	}
+
+	// install downloads into dist/ and stops: a start.sh run under `curl | bash`
+	// can leave the terminal in raw mode (staircase output, no Ctrl-C).
+	if strings.Contains(inst, `./start.sh <"$TTY"`) || strings.Contains(inst, `-File .\start.ps1`+"\n") {
+		t.Error("install must not run start.sh / start.ps1")
+	}
+	for _, want := range []string{
+		`https://pub.trustant.ai/truserverless/truserverless_${TRUSERVERLESS_VERSION}_${ARCH}.deb`,
+		`https://pub.trustant.ai/truserverless/truserverless_${TsVersion}_${Arch}.deb`,
+		`https://github.com/ollama/ollama/releases/download/v${OLLAMA_VERSION}/ollama-linux-${ARCH}.tar.zst`,
+		`https://github.com/ollama/ollama/releases/download/v${OllamaVersion}/ollama-linux-${Arch}.tar.zst`,
+		`Trustant download is ready, please cd $DEST and type ./start.sh`,
+		`Trustant download is ready, please cd $Dest and type .\start.ps1`,
+	} {
+		if !strings.Contains(inst, want) {
+			t.Errorf("install must contain %q", want)
+		}
+	}
 }

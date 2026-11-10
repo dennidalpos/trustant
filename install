@@ -8,16 +8,18 @@ echo @'
 #   irm get.trustant.ai | iex              (Windows)
 # Asks for a target folder (default: the current directory), creates it if
 # needed, clones https://github.com/trustant/trustant with its submodules into
-# <target>/trustant and runs start.sh / start.ps1 there. A <target>/dist (the
-# .deb and ollama downloads, preloaded) is copied into trustant/dist, so start.sh
-# downloads nothing again. TRUSTANT_DIR names the checkout
+# <target>/trustant, downloads the Trustant Serverless .deb (version in
+# truserverless.txt) and the ollama tarball (version in image/Dockerfile) into
+# trustant/dist, then stops: the user runs start.sh / start.ps1 there. A
+# <target>/dist (the same downloads, preloaded) is copied into trustant/dist
+# first, so only what is missing is downloaded. TRUSTANT_DIR names the checkout
 # directly and skips the question (non-interactive installs).
 # TRUSTANT_REF selects a branch or tag (default: the repo default branch).
 # See spec/install.md. Keep this file pure ASCII (Windows PowerShell 5.1).
 
 URL="https://github.com/trustant/trustant"
-# Under `curl | bash` stdin is the script itself: prompts (sudo, brew,
-# start.sh) must read the terminal instead.
+# Under `curl | bash` stdin is the script itself: prompts (sudo, brew) must
+# read the terminal instead.
 TTY=/dev/stdin
 if [ ! -t 0 ] && [ -r /dev/tty ]
 then TTY=/dev/tty
@@ -173,7 +175,7 @@ if [ -d "$SRC" ]
 then
    echo "Copying $SRC into $DEST/dist"
    mkdir -p "$DEST/dist" && cp -R "$SRC/." "$DEST/dist/" \
-      || echo "copying $SRC failed - start.sh will download what is missing"
+      || echo "copying $SRC failed - what is missing is downloaded below"
 fi
 
 cd "$DEST" || exit 1
@@ -189,8 +191,62 @@ GIT_USER=TrustantUser
 GIT_EMAIL=noreply@example.com
 ENV
 mkdir -p workspace workbench || exit 1
-exec ./start.sh <"$TTY"
 
+# Download the two big artifacts into dist/, start.sh's cache, with the names
+# and URLs start.sh uses (ensure_deb, ensure_ollama_tarball), so start.sh finds
+# them and downloads nothing. A file already there (preloaded) is kept.
+# start.sh is not run from here: under `curl | bash` its children can leave the
+# terminal in raw mode (staircase output, no Ctrl-C).
+TRUSERVERLESS_VERSION="$(head -n1 truserverless.txt 2>/dev/null | tr -d '[:space:]')"
+if [ -z "$TRUSERVERLESS_VERSION" ]
+then
+   echo "ERROR: truserverless.txt not found or empty in $DEST"
+   exit 1
+fi
+OLLAMA_VERSION="$(grep -m1 '^ARG OLLAMA_VERSION=' image/Dockerfile 2>/dev/null | cut -d= -f2 | tr -d ' ')"
+# The deb is installed by dpkg on Linux (ask it, as start.sh does); on macOS
+# the VM runs the host arch.
+if [ "$(uname -s)" = Linux ]
+then ARCH="$(dpkg --print-architecture 2>/dev/null || uname -m)"
+else ARCH="$(uname -m)"
+fi
+case "$ARCH" in
+(arm64|aarch64) ARCH=arm64 ;;
+(x86_64|amd64) ARCH=amd64 ;;
+(*) echo "ERROR: unsupported architecture $ARCH"; exit 1 ;;
+esac
+# download <file> <url>: skip when present, else fetch to .part and move into
+# place, so an interrupted download never leaves a truncated cache entry.
+download() {
+   if [ -s "$1" ]
+   then
+      echo "Using cached $1"
+      return 0
+   fi
+   echo "Downloading $2 -> $1"
+   if curl -fL --retry 3 -o "$1.part" "$2" </dev/null && mv "$1.part" "$1"
+   then return 0
+   fi
+   rm -f "$1.part"
+   return 1
+}
+mkdir -p dist || exit 1
+DEB="dist/truserverless_${TRUSERVERLESS_VERSION}_${ARCH}.deb"
+if ! download "$DEB" "https://pub.trustant.ai/truserverless/truserverless_${TRUSERVERLESS_VERSION}_${ARCH}.deb"
+then
+   echo "ERROR: Trustant Serverless $TRUSERVERLESS_VERSION ($ARCH) could not be downloaded"
+   exit 1
+fi
+if [ -z "$OLLAMA_VERSION" ]
+then
+   echo "WARNING: no OLLAMA_VERSION in image/Dockerfile - start.sh will use the ollama installer"
+elif ! download "dist/ollama-${OLLAMA_VERSION}-linux-${ARCH}.tar.zst" \
+   "https://github.com/ollama/ollama/releases/download/v${OLLAMA_VERSION}/ollama-linux-${ARCH}.tar.zst"
+then
+   echo "WARNING: ollama $OLLAMA_VERSION could not be downloaded - start.sh will use the ollama installer"
+fi
+
+echo "Trustant download is ready, please cd $DEST and type ./start.sh"
 exit 0
 
 # Above this line is Bash Script -------------------------------------------
@@ -329,7 +385,7 @@ echo > /dev/null <<"out-null" ###
             New-Item -ItemType Directory -Force -Path (Join-Path $Dest 'dist') -ErrorAction Stop | Out-Null
             Copy-Item -Recurse -Force -ErrorAction Stop (Join-Path $Src '*') (Join-Path $Dest 'dist')
         } catch {
-            Write-Host "copying $Src failed - start.sh will download what is missing"
+            Write-Host "copying $Src failed - what is missing is downloaded below"
         }
     }
 
@@ -347,9 +403,59 @@ echo > /dev/null <<"out-null" ###
     ) -join "`n"
     [System.IO.File]::WriteAllText((Join-Path $Dest '.env'), "$EnvText`n")
     New-Item -ItemType Directory -Force -Path (Join-Path $Dest 'workspace'), (Join-Path $Dest 'workbench') | Out-Null
-    # A child process with Bypass: the default policy may refuse a local .ps1.
-    $Shell = (Get-Process -Id $PID).Path
-    & $Shell -NoProfile -ExecutionPolicy Bypass -File .\start.ps1
+
+    # Download the two big artifacts into dist\, start.sh's cache, with the
+    # names and URLs start.sh uses, so it downloads nothing inside WSL. A file
+    # already there (preloaded) is kept. start.ps1 is not run from here.
+    $TsVersion = "$(Get-Content -TotalCount 1 (Join-Path $Dest 'truserverless.txt') -ErrorAction SilentlyContinue)".Trim()
+    if (-not $TsVersion) {
+        Write-Host "ERROR: truserverless.txt not found or empty in $Dest"
+        return
+    }
+    $OllamaLine = Select-String -Path (Join-Path $Dest 'image\Dockerfile') -Pattern '^ARG OLLAMA_VERSION=' -ErrorAction SilentlyContinue | Select-Object -First 1
+    $OllamaVersion = if ($OllamaLine) { ($OllamaLine.Line -split '=', 2)[1].Trim() } else { '' }
+    # The WSL guest runs the host arch. OSArchitecture is right even in an
+    # emulated x64 PowerShell on ARM; the env vars are the fallback.
+    $Arch = try { "$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)" } catch { '' }
+    if (-not $Arch) { $Arch = if ($env:PROCESSOR_ARCHITEW6432) { $env:PROCESSOR_ARCHITEW6432 } else { $env:PROCESSOR_ARCHITECTURE } }
+    switch -Regex ($Arch) {
+        '^(X64|AMD64)$' { $Arch = 'amd64' }
+        '^(Arm64|ARM64)$' { $Arch = 'arm64' }
+        default { Write-Host "ERROR: unsupported architecture $Arch"; return }
+    }
+    # curl.exe (Windows 10 1803+), not Invoke-WebRequest: far faster on 3 GB.
+    # Fetched to .part and moved into place, so an interruption never leaves a
+    # truncated cache entry.
+    $Download = {
+        param($File, $From)
+        if ((Test-Path $File) -and (Get-Item $File).Length -gt 0) {
+            Write-Host "Using cached $File"
+            return $true
+        }
+        Write-Host "Downloading $From -> $File"
+        curl.exe -fL --retry 3 -o "$File.part" $From
+        if ($LASTEXITCODE -eq 0) {
+            Move-Item -Force "$File.part" $File
+            return $true
+        }
+        Remove-Item -Force "$File.part" -ErrorAction SilentlyContinue
+        return $false
+    }
+    New-Item -ItemType Directory -Force -Path (Join-Path $Dest 'dist') | Out-Null
+    $Deb = Join-Path $Dest "dist\truserverless_${TsVersion}_${Arch}.deb"
+    if (-not (& $Download $Deb "https://pub.trustant.ai/truserverless/truserverless_${TsVersion}_${Arch}.deb")) {
+        Write-Host "ERROR: Trustant Serverless $TsVersion ($Arch) could not be downloaded"
+        return
+    }
+    if (-not $OllamaVersion) {
+        Write-Host "WARNING: no OLLAMA_VERSION in image\Dockerfile - start.sh will use the ollama installer"
+    } elseif (-not (& $Download (Join-Path $Dest "dist\ollama-${OllamaVersion}-linux-${Arch}.tar.zst") "https://github.com/ollama/ollama/releases/download/v${OllamaVersion}/ollama-linux-${Arch}.tar.zst")) {
+        Write-Host "WARNING: ollama $OllamaVersion could not be downloaded - start.sh will use the ollama installer"
+    }
+
+    Write-Host "Trustant download is ready, please cd $Dest and type .\start.ps1"
+    # The default execution policy may refuse a local .ps1.
+    Write-Host "(if PowerShell refuses to run it: powershell -ExecutionPolicy Bypass -File .\start.ps1)"
 }
 return
 
