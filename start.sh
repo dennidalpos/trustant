@@ -1438,7 +1438,7 @@ require_sudo() {
 # package's Version: field equals truserverless.txt (package.sh writes both).
 installed_truserverless_version() {
   dpkg-query -W -f='${db:Status-Abbrev} ${Version}' truserverless 2>/dev/null \
-    | awk '$1 == "ii" { print $2 }'
+    | awk '$1 == "ii" { print $2 }' || true   # not installed: dpkg-query exits 1
 }
 
 # Enforce the truserverless.txt pin on an existing native install. Runs right
