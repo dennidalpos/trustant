@@ -19,10 +19,14 @@ scripts as ANSI.
 
 ## Common behaviour
 
-- **Target folder**: the installer prints `Trustant will be installed in
-  <cwd>/trustant.` and asks `Type ENTER to accept the proposed path or specify
-  another full path [<cwd>]:` (Enter keeps the current directory; `~` is
-  expanded in bash). The checkout is `<target>/trustant`. Bash asks only when a
+- **Target folder**: the installer prints
+
+      Trustant will be installed in [<cwd>/trustant].
+      Type ENTER to accept or specify another full path.
+      Install in [<cwd>]:
+
+  The answer is the folder `trustant` is created in (Enter keeps the current
+  directory; `~` is expanded in bash). The checkout is `<target>/trustant`. Bash asks only when a
   terminal is available (stdin or `/dev/tty`); otherwise the default is used.
 - `TRUSTANT_DIR` names the checkout directly and skips the question
   (non-interactive installs); its parent is the target.

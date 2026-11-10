@@ -34,8 +34,9 @@ else
    # bare pipe would swallow the rest of this script.
    if [ -t 0 ] || [ "$TTY" = /dev/tty ]
    then
-      echo "Trustant will be installed in $TARGET/trustant."
-      printf 'Type ENTER to accept the proposed path or specify another full path [%s]: ' "$TARGET"
+      echo "Trustant will be installed in [$TARGET/trustant]."
+      echo "Type ENTER to accept or specify another full path."
+      printf 'Install in [%s]: ' "$TARGET"
       { read -r ANSWER <"$TTY"; } 2>/dev/null || { ANSWER=""; echo; }
       case "$ANSWER" in
       ("~") ANSWER="$HOME" ;;
@@ -279,8 +280,9 @@ echo > /dev/null <<"out-null" ###
         $Target = Split-Path -Parent $Dest
     } else {
         $Target = (Get-Location).ProviderPath
-        Write-Host "Trustant will be installed in $(Join-Path $Target 'trustant')."
-        $Answer = "$(Read-Host "Type ENTER to accept the proposed path or specify another full path [$Target]")".Trim().Trim('"')
+        Write-Host "Trustant will be installed in [$(Join-Path $Target 'trustant')]."
+        Write-Host "Type ENTER to accept or specify another full path."
+        $Answer = "$(Read-Host "Install in [$Target]")".Trim().Trim('"')
         if ($Answer -and $Answer -notmatch '^[A-Za-z]:') {
             Write-Host "ERROR: $Answer is not a full path - it must start with a drive letter, e.g. C:\"
             return
