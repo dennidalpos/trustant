@@ -21,11 +21,12 @@ scripts as ANSI.
 
 - **Target folder**: the installer prints
 
-      Trustant will be installed in [<cwd>/trustant].
-      Type ENTER to accept or specify another full path.
-      Install in [<cwd>]:
+      Trustant will be installed in folder trustant in "<cwd>".
+      Type ENTER to accept or specify another parent folder (full path).
+      Parent folder [<cwd>]:
 
-  The answer is the folder `trustant` is created in (Enter keeps the current
+  The answer is the parent folder: a `trustant` folder is always created
+  inside it (Enter keeps the current
   directory; `~` is expanded in bash). The checkout is `<target>/trustant`. Bash asks only when a
   terminal is available (stdin or `/dev/tty`); otherwise the default is used.
 - `TRUSTANT_DIR` names the checkout directly and skips the question
