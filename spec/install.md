@@ -88,9 +88,9 @@ scripts as ANSI.
     (`curl`, `curl.exe` on Windows - much faster than `Invoke-WebRequest`).
 - **It does not start Trustant.** It ends with
   `Trustant download is ready, please cd <dir> and type ./start.sh`
-  (PowerShell: `... type .\start.ps1`, plus a hint to use
-  `powershell -ExecutionPolicy Bypass -File .\start.ps1` if the default policy
-  refuses a local `.ps1`). Under `curl | bash` a `start.sh` run
+  (PowerShell: `... type .\start.ps1`, plus a hint to run
+  `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` and try again if
+  the default policy refuses a local `.ps1`). Under `curl | bash` a `start.sh` run
   could leave the terminal in raw mode (staircase output, no Ctrl-C); run
   from a normal shell it does not.
 
