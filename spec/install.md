@@ -22,7 +22,7 @@ scripts as ANSI.
 - **Target folder**: the installer prints
 
       Trustant will be installed in folder trustant in "<cwd>".
-      Type ENTER to accept or specify another parent folder (full path).
+      Press ENTER to accept the proposed path or specify another parent folder.
       Parent folder [<cwd>]:
 
   The answer is the parent folder: a `trustant` folder is always created

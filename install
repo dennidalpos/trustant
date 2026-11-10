@@ -35,7 +35,7 @@ else
    if [ -t 0 ] || [ "$TTY" = /dev/tty ]
    then
       echo "Trustant will be installed in folder trustant in \"$TARGET\"."
-      echo "Type ENTER to accept or specify another parent folder (full path)."
+      echo "Press ENTER to accept the proposed path or specify another parent folder."
       printf 'Parent folder [%s]: ' "$TARGET"
       { read -r ANSWER <"$TTY"; } 2>/dev/null || { ANSWER=""; echo; }
       case "$ANSWER" in
@@ -281,7 +281,7 @@ echo > /dev/null <<"out-null" ###
     } else {
         $Target = (Get-Location).ProviderPath
         Write-Host "Trustant will be installed in folder trustant in `"$Target`"."
-        Write-Host "Type ENTER to accept or specify another parent folder (full path)."
+        Write-Host "Press ENTER to accept the proposed path or specify another parent folder."
         $Answer = "$(Read-Host "Parent folder [$Target]")".Trim().Trim('"')
         if ($Answer -and $Answer -notmatch '^[A-Za-z]:') {
             Write-Host "ERROR: $Answer is not a full path - it must start with a drive letter, e.g. C:\"
