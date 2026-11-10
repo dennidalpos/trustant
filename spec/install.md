@@ -90,7 +90,9 @@ scripts as ANSI.
   `Trustant download is ready, please cd <dir> and type ./start.sh`
   (PowerShell: `... type .\start.ps1`, plus a hint to run
   `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` and try again if
-  the default policy refuses a local `.ps1`). Under `curl | bash` a `start.sh` run
+  the default policy refuses a local `.ps1`, and
+  `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned` to
+  make it persistent). Under `curl | bash` a `start.sh` run
   could leave the terminal in raw mode (staircase output, no Ctrl-C); run
   from a normal shell it does not.
 

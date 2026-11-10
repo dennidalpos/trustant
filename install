@@ -458,6 +458,7 @@ echo > /dev/null <<"out-null" ###
     Write-Host "Trustant download is ready, please cd $Dest and type .\start.ps1"
     # The default execution policy may refuse a local .ps1.
     Write-Host "If PowerShell refuses to run it, execute 'Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass' and try again"
+    Write-Host "(to make it persistent: 'Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned')"
 }
 return
 
