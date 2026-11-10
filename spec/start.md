@@ -44,6 +44,16 @@ unpinned package. If the pinned version is not published, the download fails
 (HTTP 404) and `start.sh` fails with a message naming the requested version, the
 arch and the URL. It must never fall back to another version.
 
+On native Linux the pin is also enforced on an **existing** install. Right after
+`preflight_native`, before anything is installed (`gh`, submodules, the package),
+`start.sh` compares the installed `truserverless` version with the pin. On a
+mismatch it warns that all data will be removed and asks `Continue? [y/N]`:
+anything but `y` aborts and leaves the package alone; without a terminal it fails
+and prints `sudo apt-get purge -y truserverless`. On `y` it purges the package
+(its `postrm` wipes `/var/lib/rancher/k3s`, `/home/trustant` and the `trustant`
+account) and the normal install of the pinned `.deb` follows. On macOS an
+existing VM is not re-provisioned, so a mismatched VM package is not checked.
+
 Cache as `dist/truserverless_<version>_<arch>.deb`, mirroring the published
 naming. If it already exists, skip the ~3GB download — a fully-cached run must
 not depend on `pub.trustant.ai` being reachable. Download to a `.part` file and

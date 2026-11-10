@@ -24,7 +24,8 @@
 #            ~/Library/Application Support/Trustant/.
 #   Linux  — no VM. Ubuntu/Debian already IS the environment, so the same
 #            initialization runs directly on this host: install the Trustant
-#            .deb when k3s is absent, then ollama/kubefwd/gh, the k3s host-rewrite
+#            .deb when absent (a different installed version is purged after
+#            confirmation), then ollama/kubefwd/gh, the k3s host-rewrite
 #            proxy, the support files, and setup.sh.
 #
 # Plain run:   macOS boots a plain Ubuntu VM (vz), then installs the Trustant
@@ -1092,8 +1093,11 @@ finish_native() {
   ensure_source_submodules
 
   # Install the cluster only when it is absent; otherwise just confirm it runs.
-  if run_guest dpkg -l truserverless </dev/null 2>/dev/null | grep -q '^ii'; then
-    ok "Trustant Serverless package already installed"
+  # A mismatched version was already purged by check_truserverless_version.
+  local installed
+  installed="$(installed_truserverless_version)"
+  if [[ -n "$installed" ]]; then
+    ok "Trustant Serverless package $installed already installed"
   else
     ensure_deb   # sets DEB_FILE
     install_package_native
@@ -1430,6 +1434,33 @@ require_sudo() {
   ok "passwordless sudo works"
 }
 
+# Installed truserverless version, or empty when it is not installed. The
+# package's Version: field equals truserverless.txt (package.sh writes both).
+installed_truserverless_version() {
+  dpkg-query -W -f='${db:Status-Abbrev} ${Version}' truserverless 2>/dev/null \
+    | awk '$1 == "ii" { print $2 }'
+}
+
+# Enforce the truserverless.txt pin on an existing native install. Runs right
+# after preflight_native, before anything is installed, so answering No leaves
+# the host untouched. Purge wipes /var/lib/rancher/k3s, /home/trustant and the
+# trustant account (see the package's postrm), i.e. all data — hence the
+# default-No prompt, and no removal at all without a terminal.
+check_truserverless_version() {
+  local installed answer
+  installed="$(installed_truserverless_version)"
+  [[ -n "$installed" && "$installed" != "$TRUSERVERLESS_VERSION" ]] || return 0
+  warn "Installed truserverless $installed, but truserverless.txt pins $TRUSERVERLESS_VERSION"
+  echo "I need to uninstall the existing truserverless package"
+  echo "WARNING: I am going to remove all data, interrupt if you did not save it yet."
+  [[ -t 0 ]] || fail "not a terminal — cannot confirm; purge it with: sudo apt-get purge -y truserverless"
+  read -r -p "Continue? [y/N] " answer
+  [[ "$answer" =~ ^[Yy] ]] || fail "keeping truserverless $installed — start.sh needs $TRUSERVERLESS_VERSION"
+  sudo -n env "${APT_QUIET[@]}" apt-get purge -y truserverless \
+    || fail "failed to purge truserverless $installed"
+  ok "Purged truserverless $installed"
+}
+
 # Preflight for the native path: everything the rest of the flow assumes.
 preflight_native() {
   echo "--- Checking this host ---"
@@ -1673,9 +1704,12 @@ ensure_env_file
 # ensure_gh_apt installs through run_privileged, which is the `sudo -n` that
 # require_sudo verified — preflight is pure checks, so an unsupported host fails
 # before anything is installed. On macOS neither applies: gh comes from brew and
-# the VM ensure_gh_apt would target does not exist yet.
+# the VM ensure_gh_apt would target does not exist yet. The truserverless
+# version check sits between them: it may ask to purge a mismatched package, and
+# a No must leave the host exactly as it was.
 if $NATIVE_LINUX; then
   preflight_native
+  check_truserverless_version
   ensure_gh_apt
 fi
 
