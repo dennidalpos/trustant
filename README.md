@@ -1,5 +1,7 @@
 # Trustant TL;DR
 
+[![Watch a demo](intro.png)](https://trustant.ai/#video?v=intro)
+
 Welcome to Trustant source code
 
 How to run it from sources:
