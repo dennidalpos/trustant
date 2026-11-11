@@ -4,6 +4,15 @@
 
 [Click here to watch a demo](https://trustant.ai/#video?v=demo)
 
+For convenience scripts to install from sources:
+- [Cick here for Windows](https://trustant.ai?download=win)
+- [Click here for MacOS](https://trustant.ai?download=mac)
+- [Click here for Linux](https://trustant.ai?download=lin).
+
+If you want to know the entire story, go on.
+
+# How to run Trustant from sources
+
 Welcome to Trustant source code
 
 How to run it from sources:
@@ -80,7 +89,7 @@ You can also
 
 It is recommended your first enter in the development enviroment with:
 
-`./start.sh -v` or `./start.ps1 -v` 
+`./start.sh -v` or `./start.ps1 -v`
 
 then switch to main and execute
 
@@ -90,7 +99,7 @@ git pull origin main --recurse-submodules
 ./setup.sh
 ```
 
-then you can execute `./run.sh` (inside the VM — from a Mac host use `./ssh.sh ./run.sh`) 
+then you can execute `./run.sh` (inside the VM — from a Mac host use `./ssh.sh ./run.sh`)
 
 # Trustant Introduction
 
