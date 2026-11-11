@@ -1,6 +1,8 @@
 # Trustant TL;DR
 
-[![Watch a demo](intro.png)](https://trustant.ai/#video?v=intro)
+[![Watch a demo](splash.png)](https://trustant.ai/#video?v=demo)
+
+[Click here to watch a demo](https://trustant.ai/#video?v=demo)
 
 Welcome to Trustant source code
 
