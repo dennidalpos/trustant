@@ -21,3 +21,5 @@
 *.ps1 text eol=crlf
 *.png binary
 *.jpg binary
+# Preserve upstream whitespace in the generated original license/NOTICE texts.
+NOTICE whitespace=-blank-at-eol

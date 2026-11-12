@@ -30,14 +30,17 @@ web | codejar (web/js/codejar.min.js) | 4.2.0 | MIT | https://github.com/antonme
 web | @xterm/xterm (web/js/xterm.min.js, xterm.css) | 6.0.0 | MIT | https://github.com/xtermjs/xterm.js | npm:@xterm/xterm@6.0.0
 web | @xterm/addon-fit (web/js/xterm-addon-fit.min.js) | 0.11.0 | MIT | https://github.com/xtermjs/xterm.js | npm:@xterm/addon-fit@0.11.0
 
+# Browser-fetched fonts, referenced by web/trustant-ui.css (not image files).
+webremote | Work Sans | Google Fonts (unpinned) | OFL-1.1 | https://github.com/weiweihuanghuang/Work-Sans | url:https://raw.githubusercontent.com/google/fonts/main/ofl/worksans/OFL.txt
+webremote | JetBrains Mono | Google Fonts (unpinned) | OFL-1.1 | https://github.com/JetBrains/JetBrainsMono | url:https://raw.githubusercontent.com/google/fonts/main/ofl/jetbrainsmono/OFL.txt
+
 # --- 3. Git submodules ------------------------------------------------------
 submodule | acp (TruACP) | main | AGPL-3.0-or-later | https://github.com/trustant/trustant-acp | path:acp
 submodule | oplugins-truinst | main | AGPL-3.0-or-later | https://github.com/trustant/oplugins-truinst | path:oplugins-truinst
 submodule | oplugins (openserverless-task) | 0.9.0 | Apache-2.0 | https://github.com/trustable-ai/openserverless-task | path:oplugins
 submodule | mcp (openserverless-mcp) | main | Apache-2.0 | https://github.com/trustant/openserverless-mcp | path:mcp
-submodule | skills | main | Apache-2.0 | https://github.com/trustable-ai/skills | path:skills
+submodule | skills | main | AGPL-3.0-or-later | https://github.com/trustable-ai/skills | path:skills
 submodule | pi-acp (fork, nested in acp/pi-acp) | 0.0.31-trustant.1 | MIT | https://github.com/trustable-ai/pi-acp | path:acp/pi-acp
-submodule | packages (openserverless-packages) | main | Apache-2.0 | https://github.com/trustant/openserverless-packages | path:packages
 
 # --- 5. Container image: Ubuntu 24.04 packages ------------------------------
 apt | ubuntu:24.04 base image | 24.04 | LicenseRef-Debian-Copyright | https://ubuntu.com | -
@@ -75,7 +78,7 @@ binary | ops (OpenServerless CLI) | latest | Apache-2.0 | https://github.com/apa
 binary | mcp-s3 | 1.3.0 | Apache-2.0 | https://github.com/txn2/mcp-s3 | url:https://raw.githubusercontent.com/txn2/mcp-s3/v{v}/LICENSE
 
 # --- 7. ops prerequisites (oplugins/prereq.yml, downloaded by `ops`) --------
-prereq | 7zz (7-Zip) | * | LGPL-2.1-or-later AND BSD-3-Clause AND LicenseRef-unRAR | https://www.7-zip.org | url:https://www.7-zip.org/license.txt
+prereq | 7zz (7-Zip) | * | LGPL-2.1-or-later AND BSD-3-Clause AND BSD-2-Clause AND LicenseRef-unRAR | https://www.7-zip.org | url:https://raw.githubusercontent.com/ip7z/7zip/24.07/DOC/License.txt
 prereq | coreutils (uutils) | * | MIT | https://github.com/uutils/coreutils | url:https://raw.githubusercontent.com/uutils/coreutils/{v}/LICENSE
 prereq | bun | * | MIT | https://github.com/oven-sh/bun | url:https://raw.githubusercontent.com/oven-sh/bun/bun-v{v}/LICENSE.md
 prereq | kubectl | * | Apache-2.0 | https://github.com/kubernetes/kubernetes | url:https://raw.githubusercontent.com/kubernetes/kubernetes/v{v}/LICENSE
@@ -85,7 +88,7 @@ prereq | rg (ripgrep) | * | MIT OR Unlicense | https://github.com/BurntSushi/rip
 prereq | uv | * | Apache-2.0 OR MIT | https://github.com/astral-sh/uv | url:https://raw.githubusercontent.com/astral-sh/uv/{v}/LICENSE-MIT
 prereq | yq | * | MIT | https://github.com/mikefarah/yq | url:https://raw.githubusercontent.com/mikefarah/yq/v{v}/LICENSE
 prereq | helm | * | Apache-2.0 | https://github.com/helm/helm | url:https://raw.githubusercontent.com/helm/helm/v{v}/LICENSE
-prereq | zip (Windows only) | * | Info-ZIP | https://infozip.sourceforge.net | -
+hostprereq | zip (Windows only) | 3.0-1 | Info-ZIP | https://infozip.sourceforge.net | -
 
 # --- 8. Container image: global npm installs (top-level package only) -------
 # pi.version entries are added automatically; these come from image/Dockerfile.

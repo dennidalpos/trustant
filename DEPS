@@ -43,23 +43,37 @@ codejar (web/js/codejar.min.js)                   4.2.0    MIT      https://gith
 marked (web/js/marked.min.js)                     15.0.12  MIT      https://github.com/markedjs/marked
 
 
-3. GIT SUBMODULES
+3. FONTS LOADED BY THE BROWSER
+==============================
+
+Referenced by web/trustant-ui.css and downloaded from Google Fonts at
+runtime; font files are not bundled in the repository or image. The
+Google Fonts response is not version-pinned.
+
+NAME            VERSION                  LICENSE  HOMEPAGE
+----            -------                  -------  --------
+JetBrains Mono  Google Fonts (unpinned)  OFL-1.1  https://github.com/JetBrains/JetBrainsMono
+Work Sans       Google Fonts (unpinned)  OFL-1.1  https://github.com/weiweihuanghuang/Work-Sans
+
+
+4. GIT SUBMODULES
 =================
 
-Source checked out in this repository and built into the image.
+Sources tracked by this repository. Image inclusion depends on the
+build or runtime path; these entries do not assert that every submodule
+is copied into the image.
 
-NAME                                 VERSION            LICENSE            HOMEPAGE
-----                                 -------            -------            --------
-acp (TruACP)                         main               AGPL-3.0-or-later  https://github.com/trustant/trustant-acp
-mcp (openserverless-mcp)             main               Apache-2.0         https://github.com/trustant/openserverless-mcp
-oplugins (openserverless-task)       0.9.0              Apache-2.0         https://github.com/trustable-ai/openserverless-task
-oplugins-truinst                     main               AGPL-3.0-or-later  https://github.com/trustant/oplugins-truinst
-packages (openserverless-packages)   main               Apache-2.0         https://github.com/trustant/openserverless-packages
-pi-acp (fork, nested in acp/pi-acp)  0.0.31-trustant.1  MIT                https://github.com/trustable-ai/pi-acp
-skills                               main               Apache-2.0         https://github.com/trustable-ai/skills
+NAME                                 VERSION                         LICENSE            HOMEPAGE
+----                                 -------                         -------            --------
+acp (TruACP)                         main@9786f796380a               AGPL-3.0-or-later  https://github.com/trustant/trustant-acp
+mcp (openserverless-mcp)             main@baf14007f910               Apache-2.0         https://github.com/trustant/openserverless-mcp
+oplugins (openserverless-task)       0.9.0@455258e93971              Apache-2.0         https://github.com/trustable-ai/openserverless-task
+oplugins-truinst                     main@b65d58d49a3a               AGPL-3.0-or-later  https://github.com/trustant/oplugins-truinst
+pi-acp (fork, nested in acp/pi-acp)  0.0.31-trustant.1@4e526e5f64ea  MIT                https://github.com/trustable-ai/pi-acp
+skills                               main@56d349b6174e               AGPL-3.0-or-later  https://github.com/trustable-ai/skills
 
 
-4. TRUACP (acp) - NPM PRODUCTION DEPENDENCIES
+5. TRUACP (acp) - NPM PRODUCTION DEPENDENCIES
 =============================================
 
 Full production tree of acp/package-lock.json, bundled into truacp.cjs
@@ -187,7 +201,7 @@ zod                                                4.4.3    MIT           https:
 zwitch                                             2.0.4    MIT           https://www.npmjs.com/package/zwitch
 
 
-5. PI-ACP (acp/pi-acp) - NPM PRODUCTION DEPENDENCIES
+6. PI-ACP (acp/pi-acp) - NPM PRODUCTION DEPENDENCIES
 ====================================================
 
 Full production tree of acp/pi-acp/package-lock.json.
@@ -198,7 +212,7 @@ NAME                      VERSION  LICENSE     HOMEPAGE
 zod                       3.25.76  MIT         https://www.npmjs.com/package/zod
 
 
-6. OPENSERVERLESS-MCP (mcp) - NPM PRODUCTION DEPENDENCIES
+7. OPENSERVERLESS-MCP (mcp) - NPM PRODUCTION DEPENDENCIES
 =========================================================
 
 Full production tree of mcp/package-lock.json, installed globally in the
@@ -300,7 +314,7 @@ zod                        3.25.76  MIT           https://www.npmjs.com/package/
 zod-to-json-schema         3.25.2   ISC           https://www.npmjs.com/package/zod-to-json-schema
 
 
-7. TRUSTANT-REACT-MCP (react-mcp) - NPM PRODUCTION DEPENDENCIES
+8. TRUSTANT-REACT-MCP (react-mcp) - NPM PRODUCTION DEPENDENCIES
 ===============================================================
 
 Full production tree of react-mcp/package-lock.json, installed globally
@@ -403,7 +417,7 @@ zod                        3.25.76  MIT           https://www.npmjs.com/package/
 zod-to-json-schema         3.25.2   ISC           https://www.npmjs.com/package/zod-to-json-schema
 
 
-8. CONTAINER IMAGE - UBUNTU 24.04 PACKAGES
+9. CONTAINER IMAGE - UBUNTU 24.04 PACKAGES
 ==========================================
 
 Installed with apt in image/Dockerfile. Each package's full copyright and
@@ -438,8 +452,8 @@ vim                         distro   Vim                                      ht
 zstd (build stage only)     distro   BSD-3-Clause OR GPL-2.0-only             https://github.com/facebook/zstd
 
 
-9. CONTAINER IMAGE - DOWNLOADED BINARIES AND RUNTIMES
-=====================================================
+10. CONTAINER IMAGE - DOWNLOADED BINARIES AND RUNTIMES
+======================================================
 
 Downloaded by image/Dockerfile (and by start.sh/setup.sh in the dev VM).
 
@@ -453,28 +467,38 @@ ops (OpenServerless CLI)  latest   Apache-2.0         https://github.com/apache/
 uv (/usr/bin/uv)          latest   Apache-2.0 OR MIT  https://github.com/astral-sh/uv
 
 
-10. OPS PREREQUISITES (oplugins/prereq.yml)
+11. OPS PREREQUISITES (oplugins/prereq.yml)
 ===========================================
 
 Binaries `ops` downloads into ~/.ops/<os>-<arch>/bin on first run, in the
 image and on every developer machine.
 
-NAME                VERSION  LICENSE                                                  HOMEPAGE
-----                -------  -------                                                  --------
-7zz (7-Zip)         2407     LGPL-2.1-or-later AND BSD-3-Clause AND LicenseRef-unRAR  https://www.7-zip.org
-bun                 1.3.14   MIT                                                      https://github.com/oven-sh/bun
-coreutils (uutils)  0.0.27   MIT                                                      https://github.com/uutils/coreutils
-helm                3.18.0   Apache-2.0                                               https://github.com/helm/helm
-k3sup               0.13.13  MIT                                                      https://github.com/alexellis/k3sup
-kind                0.30.0   Apache-2.0                                               https://github.com/kubernetes-sigs/kind
-kubectl             1.33.1   Apache-2.0                                               https://github.com/kubernetes/kubernetes
-rg (ripgrep)        14.1.0   MIT OR Unlicense                                         https://github.com/BurntSushi/ripgrep
-uv                  0.7.19   Apache-2.0 OR MIT                                        https://github.com/astral-sh/uv
-yq                  4.47.1   MIT                                                      https://github.com/mikefarah/yq
-zip (Windows only)  3.0-1    Info-ZIP                                                 https://infozip.sourceforge.net
+NAME                VERSION  LICENSE                                                       HOMEPAGE
+----                -------  -------                                                       --------
+7zz (7-Zip)         2407     LGPL-2.1-or-later AND BSD-3-Clause AND BSD-2-Clause AND LicenseRef-unRAR  https://www.7-zip.org
+bun                 1.3.14   MIT                                                           https://github.com/oven-sh/bun
+coreutils (uutils)  0.0.27   MIT                                                           https://github.com/uutils/coreutils
+helm                3.18.0   Apache-2.0                                                    https://github.com/helm/helm
+k3sup               0.13.13  MIT                                                           https://github.com/alexellis/k3sup
+kind                0.30.0   Apache-2.0                                                    https://github.com/kubernetes-sigs/kind
+kubectl             1.33.1   Apache-2.0                                                    https://github.com/kubernetes/kubernetes
+rg (ripgrep)        14.1.0   MIT OR Unlicense                                              https://github.com/BurntSushi/ripgrep
+uv                  0.7.19   Apache-2.0 OR MIT                                             https://github.com/astral-sh/uv
+yq                  4.47.1   MIT                                                           https://github.com/mikefarah/yq
 
 
-11. CONTAINER IMAGE - GLOBAL NPM INSTALLS
+12. HOST-SPECIFIC OPS PREREQUISITES
+===================================
+
+Referenced by the cross-platform ops sources; not shipped in the Linux
+container image.
+
+NAME                VERSION  LICENSE   HOMEPAGE
+----                -------  -------   --------
+zip (Windows only)  3.0-1    Info-ZIP  https://infozip.sourceforge.net
+
+
+13. CONTAINER IMAGE - GLOBAL NPM INSTALLS
 =========================================
 
 Coding agents pinned in acp/pi.version plus the tools installed by
@@ -498,7 +522,7 @@ typescript                              latest   Apache-2.0  https://github.com/
 typescript-language-server              latest   Apache-2.0  https://github.com/typescript-language-server/typescript-language-server
 
 
-12. CONTAINER IMAGE - PYTHON TOOLS (uv tool install)
+14. CONTAINER IMAGE - PYTHON TOOLS (uv tool install)
 ====================================================
 
 Each tool runs in its own uv-managed virtualenv under /opt/uv/tools.
@@ -515,7 +539,7 @@ redis-mcp-server                                       0.5.0    MIT             
 yapf                                                   latest   Apache-2.0                                        https://github.com/google/yapf
 
 
-13. PYTHON PACKAGES FOR USER APPS (acp/extensions/requirements.txt)
+15. PYTHON PACKAGES FOR USER APPS (acp/extensions/requirements.txt)
 ===================================================================
 
 Installed unmodified for the apps users build.
@@ -611,7 +635,7 @@ xxhash                4.0.1        BSD-2-Clause                                 
 zstandard             0.25.0       BSD-3-Clause                                        https://pypi.org/project/zstandard
 
 
-14. DEVELOPMENT ENVIRONMENT ONLY (NOT DISTRIBUTED)
+16. DEVELOPMENT ENVIRONMENT ONLY (NOT DISTRIBUTED)
 ==================================================
 
 Installed by start.sh / start.ps1 / setup.sh / run.sh on a developer
@@ -637,15 +661,21 @@ LICENSE NOTES
   in Trustant, its image or this inventory: TruACP installs it on demand into
   the user's workspace only after the user accepts Anthropic's Commercial
   Terms (https://www.anthropic.com/legal/commercial-terms).
-- psycopg / psycopg-binary are LGPL-3.0-only; they are installed as unmodified
-  Python packages and dynamically imported, as the LGPL permits. Source:
+- psycopg / psycopg-binary are declared LGPL-3.0-only and installed as separate
+  Python packages. Verify the selected distribution's source and replacement
+  requirements before redistributing an image. Source:
   https://github.com/psycopg/psycopg
-- 7-Zip (7zz) is LGPL-2.1-or-later with BSD-3-Clause parts and the unRAR
+- 7-Zip (7zz) is LGPL-2.1-or-later with BSD-3-Clause/BSD-2-Clause parts and the unRAR
   restriction; it is the unmodified upstream binary. Source:
   https://www.7-zip.org
-- MPL-2.0 components (certifi, ca-certificates, orjson, tqdm) are file-level
-  copyleft and are shipped unmodified; sources are at their homepages.
-- GPL/LGPL Ubuntu packages are the unmodified distribution binaries; their
-  sources are available from the Ubuntu archive (apt-get source <package>).
+- MPL-2.0 components (certifi, ca-certificates, orjson, tqdm) require review of
+  the covered source files and source availability for the shipped versions.
+- Ubuntu entries identify direct packages requested by the Dockerfile, not
+  the complete resolved image. Inspect dpkg and /usr/share/doc in the actual
+  image, and arrange corresponding source delivery for GPL/LGPL components.
+- Versions marked latest, distro, 24.x or 1.x are unresolved build inputs.
+  Top-level npm/Python tools and downloaded runtimes can contain additional
+  dependencies not enumerated here. This is not an image SBOM or a statement
+  that redistribution obligations have been fulfilled.
 - air is GPL-3.0 but is a development-only file watcher; it is never
   distributed with Trustant.

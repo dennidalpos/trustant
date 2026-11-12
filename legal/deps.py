@@ -25,6 +25,7 @@ fetched from spdx/license-list-data.
 """
 
 import io
+import hashlib
 import json
 import os
 import re
@@ -35,6 +36,7 @@ import tarfile
 import textwrap
 import urllib.request
 import zipfile
+from concurrent.futures import ThreadPoolExecutor
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LEGAL = os.path.join(ROOT, "legal")
@@ -56,8 +58,14 @@ SECTIONS = [
      "Compiled into the single trustant executable."),
     ("web", "FRONTEND ASSETS VENDORED IN web/",
      "Embedded into the trustant executable and served to the browser."),
+    ("webremote", "FONTS LOADED BY THE BROWSER",
+     "Referenced by web/trustant-ui.css and downloaded from Google Fonts at\n"
+     "runtime; font files are not bundled in the repository or image. The\n"
+     "Google Fonts response is not version-pinned."),
     ("submodule", "GIT SUBMODULES",
-     "Source checked out in this repository and built into the image."),
+     "Sources tracked by this repository. Image inclusion depends on the\n"
+     "build or runtime path; these entries do not assert that every submodule\n"
+     "is copied into the image."),
     ("npm-acp", "TRUACP (acp) - NPM PRODUCTION DEPENDENCIES",
      "Full production tree of acp/package-lock.json, bundled into truacp.cjs\n"
      "and the TruACP web UI."),
@@ -77,6 +85,9 @@ SECTIONS = [
     ("prereq", "OPS PREREQUISITES (oplugins/prereq.yml)",
      "Binaries `ops` downloads into ~/.ops/<os>-<arch>/bin on first run, in the\n"
      "image and on every developer machine."),
+    ("hostprereq", "HOST-SPECIFIC OPS PREREQUISITES",
+     "Referenced by the cross-platform ops sources; not shipped in the Linux\n"
+     "container image."),
     ("npmglobal", "CONTAINER IMAGE - GLOBAL NPM INSTALLS",
      "Coding agents pinned in acp/pi.version plus the tools installed by\n"
      "image/Dockerfile. Listed at top level; each package's own dependency\n"
@@ -98,16 +109,22 @@ LICENSE NOTES
   in Trustant, its image or this inventory: TruACP installs it on demand into
   the user's workspace only after the user accepts Anthropic's Commercial
   Terms (https://www.anthropic.com/legal/commercial-terms).
-- psycopg / psycopg-binary are LGPL-3.0-only; they are installed as unmodified
-  Python packages and dynamically imported, as the LGPL permits. Source:
+- psycopg / psycopg-binary are declared LGPL-3.0-only and installed as separate
+  Python packages. Verify the selected distribution's source and replacement
+  requirements before redistributing an image. Source:
   https://github.com/psycopg/psycopg
-- 7-Zip (7zz) is LGPL-2.1-or-later with BSD-3-Clause parts and the unRAR
+- 7-Zip (7zz) is LGPL-2.1-or-later with BSD-3-Clause/BSD-2-Clause parts and the unRAR
   restriction; it is the unmodified upstream binary. Source:
   https://www.7-zip.org
-- MPL-2.0 components (certifi, ca-certificates, orjson, tqdm) are file-level
-  copyleft and are shipped unmodified; sources are at their homepages.
-- GPL/LGPL Ubuntu packages are the unmodified distribution binaries; their
-  sources are available from the Ubuntu archive (apt-get source <package>).
+- MPL-2.0 components (certifi, ca-certificates, orjson, tqdm) require review of
+  the covered source files and source availability for the shipped versions.
+- Ubuntu entries identify direct packages requested by the Dockerfile, not
+  the complete resolved image. Inspect dpkg and /usr/share/doc in the actual
+  image, and arrange corresponding source delivery for GPL/LGPL components.
+- Versions marked latest, distro, 24.x or 1.x are unresolved build inputs.
+  Top-level npm/Python tools and downloaded runtimes can contain additional
+  dependencies not enumerated here. This is not an image SBOM or a statement
+  that redistribution obligations have been fulfilled.
 - air is GPL-3.0 but is a development-only file watcher; it is never
   distributed with Trustant.
 """
@@ -256,7 +273,8 @@ def fetch(comp):
                 with open(os.path.join(tmp, os.path.basename(url)), "wb") as f:
                     f.write(data)
         elif kind == "npm":
-            r = subprocess.run(["npm", "pack", arg, "--silent", "--pack-destination", tmp],
+            r = subprocess.run([shutil.which("npm") or "npm", "pack", arg,
+                                "--ignore-scripts", "--silent", "--pack-destination", tmp],
                                capture_output=True, text=True)
             if r.returncode:
                 raise RuntimeError(r.stderr.strip()[-300:])
@@ -297,7 +315,7 @@ def fetch(comp):
     return d
 
 
-LEGAL_FILE = re.compile(r"^(LICEN[CS]E|COPYING|NOTICE|UNLICENSE|COPYRIGHT|LICENSE-[A-Z0-9]+)"
+LEGAL_FILE = re.compile(r"^(LICEN[CS]E|COPYING|NOTICE|UNLICENSE|COPYRIGHT|OFL|LICENSE-[A-Z0-9]+)"
                         r"([._-].*)?$", re.I)
 
 
@@ -411,17 +429,54 @@ def table(rows):
 
 
 def write(name, text):
-    with open(rel(name), "w") as f:
+    with open(rel(name), "w", encoding="utf-8", newline="\n") as f:
         f.write(text.rstrip("\n") + "\n")
 
 
-def main():
+def component_records(comps):
+    """Keep source evidence distinct from an asserted licensing conclusion."""
+    records = []
+    for c in comps:
+        source = c["fetch"].replace("{v}", c["version"])
+        if source.startswith("dir:"):
+            source = "path:" + os.path.relpath(source[4:], ROOT).replace(os.sep, "/")
+        originals = c["licfiles"] + c["noticefiles"]
+        status = ("development-only" if c["section"] == "dev" else
+                  "license-files-collected" if c["licfiles"] else
+                  "notice-only" if c["noticefiles"] else "declared-only")
+        obligation = "Review the SPDX expression; preserve applicable license and attribution notices."
+        if re.search(r"(?:A|L)?GPL-|MPL-", c["license"]):
+            obligation += " Review corresponding/covered source and any replacement or relinking requirements."
+        if "LicenseRef-unRAR" in c["license"]:
+            obligation += " Review the unRAR restriction separately from the LGPL terms."
+        if c["section"] == "dev":
+            obligation = "Development input; not identified as a shipped runtime by this inventory."
+        record = {key: c[key] for key in ("section", "name", "version", "license", "homepage")}
+        if c.get("revision"):
+            record["revision"] = c["revision"]
+        record.update(source=source, status=status, obligation=obligation,
+                      evidence=[dict(file=os.path.basename(p),
+                                     sha256=hashlib.sha256(read_text(p).encode("utf-8")).hexdigest())
+                                for p in originals])
+        records.append(record)
+    return sorted(records, key=lambda c: (c["section"], c["name"].lower(), c["version"]))
+
+
+def components():
     comps = read_manual()
     goversion, mods = go_mod()
     pins = requirements()
     prereq = prereq_versions()
 
     for c in comps:
+        if c["section"] == "submodule" and c["fetch"].startswith("path:"):
+            directory = rel(c["fetch"][5:])
+            result = subprocess.run(["git", "-C", directory, "rev-parse", "HEAD"],
+                                    capture_output=True, text=True)
+            if result.returncode:
+                die("cannot resolve source revision of " + c["name"])
+            c["revision"] = result.stdout.strip()
+            c["version"] += "@" + c["revision"][:12]
         if c["version"] != "*":
             continue
         if c["section"] == "go":
@@ -462,9 +517,29 @@ def main():
         if c["section"] not in known:
             die("unknown section %r for %s" % (c["section"], c["name"]))
 
+    return comps
+
+
+def main():
+    comps = components()
+
+    # Fetch each source once: lockfile trees can share the same package cache.
+    # Independent downloads may run together, but never write the same cache.
+    sources = {}
+    for c in comps:
+        if c["section"] != "dev":
+            sources.setdefault(c["fetch"].replace("{v}", c["version"]), c)
+    with ThreadPoolExecutor(max_workers=6) as executor:
+        pending = {key: executor.submit(fetch, c) for key, c in sources.items()}
+        fetched = {key: future.result() for key, future in pending.items()}
+    unavailable = [key for key, directory in fetched.items()
+                   if key and key != "-" and (not directory or not os.path.isdir(directory))]
+    if unavailable:
+        die("legal sources unavailable; existing outputs preserved: " + ", ".join(unavailable))
+
     # Fetch legal files; fill licenses the inputs do not declare.
     for c in comps:
-        d = fetch(c) if c["section"] != "dev" else None
+        d = fetched.get(c["fetch"].replace("{v}", c["version"])) if c["section"] != "dev" else None
         c["licfiles"], c["noticefiles"] = legal_files(d)
         if not c["license"] and d:
             pj = os.path.join(d, "package.json")
@@ -509,7 +584,7 @@ def main():
         head = "%d. %s" % (n, title)
         out += ["", "", head, "=" * len(head), "", desc, "", table(rows)]
     out += ["", "", NOTES]
-    write("DEPS", "\n".join(out))
+    deps_text = "\n".join(out)
 
     # LICENSE
     users = {}
@@ -537,13 +612,13 @@ def main():
         out.append(text if text is not None else
                    "This is Trustant's own license; its full text is at the top of "
                    "this file.")
-    write("LICENSE", "\n".join(out))
+    license_result = "\n".join(out)
 
     # NOTICE
     out = [read_text(os.path.join(LEGAL, "NOTICE.head")).strip("\n"), "", "", RULE,
            "THIRD-PARTY NOTICES", RULE, "", textwrap.dedent("""\
-        Copyright statements and NOTICE files of the third-party components listed
-        in DEPS, grouped as in DEPS. The full license texts are in LICENSE. Ubuntu
+        Original license and NOTICE files of the third-party components listed
+        in DEPS, grouped as in DEPS. SPDX license texts are also in LICENSE. Ubuntu
         packages carry their statements in /usr/share/doc/<package>/copyright
         inside the container image.""")]
     seen = set()
@@ -559,12 +634,17 @@ def main():
                 continue
             seen.add(ident)
             lines = copyright_lines(c["licfiles"])
+            originals = [(os.path.basename(p), read_text(p).strip("\n"))
+                         for p in c["licfiles"]]
             notices = [read_text(p).strip("\n") for p in c["noticefiles"]]
             notices = [t for t in notices if t.strip()]
-            if not lines and not notices:
+            if not originals and not notices:
                 continue
             b = ["%s %s (%s)" % (c["name"], c["version"], c["license"])]
             b += ["  " + l for l in lines]
+            for filename, original in originals:
+                b += ["", "  LICENSE FILE: " + filename]
+                b += ["  | " + l if l else "  |" for l in original.split("\n")]
             for t in notices:
                 b += ["", "  NOTICE:"] + ["  | " + l if l else "  |" for l in t.split("\n")]
             blocks.append("\n".join(b))
@@ -574,7 +654,16 @@ def main():
         head = "%d. %s" % (n, title)
         out += ["", "", head, "=" * len(head), ""]
         out.append("\n\n".join(blocks))
+    records_text = json.dumps({
+        "schemaVersion": 1,
+        "scope": "Declared source and image build inputs; not a resolved image SBOM or legal clearance.",
+        "components": component_records(comps),
+    }, ensure_ascii=False, indent=2)
+    # Resolve every source and license text before replacing any output.
+    write("DEPS", deps_text)
+    write("LICENSE", license_result)
     write("NOTICE", "\n".join(out))
+    write("legal/COMPONENTS.json", records_text)
 
     missing = [c["name"] for c in comps
                if c["section"] != "dev" and c["fetch"] != "-" and not c["licfiles"]]
