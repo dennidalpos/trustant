@@ -4,10 +4,11 @@ Trustant uses `pi` (`@earendil-works/pi-coding-agent`) as its coding agent.
 Trustant does not execute it directly: `truacp` serves the React UI on port
 4096, starts `pi-acp` over stdio, and `pi-acp` starts Pi in RPC mode.
 
-The browser-visible hostname remains `opencode.<domain>` for ingress and WAF
-compatibility, but it is only a plain reverse proxy to TruACP. There is no
-OpenCode process, session API, directory header, project database, or URL
-rewriting behind that hostname.
+The browser-visible hostname is `truacp.<domain>`. On port 8910, Trustant's
+hostname middleware forwards that host to `127.0.0.1:4096` without URL,
+directory, or session rewriting. The bundled Kubernetes `truacp-ing` ingress
+routes to service port 4096 directly. TruACP owns its working directory and ACP
+session state. See [preflight routing](0-preflight.md).
 
 ## Source and version pinning
 

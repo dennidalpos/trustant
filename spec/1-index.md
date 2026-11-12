@@ -225,6 +225,7 @@ persisted:
 
 1. `POST /api/discover-models` with `{base_url, api_key}`. On error, show the
    message inline in the dialog and keep it open.
+   **Cancel** during discovery returns to the picker without saving the endpoint.
 2. Build `models` as `{name: {maxToken: 131072, maxOutput: 32768}}` for each
    discovered model. An endpoint that returns no models is an error: show *"The
    endpoint returned no models."* inline and keep the dialog open.
@@ -260,6 +261,8 @@ reaches the probe and surfaces the internal `pi.default not defined` diagnostic.
 
 Every time the index page is opened (after a provider has been chosen), invoke the configuration api.
 Expect a streamed answer and show the messages with a modal while it is configuring.
+If configuration fails, show **Retry** and **Choose another provider**.
+Show **Continue** after configuration and the model health check succeed.
 
 When `provider == "trustant"` the backend skips the Ollama connectivity check and model-pull steps and streams a single `OK: Skipping Ollama setup (Trustant Cloud)` line — see [2a-config.md](2a-config.md).
 
@@ -279,6 +282,9 @@ If the connectivity probe returns an authentication error **and** `provider == "
 - If a URL is found, show **"Click here to login to Ollama Cloud"** as a link pointing to that URL with `target="_blank"` (opens in a new tab) and a Retry button. Retry reruns the streamed Pi gate, rather than only the model probe, so a successful sign-in also writes Pi's global models, authentication reference, and default selection.
 
 - If `ollama signin` produces no recognizable URL, show **"You are not logged in to Ollama Cloud. Please execute `ollama signin` in your terminal and click Retry."**
+- Open the dialog while the browser is still requesting the link. Keep
+  **Choose another provider** available during the request and show the terminal
+  instructions if the request fails or times out.
 
 Repeat until the test succeeded.
 
@@ -292,6 +298,12 @@ When `provider == "trustant"` and `/api/testmodel` returns an error, run the **T
 
 Repeat until the test succeeds.
 
-If the user cancels the recovery flow (closes the signin modal without retrying, or clicks **Cancel** in the Trustant iframe), or the test still fails after recovery, the splash **returns to the Provider Choice modal** rather than proceeding to `applist.html`. A failed health check always sends the user back to provider selection — the app is unusable without a working model.
+**Choose another provider** on the Ollama sign-in dialog reopens the splash with
+`?choose=1`. The splash shows the provider picker even if Ollama is still saved.
+This action is available whenever the dialog appears, including after reopening
+the splash. The saved configuration changes when the user configures a provider.
+
+**Cancel** in the Trustant sign-in iframe ends registration or recovery. A
+failed model health check after recovery also returns to provider selection.
 
 Once configuration completes successfully, navigate to `applist.html`.

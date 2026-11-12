@@ -31,11 +31,14 @@ process environment overrides its default.
 
 | Variable | Internal | Default | Effect when on |
 |---|---|---|---|
-| `ENABLE_LICENSE` | `EnableLicense` | **on** | Enforce the license gates on git push and publishing, and show the License card in `configure.html` |
+| `ENABLE_LICENSE` | `EnableLicense` | **on** | Require a valid license and a covered destination for remote deployment and application provisioning, and show the License card in `configure.html` |
 | `ENABLE_REGOLO` | `EnableRegolo` | **off** | Offer the **Sovereign AI** (Regolo.AI) card in the provider selector |
 
-So by default a license is required to push and publish, and the provider
-selector shows only Cloud AI and Private AI.
+By default, remote deployment (`/api/publish/remote`) and application
+provisioning (`/api/publish/provision`) require a valid license. The local
+destinations listed in [14-license.md](14-license.md) bypass the destination
+check only. Git push, force-push, and development launch have no license gate.
+The provider selector shows only Cloud AI and Private AI by default.
 
 `STATUS_URL` is hidden the same way: it overrides the status file
 `/api/status` reads (default `https://trustant.ai/status.json`, see
@@ -228,13 +231,13 @@ The web application requires you always access the application with a full fqdn 
 
 - if detect a fqdn like <host>.<domain> (no '.' in <host>, <domain> can include '.') do the following:
 - if <host> is 'trustant', serve the folder `web`
-- if <host> is 'opencode', proxy pass to the pod-local TruACP runtime at
-  `127.0.0.1:4096`. The hostname keeps its historical `opencode` label so
-  existing ingress, WAF rules and bookmarks stay valid; the runtime behind it is
-  TruACP/Pi. In Kubernetes/browser deployments the `opencode.<domain>` ingress
-  must route to the Trustant app port 8910, not directly to service port 4096.
+- if <host> is 'truacp', proxy to the TruACP runtime at `127.0.0.1:4096`.
   TruACP serves its own UI and owns its working directory and ACP session state
   internally, so the middleware performs no directory, session or project-route
   rewriting: requests are proxied through unchanged. App switching happens
   through Trustant `/api/launch/<app>`.
-- if <host> is 'vite',  proxy pass to port 5173
+- if <host> is 'vite', proxy to port 5173.
+
+These are the Go server's hostname routes when traffic reaches port 8910.
+The bundled Kubernetes ingress templates route `trustant.<domain>` to service
+port 8910, `truacp.<domain>` to 4096, and `vite.<domain>` to 5173.

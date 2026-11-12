@@ -13,10 +13,11 @@ port `8910`. It is independent from:
 - model-provider and Ollama credentials;
 - per-application `.env` files.
 
-This phase does not protect the Kubernetes ingresses that route
-`opencode.<domain>` and `vite.<domain>` directly to ports `4096` and `5173`.
-Those hosts require a later host-specific session bootstrap; a parent-domain
-cookie must not be used.
+The Kubernetes ingresses route `truacp.<domain>` and `vite.<domain>` directly
+to service ports `4096` and `5173`. The Go server also proxies those hostnames
+when requests arrive on port `8910`. Both paths bypass the Trustant local
+session middleware. A future session bootstrap for these hosts must use
+host-specific sessions and host-only cookies.
 
 See [trustant-auth-flow.svg](trustant-auth-flow.svg).
 

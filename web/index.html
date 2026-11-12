@@ -36,7 +36,7 @@
 
     <!-- Provider Choice Modal -->
     <div id="providerModal" class="fixed inset-0 nu-modal-scrim hidden items-center justify-center z-40">
-        <div class="nu-modal p-6 w-full max-w-4xl mx-4">
+        <div class="nu-modal p-6 w-full max-w-4xl mx-4 max-h-[calc(100dvh-2rem)] overflow-y-auto">
             <h3 class="text-3xl font-light mb-2 text-center">Select your AI provider</h3>
             <div id="providerGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-5 items-stretch">
 
@@ -125,11 +125,14 @@
             <h3 class="text-lg font-medium mb-2">Configuring</h3>
             <p class="text-sm text-[color:var(--nu-muted)] mb-3">Pulling models and generating configuration…</p>
             <div id="configMessages" class="nu-code text-left text-sm nu-panel p-3 max-h-48 overflow-y-auto mb-4"></div>
-            <div id="configDone" class="hidden flex gap-3 justify-center">
+            <div id="configDone" class="hidden flex flex-wrap gap-3 justify-center">
                 <button id="configRetryBtn" onclick="runConfiguration()" class="hidden nu-btn nu-btn-primary">
                     Retry
                 </button>
-                <button onclick="hideConfigModal()"
+                <a id="configChooseBtn" href="?choose=1" class="hidden nu-btn nu-btn-secondary">
+                    Choose another provider
+                </a>
+                <button id="configContinueBtn" type="button" onclick="hideConfigModal()"
                     class="nu-btn nu-btn-secondary">
                     Continue
                 </button>
@@ -138,9 +141,11 @@
     </div>
 
     <!-- Sign-in Required Modal -->
-    <div id="signinModal" class="fixed inset-0 nu-modal-scrim hidden items-center justify-center z-50">
+    <div id="signinModal" role="dialog" aria-labelledby="signinTitle"
+        class="fixed inset-0 nu-modal-scrim hidden items-center justify-center z-50">
         <div class="nu-modal p-6 w-full max-w-md mx-4 text-center">
-            <h3 class="text-lg font-medium mb-4 text-[color:var(--nu-danger)]">Sign-in required</h3>
+            <h3 id="signinTitle" tabindex="-1" class="text-lg font-medium mb-4 text-[color:var(--nu-danger)]">Sign-in required</h3>
+            <p id="signinLoading" role="status" class="hidden mb-6 text-[color:var(--nu-muted)]">Preparing Ollama sign-in…</p>
             <div id="signinWithLink" class="hidden mb-6">
                 <a id="ollamaConnectLink" href="#" target="_blank"
                     class="text-lg nu-link font-medium">Click here to log in to Ollama Cloud</a>
@@ -150,10 +155,14 @@
                 <p class="text-[color:var(--nu-muted)] mb-2">You are not logged in to Ollama Cloud.</p>
                 <p class="text-[color:var(--nu-muted)]">Please execute <code class="nu-code nu-panel px-2 py-1 text-sm">ollama signin</code> and click Retry.</p>
             </div>
-            <button onclick="retryOpenAITest()"
-                class="nu-btn nu-btn-primary">
-                Retry
-            </button>
+            <div class="flex flex-wrap justify-center gap-3">
+                <a href="?choose=1" class="nu-btn nu-btn-secondary">
+                    Choose another provider
+                </a>
+                <button id="signinRetryBtn" type="button" onclick="retryOpenAITest()" class="nu-btn nu-btn-primary">
+                    Retry
+                </button>
+            </div>
         </div>
     </div>
 
@@ -272,6 +281,7 @@
         // broken endpoint is never persisted and the user goes straight through
         // the normal Configuration flow instead of via configure.html.
         const PRIVATE_BASE_URL_RE = /^https?:\/\/[^\s]+\/v1\/?$/;
+        let privateDiscovery = null;
 
         function selectPrivate() {
             hideProviderModal();
@@ -289,6 +299,7 @@
         }
 
         function cancelPrivate() {
+            privateDiscovery?.abort();
             hidePrivateModal();
             showProviderModal();
         }
@@ -301,6 +312,7 @@
         }
 
         async function confirmPrivate() {
+            if (privateDiscovery) return;
             const baseUrl = document.getElementById('privateBaseUrl').value.trim();
             const apiKey = document.getElementById('privateApiKey').value.trim();
 
@@ -318,14 +330,18 @@
             }
 
             const btn = document.getElementById('privateSaveBtn');
-            const label = btn ? btn.textContent : '';
-            if (btn) { btn.disabled = true; btn.textContent = 'Discovering models…'; }
+            const label = btn.textContent;
+            const discovery = new AbortController();
+            privateDiscovery = discovery;
+            btn.disabled = true;
+            btn.textContent = 'Discovering models…';
             showPrivateError('');
 
             let models;
             try {
                 const resp = await fetch('/api/discover-models', {
                     method: 'POST',
+                    signal: discovery.signal,
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ base_url: baseUrl, api_key: apiKey })
                 });
@@ -335,11 +351,14 @@
                 }
                 models = Array.isArray(data.models) ? data.models : [];
             } catch (e) {
-                if (btn) { btn.disabled = false; btn.textContent = label; }
-                showPrivateError('Could not discover models: ' + e.message);
+                if (!discovery.signal.aborted) showPrivateError('Could not discover models: ' + e.message);
                 return;
+            } finally {
+                privateDiscovery = null;
+                btn.disabled = false;
+                btn.textContent = label;
             }
-            if (btn) { btn.disabled = false; btn.textContent = label; }
+            if (discovery.signal.aborted) return;
             if (models.length === 0) {
                 showPrivateError('The endpoint returned no models.');
                 return;
@@ -538,23 +557,31 @@
         }
 
         async function showSigninModal() {
+            const modal = document.getElementById('signinModal');
+            const loading = document.getElementById('signinLoading');
+            const withLink = document.getElementById('signinWithLink');
+            const withoutLink = document.getElementById('signinWithoutLink');
+            const retry = document.getElementById('signinRetryBtn');
+            withLink.classList.add('hidden');
+            withoutLink.classList.add('hidden');
+            loading.classList.remove('hidden');
+            retry.disabled = true;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.getElementById('signinTitle').focus();
+
+            let url;
             try {
-                const resp = await fetch('/api/ollama-connect');
-                const data = await resp.json();
-                if (data.url) {
-                    document.getElementById('ollamaConnectLink').href = data.url;
-                    document.getElementById('signinWithLink').classList.remove('hidden');
-                    document.getElementById('signinWithoutLink').classList.add('hidden');
-                } else {
-                    document.getElementById('signinWithLink').classList.add('hidden');
-                    document.getElementById('signinWithoutLink').classList.remove('hidden');
-                }
+                const resp = await fetch('/api/ollama-connect', { signal: AbortSignal.timeout(10000) });
+                if (resp.ok) url = (await resp.json()).url;
             } catch {
-                document.getElementById('signinWithLink').classList.add('hidden');
-                document.getElementById('signinWithoutLink').classList.remove('hidden');
+                // The terminal sign-in instructions are also the network fallback.
             }
-            document.getElementById('signinModal').classList.remove('hidden');
-            document.getElementById('signinModal').classList.add('flex');
+            if (url) document.getElementById('ollamaConnectLink').href = url;
+            withLink.classList.toggle('hidden', !url);
+            withoutLink.classList.toggle('hidden', !!url);
+            loading.classList.add('hidden');
+            retry.disabled = false;
         }
 
         function hideSigninModal() {
@@ -632,8 +659,29 @@
             const msgEl = document.getElementById('configMessages');
             let configError = false;
             let authRequired = false;
+            function appendConfigLine(line) {
+                if (!line.trim()) return;
+                const div = document.createElement('div');
+                if (line.startsWith('AUTH_REQUIRED:')) {
+                    div.className = 'text-[color:var(--nu-danger)]';
+                    div.textContent = line.substring('AUTH_REQUIRED:'.length).trim();
+                    authRequired = true;
+                } else {
+                    div.textContent = line;
+                    if (line.startsWith('ERROR:')) {
+                        div.className = 'text-[color:var(--nu-danger)]';
+                        configError = true;
+                    } else {
+                        div.className = line.startsWith('OK:')
+                            ? 'text-[color:var(--nu-signal)]' : 'text-[color:var(--nu-muted)]';
+                    }
+                }
+                msgEl.appendChild(div);
+                msgEl.scrollTop = msgEl.scrollHeight;
+            }
             try {
                 const resp = await fetch('/api/configure');
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
                 const reader = resp.body.getReader();
                 const decoder = new TextDecoder();
                 let buffer = '';
@@ -643,38 +691,9 @@
                     buffer += decoder.decode(value, { stream: true });
                     const lines = buffer.split('\n');
                     buffer = lines.pop();
-                    for (const line of lines) {
-                        if (line.trim()) {
-                            const div = document.createElement('div');
-                            // /api/configure must not collapse an Ollama 401
-                            // into a generic configuration error: that would
-                            // skip the sign-in modal and strand Pi unconfigured.
-                            if (line.startsWith('AUTH_REQUIRED:')) {
-                                div.className = 'text-[color:var(--nu-danger)]';
-                                div.textContent = line.substring('AUTH_REQUIRED:'.length).trim();
-                                authRequired = true;
-                            } else if (line.startsWith('ERROR:')) {
-                                div.className = 'text-[color:var(--nu-danger)]';
-                                div.textContent = line;
-                                configError = true;
-                            } else if (line.startsWith('OK:')) {
-                                div.className = 'text-[color:var(--nu-signal)]';
-                                div.textContent = line;
-                            } else {
-                                div.className = 'text-[color:var(--nu-muted)]';
-                                div.textContent = line;
-                            }
-                            msgEl.appendChild(div);
-                            msgEl.scrollTop = msgEl.scrollHeight;
-                        }
-                    }
+                    lines.forEach(appendConfigLine);
                 }
-                // Process remaining buffer
-                if (buffer.trim()) {
-                    const div = document.createElement('div');
-                    div.textContent = buffer;
-                    msgEl.appendChild(div);
-                }
+                appendConfigLine(buffer + decoder.decode());
             } catch (e) {
                 const div = document.createElement('div');
                 div.className = 'text-[color:var(--nu-danger)]';
@@ -689,12 +708,6 @@
                 // Rerun the full gate, not only /api/testmodel: a successful
                 // retry must also materialize Pi's global models/auth/settings.
                 return runConfiguration();
-            }
-
-            if (configError) {
-                document.getElementById('configRetryBtn').classList.remove('hidden');
-            } else {
-                document.getElementById('configRetryBtn').classList.add('hidden');
             }
 
             if (!configError) {
@@ -726,6 +739,9 @@
                 msgEl.scrollTop = msgEl.scrollHeight;
             }
 
+            document.getElementById('configRetryBtn').classList.toggle('hidden', !configError);
+            document.getElementById('configChooseBtn').classList.toggle('hidden', !configError);
+            document.getElementById('configContinueBtn').classList.toggle('hidden', configError);
             document.getElementById('configDone').classList.remove('hidden');
         }
 
