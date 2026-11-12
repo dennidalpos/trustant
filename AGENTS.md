@@ -1,159 +1,38 @@
-# CLAUDE.md
+# AGENTS.md
 
-Be brief. Update the specs under spec/*.md when change code.
+<!-- secondbrain:repository:begin -->
+Direttive comuni applicate: revisione **1.1** — 2026-11-12. <!-- secondbrain:source global=8238B8C140EC9FE3C6E4002D94B0AADBB1EAE0E15A52566BF31854D2292AC06C workstation=CFB3267FB25931AF68B8791B8D01F31AC30D940679D6D3443567A45BE9FBA9A6 -->
+## SecondBrain
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Repository knowledge lives in the SecondBrain dossier; code, guides, and publishable assets stay here.
 
-## Developemt process
+- Load the slim startup with the SecondBrain checkout's scripts/knowledge.ps1 -Startup or MCP get_startup_context, and follow its references for detail. If the root is unreachable, report the dossier as unavailable.
+- Write only to this repository's dossier `01-projects/<repo>/`, only through SecondBrain scripts or MCP write tools. Work folders come from scripts/work.ps1 -Init; sessions, retention, and cleanup rules load from `sb prompt`.
+- Commits, pushes, deletions, and publication require specific authorization.
+<!-- secondbrain:repository:end -->
 
-Never implement anything unless you wrote a plan in an issue.
+## Scope and authorization
 
-When the user ask for a new feature create an issue in the main repo (trustable-app) and store the plan in it.
+- Work within the user's request. Audits and reviews are read-only. For substantial changes, make a short plan and use an existing issue when the user provides one.
+- Create or edit GitHub issues, PRs, and wiki pages only when explicitly requested. Commits, pushes, merges, releases, deployments, and destructive operations each require explicit authorization for the relevant scope. Check what scripts do before running them.
+- Preserve unrelated work and keep credentials in their authentication stores. Before publishing, verify the destination and scan the working tree, index, and relevant history for secrets and private data. Follow [CONTRIBUTING.md](CONTRIBUTING.md) for an authorized PR.
+- Use [.gitmodules](.gitmodules) and follow the instructions inside each affected submodule. Update only the submodules and gitlinks required by the change. Push to plugin repositories only with explicit authorization for those repositories.
 
-Implement only the plan writte in the issue.
+## Changes and verification
 
-Once implemented, commit all the subodules to a branch issue-<issuenr> and create a pull request to main to the top level to link everything to the main.
+- Verify current behavior in code and tests. Use [spec/](spec/) for intended behavior and update the relevant spec when behavior changes. Flag conflicts between the spec and the implementation. For a new API, register its route in [main.go](main.go) and keep its handler with the feature.
+- Use `./start.ps1` from PowerShell on Windows (WSL2) or `./start.sh` on macOS (Lima) and native Ubuntu. Run `./run.sh` in the Ubuntu environment. See [spec/start.md](spec/start.md) and [spec/run.md](spec/run.md). Use [.env.dist](.env.dist) and [spec/0-preflight.md](spec/0-preflight.md) for environment setup.
+- Run relevant checks. The Go suite (`go test ./...`) requires the ignored `_build.txt` embedded by [main.go](main.go). The development loop generates it before starting Air. Node checks and E2E entry points are listed in [package.json](package.json). Cluster scenarios may launch apps or call model providers. See [spec/8-e2e.md](spec/8-e2e.md).
+- Review the diff and `git status --ignored` before handing off. Report checks run, failures, and unverified behavior.
 
-When I ask to merge, merge all the submodules and the main module to the main branch.
+## Trustant conventions
 
-## What this is
+- Use **Trustant** for the product and `github.com/trustant/trustant` for the canonical repository. Preserve the module path in [go.mod](go.mod) and the upstream identities in [.gitmodules](.gitmodules).
+- The durable app repository is bare and lives at `$WORKSPACE_DIR/workspace/<name>/`. The active checkout lives at `$WORKBENCH_DIR/<name>/` and receives regenerated configuration on launch. See [spec/4-launch.md](spec/4-launch.md) and [spec/13-gitignore.md](spec/13-gitignore.md).
+- Use an FQDN for checks that exercise [hostname routing](middleware.go). The current host labels are `trustant` for the UI/API, `truacp` for the assistant, and `vite` for the app preview. Registered app hosts route to their development services.
+- Treat [openserverless-instructions.md](openserverless-instructions.md) and [app-agents.md](app-agents.md) as product assets that guide generated apps. Preserve the license error prefixes consumed by the UI when changing that API. See [spec/14-license.md](spec/14-license.md).
 
-`trustable-app` is a Go single-binary web server that hosts a "Lovable-like" development environment on top of OpenServerless. It serves the local UI (`web/`), proxies the user's running app (Vite) and TruACP/Pi, drives `ops` CLI subprocesses, and manages per-app workspaces and publishing.
+## Release script side effects
 
-The binary embeds `web/`, `_build.txt`, and `openserverless-instructions.md` (see [main.go](main.go)) so a production build is a single executable. `_build.txt` is generated by [build.sh](build.sh) from `version.txt` and holds the multi-line `Version:` / `Build:` / `Branch:` / `Stream:` block parsed by `parseVersion` at startup. There is no build expiry.
-
-## Prerequisites
-
-macOS development uses a **running Trustant VM** on the local machine — the macOS app from `https://trustant.ai` provisions a k3s VM and writes its credentials to `~/Library/Application Support/Trustant/` (`id_ed25519`, `current.ip`, `apihost`).
-
-Linux server development uses local access to the Trustant k3s cluster with Docker or nerdctl and passwordless `sudo -n k3s`. `build.sh` is the single build entrypoint for both hosts and detects which one it is on.
-
-`start.sh` provisions a local dev VM (Lima, named `trudev`), mirrors the host user into it, and installs a **CPU-only ollama** plus a pinned `kubefwd` host binary in the VM. `setup.sh` then runs **inside that VM** (via `./ssh.sh ./setup.sh` or a login shell) as the mirrored guest user: it recreates the `image/Dockerfile` environment for the local user — ops, go (via `g`), air, uv, Node, TruACP/Pi, and the MCP servers (openserverless, postgres, redis, milvus, mongodb, s3) into `~/.local/bin` — creates a proper in-VM `.env` if absent, extracts the kubeconfig from the **local** k3s (`sudo cat /etc/rancher/k3s/k3s.yaml`, no IP rewrite — `127.0.0.1` is correct in-VM), and checks `ops admin listuser` works against the apihost. `run.sh` is then run inside the VM and owns one namespace-wide `kubefwd` process excluding `trustant-svc`, so host-namespace CLIs and MCP servers can resolve the Service names written by `ops ide login`.
-
-## Common commands
-
-```bash
-./start.sh       # Provision the dev VM (Lima `trudev`); -s stops it, -k destroys it (macOS host)
-./setup.sh       # Run INSIDE the VM: recreates the image env (ops/go/air/uv/node/TruACP/Pi + MCP), creates .env, wires local k3s kubeconfig
-./run.sh         # Run INSIDE the VM ONLY (refuses to start unless /etc/os-release says ubuntu; from a Mac host use ./ssh.sh ./run.sh): kills ports 8910/5173/4096, checks local k3s, starts one bounded kubefwd, runs `air`, prints the Trustant URL
-./build.sh       # No args: help. --build [--no-deploy] full image + deploy, --buildx CI multiarch push, --tag tag only
-./hotfix.sh      # Same modes; layers a rebuilt binary + start.sh/env/trustant.json on the existing image (minutes, not ~20 min)
-./publish.sh     # Pushes the latest git tag, watches CI, then may push oplugins-truinst only with explicit user authorization
-go test ./...    # Unit tests (currently only configure_test.go)
-go test -run TestGenerateProjectAssetsForTruACP  # Single test
-```
-
-`air` (config in [.air.toml](.air.toml)) builds `tmp/main` on every `.go` change. Symbol-level reload: edit a `.go` file, save, air rebuilds and restarts on `:8910`.
-
-`build.sh --build` produces a single image and **always** writes the image tag into `oplugins-truinst/opsroot.json` via `jq`, on every host. Deployment is always `ops truinst trustant redeploy`, which reads that file; the StatefulSet is never patched directly. Pushing the `oplugins-truinst` submodule is what actually ships the new version to the deployment plugin and requires explicit user authorization.
-
-[hotfix.sh](hotfix.sh) is the one exception to both rules. It layers a rebuilt binary plus `image/start.sh`, `image/env` and `trustant.json` onto the image already in `opsroot.json` (`FROM <that image>`), and it **never writes `opsroot.json` and never commits** — so it patches the StatefulSet directly (`kubectl set image` + `rollout status`), because a redeploy would resolve the base image and roll out the wrong thing. The patch is **not durable**: the next plugin deploy reverts it. `publish.sh` therefore never touches `oplugins-truinst` for a hotfix tag. See [spec/build.md](spec/build.md).
-
-## Required environment
-
-`.env` is mandatory — preflight fails at startup if absent. In the VM, `setup.sh` creates one (create-if-missing) with in-VM values (`WORKSPACE_DIR`/`WORKBENCH_DIR` under the guest `$HOME`, Ollama on `localhost:11434`, AIP at `api.nuvolaris.io`); otherwise copy [.env.dist](.env.dist):
-
-- `WORKSPACE_DIR` — must exist (created by `ops setup mini`, or `mkdir`'d by `setup.sh`); per-app bare repos live in `$WORKSPACE_DIR/workspace/<name>`
-- `WORKBENCH_DIR` — checkout area for the currently-launched app
-- `OPENAI_BASE_URL`, `OPENAI_API_KEY` — provider credentials (overwritten when user picks a provider in the UI)
-- `OLLAMA_ENDPOINT` — local Ollama for the Ollama provider
-- `AIP_REGISTER_URL` — **mandatory**, ai-proxy registration UI base. The splash page loads this in an iframe for Trustant Cloud sign-up, and the top-up form lives at `<this>/top-up`. Dev default: `http://localhost:8080/_register`. Production: `https://api.nuvolaris.io/_register`.
-- `AIP_BASE_URL` — **mandatory**, ai-proxy JSON API base. `/api/credits` and `/api/topup` proxy directly under this URL (no `/v1`-suffix contract — that has been removed). `/api/status` does not use it: it reads `https://trustant.ai/status.json`. Dev default: `http://localhost:8080/api/v2/`. Production: `https://api.nuvolaris.io/api/v2/`.
-- `GIT_USER`, `GIT_EMAIL` — used for commits made on behalf of the user
-
-
-## Architecture
-
-### One Go package, file-per-feature
-
-Everything is `package main`. Each `*.go` file owns a feature surface that maps 1:1 with a spec doc under [spec/](spec/):
-
-`go.mod` is no longer dependency-free: the terminal adds `github.com/creack/pty` and `github.com/coder/websocket`. Both are pure Go, so `build.sh --buildx` keeps cross-compiling `linux/amd64` and `linux/arm64` with `CGO_ENABLED=0` (`--build` compiles the host arch only).
-
-| File | Spec | Responsibility |
-|---|---|---|
-| [main.go](main.go) | — | Embeds `web/`, registers `/api/*` routes, starts `:8910` with `hostnameMiddleware` |
-| [preflight.go](preflight.go) | [0-preflight.md](spec/0-preflight.md) | Loads `.env`, kills leftover processes on 8910/5173/4096, checks ssh key, runs the workspace `trustant.json` migration |
-| [middleware.go](middleware.go) | [0-preflight.md](spec/0-preflight.md) | **Host-based routing** — the same `:8910` handles three apps by hostname prefix |
-| [repo.go](repo.go) | [2-repo.md](spec/2-repo.md) | `/api/repo`, `/api/upload`, `/api/git*` — manages per-app bare git repos under `$WORKSPACE_DIR/workspace/<name>` |
-| [configure.go](configure.go) | [2a-config.md](spec/2a-config.md) | Two-layer config (base `trustant.json` + workspace `trustant.json`), `/api/configuration`, `/api/configure`, `/api/testmodel`, `/api/appconfig/` — also writes per-app `.env`/`.env.production` files |
-| [launch.go](launch.go) | [4-launch.md](spec/4-launch.md) | `/api/launch/<name>` — clones workspace → workbench, runs `ops ide login/clean/deploy`, owns the pgid file for orderly shutdown |
-| [git.go](git.go) | [5-git.md](spec/5-git.md) | Git save / status APIs |
-| [publish.go](publish.go) | [6-publish.md](spec/6-publish.md) | `/api/publish/{push,force-push,remote}` — **every endpoint calls `requireValidLicense` first** |
-| [license.go](license.go) | [14-license.md](spec/14-license.md) | Offline Ed25519 license: `/api/license`, the valid-license and licensed-host publish gates |
-| [skills.go](skills.go) | [7-skills.md](spec/7-skills.md) | `/api/skills/<name>` — clones the skills repo into the app's `.agents/skills/` |
-| [credits.go](credits.go) | [credit_check.md](spec/credit_check.md) | `/api/credits`, `/api/topup` — proxy to `$AIP_BASE_URL` |
-| [status.go](status.go) | [status_check.md](spec/status_check.md) | `/api/status` — provider model catalog (powers the splash screen) |
-| [memory.go](memory.go) | — | `/api/memory/` |
-| [files.go](files.go) | [11-files.md](spec/11-files.md) | `/api/files/` — read-only workbench file viewer (GET only, path-containment checked) |
-| [terminal.go](terminal.go) | [12-terminal.md](spec/12-terminal.md) | `/api/terminal/<name>` — PTY-backed shell over a WebSocket |
-
-When a spec doc and a `.go` file disagree, **the spec is the source of truth** — the user iterates on specs first.
-
-### Host-based routing (the non-obvious bit)
-
-[middleware.go](middleware.go) inspects the request hostname and routes by the first label:
-
-- `trustant.<domain>` → serves static `web/` + Go APIs (`http.DefaultServeMux`)
-- `opencode.<domain>` → reverse-proxies to `localhost:4096` (the AI coding assistant)
-- `vite.<domain>` → reverse-proxies to `localhost:5173` (the running user app)
-- Any other prefix → 400 with the corrected URL
-
-Bare `localhost` or IP requests are 307-redirected to `trustant.<ip>.nip.io:<port>` so the FQDN form is always used. **Every test must be against an FQDN** — plain `localhost:8910` will redirect.
-
-### Workspace vs. workbench (the other non-obvious bit)
-
-- `$WORKSPACE_DIR/workspace/<name>/` — the **bare git repo** for each app (durable state, what gets published)
-- `$WORKBENCH_DIR/<name>/` — the **active checkout** of whichever app the user is editing (regenerated on launch, holds `.env`/`.env.production`, `node_modules`, `.agents/skills/`)
-
-Launching an app clones workspace → workbench when missing and regenerates env files every time so config edits propagate. `pgid` in workbench tracks the running ops process group for clean teardown.
-
-### Frontend (`web/`)
-
-Plain HTML + Tailwind (via [web/tailwind.js](web/tailwind.js)) — **no build step**, no React. Each page corresponds to a spec doc:
-
-- [index.html](web/index.html) → splash + provider choice ([spec/1-index.md](spec/1-index.md))
-- [applist.html](web/applist.html) → app list ([spec/1-applist.md](spec/1-applist.md))
-- [app.html](web/app.html) → per-app workbench/editor ([spec/3-app.md](spec/3-app.md))
-- [appconfig.html](web/appconfig.html) → env editor
-- [configure.html](web/configure.html) → provider/model config
-
-Pages talk to the backend only through `/api/*` JSON endpoints.
-
-### Configuration layering
-
-Config is loaded by merging two `trustant.json` files (see [spec/2a-config.md](spec/2a-config.md)):
-
-1. **Base** (`./trustant.json`) — immutable defaults shipped with the binary
-2. **Workspace** (`$WORKSPACE_DIR/trustant.json`) — user overrides + `apps` + `provider`
-
-Maps merge key-by-key. The workspace file uses `omitempty` so it stays small. `provider`, `apps`, and chosen models live only in the workspace layer. There is no global `env` block — per-app env vars live under `apps.<name>.development` / `apps.<name>.production`.
-
-### Publishing authorization (server-side, license-based)
-
-There is **no client-side gate** on publishing. The frontend always renders Git Push / Publish and always calls the backend. Authorization is an offline, Ed25519-signed **license** (`lic_<payload>.<sig>`) stored in the workspace config and verified against `master_key_pub`, which is committed and embedded in the binary — no network access. Two gates live in [license.go](license.go), both returning HTTP 402:
-
-1. `requireValidLicense` — called by **all three** `/api/publish/*` handlers. Signature + expiry only; the `hosts` list is not consulted. On failure: `{"error": "License required: <reason>"}`
-2. `requireLicensedHost` — called by `handlePublishRemote` only, after config resolution and before `ops ide login`, so nothing touches an unlicensed cluster. On mismatch: `{"error": "Host not licensed: <apihost> is not covered by your license"}`
-
-An expired license invalidates everything, git push included. Local apihosts (`miniops.me`, `localhost`, `127.0.0.1`, `::1`) skip **only** the host gate — a valid license is still required. `/api/git/deploy` is not gated at all.
-
-The frontend recognizes the `"License required"` and `"Host not licensed"` prefixes and shows a license modal (see `showLicenseModal` in [web/applist.html](web/applist.html)). When changing the error wording, keep those prefixes intact or the frontend gate breaks.
-
-Licenses are issued by the `trulicense` CLI, which lives in the **trustant-installer** repo (run `./trulicense.sh` there). It keeps the signing key in 1Password (vault `TrustantLicenses`) and archives every license it issues. This repo only *verifies* licenses, offline, against the embedded `master_key_pub`. See [spec/14-license.md](spec/14-license.md).
-
-## Submodules
-
-Five git submodules in [.gitmodules](.gitmodules) — `mcp`, `oplugins`, `oplugins-truinst`, `skills`, and `trustant-acp`. The build flow writes the new image tag into `oplugins-truinst/opsroot.json`.
-Never push to any plugin repository without explicit user authorization, including `oplugins`, `oplugins-truinst`, local plugin copies, submodules, and scripts that would push those repos.
-
-## Tests
-
-- `go test ./...` runs Go unit tests (`*_test.go`) — coverage is minimal; mostly `configure_test.go`.
-- [tests/](tests/) holds **manual end-to-end test scenarios** (spec markdown + a runnable script per scenario, e.g. `1-reset.sh` wipes miniops users and workspace, then runs `air`). These are not part of `go test`.
-
-## Conventions worth knowing
-
-- Adding a new API: register the route in [main.go](main.go), add a handler in the matching feature file, and update the spec doc under [spec/](spec/) — the spec is what's iterated on first.
-- `openserverless-instructions.md` at the repo root is **embedded into the binary** and shown to the AI assistant running inside *user-created* apps. It is not guidance for editing this repo — do not confuse it with this file.
-- Long-running subprocesses (`ops ide deploy`, `npm install`, `git push`) are spawned with their own process group; the `pgid` file in `$WORKBENCH_DIR` is how cleanup finds them.
+- [build.sh](build.sh) in `--tag` and `--build` modes replaces local Git tags, updates `oplugins-truinst/opsroot.json`, and attempts `git commit -a`. With `--build --no-deploy`, those effects still occur. The regular deploy reads the image from `opsroot.json`.
+- [hotfix.sh](hotfix.sh) can also replace local tags. Its deploy patches the live StatefulSet and a subsequent regular redeploy restores the image from `opsroot.json`. Both scripts push images in `--buildx` mode. [publish.sh](publish.sh) pushes Git refs. See [spec/build.md](spec/build.md) before using these scripts.
