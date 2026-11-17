@@ -36,3 +36,7 @@ Repository knowledge lives in the SecondBrain dossier; code, guides, and publish
 
 - [build.sh](build.sh) in `--tag` and `--build` modes replaces local Git tags, updates `oplugins-truinst/opsroot.json`, and attempts `git commit -a`. With `--build --no-deploy`, those effects still occur. The regular deploy reads the image from `opsroot.json`.
 - [hotfix.sh](hotfix.sh) can also replace local tags. Its deploy patches the live StatefulSet and a subsequent regular redeploy restores the image from `opsroot.json`. Both scripts push images in `--buildx` mode. [publish.sh](publish.sh) pushes Git refs. See [spec/build.md](spec/build.md) before using these scripts.
+
+## Git workflow (push policy)
+
+- The repository owner is an admin and changes are verified locally before any push. When a push is authorized, push directly to `main` and do not open a pull request. This applies only to pushes the user has authorized; it does not authorize committing or pushing on its own. If anything is unclear (failed checks, unexpected remote state, protected-branch rejection), stop and ask.
