@@ -6,6 +6,22 @@ This README is for developers running Trustant from source and contributors navi
 
 [![Watch the Trustant demo](splash.png)](https://trustant.ai/#video?v=demo)
 
+## How it fits together
+
+```mermaid
+flowchart LR
+    Browser[Browser UI<br/>web/] -->|trustant.DOMAIN| Go[Go server :8910<br/>main.go, middleware.go]
+    Browser -->|truacp.DOMAIN| ACP[TruACP assistant :4096<br/>acp submodule]
+    Browser -->|vite.DOMAIN| Vite[Vite preview :5173]
+    Go --> WS[(WORKSPACE_DIR<br/>bare repos + trustant.json)]
+    Go --> WB[(WORKBENCH_DIR<br/>active checkouts)]
+    ACP -->|spawns| Pi[Pi / Codex / Claude agents]
+    ACP --> WB
+    Go -->|deploy, provision| OS[OpenServerless on k3s]
+```
+
+The Go server owns configuration, repositories, launch, publishing, and the license checks. The assistant runs as a separate process reached through its own hostname; it works on the same application checkout the preview serves.
+
 ## Quick start
 
 Use the entry point for your host. The scripts install tools and services, configure networking, and start the development server; first startup downloads the pinned serverless package and runtime dependencies. Keep the checkout and its generated configuration on a development machine.
@@ -46,6 +62,22 @@ cd trustant
 ```
 
 The script prepares the host, runs `setup.sh`, then starts `run.sh`. See [native Ubuntu setup](spec/start.md#native-ubuntu-linux).
+
+### What the start scripts do
+
+```mermaid
+flowchart TD
+    A[start.ps1 / start.sh] --> B{Host}
+    B -->|Windows| C[Create WSL2 distro trudev]
+    B -->|macOS| D[Boot Lima VM trudev]
+    B -->|Ubuntu| E[Use this host]
+    C --> F[setup.sh]
+    D --> F
+    E --> F
+    F --> G[run.sh: dev loop with Air]
+    G --> H[Go server + TruACP + Vite]
+    H --> I[Open the printed Trustant URL]
+```
 
 ### Open the UI
 
@@ -93,6 +125,20 @@ git submodule update --init --recursive
 ### Save and publish an application
 
 Use the app's Git controls to save source changes and push to its configured Git remote. Configure production environment values before deploying to an OpenServerless destination.
+
+```mermaid
+flowchart TD
+    P[Publish request] --> Q{Operation}
+    Q -->|Git push / force-push| OK1[Allowed, no license check]
+    Q -->|Development deploy| OK2[Allowed, no license check]
+    Q -->|Remote production deploy| L{Valid license?}
+    Q -->|Provisioning| L
+    L -->|No| E1[License required]
+    L -->|Yes| H{Destination host licensed?}
+    H -->|local hostname| OK3[Proceed]
+    H -->|licensed| OK3
+    H -->|not licensed| E2[Host not licensed]
+```
 
 With license enforcement enabled (the default):
 
@@ -147,6 +193,17 @@ The Go listener on `:8910` dispatches by the first hostname label, as implemente
 | `vite.<domain>` | Vite preview on `127.0.0.1:5173` |
 | Registered application name | That application's development service |
 | Unknown label | HTTP 400 with a suggested Trustant URL |
+
+```mermaid
+flowchart LR
+    R[Request on :8910] --> M{First host label}
+    M -->|trustant| U[UI and Go API]
+    M -->|truacp| T[127.0.0.1:4096]
+    M -->|vite| V[127.0.0.1:5173]
+    M -->|registered app name| AP[App dev service]
+    M -->|other| X[HTTP 400 + suggested URL]
+    R -.->|localhost, IP, no dot| RD[HTTP 307 to Trustant FQDN]
+```
 
 Requests using `localhost`, an IPv4 address, or a hostname without a dot receive an HTTP 307 redirect to the Trustant FQDN. Use the printed FQDN for browser access and hostname-routing checks. These surfaces use separate hostnames.
 
@@ -203,6 +260,6 @@ This README's commands were reviewed against the scripts. Full provisioning, mod
 
 ## Help and license
 
-Report reproducible problems in the [Trustant issue tracker](https://github.com/trustant/trustant/issues), including the relevant version, host platform, and sanitized error output. For contribution questions, follow [CONTRIBUTING.md](CONTRIBUTING.md).
+Report reproducible problems in the [Trustant issue tracker](https://github.com/trustant/trustant/issues), including the relevant version, host platform, and sanitized error output. For contribution questions, follow [CONTRIBUTING.md](CONTRIBUTING.md). Report security problems privately as described in [SECURITY.md](SECURITY.md).
 
 See [LICENSE](LICENSE), [NOTICE](NOTICE), and [DEPS](DEPS) for licensing and third-party notices.
