@@ -2,7 +2,18 @@
 
 ## Overview
 
-Obsidian plugin for AI agent interaction via ACP. `useAgent` facade hook composes sub-hooks (`useAgentSession` + `useAgentMessages`) and subscribes to a single `onSessionUpdate` channel. `ChatPanel` orchestrates hooks and renders children directly. Services are injected via React Context. ACP protocol details are isolated in the `acp/` layer.
+Standalone ACP client (Node server plus browser React UI) for AI agent interaction. The directory notes below keep some names from the editor-plugin origin (for example the vault and view classes). `useAgent` facade hook composes sub-hooks (`useAgentSession` + `useAgentMessages`) and subscribes to a single `onSessionUpdate` channel. `ChatPanel` orchestrates hooks and renders children directly. Services are injected via React Context. ACP protocol details are isolated in the `acp/` layer.
+
+```mermaid
+flowchart TD
+    AG[Agent process] -->|ACP SDK| H[acp-handler<br/>sessionId filter]
+    H -->|onSessionUpdate| L[listeners]
+    L --> SESS[useAgentSession<br/>commands, mode, config, usage, errors]
+    L --> MSG[useAgentMessages<br/>text, tool calls, plan, permissions]
+    SESS --> F[useAgent facade]
+    MSG --> F
+    F --> P[ChatPanel renders]
+```
 
 ## Directory Structure
 
