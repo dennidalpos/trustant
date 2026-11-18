@@ -53,3 +53,9 @@ ghlogin.sh
 # deps.sh download cache
 legal/.cache/
 data/
+
+# Tracked templates that the broad patterns above would otherwise hide, and the
+# vendored acp/ editor settings (acp/.gitignore keeps its own rules).
+!.env.dist
+!.env.example
+!/acp/.vscode/
