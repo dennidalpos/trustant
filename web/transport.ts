@@ -64,11 +64,16 @@ export interface AgentsInfo {
 }
 
 type UpdateListener = (update: SessionUpdate) => void;
+export type SessionStreamStatus = "live" | "reconnecting" | "waiting";
 
 export class AcpTransport {
 	private readonly base: string;
 	private ws: WebSocket | null = null;
 	private readonly listeners = new Set<UpdateListener>();
+	private readonly streamListeners = new Set<
+		(status: SessionStreamStatus) => void
+	>();
+	private streamStatus: SessionStreamStatus = "live";
 	private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 
 	constructor(base = "") {
@@ -452,10 +457,24 @@ export class AcpTransport {
 	// ---- WebSocket streaming ----------------------------------------------
 
 	/** Subscribe to streamed SessionUpdates. Returns an unsubscribe fn. */
-	onSessionUpdate(listener: UpdateListener): () => void {
+	onSessionUpdate(
+		listener: UpdateListener,
+		onStreamStatus: (status: SessionStreamStatus) => void,
+	): () => void {
 		this.listeners.add(listener);
+		this.streamListeners.add(onStreamStatus);
+		onStreamStatus(this.streamStatus);
 		this.ensureSocket();
-		return () => this.listeners.delete(listener);
+		return () => {
+			this.listeners.delete(listener);
+			this.streamListeners.delete(onStreamStatus);
+		};
+	}
+
+	private setStreamStatus(status: SessionStreamStatus): void {
+		if (status === this.streamStatus) return;
+		this.streamStatus = status;
+		for (const listener of this.streamListeners) listener(status);
 	}
 
 	private ensureSocket(): void {
@@ -466,7 +485,15 @@ export class AcpTransport {
 		const ws = new WebSocket(wsUrl);
 		this.ws = ws;
 
+		ws.addEventListener("open", () => {
+			// A reopened socket does not replay the missed retry events.
+			if (this.ws === ws && this.streamStatus === "reconnecting") {
+				this.setStreamStatus("waiting");
+			}
+		});
+
 		ws.addEventListener("message", (e) => {
+			if (this.ws !== ws) return;
 			let event: WsEvent;
 			try {
 				event = JSON.parse(e.data as string);
@@ -475,12 +502,15 @@ export class AcpTransport {
 			}
 			if (event.type === "sessionUpdate") {
 				for (const l of this.listeners) l(event.update);
+				this.setStreamStatus("live");
 			}
 		});
 
 		// Reconnect on drop while listeners remain.
 		ws.addEventListener("close", () => {
+			if (this.ws !== ws) return;
 			this.ws = null;
+			this.setStreamStatus("reconnecting");
 			if (this.listeners.size > 0 && !this.reconnectTimer) {
 				this.reconnectTimer = setTimeout(() => {
 					this.reconnectTimer = null;

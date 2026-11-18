@@ -675,6 +675,11 @@ The fork reports `_meta.piAcp.activity` version 1 on `session_info_update`.
 `thinking`, `responding`, tool-specific states, `retrying`, `compacting`,
 `stopping`, and `idle` remain control-plane UI state; retry/compaction text must
 not be appended to the assistant transcript.
+During an active turn, show **Reconnecting…** if the session WebSocket closes.
+When it reopens, show **Waiting for an update…** until a session event arrives.
+Discard the previous retry label so the UI only shows retry progress from a
+fresh activity update. An HTTP prompt completion or failure still ends the
+activity indicator.
 
 ## 10d. Per-agent config & auth (gear panel)
 

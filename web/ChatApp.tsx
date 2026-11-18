@@ -39,7 +39,11 @@ import type {
 	SessionConfigOption,
 	SessionInfo,
 } from "../src/types/session";
-import { AcpTransport, type AgentInfo } from "./transport";
+import {
+	AcpTransport,
+	type AgentInfo,
+	type SessionStreamStatus,
+} from "./transport";
 import { modelChoicesForAgent } from "./model-options";
 import { copyText } from "./clipboard";
 import {
@@ -234,6 +238,8 @@ export function ChatApp(): React.ReactElement {
 	const [shellRunning, setShellRunning] = useState(false);
 	const [stopping, setStopping] = useState(false);
 	const [activity, setActivity] = useState<ActivityState | null>(null);
+	const [streamStatus, setStreamStatus] =
+		useState<SessionStreamStatus>("live");
 	const [elapsedSeconds, setElapsedSeconds] = useState(0);
 	const [error, setError] = useState<string | null>(null);
 	const [turns, setTurns] = useState<Turn[]>([]);
@@ -376,7 +382,18 @@ export function ChatApp(): React.ReactElement {
 
 	// Subscribe to the streamed updates once.
 	useEffect(() => {
-		return transport.onSessionUpdate((u) => applyUpdate(u));
+		return transport.onSessionUpdate(
+			(u) => applyUpdate(u),
+			(status) => {
+				setStreamStatus(status);
+				if (status === "reconnecting") {
+					// A missed activity update can leave an obsolete attempt visible.
+					setActivity((previous) =>
+						previous?.state === "retrying" ? null : previous,
+					);
+				}
+			},
+		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -2245,7 +2262,20 @@ export function ChatApp(): React.ReactElement {
 			)}
 
 			{error && (
-				<div className="error" onClick={() => setError(null)}>
+				// WHY: role="alert" makes screen readers announce the failure when it
+				// appears, and the keyboard handler lets non-pointer users dismiss it.
+				<div
+					className="error"
+					role="alert"
+					tabIndex={0}
+					onClick={() => setError(null)}
+					onKeyDown={(e) => {
+						if (e.key === "Enter" || e.key === " " || e.key === "Escape") {
+							e.preventDefault();
+							setError(null);
+						}
+					}}
+				>
 					{error}
 				</div>
 			)}
@@ -2690,8 +2720,15 @@ export function ChatApp(): React.ReactElement {
 			{running && (
 				<div className="activity" role="status" aria-live="polite">
 					<span className="activity-spinner" aria-hidden="true" />
-					<span>{activity?.label || "Working"}</span>
-					<span className="activity-elapsed">
+					<span>
+						{!shellRunning && streamStatus === "reconnecting"
+							? "Reconnecting…"
+							: !shellRunning && streamStatus === "waiting"
+								? "Waiting for an update…"
+								: activity?.label || "Working"}
+					</span>
+					{/* Keep per-second timer updates out of the status announcement. */}
+					<span className="activity-elapsed" aria-hidden="true">
 						{formatElapsed(elapsedSeconds)}
 					</span>
 				</div>
