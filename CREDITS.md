@@ -1,0 +1,75 @@
+# Credits
+
+Trustant is built on the work of many projects. This file credits the main
+components and says where each comes from and under which license. It is a
+readable summary; the complete, generated registers are [DEPS](DEPS),
+[LICENSE](LICENSE), [NOTICE](NOTICE), and [legal/COMPONENTS.json](legal/COMPONENTS.json),
+produced by `./deps.sh` (see [spec/20-legal.md](spec/20-legal.md)). When this
+file and the generated registers disagree, the generated registers are right:
+fix this file.
+
+Trustant itself is AGPL-3.0-or-later, Copyright 2025-2026 Nuvolaris Inc. See
+[CONTRIBUTING.md](CONTRIBUTING.md) for the contributor agreement.
+
+## Sources in this repository
+
+| Component | Role | License | Origin |
+|---|---|---|---|
+| `acp/` (TruACP) | Assistant runtime: Node server and browser UI over the Agent Client Protocol | AGPL-3.0-or-later | Vendored from the owner's `trustant-acp` fork |
+| `acp/pi-acp/` | Adapter between ACP and the Pi coding agent | MIT, Copyright (c) 2025 Sergii Kozak | Vendored fork of `pi-acp` (`trustable-ai/pi-acp`) |
+| `web/` assets | Browser UI libraries | MIT | See below |
+
+Vendored web assets: [Tailwind CSS browser build](https://github.com/tailwindlabs/tailwindcss),
+[marked](https://github.com/markedjs/marked), [CodeJar](https://github.com/antonmedv/codejar),
+and [xterm.js](https://github.com/xtermjs/xterm.js). Fonts Work Sans and
+JetBrains Mono (SIL OFL-1.1) are loaded from Google Fonts at runtime and are not
+bundled.
+
+## Submodules
+
+| Submodule | License | Source |
+|---|---|---|
+| `mcp` (OpenServerless MCP) | Apache-2.0 | https://github.com/trustant/openserverless-mcp |
+| `oplugins` (OpenServerless tasks) | Apache-2.0 | https://github.com/trustable-ai/openserverless-task |
+| `oplugins-truinst` | AGPL-3.0-or-later | https://github.com/trustant/oplugins-truinst |
+| `skills` | AGPL-3.0-or-later | https://github.com/trustable-ai/skills |
+
+The Apache-2.0 submodules keep their own LICENSE and NOTICE files and carry no
+AGPL headers.
+
+## Coding agents and protocol
+
+- [Pi](https://github.com/earendil-works/pi) packages (`pi-ai`, `pi-tui`,
+  `pi-agent-core`, `pi-storage-sqlite-node`, `pi-coding-agent`), MIT.
+- [Agent Client Protocol](https://agentclientprotocol.com) SDK and the Codex ACP
+  adapter, Apache-2.0.
+- [OpenAI Codex CLI](https://github.com/openai/codex), Apache-2.0.
+- Claude Code is not distributed with Trustant; TruACP installs it on demand
+  after the user accepts Anthropic's terms.
+
+## Platform and tools
+
+Trustant runs on [OpenServerless](https://openserverless.apache.org)
+(Apache-2.0) over k3s, and its image and setup use, among others: Node.js (MIT),
+Go (BSD-3-Clause), Ollama (MIT), GitHub CLI (MIT), uv (Apache-2.0 or MIT),
+kubectl and Helm (Apache-2.0), bun, yq, k3sup and uutils coreutils (MIT), and
+Ubuntu packages under their distribution licenses. Python application packages
+and npm production trees are listed in full in [DEPS](DEPS).
+
+## License compatibility notes
+
+- AGPL-3.0-or-later code may include Apache-2.0, MIT, BSD, and similar
+  permissive code; their notices are preserved in [NOTICE](NOTICE).
+- Tools licensed GPL-2.0-only or GPL-3.0 (for example `git`, or `pglast` inside
+  the Postgres MCP server) run as separate programs or tools and are not linked
+  into Trustant. They are listed for attribution, not combined into one work.
+- `7zz` carries an unRAR restriction; it is downloaded by the OpenServerless
+  prerequisites and is not redistributed in the source tree.
+- Items marked `declared-only` in the registers have license metadata but no
+  collected license text. They are not legal clearance. See
+  [legal/REVIEW.md](legal/REVIEW.md).
+
+## Keeping this file current
+
+Update this file in the same change that adds, removes, or re-sources a
+component, then rerun `./deps.sh` and commit the regenerated registers.

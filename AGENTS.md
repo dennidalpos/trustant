@@ -16,6 +16,7 @@ Repository knowledge lives in the SecondBrain dossier; code, guides, and publish
 - Work within the user's request. Audits and reviews are read-only. For substantial changes, make a short plan and use an existing issue when the user provides one.
 - Create or edit GitHub issues, PRs, and wiki pages only when explicitly requested. Commits, pushes, merges, releases, deployments, and destructive operations each require explicit authorization for the relevant scope. Check what scripts do before running them.
 - Preserve unrelated work and keep credentials in their authentication stores. Before publishing, verify the destination and scan the working tree, index, and relevant history for secrets and private data. Follow [CONTRIBUTING.md](CONTRIBUTING.md) for an authorized PR.
+- Keep [CREDITS.md](CREDITS.md) in step with component changes and regenerate DEPS, LICENSE, and NOTICE with `./deps.sh` (see [spec/20-legal.md](spec/20-legal.md)); they are generated, never edited by hand.
 - Use [.gitmodules](.gitmodules) and follow the instructions inside each affected submodule. Update only the submodules and gitlinks required by the change. Push to plugin repositories only with explicit authorization for those repositories.
 
 ## Changes and verification

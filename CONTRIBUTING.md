@@ -49,7 +49,7 @@ own LICENSE and NOTICE files. Do not add AGPL headers there.
 dependency — a Go module, an npm package, a pinned Python package, a
 downloaded binary, an ops prerequisite or a package in the image — update
 `legal/deps.manual.txt` if the component is not read automatically, rerun
-`./deps.sh` and commit the three regenerated files.
+`./deps.sh` and commit the three regenerated files, and update [CREDITS.md](CREDITS.md) if a main component changed.
 
 ## Before you open a pull request
 

@@ -262,4 +262,4 @@ This README's commands were reviewed against the scripts. Full provisioning, mod
 
 Report reproducible problems in the [Trustant issue tracker](https://github.com/trustant/trustant/issues), including the relevant version, host platform, and sanitized error output. For contribution questions, follow [CONTRIBUTING.md](CONTRIBUTING.md). Report security problems privately as described in [SECURITY.md](SECURITY.md).
 
-See [LICENSE](LICENSE), [NOTICE](NOTICE), and [DEPS](DEPS) for licensing and third-party notices.
+See [LICENSE](LICENSE), [NOTICE](NOTICE), and [DEPS](DEPS) for licensing and third-party notices, and [CREDITS.md](CREDITS.md) for a readable summary of the components Trustant builds on.
