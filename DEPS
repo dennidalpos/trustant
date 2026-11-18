@@ -207,7 +207,7 @@ vfile                                              6.0.3    MIT           https:
 vfile-message                                      4.0.3    MIT           https://www.npmjs.com/package/vfile-message
 w3c-keyname                                        2.2.8    MIT           https://www.npmjs.com/package/w3c-keyname
 ws                                                 8.21.1   MIT           https://www.npmjs.com/package/ws
-zod                                                4.4.3    MIT           https://www.npmjs.com/package/zod
+zod                                                4.6.7    MIT           https://www.npmjs.com/package/zod
 zwitch                                             2.0.4    MIT           https://www.npmjs.com/package/zwitch
 
 
@@ -332,18 +332,19 @@ in the image.
 
 NAME                       VERSION  LICENSE       HOMEPAGE
 ----                       -------  -------       --------
-@hono/node-server          1.19.15  MIT           https://www.npmjs.com/package/@hono/node-server
-@modelcontextprotocol/sdk  1.29.0   MIT           https://www.npmjs.com/package/@modelcontextprotocol/sdk
+@hono/node-server          2.1.9    MIT           https://www.npmjs.com/package/@hono/node-server
+@modelcontextprotocol/sdk  1.32.2   MIT           https://www.npmjs.com/package/@modelcontextprotocol/sdk
 accepts                    2.0.0    MIT           https://www.npmjs.com/package/accepts
 ajv                        8.20.0   MIT           https://www.npmjs.com/package/ajv
 ajv-formats                3.0.1    MIT           https://www.npmjs.com/package/ajv-formats
-body-parser                2.3.0    MIT           https://www.npmjs.com/package/body-parser
+body-parser                2.4.0    MIT           https://www.npmjs.com/package/body-parser
 bytes                      3.1.2    MIT           https://www.npmjs.com/package/bytes
 call-bind-apply-helpers    1.0.2    MIT           https://www.npmjs.com/package/call-bind-apply-helpers
 call-bound                 1.0.4    MIT           https://www.npmjs.com/package/call-bound
 content-disposition        1.1.0    MIT           https://www.npmjs.com/package/content-disposition
 content-type               1.0.5    MIT           https://www.npmjs.com/package/content-type
 content-type               2.0.0    MIT           https://www.npmjs.com/package/content-type
+content-type               2.1.0    MIT           https://www.npmjs.com/package/content-type
 cookie                     0.7.2    MIT           https://www.npmjs.com/package/cookie
 cookie-signature           1.2.2    MIT           https://www.npmjs.com/package/cookie-signature
 cors                       2.8.6    MIT           https://www.npmjs.com/package/cors
@@ -363,7 +364,7 @@ eventsource-parser         3.1.0    MIT           https://www.npmjs.com/package/
 express                    5.2.1    MIT           https://www.npmjs.com/package/express
 express-rate-limit         8.6.0    MIT           https://www.npmjs.com/package/express-rate-limit
 fast-deep-equal            3.1.3    MIT           https://www.npmjs.com/package/fast-deep-equal
-fast-uri                   3.1.4    BSD-3-Clause  https://www.npmjs.com/package/fast-uri
+fast-uri                   3.1.9    BSD-3-Clause  https://www.npmjs.com/package/fast-uri
 finalhandler               2.1.1    MIT           https://www.npmjs.com/package/finalhandler
 forwarded                  0.2.0    MIT           https://www.npmjs.com/package/forwarded
 fresh                      2.0.0    MIT           https://www.npmjs.com/package/fresh
@@ -373,11 +374,11 @@ get-proto                  1.0.1    MIT           https://www.npmjs.com/package/
 gopd                       1.2.0    MIT           https://www.npmjs.com/package/gopd
 has-symbols                1.1.0    MIT           https://www.npmjs.com/package/has-symbols
 hasown                     2.0.4    MIT           https://www.npmjs.com/package/hasown
-hono                       4.12.32  MIT           https://www.npmjs.com/package/hono
+hono                       4.13.19  MIT           https://www.npmjs.com/package/hono
 http-errors                2.0.1    MIT           https://www.npmjs.com/package/http-errors
 iconv-lite                 0.7.3    MIT           https://www.npmjs.com/package/iconv-lite
 inherits                   2.0.4    ISC           https://www.npmjs.com/package/inherits
-ip-address                 10.2.0   MIT           https://www.npmjs.com/package/ip-address
+ip-address                 10.7.6   MIT           https://www.npmjs.com/package/ip-address
 ipaddr.js                  1.9.1    MIT           https://www.npmjs.com/package/ipaddr.js
 is-promise                 4.0.0    MIT           https://www.npmjs.com/package/is-promise
 isexe                      2.0.0    ISC           https://www.npmjs.com/package/isexe
@@ -399,8 +400,8 @@ parseurl                   1.3.3    MIT           https://www.npmjs.com/package/
 path-key                   3.1.1    MIT           https://www.npmjs.com/package/path-key
 path-to-regexp             8.4.2    MIT           https://www.npmjs.com/package/path-to-regexp
 pkce-challenge             5.0.1    MIT           https://www.npmjs.com/package/pkce-challenge
-proxy-addr                 2.0.7    MIT           https://www.npmjs.com/package/proxy-addr
-qs                         6.15.3   BSD-3-Clause  https://www.npmjs.com/package/qs
+proxy-addr                 2.0.8    MIT           https://www.npmjs.com/package/proxy-addr
+qs                         6.17.1   BSD-3-Clause  https://www.npmjs.com/package/qs
 range-parser               1.3.0    MIT           https://www.npmjs.com/package/range-parser
 raw-body                   3.0.2    MIT           https://www.npmjs.com/package/raw-body
 require-from-string        2.0.2    MIT           https://www.npmjs.com/package/require-from-string
@@ -566,14 +567,14 @@ beautifulsoup4        4.15.0       MIT                                          
 boto3                 1.43.97      Apache-2.0                                          https://pypi.org/project/boto3
 botocore              1.43.97      Apache-2.0                                          https://pypi.org/project/botocore
 cachetools            7.2.0        MIT                                                 https://pypi.org/project/cachetools
-certifi               2026.7.22    MPL-2.0                                             https://pypi.org/project/certifi
+certifi               2026.10.18   MPL-2.0                                             https://pypi.org/project/certifi
 cffi                  2.1.1        MIT-0                                               https://pypi.org/project/cffi
 charset-normalizer    3.5.1        MIT                                                 https://pypi.org/project/charset-normalizer
 click                 8.5.0        BSD-3-Clause                                        https://pypi.org/project/click
 cloudpickle           3.1.2        BSD-3-Clause                                        https://pypi.org/project/cloudpickle
 defusedxml            0.7.1        PSF-2.0                                             https://pypi.org/project/defusedxml
 distro                1.9.0        Apache-2.0                                          https://pypi.org/project/distro
-dnspython             2.8.0        ISC                                                 https://pypi.org/project/dnspython
+dnspython             2.9.2        ISC                                                 https://pypi.org/project/dnspython
 feedparser            6.0.14       BSD-2-Clause                                        https://pypi.org/project/feedparser
 feedparser-sgmllib    2.1.0        PSF-2.0                                             https://pypi.org/project/feedparser-sgmllib
 grpcio                1.84.0       Apache-2.0                                          https://pypi.org/project/grpcio
@@ -594,14 +595,14 @@ langchain             1.4.1        MIT                                          
 langchain-core        1.6.3        MIT                                                 https://pypi.org/project/langchain-core
 langchain-protocol    0.0.19       MIT                                                 https://pypi.org/project/langchain-protocol
 langdetect            1.0.9        Apache-2.0                                          https://pypi.org/project/langdetect
-langgraph             1.2.11       MIT                                                 https://pypi.org/project/langgraph
+langgraph             1.2.14       MIT                                                 https://pypi.org/project/langgraph
 langgraph-checkpoint  4.2.0        MIT                                                 https://pypi.org/project/langgraph-checkpoint
 langgraph-prebuilt    1.1.0        MIT                                                 https://pypi.org/project/langgraph-prebuilt
-langgraph-sdk         0.4.4        MIT                                                 https://pypi.org/project/langgraph-sdk
+langgraph-sdk         0.4.6        MIT                                                 https://pypi.org/project/langgraph-sdk
 langsmith             0.12.6       MIT                                                 https://pypi.org/project/langsmith
 minio                 7.2.20       Apache-2.0                                          https://pypi.org/project/minio
 narwhals              2.26.0       MIT                                                 https://pypi.org/project/narwhals
-nltk                  3.10.3       Apache-2.0                                          https://pypi.org/project/nltk
+nltk                  3.10.4       Apache-2.0                                          https://pypi.org/project/nltk
 numpy                 2.5.3        BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0  https://pypi.org/project/numpy
 ollama                0.6.2        MIT                                                 https://pypi.org/project/ollama
 openai                3.15.0       Apache-2.0                                          https://pypi.org/project/openai
@@ -619,7 +620,7 @@ pycryptodome          3.23.0       BSD-2-Clause AND LicenseRef-Public-Domain    
 pydantic              2.13.5       MIT                                                 https://pypi.org/project/pydantic
 pydantic-core         2.46.5       MIT                                                 https://pypi.org/project/pydantic-core
 pymilvus              3.0.2        Apache-2.0                                          https://pypi.org/project/pymilvus
-pymongo               4.18.1       Apache-2.0                                          https://pypi.org/project/pymongo
+pymongo               4.18.3       Apache-2.0                                          https://pypi.org/project/pymongo
 pyparsing             3.3.2        MIT                                                 https://pypi.org/project/pyparsing
 python-dateutil       2.9.0.post0  Apache-2.0 AND BSD-3-Clause                         https://pypi.org/project/python-dateutil
 python-dotenv         1.2.3        BSD-3-Clause                                        https://pypi.org/project/python-dotenv
@@ -632,7 +633,7 @@ s3transfer            0.19.2       Apache-2.0                                   
 scramp                1.4.17       MIT-0                                               https://pypi.org/project/scramp
 six                   1.17.0       MIT                                                 https://pypi.org/project/six
 sniffio               1.3.1        MIT OR Apache-2.0                                   https://pypi.org/project/sniffio
-soupsieve             2.9.2        MIT                                                 https://pypi.org/project/soupsieve
+soupsieve             4.0.0        MIT                                                 https://pypi.org/project/soupsieve
 tenacity              9.1.4        Apache-2.0                                          https://pypi.org/project/tenacity
 tqdm                  4.70.1       MPL-2.0 AND MIT                                     https://pypi.org/project/tqdm
 truststore            0.10.4       MIT                                                 https://pypi.org/project/truststore
