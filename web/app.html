@@ -23,6 +23,7 @@
     <title>Trustant App</title>
     <script src="tailwind.js"></script>
     <script src="trustant-auth.js"></script>
+    <script src="js/modal-a11y.js" defer></script>
     <script src="js/envtable.js"></script>
     <script src="js/marked.min.js"></script>
     <script src="js/xterm.min.js"></script>
@@ -213,11 +214,11 @@
     <!-- Body: iframe row (resizable horizontally) above an optional terminal pane -->
     <div id="workbenchBody" class="h-[90%] flex flex-col">
         <div id="iframeContainer" class="flex-1 flex min-h-0">
-            <iframe id="leftFrame" class="h-full border-r border-[color:var(--nu-rule)]" style="width: 50%; min-width: 100px;"></iframe>
+            <iframe id="leftFrame" title="Application preview" class="h-full border-r border-[color:var(--nu-rule)]" style="width: 50%; min-width: 100px;"></iframe>
             <div id="divider" class="w-1.5 bg-[color:var(--nu-rule)] hover:bg-[color:var(--nu-brand)] cursor-col-resize flex-shrink-0 transition-colors"></div>
             <div id="rightPane" class="h-full flex-1 relative overflow-hidden" style="min-width: 100px;">
                 <div id="deviceStage" class="absolute inset-0">
-                    <iframe id="rightFrame" class="w-full h-full"></iframe>
+                    <iframe id="rightFrame" title="Application workspace" class="w-full h-full"></iframe>
                 </div>
             </div>
         </div>
@@ -520,7 +521,7 @@
                 <button onclick="cancelTopup()"
                     class="nu-btn nu-btn-secondary nu-btn-compact">Close</button>
             </div>
-            <iframe id="topupIframe" class="flex-1 w-full" src="about:blank"></iframe>
+            <iframe id="topupIframe" title="Add credit" class="flex-1 w-full" src="about:blank"></iframe>
         </div>
     </div>
 

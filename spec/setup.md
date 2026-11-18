@@ -170,6 +170,14 @@ prefix; it does not own another persistent default in the repository-root flow.
 The image build remains reproducible: it invokes the same nested installer as
 the image build user and uses that build context's writable npm prefix.
 
+## OpenServerless shell prompt
+
+`setup.sh` installs the OpenServerless `~/.bash_aliases` (prompt and aliases)
+only inside the Trustant VMs: the WSL distribution named `trudev`
+(`WSL_DISTRO_NAME=trudev`) or the Lima guest (`/mnt/lima-cidata` present and a
+hostname containing `trudev`). On a native Ubuntu host it leaves
+`~/.bash_aliases` untouched.
+
 6. ensure $HOME/.local/bin is the first entry in the path and warn if not. The
 selected npm `<prefix>/bin` must also be present before npm-installed commands
 are verified.

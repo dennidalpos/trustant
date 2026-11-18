@@ -451,7 +451,7 @@ textarea {
 }
 
 .nu-link {
-    color: color-mix(in oklab, var(--nu-brand) 75%, var(--nu-ink));
+    color: color-mix(in oklab, var(--nu-brand) 60%, var(--nu-ink));
 }
 
 .nu-link:hover {

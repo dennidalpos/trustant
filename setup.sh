@@ -716,8 +716,15 @@ for shell_rc in "$HOME/.profile" "$HOME/.bashrc"; do
 done
 
 
-# include bash aliases from openserverless
-curl -sL https://raw.githubusercontent.com/apache/openserverless/refs/heads/0.9.0/bash_aliases >~/.bash_aliases
+# OpenServerless bash aliases/prompt: only inside the Trustant VMs (Lima or WSL
+# "trudev"). A native Ubuntu host keeps its own ~/.bash_aliases untouched.
+if [[ "${WSL_DISTRO_NAME:-}" == "trudev" ]] || [[ -d /mnt/lima-cidata && "$(hostname)" == *trudev* ]]; then
+  curl -fsSL https://raw.githubusercontent.com/apache/openserverless/refs/heads/0.9.0/bash_aliases >~/.bash_aliases \
+    || warn "could not fetch OpenServerless bash_aliases"
+  ok "OpenServerless prompt installed (trudev VM)"
+else
+  ok "native host: ~/.bash_aliases left untouched"
+fi
 
 
 # Note: per-app AGENTS.md / .openserverless-contract.md are written at launch by

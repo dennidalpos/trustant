@@ -23,6 +23,7 @@
     <title>Trustant</title>
     <script src="tailwind.js"></script>
     <script src="trustant-auth.js"></script>
+    <script src="js/modal-a11y.js" defer></script>
     <script src="js/envtable.js"></script>
     <script src="js/bind.js"></script>
     <script src="js/shared.js"></script>
@@ -234,7 +235,7 @@
                     <div id="starterList" class="space-y-2 max-h-56 overflow-y-auto pr-1">
                         <p id="starterLoading" class="text-xs text-[color:var(--nu-muted)]">Loading application starters...</p>
                     </div>
-                    <p id="starterWarning" class="text-xs mt-2 hidden"></p>
+                    <p id="starterWarning" class="text-xs mt-2 hidden" role="alert"></p>
                 </div>
                 <div>
                     <label for="appName" class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">Application Name</label>
@@ -997,6 +998,20 @@
             const list = document.getElementById('starterList');
             const warningEl = document.getElementById('starterWarning');
             list.innerHTML = '';
+
+            // An empty catalog with no warning is a real empty catalog; with a
+            // warning the catalog is unreachable. Say which one this is.
+            if (starters.length === 0 && !warning) {
+                const empty = document.createElement('p');
+                empty.className = 'text-xs text-[color:var(--nu-muted)]';
+                empty.textContent = 'No application starters are published yet.';
+                list.appendChild(empty);
+            } else if (starters.length === 0) {
+                const offline = document.createElement('p');
+                offline.className = 'text-xs text-[color:var(--nu-muted)]';
+                offline.textContent = 'The starter catalog is unavailable right now (not empty). Reopen this dialog to retry, or use My Application Starter.';
+                list.appendChild(offline);
+            }
 
             for (const starter of starters) {
                 const row = document.createElement('label');
