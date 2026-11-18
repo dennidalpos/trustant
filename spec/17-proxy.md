@@ -87,3 +87,21 @@ Against an echoing upstream, the mapping holds for every shape:
 `opencode.foo.bar.baz` all arrive as `<label>.miniops.me`, a bare `localhost`
 arrives as `trustant.miniops.me`, and an explicit `:8911` in the request's
 `Host` is stripped rather than carried through.
+
+## Streaming timeout chain
+
+Timeouts along the streamed-AI path, as implemented (GH-204). nginx timeouts
+are idle limits between two reads or writes, not total durations.
+
+| Layer | Where | Timeout |
+| --- | --- | --- |
+| Public proxy (UI, API, streamed responses) | `proxy.sh` | `proxy_read_timeout` / `proxy_send_timeout` 3600s |
+| Lima port-8080 hop carrying the TruACP `/ws` stream | `start.sh` | `proxy_read_timeout` / `proxy_send_timeout` 600s |
+| Ollama model pull client (not a chat stream) | `configure.go` | 600s `http.Client` timeout |
+
+The TruACP WebSocket hop is the shortest idle limit on the stream path: a
+provider that stays silent for more than 600s is cut there, before the
+one-hour proxy limit applies. `setup_test.go` pins the 600s hop values and
+`proxy_test.go` pins the one-hour proxy values so a change to either is made
+on purpose. Completion checks (a valid `finish_reason` versus an early close)
+belong to the ACP runtime and are tracked in the `acp` repository.

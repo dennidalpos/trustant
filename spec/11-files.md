@@ -10,7 +10,7 @@ that is what makes it safe to expose over the whole workbench.
 
 # API
 
-Both endpoints are `GET` only. Any other method returns 405. Each call
+Both endpoints are `GET` only. Any other method returns 405. Responses carry `Cache-Control: no-store`, so Refresh always reflects the current tree after files are moved or renamed; the modal also drops a selected file or collapsed folder that the refreshed listing no longer contains. Each call
 validates `<name>` against `namePattern`; an invalid
 name is 400 and a missing workbench directory is 404.
 

@@ -1628,6 +1628,7 @@
         function resetFileContentPane() {
             document.getElementById('filesContent').textContent = '';
             document.getElementById('filesCurrentPath').textContent = 'Select a file';
+            delete document.getElementById('filesCurrentPath').dataset.path;
             document.getElementById('filesCopyBtn').classList.add('hidden');
             filesCurrentContent = '';
         }
@@ -1638,11 +1639,17 @@
             document.getElementById('filesError').classList.add('hidden');
 
             try {
-                const resp = await fetch(`/api/files/${encodeURIComponent(appName)}`);
+                const resp = await fetch(`/api/files/${encodeURIComponent(appName)}`, { cache: 'no-store' });
                 if (!resp.ok) throw new Error(await resp.text());
                 const data = await resp.json();
 
                 filesEntries = data.files || [];
+                // Drop state that points at paths the refresh no longer lists, so a
+                // moved or renamed file is not shown under its old name.
+                const livePaths = new Set(filesEntries.map(e => e.path));
+                for (const p of Array.from(filesCollapsed)) if (!livePaths.has(p)) filesCollapsed.delete(p);
+                const shownPath = document.getElementById('filesCurrentPath').dataset.path;
+                if (shownPath && !livePaths.has(shownPath)) resetFileContentPane();
                 document.getElementById('filesTruncated').classList.toggle('hidden', !data.truncated);
                 renderFileTree();
 
@@ -1696,6 +1703,7 @@
             const pathEl = document.getElementById('filesCurrentPath');
             const contentEl = document.getElementById('filesContent');
             pathEl.textContent = path;
+            pathEl.dataset.path = path;
             contentEl.textContent = 'Loading...';
             document.getElementById('filesCopyBtn').classList.add('hidden');
             filesCurrentContent = '';
@@ -1706,7 +1714,7 @@
             }
 
             try {
-                const resp = await fetch(`/api/files/${encodeURIComponent(appName)}?path=${encodeURIComponent(path)}`);
+                const resp = await fetch(`/api/files/${encodeURIComponent(appName)}?path=${encodeURIComponent(path)}`, { cache: 'no-store' });
                 if (!resp.ok) throw new Error(await resp.text());
                 const data = await resp.json();
 

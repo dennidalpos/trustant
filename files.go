@@ -77,6 +77,10 @@ type FileEntry struct {
 // returns that file's content. The endpoint is read-only by design: there is no
 // write path, which is what makes it safe to expose over the whole workbench.
 func handleFiles(w http.ResponseWriter, r *http.Request) {
+	// WHY: the tree and file contents change whenever the assistant moves or
+	// renames files; a heuristically cached response would keep showing the
+	// previous paths even after the user presses Refresh (GH-022).
+	w.Header().Set("Cache-Control", "no-store")
 
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)

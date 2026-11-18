@@ -310,3 +310,59 @@ func TestFilesRejectsDirectoryRead(t *testing.T) {
 		t.Fatalf("status = %d, want 400 for a directory (body %q)", rec.Code, rec.Body.String())
 	}
 }
+
+// GH-022: after files are moved or renamed, a fresh listing must show only the
+// new paths, and the response must not be cacheable by the browser.
+func TestFilesListReflectsMoveAndRename(t *testing.T) {
+	name, workbench := newFilesWorkbench(t)
+	writeFile(t, filepath.Join(workbench, "src", "Old.tsx"), "export default 1\n")
+	writeFile(t, filepath.Join(workbench, "notes.md"), "notes\n")
+
+	paths := func() map[string]bool {
+		rec := getFiles(t, "/api/files/"+name)
+		if rec.Code != http.StatusOK {
+			t.Fatalf("status = %d, want 200", rec.Code)
+		}
+		if got := rec.Header().Get("Cache-Control"); got != "no-store" {
+			t.Fatalf("Cache-Control = %q, want no-store", got)
+		}
+		var resp struct {
+			Files []FileEntry `json:"files"`
+		}
+		if err := json.Unmarshal(rec.Body.Bytes(), &resp); err != nil {
+			t.Fatalf("decode: %s", err)
+		}
+		out := map[string]bool{}
+		for _, f := range resp.Files {
+			out[f.Path] = true
+		}
+		return out
+	}
+
+	before := paths()
+	if !before["src/Old.tsx"] || !before["notes.md"] {
+		t.Fatalf("initial listing missing files: %v", before)
+	}
+
+	if err := os.MkdirAll(filepath.Join(workbench, "app"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Rename(filepath.Join(workbench, "src", "Old.tsx"), filepath.Join(workbench, "app", "New.tsx")); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Rename(filepath.Join(workbench, "notes.md"), filepath.Join(workbench, "README.md")); err != nil {
+		t.Fatal(err)
+	}
+
+	after := paths()
+	for _, stale := range []string{"src/Old.tsx", "notes.md"} {
+		if after[stale] {
+			t.Errorf("stale path %q still listed after move/rename", stale)
+		}
+	}
+	for _, fresh := range []string{"app/New.tsx", "README.md"} {
+		if !after[fresh] {
+			t.Errorf("new path %q missing after move/rename", fresh)
+		}
+	}
+}
