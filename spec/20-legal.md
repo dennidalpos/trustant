@@ -9,6 +9,22 @@ files at the repo root:
 | `LICENSE` | Trustant's AGPL-3.0 text first, then the full text of **every** license identifier that appears in `DEPS`, each under a `License: <id>` header |
 | `NOTICE` | Trustant's own notice (`legal/NOTICE.head`), then per component the original license files and NOTICE files, with extracted copyright lines for navigation |
 
+```mermaid
+flowchart LR
+    M[legal/deps.manual.txt] --> G[legal/deps.py<br/>run by ./deps.sh]
+    GM[go.mod] --> G
+    NL[npm lockfiles<br/>acp, pi-acp, mcp, react-mcp] --> G
+    PV[acp/pi.version and requirements.txt] --> G
+    G --> D[DEPS]
+    G --> L[LICENSE]
+    G --> N[NOTICE]
+    G --> C[legal/COMPONENTS.json]
+    D -.summarized by hand.-> CR[CREDITS.md]
+```
+
+`CREDITS.md` is the only hand-written file in this set: a readable summary of
+the main components, kept in step with the generated registers.
+
 The generator also writes `legal/COMPONENTS.json`: component/version/license,
 source selector, evidence status, legal-file text hashes and obligations to
 review. Its statuses distinguish collected files from declared-only metadata;
@@ -20,7 +36,7 @@ The three files are **generated, never edited by hand**. `deps.sh` runs
 `legal/deps.py`, which reads:
 
 - `legal/deps.manual.txt` — hand-maintained components (vendored web assets,
-  submodules, Ubuntu packages, downloaded binaries, ops prerequisites, global
+  sources vendored in the repository such as `acp/` and `acp/pi-acp/`, submodules, Ubuntu packages, downloaded binaries, ops prerequisites, global
   npm and Python tools, the license of each pinned Python package, dev-only
   tools). Format and fetch kinds are documented at the top of the file.
 - `go.mod` — Go modules (license files from the Go module cache).
