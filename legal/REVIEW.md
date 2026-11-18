@@ -1,6 +1,8 @@
 # Third-party licensing review
 
-Review date: 2026-11-12. Scope: source checkout and the declared Linux container
+Review date: 2026-11-12; updated 2026-11-19 (acp and pi-acp are vendored in
+the repository and listed in their own DEPS section; see also
+[CREDITS.md](../CREDITS.md)). Scope: source checkout and the declared Linux container
 build inputs. This is a technical inventory, not a legal opinion or clearance
 of a published image.
 

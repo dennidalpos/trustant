@@ -56,24 +56,34 @@ JetBrains Mono  Google Fonts (unpinned)  OFL-1.1  https://github.com/JetBrains/J
 Work Sans       Google Fonts (unpinned)  OFL-1.1  https://github.com/weiweihuanghuang/Work-Sans
 
 
-4. GIT SUBMODULES
+4. SOURCES VENDORED IN THIS REPOSITORY
+======================================
+
+Directories that are plain files of this repository (not submodules), so
+the repository commit pins them. Image inclusion depends on the build path.
+
+NAME                                   VERSION            LICENSE            HOMEPAGE
+----                                   -------            -------            --------
+acp (TruACP)                           vendored           AGPL-3.0-or-later  https://github.com/dennidalpos/trustant
+pi-acp (fork, vendored in acp/pi-acp)  0.0.31-trustant.1  MIT                https://github.com/trustable-ai/pi-acp
+
+
+5. GIT SUBMODULES
 =================
 
 Sources tracked by this repository. Image inclusion depends on the
 build or runtime path; these entries do not assert that every submodule
 is copied into the image.
 
-NAME                                 VERSION                         LICENSE            HOMEPAGE
-----                                 -------                         -------            --------
-acp (TruACP)                         main@9786f796380a               AGPL-3.0-or-later  https://github.com/trustant/trustant-acp
-mcp (openserverless-mcp)             main@baf14007f910               Apache-2.0         https://github.com/trustant/openserverless-mcp
-oplugins (openserverless-task)       0.9.0@455258e93971              Apache-2.0         https://github.com/trustable-ai/openserverless-task
-oplugins-truinst                     main@b65d58d49a3a               AGPL-3.0-or-later  https://github.com/trustant/oplugins-truinst
-pi-acp (fork, nested in acp/pi-acp)  0.0.31-trustant.1@4e526e5f64ea  MIT                https://github.com/trustable-ai/pi-acp
-skills                               main@56d349b6174e               AGPL-3.0-or-later  https://github.com/trustable-ai/skills
+NAME                            VERSION             LICENSE            HOMEPAGE
+----                            -------             -------            --------
+mcp (openserverless-mcp)        main@baf14007f910   Apache-2.0         https://github.com/trustant/openserverless-mcp
+oplugins (openserverless-task)  0.9.0@455258e93971  Apache-2.0         https://github.com/trustable-ai/openserverless-task
+oplugins-truinst                main@b65d58d49a3a   AGPL-3.0-or-later  https://github.com/trustant/oplugins-truinst
+skills                          main@56d349b6174e   AGPL-3.0-or-later  https://github.com/trustable-ai/skills
 
 
-5. TRUACP (acp) - NPM PRODUCTION DEPENDENCIES
+6. TRUACP (acp) - NPM PRODUCTION DEPENDENCIES
 =============================================
 
 Full production tree of acp/package-lock.json, bundled into truacp.cjs
@@ -201,7 +211,7 @@ zod                                                4.4.3    MIT           https:
 zwitch                                             2.0.4    MIT           https://www.npmjs.com/package/zwitch
 
 
-6. PI-ACP (acp/pi-acp) - NPM PRODUCTION DEPENDENCIES
+7. PI-ACP (acp/pi-acp) - NPM PRODUCTION DEPENDENCIES
 ====================================================
 
 Full production tree of acp/pi-acp/package-lock.json.
@@ -212,7 +222,7 @@ NAME                      VERSION  LICENSE     HOMEPAGE
 zod                       3.25.76  MIT         https://www.npmjs.com/package/zod
 
 
-7. OPENSERVERLESS-MCP (mcp) - NPM PRODUCTION DEPENDENCIES
+8. OPENSERVERLESS-MCP (mcp) - NPM PRODUCTION DEPENDENCIES
 =========================================================
 
 Full production tree of mcp/package-lock.json, installed globally in the
@@ -314,7 +324,7 @@ zod                        3.25.76  MIT           https://www.npmjs.com/package/
 zod-to-json-schema         3.25.2   ISC           https://www.npmjs.com/package/zod-to-json-schema
 
 
-8. TRUSTANT-REACT-MCP (react-mcp) - NPM PRODUCTION DEPENDENCIES
+9. TRUSTANT-REACT-MCP (react-mcp) - NPM PRODUCTION DEPENDENCIES
 ===============================================================
 
 Full production tree of react-mcp/package-lock.json, installed globally
@@ -417,8 +427,8 @@ zod                        3.25.76  MIT           https://www.npmjs.com/package/
 zod-to-json-schema         3.25.2   ISC           https://www.npmjs.com/package/zod-to-json-schema
 
 
-9. CONTAINER IMAGE - UBUNTU 24.04 PACKAGES
-==========================================
+10. CONTAINER IMAGE - UBUNTU 24.04 PACKAGES
+===========================================
 
 Installed with apt in image/Dockerfile. Each package's full copyright and
 license statement ships in the image at /usr/share/doc/<package>/copyright.
@@ -452,7 +462,7 @@ vim                         distro   Vim                                      ht
 zstd (build stage only)     distro   BSD-3-Clause OR GPL-2.0-only             https://github.com/facebook/zstd
 
 
-10. CONTAINER IMAGE - DOWNLOADED BINARIES AND RUNTIMES
+11. CONTAINER IMAGE - DOWNLOADED BINARIES AND RUNTIMES
 ======================================================
 
 Downloaded by image/Dockerfile (and by start.sh/setup.sh in the dev VM).
@@ -467,7 +477,7 @@ ops (OpenServerless CLI)  latest   Apache-2.0         https://github.com/apache/
 uv (/usr/bin/uv)          latest   Apache-2.0 OR MIT  https://github.com/astral-sh/uv
 
 
-11. OPS PREREQUISITES (oplugins/prereq.yml)
+12. OPS PREREQUISITES (oplugins/prereq.yml)
 ===========================================
 
 Binaries `ops` downloads into ~/.ops/<os>-<arch>/bin on first run, in the
@@ -487,7 +497,7 @@ uv                  0.7.19   Apache-2.0 OR MIT                                  
 yq                  4.47.1   MIT                                                           https://github.com/mikefarah/yq
 
 
-12. HOST-SPECIFIC OPS PREREQUISITES
+13. HOST-SPECIFIC OPS PREREQUISITES
 ===================================
 
 Referenced by the cross-platform ops sources; not shipped in the Linux
@@ -498,7 +508,7 @@ NAME                VERSION  LICENSE   HOMEPAGE
 zip (Windows only)  3.0-1    Info-ZIP  https://infozip.sourceforge.net
 
 
-13. CONTAINER IMAGE - GLOBAL NPM INSTALLS
+14. CONTAINER IMAGE - GLOBAL NPM INSTALLS
 =========================================
 
 Coding agents pinned in acp/pi.version plus the tools installed by
@@ -522,7 +532,7 @@ typescript                              latest   Apache-2.0  https://github.com/
 typescript-language-server              latest   Apache-2.0  https://github.com/typescript-language-server/typescript-language-server
 
 
-14. CONTAINER IMAGE - PYTHON TOOLS (uv tool install)
+15. CONTAINER IMAGE - PYTHON TOOLS (uv tool install)
 ====================================================
 
 Each tool runs in its own uv-managed virtualenv under /opt/uv/tools.
@@ -539,7 +549,7 @@ redis-mcp-server                                       0.5.0    MIT             
 yapf                                                   latest   Apache-2.0                                        https://github.com/google/yapf
 
 
-15. PYTHON PACKAGES FOR USER APPS (acp/extensions/requirements.txt)
+16. PYTHON PACKAGES FOR USER APPS (acp/extensions/requirements.txt)
 ===================================================================
 
 Installed unmodified for the apps users build.
@@ -635,7 +645,7 @@ xxhash                4.0.1        BSD-2-Clause                                 
 zstandard             0.25.0       BSD-3-Clause                                        https://pypi.org/project/zstandard
 
 
-16. DEVELOPMENT ENVIRONMENT ONLY (NOT DISTRIBUTED)
+17. DEVELOPMENT ENVIRONMENT ONLY (NOT DISTRIBUTED)
 ==================================================
 
 Installed by start.sh / start.ps1 / setup.sh / run.sh on a developer

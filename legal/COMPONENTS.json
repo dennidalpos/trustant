@@ -7321,27 +7321,6 @@
     },
     {
       "section": "submodule",
-      "name": "acp (TruACP)",
-      "version": "main@9786f796380a",
-      "license": "AGPL-3.0-or-later",
-      "homepage": "https://github.com/trustant/trustant-acp",
-      "revision": "9786f796380aa9b2000d8cebd913fa41150c89ed",
-      "source": "path:acp",
-      "status": "license-files-collected",
-      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices. Review corresponding/covered source and any replacement or relinking requirements.",
-      "evidence": [
-        {
-          "file": "LICENSE",
-          "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
-        },
-        {
-          "file": "NOTICE",
-          "sha256": "8b3bdae03883e44091168429324c94d9b5aa19c6f791cbaedb89592924adf848"
-        }
-      ]
-    },
-    {
-      "section": "submodule",
       "name": "mcp (openserverless-mcp)",
       "version": "main@baf14007f910",
       "license": "Apache-2.0",
@@ -7405,23 +7384,6 @@
     },
     {
       "section": "submodule",
-      "name": "pi-acp (fork, nested in acp/pi-acp)",
-      "version": "0.0.31-trustant.1@4e526e5f64ea",
-      "license": "MIT",
-      "homepage": "https://github.com/trustable-ai/pi-acp",
-      "revision": "4e526e5f64eaec647d78c919ba9dc071197c2517",
-      "source": "path:acp/pi-acp",
-      "status": "license-files-collected",
-      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
-      "evidence": [
-        {
-          "file": "LICENSE",
-          "sha256": "b9e63459a8c046806ee709828fe8cf04a08062c5a99847c9ae2a2be18009fa03"
-        }
-      ]
-    },
-    {
-      "section": "submodule",
       "name": "skills",
       "version": "main@56d349b6174e",
       "license": "AGPL-3.0-or-later",
@@ -7434,6 +7396,42 @@
         {
           "file": "LICENSE",
           "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ]
+    },
+    {
+      "section": "vendored",
+      "name": "acp (TruACP)",
+      "version": "vendored",
+      "license": "AGPL-3.0-or-later",
+      "homepage": "https://github.com/dennidalpos/trustant",
+      "source": "path:acp",
+      "status": "license-files-collected",
+      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices. Review corresponding/covered source and any replacement or relinking requirements.",
+      "evidence": [
+        {
+          "file": "LICENSE",
+          "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+        },
+        {
+          "file": "NOTICE",
+          "sha256": "8b3bdae03883e44091168429324c94d9b5aa19c6f791cbaedb89592924adf848"
+        }
+      ]
+    },
+    {
+      "section": "vendored",
+      "name": "pi-acp (fork, vendored in acp/pi-acp)",
+      "version": "0.0.31-trustant.1",
+      "license": "MIT",
+      "homepage": "https://github.com/trustable-ai/pi-acp",
+      "source": "path:acp/pi-acp",
+      "status": "license-files-collected",
+      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
+      "evidence": [
+        {
+          "file": "LICENSE",
+          "sha256": "b9e63459a8c046806ee709828fe8cf04a08062c5a99847c9ae2a2be18009fa03"
         }
       ]
     },

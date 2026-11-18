@@ -456,10 +456,10 @@ Work Sans Google Fonts (unpinned) (OFL-1.1)
   | OTHER DEALINGS IN THE FONT SOFTWARE.
 
 
-4. GIT SUBMODULES
-=================
+4. SOURCES VENDORED IN THIS REPOSITORY
+======================================
 
-acp (TruACP) main@9786f796380a (AGPL-3.0-or-later)
+acp (TruACP) vendored (AGPL-3.0-or-later)
 
   LICENSE FILE: LICENSE
   |                     GNU AFFERO GENERAL PUBLIC LICENSE
@@ -1135,6 +1135,36 @@ acp (TruACP) main@9786f796380a (AGPL-3.0-or-later)
   |
   | obsidian-agent-client
   | Copyright 2025-2026 RAIT-09
+
+pi-acp (fork, vendored in acp/pi-acp) 0.0.31-trustant.1 (MIT)
+  Copyright (c) 2025 Sergii Kozak
+
+  LICENSE FILE: LICENSE
+  | MIT License
+  |
+  | Copyright (c) 2025 Sergii Kozak
+  |
+  | Permission is hereby granted, free of charge, to any person obtaining a copy
+  | of this software and associated documentation files (the "Software"), to deal
+  | in the Software without restriction, including without limitation the rights
+  | to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  | copies of the Software, and to permit persons to whom the Software is
+  | furnished to do so, subject to the following conditions:
+  |
+  | The above copyright notice and this permission notice shall be included in all
+  | copies or substantial portions of the Software.
+  |
+  | THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  | IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  | FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  | AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  | LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  | OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  | SOFTWARE.
+
+
+5. GIT SUBMODULES
+=================
 
 mcp (openserverless-mcp) main@baf14007f910 (Apache-2.0)
 
@@ -2562,32 +2592,6 @@ oplugins-truinst main@b65d58d49a3a (AGPL-3.0-or-later)
   | This product is licensed under the GNU Affero General Public License,
   | version 3 or later. See the LICENSE file for the full license text.
 
-pi-acp (fork, nested in acp/pi-acp) 0.0.31-trustant.1@4e526e5f64ea (MIT)
-  Copyright (c) 2025 Sergii Kozak
-
-  LICENSE FILE: LICENSE
-  | MIT License
-  |
-  | Copyright (c) 2025 Sergii Kozak
-  |
-  | Permission is hereby granted, free of charge, to any person obtaining a copy
-  | of this software and associated documentation files (the "Software"), to deal
-  | in the Software without restriction, including without limitation the rights
-  | to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  | copies of the Software, and to permit persons to whom the Software is
-  | furnished to do so, subject to the following conditions:
-  |
-  | The above copyright notice and this permission notice shall be included in all
-  | copies or substantial portions of the Software.
-  |
-  | THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  | IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  | FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  | AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  | LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  | OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-  | SOFTWARE.
-
 skills main@56d349b6174e (AGPL-3.0-or-later)
 
   LICENSE FILE: LICENSE
@@ -2794,7 +2798,7 @@ skills main@56d349b6174e (AGPL-3.0-or-later)
   |    limitations under the License.
 
 
-5. TRUACP (acp) - NPM PRODUCTION DEPENDENCIES
+6. TRUACP (acp) - NPM PRODUCTION DEPENDENCIES
 =============================================
 
 @agentclientprotocol/sdk 0.28.1 (Apache-2.0)
@@ -6069,7 +6073,7 @@ zwitch 2.0.4 (MIT)
   | SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-6. PI-ACP (acp/pi-acp) - NPM PRODUCTION DEPENDENCIES
+7. PI-ACP (acp/pi-acp) - NPM PRODUCTION DEPENDENCIES
 ====================================================
 
 @agentclientprotocol/sdk 0.26.0 (Apache-2.0)
@@ -6294,7 +6298,7 @@ zod 3.25.76 (MIT)
   | SOFTWARE.
 
 
-7. OPENSERVERLESS-MCP (mcp) - NPM PRODUCTION DEPENDENCIES
+8. OPENSERVERLESS-MCP (mcp) - NPM PRODUCTION DEPENDENCIES
 =========================================================
 
 @hono/node-server 1.19.17 (MIT)
@@ -8649,7 +8653,7 @@ zod-to-json-schema 3.25.2 (ISC)
   | OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-8. TRUSTANT-REACT-MCP (react-mcp) - NPM PRODUCTION DEPENDENCIES
+9. TRUSTANT-REACT-MCP (react-mcp) - NPM PRODUCTION DEPENDENCIES
 ===============================================================
 
 @hono/node-server 1.19.15 (MIT)
@@ -8990,8 +8994,8 @@ typescript 5.9.3 (Apache-2.0)
   | END OF TERMS AND CONDITIONS
 
 
-9. CONTAINER IMAGE - DOWNLOADED BINARIES AND RUNTIMES
-=====================================================
+10. CONTAINER IMAGE - DOWNLOADED BINARIES AND RUNTIMES
+======================================================
 
 gh (GitHub CLI) 2.96.0 (MIT)
   Copyright (c) 2019 GitHub Inc.
@@ -14853,7 +14857,7 @@ uv (/usr/bin/uv) latest (Apache-2.0 OR MIT)
   | SOFTWARE.
 
 
-10. OPS PREREQUISITES (oplugins/prereq.yml)
+11. OPS PREREQUISITES (oplugins/prereq.yml)
 ===========================================
 
 7zz (7-Zip) 2407 (LGPL-2.1-or-later AND BSD-3-Clause AND BSD-2-Clause AND LicenseRef-unRAR)
@@ -15884,7 +15888,7 @@ yq 4.47.1 (MIT)
   | SOFTWARE.
 
 
-11. CONTAINER IMAGE - GLOBAL NPM INSTALLS
+12. CONTAINER IMAGE - GLOBAL NPM INSTALLS
 =========================================
 
 @agentclientprotocol/codex-acp 1.1.4 (Apache-2.0)
@@ -17452,7 +17456,7 @@ typescript-language-server latest (Apache-2.0)
   |    limitations under the License.
 
 
-12. CONTAINER IMAGE - PYTHON TOOLS (uv tool install)
+13. CONTAINER IMAGE - PYTHON TOOLS (uv tool install)
 ====================================================
 
 mcp (Python MCP SDK, <2) 1.x (MIT)
@@ -18213,7 +18217,7 @@ yapf latest (Apache-2.0)
   |    limitations under the License.
 
 
-13. PYTHON PACKAGES FOR USER APPS (acp/extensions/requirements.txt)
+14. PYTHON PACKAGES FOR USER APPS (acp/extensions/requirements.txt)
 ===================================================================
 
 annotated-types 0.8.0 (MIT)

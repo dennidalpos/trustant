@@ -62,6 +62,9 @@ SECTIONS = [
      "Referenced by web/trustant-ui.css and downloaded from Google Fonts at\n"
      "runtime; font files are not bundled in the repository or image. The\n"
      "Google Fonts response is not version-pinned."),
+    ("vendored", "SOURCES VENDORED IN THIS REPOSITORY",
+     "Directories that are plain files of this repository (not submodules), so\n"
+     "the repository commit pins them. Image inclusion depends on the build path."),
     ("submodule", "GIT SUBMODULES",
      "Sources tracked by this repository. Image inclusion depends on the\n"
      "build or runtime path; these entries do not assert that every submodule\n"
