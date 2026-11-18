@@ -13,6 +13,8 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Derived from obsidian-agent-client (Apache-2.0), Copyright 2025-2026 RAIT-09; unmodified apart from this header.
  */
 
 import { useRef, useCallback, useEffect } from "react";

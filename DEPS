@@ -62,10 +62,12 @@ Work Sans       Google Fonts (unpinned)  OFL-1.1  https://github.com/weiweihuang
 Directories that are plain files of this repository (not submodules), so
 the repository commit pins them. Image inclusion depends on the build path.
 
-NAME                                   VERSION            LICENSE            HOMEPAGE
-----                                   -------            -------            --------
-acp (TruACP)                           vendored           AGPL-3.0-or-later  https://github.com/dennidalpos/trustant
-pi-acp (fork, vendored in acp/pi-acp)  0.0.31-trustant.1  MIT                https://github.com/trustable-ai/pi-acp
+NAME                                                    VERSION            LICENSE            HOMEPAGE
+----                                                    -------            -------            --------
+acp (TruACP)                                            vendored           AGPL-3.0-or-later  https://github.com/dennidalpos/trustant
+obsidian-agent-client (origin of acp, upstream 0.11.0)  0.11.0             Apache-2.0         https://github.com/RAIT-09/obsidian-agent-client
+pi-acp (fork, vendored in acp/pi-acp)                   0.0.31-trustant.1  MIT                https://github.com/trustable-ai/pi-acp
+pi-acp (upstream svkozak/pi-acp, base of the fork)      0.0.31             MIT                https://github.com/svkozak/pi-acp
 
 
 5. GIT SUBMODULES
@@ -80,7 +82,7 @@ NAME                            VERSION             LICENSE            HOMEPAGE
 mcp (openserverless-mcp)        main@baf14007f910   Apache-2.0         https://github.com/trustant/openserverless-mcp
 oplugins (openserverless-task)  0.9.0@455258e93971  Apache-2.0         https://github.com/trustable-ai/openserverless-task
 oplugins-truinst                main@b65d58d49a3a   AGPL-3.0-or-later  https://github.com/trustant/oplugins-truinst
-skills                          main@56d349b6174e   AGPL-3.0-or-later  https://github.com/trustable-ai/skills
+skills                          main@56d349b6174e   Apache-2.0         https://github.com/trustable-ai/skills
 
 
 6. TRUACP (acp) - NPM PRODUCTION DEPENDENCIES

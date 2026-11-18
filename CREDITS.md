@@ -15,8 +15,9 @@ Trustant itself is AGPL-3.0-or-later, Copyright 2025-2026 Nuvolaris Inc. See
 
 | Component | Role | License | Origin |
 |---|---|---|---|
-| `acp/` (TruACP) | Assistant runtime: Node server and browser UI over the Agent Client Protocol | AGPL-3.0-or-later | Vendored from the owner's `trustant-acp` fork |
-| `acp/pi-acp/` | Adapter between ACP and the Pi coding agent | MIT, Copyright (c) 2025 Sergii Kozak | Vendored fork of `pi-acp` (`trustable-ai/pi-acp`) |
+| `acp/` (TruACP) | Assistant runtime: Node server and browser UI over the Agent Client Protocol | AGPL-3.0-or-later for Trustant's parts; Apache-2.0 for the parts derived from obsidian-agent-client | Vendored from the owner's `trustant-acp` fork, itself derived from obsidian-agent-client (below) |
+| obsidian-agent-client 0.11.0 | Origin of `acp/`; derived files carry its attribution | Apache-2.0, Copyright 2025-2026 RAIT-09 | https://github.com/RAIT-09/obsidian-agent-client |
+| `acp/pi-acp/` | Adapter between ACP and the Pi coding agent | MIT, Copyright (c) 2025 Sergii Kozak | Vendored fork of `svkozak/pi-acp` 0.0.31 (`trustable-ai/pi-acp`) |
 | `web/` assets | Browser UI libraries | MIT | See below |
 
 Vendored web assets: [Tailwind CSS browser build](https://github.com/tailwindlabs/tailwindcss),
@@ -32,10 +33,14 @@ bundled.
 | `mcp` (OpenServerless MCP) | Apache-2.0 | https://github.com/trustant/openserverless-mcp |
 | `oplugins` (OpenServerless tasks) | Apache-2.0 | https://github.com/trustable-ai/openserverless-task |
 | `oplugins-truinst` | AGPL-3.0-or-later | https://github.com/trustant/oplugins-truinst |
-| `skills` | AGPL-3.0-or-later | https://github.com/trustable-ai/skills |
+| `skills` | Apache-2.0 | https://github.com/trustable-ai/skills |
 
-The Apache-2.0 submodules keep their own LICENSE and NOTICE files and carry no
-AGPL headers.
+The Apache-2.0 submodules (`mcp`, `oplugins`, `skills`) keep their own LICENSE and
+NOTICE files and carry no AGPL headers.
+
+For vendored sources, upstream attribution is in [acp/UPSTREAM.md](acp/UPSTREAM.md)
+and `acp/NOTICE`, and per-file changes are tracked in
+[legal/VENDORED.md](legal/VENDORED.md).
 
 ## Coding agents and protocol
 

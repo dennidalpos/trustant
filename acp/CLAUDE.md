@@ -7,6 +7,8 @@
 
 **Repository**: this directory is vendored in the Trustant repository (including `pi-acp/`); it is not a submodule and has no separate remote. Upstream is not tracked or merged; do not assume upstream updates or propose syncing from it unless asked. Commits and pushes follow the root [AGENTS.md](../AGENTS.md).
 
+**Licensing**: this directory is vendored and partly derived from obsidian-agent-client (Apache-2.0, Copyright RAIT-09). Follow the third-party license and vendored-source rules in the root [AGENTS.md](../AGENTS.md); upstream attribution is in [UPSTREAM.md](UPSTREAM.md) and [NOTICE](NOTICE). Do not add AGPL headers to `pi-acp/` files (MIT).
+
 ## Architecture
 
 ```

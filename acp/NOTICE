@@ -4,7 +4,14 @@ Copyright 2025-2026 Nuvolaris Inc
 This product is licensed under the GNU Affero General Public License,
 version 3 or later. See the LICENSE file for the full license text.
 
-derived from
+This product is derived from obsidian-agent-client, which is licensed under
+the Apache License, Version 2.0. A copy of that license is in
+LICENSE-Apache-2.0-obsidian-agent-client. The upstream NOTICE follows
+unchanged:
 
 obsidian-agent-client
 Copyright 2025-2026 RAIT-09
+
+Upstream: https://github.com/RAIT-09/obsidian-agent-client (version 0.11.0).
+Files derived from it carry a notice in their header, and the changes made by
+Nuvolaris Inc. are tracked per file in ../legal/VENDORED.md. See UPSTREAM.md.

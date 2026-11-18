@@ -7402,12 +7402,12 @@
       "section": "submodule",
       "name": "skills",
       "version": "main@56d349b6174e",
-      "license": "AGPL-3.0-or-later",
+      "license": "Apache-2.0",
       "homepage": "https://github.com/trustable-ai/skills",
       "revision": "56d349b6174e53707723ed839c252995122dc46d",
       "source": "path:skills",
       "status": "license-files-collected",
-      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices. Review corresponding/covered source and any replacement or relinking requirements.",
+      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
         {
           "file": "LICENSE",
@@ -7430,8 +7430,32 @@
           "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
         },
         {
+          "file": "LICENSE-Apache-2.0-obsidian-agent-client",
+          "sha256": "a6f451430bcb6a8cd62e25dc4bc29e1d06d009f0bc160195d9ba6b640c3e22d3"
+        },
+        {
           "file": "NOTICE",
-          "sha256": "8b3bdae03883e44091168429324c94d9b5aa19c6f791cbaedb89592924adf848"
+          "sha256": "59e78558fc87cbc9478aa34c4a04a83d8300aa856f88249132f07df8ef5d4558"
+        }
+      ]
+    },
+    {
+      "section": "vendored",
+      "name": "obsidian-agent-client (origin of acp, upstream 0.11.0)",
+      "version": "0.11.0",
+      "license": "Apache-2.0",
+      "homepage": "https://github.com/RAIT-09/obsidian-agent-client",
+      "source": "url:https://raw.githubusercontent.com/RAIT-09/obsidian-agent-client/0.11.0/LICENSE,https://raw.githubusercontent.com/RAIT-09/obsidian-agent-client/0.11.0/NOTICE",
+      "status": "license-files-collected",
+      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
+      "evidence": [
+        {
+          "file": "LICENSE",
+          "sha256": "a6f451430bcb6a8cd62e25dc4bc29e1d06d009f0bc160195d9ba6b640c3e22d3"
+        },
+        {
+          "file": "NOTICE",
+          "sha256": "af7c8271543f44658f58072aad8cef8b1a1d360137783f65438a1c0058040a7e"
         }
       ]
     },
@@ -7442,6 +7466,22 @@
       "license": "MIT",
       "homepage": "https://github.com/trustable-ai/pi-acp",
       "source": "path:acp/pi-acp",
+      "status": "license-files-collected",
+      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
+      "evidence": [
+        {
+          "file": "LICENSE",
+          "sha256": "b9e63459a8c046806ee709828fe8cf04a08062c5a99847c9ae2a2be18009fa03"
+        }
+      ]
+    },
+    {
+      "section": "vendored",
+      "name": "pi-acp (upstream svkozak/pi-acp, base of the fork)",
+      "version": "0.0.31",
+      "license": "MIT",
+      "homepage": "https://github.com/svkozak/pi-acp",
+      "source": "url:https://raw.githubusercontent.com/svkozak/pi-acp/9e857dcc05a057404eb1537e5f31e5aef88a5863/LICENSE",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [

@@ -722,7 +722,7 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 ===============================================================================
 License: AGPL-3.0-or-later
 ===============================================================================
-Used by: acp (TruACP), oplugins-truinst, skills
+Used by: acp (TruACP), oplugins-truinst
 -------------------------------------------------------------------------------
 
 This is Trustant's own license; its full text is at the top of this file.
@@ -731,7 +731,7 @@ This is Trustant's own license; its full text is at the top of this file.
 ===============================================================================
 License: Apache-2.0
 ===============================================================================
-Used by 45 components (see DEPS), including: @agentclientprotocol/codex-acp,
+Used by 47 components (see DEPS), including: @agentclientprotocol/codex-acp,
 @agentclientprotocol/sdk, @openai/codex, @playwright/test (e2e tests), bcrypt,
 boto3, botocore, distro, grpcio, helm, k3s, kafka-python, ...
 -------------------------------------------------------------------------------
@@ -2551,7 +2551,7 @@ The license for original unRAR code has the following restriction:
 ===============================================================================
 License: MIT
 ===============================================================================
-Used by 264 components (see DEPS), including: @codemirror/state,
+Used by 265 components (see DEPS), including: @codemirror/state,
 @codemirror/view, @earendil-works/pi-agent-core, @earendil-works/pi-ai,
 @earendil-works/pi-coding-agent, @earendil-works/pi-storage-sqlite-node,
 @earendil-works/pi-tui, @hono/node-server, @marijn/find-cluster-break,
