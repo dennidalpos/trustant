@@ -99,9 +99,8 @@ case "$NERDCTL_ARCH" in
     aarch64|arm64) NERDCTL_ARCH="arm64" ;;
 esac
 git submodule update --init ../mcp
-# WHY: acp owns pinned Pi and pi-acp forks. Recursive initialization
-# is required so image builds cannot silently fall back to npm runtimes.
-git submodule update --init --recursive ../acp
+# WHY: acp and its pi-acp are vendored in this repository (no submodule
+# step), so image builds cannot silently fall back to npm runtimes.
 
 if [ ! -f ../mcp/package.json ]; then
     echo "Error: ../mcp is not initialized. Run: git submodule update --init mcp" >&2
@@ -115,11 +114,11 @@ mkdir -p "$MCP_CONTEXT_DIR"
 git -C ../mcp archive HEAD | tar -x -C "$MCP_CONTEXT_DIR"
 
 if [ ! -f ../acp/package.json ]; then
-    echo "Error: ../acp is not initialized. Run: git submodule update --init acp" >&2
+    echo "Error: ../acp is missing; it is vendored in this repository" >&2
     exit 1
 fi
 TRUACP_REF="$(git -C ../acp rev-parse HEAD)"
-echo "Using acp submodule: $TRUACP_REF"
+echo "Using vendored acp at repository commit: $TRUACP_REF"
 # WHY: the managed runtime must package the issue #57 policy extension beside
 # the exact TruACP and pi-acp versions that negotiate its typed launch path.
 for required in setup.sh pi.version pi.integrity package-lock.json extensions/trustant-runtime.ts extensions/requirements.txt; do

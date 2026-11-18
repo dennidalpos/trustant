@@ -27,7 +27,7 @@ Repository knowledge lives in the SecondBrain dossier; code, guides, and publish
 
 ## Trustant conventions
 
-- Use **Trustant** for the product and `github.com/trustant/trustant` for the canonical repository. Preserve the module path in [go.mod](go.mod) and the upstream identities in [.gitmodules](.gitmodules).
+- Use **Trustant** for the product. This repository and its submodules are maintained as the owner's forks; the owner does not track or merge upstream changes, so do not assume upstream updates, rebase onto upstream, or propose syncing from it unless asked. Preserve the module path `github.com/trustant/trustant` in [go.mod](go.mod), which imports depend on. Change the URLs in [.gitmodules](.gitmodules) to a fork only when the owner asks. TruACP (`acp/`, including `acp/pi-acp/`) is vendored in this repository and changes with it; it is not a submodule.
 - The durable app repository is bare and lives at `$WORKSPACE_DIR/workspace/<name>/`. The active checkout lives at `$WORKBENCH_DIR/<name>/` and receives regenerated configuration on launch. See [spec/4-launch.md](spec/4-launch.md) and [spec/13-gitignore.md](spec/13-gitignore.md).
 - Use an FQDN for checks that exercise [hostname routing](middleware.go). The current host labels are `trustant` for the UI/API, `truacp` for the assistant, and `vite` for the app preview. Registered app hosts route to their development services.
 - Treat [openserverless-instructions.md](openserverless-instructions.md) and [app-agents.md](app-agents.md) as product assets that guide generated apps. Preserve the license error prefixes consumed by the UI when changing that API. See [spec/14-license.md](spec/14-license.md).

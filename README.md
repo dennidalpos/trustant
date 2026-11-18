@@ -11,7 +11,7 @@ This README is for developers running Trustant from source and contributors navi
 ```mermaid
 flowchart LR
     Browser[Browser UI<br/>web/] -->|trustant.DOMAIN| Go[Go server :8910<br/>main.go, middleware.go]
-    Browser -->|truacp.DOMAIN| ACP[TruACP assistant :4096<br/>acp submodule]
+    Browser -->|truacp.DOMAIN| ACP[TruACP assistant :4096<br/>acp/]
     Browser -->|vite.DOMAIN| Vite[Vite preview :5173]
     Go --> WS[(WORKSPACE_DIR<br/>bare repos + trustant.json)]
     Go --> WB[(WORKBENCH_DIR<br/>active checkouts)]
@@ -83,7 +83,7 @@ flowchart TD
 
 Open the URL printed by the development loop. Choose a provider and model, then create or import an application from the app list. Provider credentials are configured in the UI. The app workbench provides the assistant, preview, file viewer, terminal, and application configuration.
 
-`start.sh` initializes the runtime source submodules (`mcp` and `acp`, including nested dependencies). To populate every submodule for repository work:
+`start.sh` initializes the `mcp` runtime source submodule; TruACP (`acp/`, including `acp/pi-acp/`) is part of this repository. To populate every submodule for repository work:
 
 ```bash
 git submodule update --init --recursive
@@ -241,7 +241,7 @@ node --test tests/issue98-session-tree.test.mjs
 
 ### Submodules and releases
 
-[.gitmodules](.gitmodules) declares five direct submodules: `acp`, `mcp`, `oplugins`, `oplugins-truinst`, and `skills`. `acp` contains the TruACP runtime and its nested Pi ACP dependency. Follow each affected submodule's own instructions.
+[.gitmodules](.gitmodules) declares four direct submodules: `mcp`, `oplugins`, `oplugins-truinst`, and `skills`. The TruACP runtime lives in [acp/](acp/), with its Pi ACP adapter in `acp/pi-acp/`; follow [acp/AGENTS.md](acp/AGENTS.md) there. Follow each submodule's own instructions for the others.
 
 Release tooling is documented in [spec/build.md](spec/build.md). `build.sh --tag` and `--build` can replace local tags, update `oplugins-truinst/opsroot.json`, and attempt a commit, including with `--no-deploy`. `hotfix.sh` can replace tags and patch the live StatefulSet; a regular redeploy restores the image from `opsroot.json`. Buildx modes push images, and `publish.sh` pushes Git refs. Review the script before using a release command.
 

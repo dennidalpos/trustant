@@ -7,7 +7,7 @@ Thanks for your interest in contributing to Trustant.
 **We cannot accept a pull request until a signed Contributor License Agreement
 (CLA) is on file for its author.** This applies to every contribution of any
 size, and to every repository in the Trustant project, including the
-`skills`, `oplugins-truinst`, and `trustant-acp` submodules.
+`skills` and `oplugins-truinst` submodules and the vendored `acp/` directory.
 
 Trustant is released under the GNU Affero General Public License, version 3 or
 later (see [LICENSE](LICENSE)). Nuvolaris Inc also offers the software under

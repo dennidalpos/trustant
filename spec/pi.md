@@ -12,11 +12,10 @@ session state. See [preflight routing](0-preflight.md).
 
 ## Source and version pinning
 
-`trustant-acp` is a pinned Git submodule. Pi extensions are pinned in
-`trustant-acp/pi.version`; every npm install entry must carry an explicit
-version. The customized Pi executable/core and ACP adapter are the nested
-`trustant-acp/pi` and `trustant-acp/pi-acp` submodules, each pinned to an
-exact fork revision. `setup.sh` builds the five lockstep Pi packages
+TruACP is vendored in this repository under `acp/`, so the repository commit
+pins it. Pi extensions are pinned in `acp/pi.version`; every npm install entry must carry an explicit
+version. The customized ACP adapter is vendored as `acp/pi-acp/`; Pi core comes from
+the pinned upstream npm packages verified by `acp/pi.integrity`. `setup.sh` builds the five lockstep Pi packages
 (`pi-ai`, `pi-tui`, `pi-agent-core`, `pi-storage-sqlite-node`, and
 `pi-coding-agent`) from the owned fork in source/VM mode or consumes the same
 prebuilt tarballs in the image. It never installs the public coding-agent

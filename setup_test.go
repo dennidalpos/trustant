@@ -376,8 +376,8 @@ func TestStartInitializesRuntimeSourcesOnHost(t *testing.T) {
 		// Not the whole command line: start.sh threads `-c core.autocrlf=false
 		// -c core.eol=lf` between `git -C "$MOUNT_DIR"` and the subcommand so a
 		// fresh Windows checkout lands as LF. What must hold is that both
-		// source submodules are initialised recursively, not the exact flags.
-		`submodule update --init --recursive mcp acp`,
+		// the mcp submodule is initialised recursively; acp is vendored.
+		`submodule update --init --recursive mcp`,
 		`[[ -f "$MOUNT_DIR/mcp/package.json" ]]`,
 		`[[ -f "$MOUNT_DIR/acp/package.json" ]]`,
 		`ensure_source_submodules`,

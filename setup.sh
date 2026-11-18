@@ -687,9 +687,9 @@ ok "MCP servers (browser, react, openserverless, postgres, redis, milvus, mongod
 # packages and make clean VM behavior differ from the image workflow.
 echo "--- Building truacp ---"
 [[ -f acp/package.json && -f acp/pi.version ]] \
-  || fail "acp submodule is not initialized (run ./start.sh on the host or: git submodule update --init acp)"
+  || fail "acp source is missing (it is vendored in this repository; check the checkout)"
 [[ -f acp/pi-acp/package.json ]] \
-  || fail "nested pi-acp fork is not initialized (run: git submodule update --init --recursive acp)"
+  || fail "vendored pi-acp source is missing (check the checkout)"
 [[ -x acp/setup.sh ]] || chmod +x acp/setup.sh
 (cd acp && ./setup.sh) || fail "truacp build/install failed"
 command -v truacp &>/dev/null || fail "truacp not on PATH after install (expected ~/.local/bin/truacp)"

@@ -1,0 +1,1085 @@
+/*
+ * Copyright 2025-2026 Nuvolaris Inc
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/* Standalone ACP client — browser chat styles.
+   Self-contained (no Obsidian theme variables); light + dark via prefers-color-scheme. */
+
+:root {
+	--bg: #ffffff;
+	--bg-alt: #f4f4f5;
+	--bg-user: #e8f0fe;
+	--text: #1f2328;
+	--muted: #6b7280;
+	--border: #e4e4e7;
+	--accent: #2563eb;
+	--accent-text: #ffffff;
+	--error-bg: #fee2e2;
+	--error-text: #991b1b;
+	--warning-text: #a16207;
+	--notebook: #0f766e;
+	--notebook-soft: #ccfbf1;
+	/* Template step run states: pending is deliberately the quietest. */
+	--run-done: #16a34a;
+	--run-running: #d97706;
+	--mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg: #1a1b1e;
+		--bg-alt: #26272b;
+		--bg-user: #1e3a5f;
+		--text: #e4e4e7;
+		--muted: #9ca3af;
+		--border: #3f3f46;
+		--accent: #3b82f6;
+		--error-bg: #451a1a;
+		--error-text: #fca5a5;
+		--warning-text: #facc15;
+		--notebook: #2dd4bf;
+		--notebook-soft: #123b37;
+		--run-done: #4ade80;
+		--run-running: #fbbf24;
+	}
+}
+
+* {
+	box-sizing: border-box;
+}
+body {
+	margin: 0;
+	font:
+		14px/1.55 system-ui,
+		-apple-system,
+		sans-serif;
+	color: var(--text);
+	background: var(--bg);
+}
+
+.app {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+}
+
+/* top bar */
+/* The header never wraps: when the chat panel narrows the dropdowns shrink
+   down to --topbar-select-min, and the host stops the divider there (#211). */
+.topbar {
+	--topbar-select-min: 5rem;
+	display: flex;
+	flex-wrap: nowrap;
+	min-width: 0;
+	align-items: center;
+	gap: 0.6rem;
+	padding: 0.6rem 0.9rem;
+	border-bottom: 1px solid var(--border);
+	background: var(--bg-alt);
+}
+.topbar .brand {
+	font-weight: 600;
+}
+.topbar select,
+.topbar button {
+	font: inherit;
+	padding: 0.3rem 0.6rem;
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	background: var(--bg);
+	color: var(--text);
+	cursor: pointer;
+}
+.topbar button {
+	background: var(--accent);
+	color: var(--accent-text);
+	border-color: transparent;
+}
+.topbar button.header-action {
+	background: var(--bg);
+	color: var(--text);
+	border-color: var(--border);
+}
+.topbar button:disabled {
+	opacity: 0.5;
+	cursor: default;
+}
+.topbar .status {
+	flex: 0 0 auto;
+	white-space: nowrap;
+	color: var(--accent);
+	font-weight: 500;
+}
+.topbar button.icon-action {
+	position: relative;
+	display: inline-grid;
+	place-items: center;
+	flex: 0 0 auto;
+	width: 2.2rem;
+	height: 2.2rem;
+	padding: 0;
+	border-radius: 8px;
+}
+.topbar button.icon-action svg {
+	width: 1.15rem;
+	height: 1.15rem;
+}
+.topbar .notebook-toggle,
+.topbar .run-next {
+	background: var(--bg);
+	color: var(--text);
+	border-color: var(--border);
+}
+.topbar .run-next:not(:disabled) {
+	background: var(--notebook);
+	color: #fff;
+}
+
+/* error banner */
+.error {
+	padding: 0.5rem 0.9rem;
+	background: var(--error-bg);
+	color: var(--error-text);
+	font-size: 0.85rem;
+	cursor: pointer;
+}
+
+/* message list */
+.messages {
+	flex: 1;
+	overflow-y: auto;
+	padding: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	/* WHY: the managed chat is often embedded in another Trustant page.
+	   Keep transcript selection explicit so host styles cannot turn normal
+	   copy/paste into a drag-only or non-selectable surface. */
+	user-select: text;
+}
+.empty {
+	color: var(--muted);
+	text-align: center;
+	margin-top: 2rem;
+}
+
+.turn {
+	display: flex;
+	flex-direction: column;
+}
+.turn.user {
+	align-items: flex-end;
+}
+.turn .bubble {
+	max-width: 80%;
+	padding: 0.5rem 0.8rem;
+	border-radius: 10px;
+	background: var(--bg-alt);
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+.turn.user .bubble {
+	background: var(--bg-user);
+}
+.turn.assistant .bubble.markdown {
+	max-width: 100%;
+	white-space: normal;
+}
+.turn-actions {
+	display: flex;
+	margin-top: 0.2rem;
+}
+.turn.user .turn-actions {
+	justify-content: flex-end;
+}
+.copy-action {
+	border: 1px solid transparent;
+	border-radius: 5px;
+	padding: 0.12rem 0.4rem;
+	background: transparent;
+	color: var(--muted);
+	font: inherit;
+	font-size: 0.72rem;
+	line-height: 1.35;
+	cursor: pointer;
+}
+.copy-action:hover,
+.copy-action:focus-visible {
+	border-color: var(--border);
+	background: var(--bg-alt);
+	color: var(--text);
+}
+.copy-action.state-copied {
+	color: #16a34a;
+}
+.copy-action.state-failed {
+	color: var(--error-text);
+}
+.markdown-code-block {
+	position: relative;
+}
+.markdown-code-block .code-copy-action {
+	position: absolute;
+	z-index: 1;
+	top: 0.35rem;
+	right: 0.35rem;
+	background: var(--bg);
+	border-color: var(--border);
+}
+.markdown pre {
+	background: var(--bg-alt);
+	padding: 0.7rem;
+	padding-top: 2rem;
+	border-radius: 8px;
+	overflow-x: auto;
+	font-family: var(--mono);
+	font-size: 0.85rem;
+}
+.markdown code {
+	font-family: var(--mono);
+	font-size: 0.85em;
+}
+.markdown :not(pre) > code {
+	background: var(--bg-alt);
+	padding: 0.1em 0.35em;
+	border-radius: 4px;
+}
+.markdown table {
+	border-collapse: collapse;
+}
+.markdown th,
+.markdown td {
+	border: 1px solid var(--border);
+	padding: 0.3rem 0.6rem;
+}
+
+.thoughts {
+	color: var(--muted);
+	font-size: 0.85rem;
+	margin-bottom: 0.3rem;
+}
+.thoughts summary {
+	cursor: pointer;
+}
+.thought-body {
+	white-space: pre-wrap;
+	padding: 0.3rem 0 0.3rem 0.8rem;
+	border-left: 2px solid var(--border);
+}
+
+/* tool call rows */
+.turn.tool {
+	flex-direction: row;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.85rem;
+	color: var(--muted);
+	font-family: var(--mono);
+}
+.turn.tool .tool-title {
+	color: var(--text);
+}
+.turn.tool.status-completed .tool-status {
+	color: #16a34a;
+}
+.turn.tool.status-issues-found .tool-status,
+.turn.tool.status-attempt-failed .tool-status {
+	color: var(--warning-text);
+}
+.turn.tool.status-recovered {
+	opacity: 0.72;
+}
+.turn.tool.status-recovered .tool-status {
+	color: var(--muted);
+}
+.turn.tool.status-failed .tool-status {
+	color: var(--error-text);
+}
+
+/* permission prompt */
+.permission {
+	border: 1px solid var(--accent);
+	border-radius: 10px;
+	padding: 0.7rem 0.9rem;
+	background: var(--bg-alt);
+}
+.perm-title {
+	font-weight: 500;
+	margin-bottom: 0.5rem;
+}
+.perm-options {
+	display: flex;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+}
+.perm-options button {
+	font: inherit;
+	padding: 0.3rem 0.7rem;
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	background: var(--bg);
+	color: var(--text);
+	cursor: pointer;
+}
+.perm-options button:first-child {
+	background: var(--accent);
+	color: var(--accent-text);
+	border-color: transparent;
+}
+
+/* composer */
+.composer {
+	display: flex;
+	gap: 0.6rem;
+	padding: 0.7rem 0.9rem;
+	border-top: 1px solid var(--border);
+	background: var(--bg-alt);
+	/* Keep the button one row high at the bottom while the textarea grows. */
+	align-items: flex-end;
+	--composer-line: 1.4em;
+	--composer-row: calc(var(--composer-line) + 1rem + 2px);
+}
+.composer textarea {
+	flex: 1;
+	resize: none;
+	box-sizing: border-box;
+	/* One row by default, auto-grown by ChatApp up to five, then scrolls. */
+	min-height: var(--composer-row);
+	max-height: calc(5 * var(--composer-line) + 1rem + 2px);
+	overflow-y: auto;
+	font: inherit;
+	/* After `font`, whose shorthand resets line-height. */
+	line-height: var(--composer-line);
+	padding: 0.5rem 0.7rem;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	background: var(--bg);
+	color: var(--text);
+}
+.composer button {
+	font: inherit;
+	height: var(--composer-row);
+	padding: 0 1.1rem;
+	border: none;
+	border-radius: 8px;
+	background: var(--accent);
+	color: var(--accent-text);
+	cursor: pointer;
+}
+.composer button:disabled {
+	opacity: 0.5;
+	cursor: default;
+}
+.composer button.stop {
+	background: #dc2626;
+	min-width: 6.5rem;
+}
+
+/* Live agent activity. This is deliberately outside the message list so
+   protocol/control-plane state never becomes assistant-authored transcript. */
+.activity {
+	display: flex;
+	align-items: center;
+	gap: 0.55rem;
+	min-height: 2.1rem;
+	padding: 0.35rem 0.95rem;
+	border-top: 1px solid var(--border);
+	color: var(--muted);
+	background: var(--bg);
+	font-size: 0.85rem;
+}
+.activity-spinner {
+	width: 0.8rem;
+	height: 0.8rem;
+	border: 2px solid var(--border);
+	border-top-color: var(--accent);
+	border-radius: 50%;
+	animation: activity-spin 0.8s linear infinite;
+}
+.activity-elapsed {
+	margin-left: auto;
+	font-family: var(--mono);
+}
+@keyframes activity-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.history-modal {
+	max-height: min(80vh, 42rem);
+}
+.session-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.45rem;
+	max-height: 26rem;
+	overflow-y: auto;
+}
+.session-row {
+	display: flex;
+	align-items: stretch;
+	width: 100%;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	background: var(--bg);
+	color: var(--text);
+	overflow: hidden;
+}
+.session-row:hover {
+	border-color: var(--accent);
+}
+.session-resume {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.2rem;
+	min-width: 0;
+	padding: 0.65rem 0.75rem;
+	border: 0;
+	background: transparent;
+	color: var(--text);
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+}
+.session-resume span {
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.session-resume small {
+	color: var(--muted);
+	font-family: var(--mono);
+}
+.session-delete {
+	/* WHY: deletion must be visually separate from the large resume target so
+	   clicking × can never accidentally load the session first. */
+	align-self: center;
+	margin-right: 0.55rem;
+	width: 2rem;
+	height: 2rem;
+	border: 1px solid transparent;
+	border-radius: 50%;
+	background: transparent;
+	color: var(--muted);
+	font:
+		1.25rem/1 system-ui,
+		sans-serif;
+	cursor: pointer;
+}
+.session-delete:hover:not(:disabled) {
+	border-color: var(--error-text);
+	color: var(--error-text);
+	background: var(--error-bg);
+}
+.session-delete:disabled,
+.session-resume:disabled {
+	opacity: 0.45;
+	cursor: default;
+}
+.session-error {
+	margin-bottom: 0.75rem;
+	padding: 0.55rem 0.65rem;
+	border-radius: 8px;
+	background: var(--error-bg);
+	color: var(--error-text);
+	font-size: 0.85rem;
+}
+.session-delete-confirm {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.8rem;
+	margin-top: 0.75rem;
+	padding: 0.65rem 0.75rem;
+	border: 1px solid var(--error-text);
+	border-radius: 8px;
+	background: var(--error-bg);
+	color: var(--error-text);
+}
+.session-delete-confirm > div {
+	display: flex;
+	gap: 0.45rem;
+}
+.session-delete-confirm button {
+	padding: 0.35rem 0.65rem;
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	background: var(--bg);
+	color: var(--text);
+	font: inherit;
+	cursor: pointer;
+}
+.session-delete-confirm button.danger {
+	border-color: transparent;
+	background: #dc2626;
+	color: #fff;
+}
+.session-delete-confirm button:disabled {
+	opacity: 0.5;
+	cursor: default;
+}
+
+/* Gear config button in the topbar */
+.topbar .gear {
+	border: 1px solid var(--border);
+	background: var(--bg);
+	color: var(--text);
+}
+
+/* Config / auth modals (pi endpoint, codex device-auth) */
+.modal-backdrop {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.45);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 50;
+}
+.modal {
+	background: var(--bg);
+	color: var(--text);
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	padding: 1.2rem;
+	width: min(90%, 30rem);
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+.modal-title {
+	font-weight: 600;
+	font-size: 1.05rem;
+	margin-bottom: 0.4rem;
+}
+.modal-desc {
+	color: var(--muted);
+	font-size: 0.85rem;
+	margin: 0 0 0.9rem;
+}
+.modal-field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	margin-bottom: 0.8rem;
+	font-size: 0.85rem;
+}
+.modal-field > span {
+	color: var(--muted);
+}
+.modal-field input {
+	font: inherit;
+	padding: 0.45rem 0.6rem;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	background: var(--bg-alt);
+	color: var(--text);
+}
+.modal-field a {
+	color: var(--accent);
+	word-break: break-all;
+}
+.auth-code {
+	font-family: var(--mono);
+	font-size: 1.3rem;
+	letter-spacing: 0.15em;
+	padding: 0.4rem 0.6rem;
+	background: var(--bg-alt);
+	border-radius: 8px;
+	display: inline-block;
+	user-select: all;
+}
+.modal-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 0.5rem;
+	margin-top: 0.4rem;
+}
+.modal-actions button {
+	font: inherit;
+	padding: 0.4rem 0.9rem;
+	border: none;
+	border-radius: 8px;
+	background: var(--accent);
+	color: var(--accent-text);
+	cursor: pointer;
+}
+.modal-actions button.secondary {
+	background: var(--bg-alt);
+	color: var(--text);
+	border: 1px solid var(--border);
+}
+.modal-actions button:disabled {
+	opacity: 0.5;
+	cursor: default;
+}
+
+/* ACP model and reasoning controls share compact topbar affordances. */
+.topbar .model-select,
+.topbar .reasoning-select {
+	font: inherit;
+	padding: 0.3rem 0.5rem;
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	background: var(--bg);
+	color: var(--text);
+	cursor: pointer;
+	max-width: 12rem;
+}
+.topbar .reasoning-select {
+	max-width: 9rem;
+}
+.topbar .agent-select {
+	max-width: 10rem;
+}
+.topbar .agent-select,
+.topbar .model-select,
+.topbar .reasoning-select {
+	flex: 0 1 auto;
+	min-width: var(--topbar-select-min);
+	text-overflow: ellipsis;
+}
+.topbar .model-select:disabled,
+.topbar .reasoning-select:disabled {
+	opacity: 0.5;
+	cursor: default;
+}
+
+/* GitHub-backed notebook panel */
+.notebook-panel {
+	position: fixed;
+	z-index: 40;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	width: min(92vw, 24rem);
+	padding: 1rem;
+	overflow-y: auto;
+	background: var(--bg);
+	border-left: 1px solid var(--border);
+	box-shadow: -12px 0 40px rgba(0, 0, 0, 0.18);
+}
+.notebook-panel-header,
+.notebook-active,
+.notebook-list-entry {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.6rem;
+}
+.notebook-panel-header {
+	margin-bottom: 1rem;
+}
+.notebook-panel-subtitle,
+.notebook-list-entry small,
+.notebook-list-empty {
+	color: var(--muted);
+	font-size: 0.78rem;
+}
+.icon-button {
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	background: var(--bg-alt);
+	color: var(--text);
+	cursor: pointer;
+}
+.icon-button.danger {
+	color: var(--error-text);
+}
+.icon-button:disabled {
+	opacity: 0.4;
+	cursor: default;
+}
+.notebook-field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	margin-bottom: 0.6rem;
+	font-size: 0.8rem;
+	color: var(--muted);
+}
+.notebook-field input,
+.notebook-add input {
+	width: 100%;
+	padding: 0.45rem 0.55rem;
+	border: 1px solid var(--border);
+	border-radius: 7px;
+	background: var(--bg-alt);
+	color: var(--text);
+	font: inherit;
+}
+.notebook-primary,
+.notebook-add button {
+	padding: 0.4rem 0.75rem;
+	border: 0;
+	border-radius: 7px;
+	background: var(--notebook);
+	color: #fff;
+	cursor: pointer;
+}
+.notebook-primary:disabled,
+.notebook-add button:disabled {
+	opacity: 0.45;
+	cursor: default;
+}
+/*
+ * Read-only repositories get a quiet closing note instead of the old warning
+ * banner: nothing is wrong, the write controls are simply absent, so the note
+ * carries no border, background, or alert color.
+ */
+.notebook-hint {
+	margin-top: 1rem;
+	color: var(--muted);
+	font-size: 0.75rem;
+}
+.notebook-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	margin: 1rem 0;
+}
+.notebook-list-entry {
+	padding: 0.35rem;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+}
+.notebook-list-entry.active {
+	border-color: var(--notebook);
+	background: var(--notebook-soft);
+}
+
+/*
+ * The workbench working copy. It sits above the catalog because it is what the
+ * session actually edits; the catalog is where copies come from and go back to.
+ */
+.notebook-working-copy {
+	margin: 1rem 0;
+	padding: 0.7rem;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+}
+.notebook-working-copy.changed {
+	border-color: var(--notebook);
+	background: var(--notebook-soft);
+}
+.notebook-working-copy-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.6rem;
+}
+.notebook-working-copy code {
+	display: block;
+	color: var(--muted);
+	font-size: 0.72rem;
+}
+.notebook-changed-badge {
+	padding: 0.1rem 0.45rem;
+	border-radius: 999px;
+	background: var(--notebook);
+	color: #fff;
+	font-size: 0.68rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+.notebook-save-fields {
+	display: grid;
+	gap: 0.45rem;
+	margin-top: 0.6rem;
+}
+.notebook-save-fields input {
+	width: 100%;
+	padding: 0.45rem 0.55rem;
+	border: 1px solid var(--border);
+	border-radius: 7px;
+	background: var(--bg-alt);
+	color: var(--text);
+	font: inherit;
+}
+.notebook-save-fields button {
+	padding: 0.4rem 0.75rem;
+	border: 0;
+	border-radius: 7px;
+	background: var(--notebook);
+	color: #fff;
+	cursor: pointer;
+}
+.notebook-save-fields button:disabled {
+	opacity: 0.45;
+	cursor: default;
+}
+.notebook-list-load {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	border: 0;
+	background: transparent;
+	color: var(--text);
+	cursor: pointer;
+	text-align: left;
+}
+.notebook-active {
+	padding: 0.7rem 0;
+	border-top: 1px solid var(--border);
+	border-bottom: 1px solid var(--border);
+}
+.notebook-active code {
+	display: block;
+	color: var(--muted);
+	font-size: 0.72rem;
+}
+.notebook-add {
+	display: grid;
+	gap: 0.45rem;
+	margin-top: 1rem;
+}
+
+/* Notebook and ad-hoc nodes embedded in the conversation */
+.notebook-node {
+	border: 1px solid var(--border);
+	border-left: 4px solid var(--notebook);
+	border-radius: 10px;
+	padding: 0.7rem;
+	background: var(--bg-alt);
+}
+.notebook-node.input {
+	border-left-color: var(--muted);
+}
+.notebook-node.selected {
+	box-shadow: 0 0 0 2px color-mix(in srgb, var(--notebook) 35%, transparent);
+}
+.notebook-node.editing {
+	border-style: dashed;
+}
+/*
+ * A node being repositioned reads as lifted out of the list: a dashed outline
+ * and a slight raise, on the outline channel rather than the left edge, so it
+ * does not compete with the run-state edge the step keeps while it moves.
+ */
+.notebook-node.moving {
+	outline: 2px dashed var(--notebook);
+	outline-offset: 2px;
+	box-shadow: 0 4px 12px color-mix(in srgb, var(--notebook) 20%, transparent);
+}
+.notebook-node.moving:focus {
+	outline-color: var(--notebook);
+}
+/* Plain instruction text: nothing is wrong, the node is simply in a mode. */
+.notebook-move-hint {
+	color: var(--muted);
+	font-size: 0.72rem;
+}
+
+/*
+ * Run state on the left edge, which already carries node identity: a pending
+ * step is muted, a completed one is solid, and the running one is both
+ * coloured and animated so it stands out from everything already finished.
+ * Selection stays a ring, so the two signals never compete.
+ */
+.notebook-node.run-pending {
+	border-left-color: color-mix(in srgb, var(--notebook) 35%, transparent);
+}
+.notebook-node.run-done {
+	border-left-color: var(--run-done);
+}
+.notebook-node.run-running {
+	border-left-color: var(--run-running);
+	box-shadow: 0 0 0 2px color-mix(in srgb, var(--run-running) 30%, transparent);
+}
+.notebook-node.run-pending .notebook-node-title {
+	color: var(--muted);
+}
+.notebook-run-state {
+	padding: 0.05rem 0.4rem;
+	border-radius: 999px;
+	border: 1px solid var(--border);
+	color: var(--muted);
+	font-size: 0.65rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	white-space: nowrap;
+}
+.notebook-run-state.done {
+	border-color: var(--run-done);
+	color: var(--run-done);
+}
+.notebook-run-state.running {
+	border-color: var(--run-running);
+	color: var(--run-running);
+	animation: notebook-run-pulse 1.4s ease-in-out infinite;
+}
+@keyframes notebook-run-pulse {
+	50% {
+		opacity: 0.45;
+	}
+}
+/* A pulsing badge is decoration, not information; the label already says it. */
+@media (prefers-reduced-motion: reduce) {
+	.notebook-run-state.running {
+		animation: none;
+	}
+}
+.notebook-node-header,
+.notebook-node-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+}
+.notebook-node-header {
+	justify-content: space-between;
+	margin-bottom: 0.5rem;
+}
+.notebook-node-actions button {
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	background: var(--bg);
+	color: var(--text);
+	font: inherit;
+	font-size: 0.75rem;
+	cursor: pointer;
+}
+.notebook-node-actions button:disabled {
+	opacity: 0.4;
+	cursor: default;
+}
+.input-node-label {
+	color: var(--muted);
+	font-size: 0.75rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+.notebook-node-prompt {
+	white-space: pre-wrap;
+	font-family: var(--mono);
+	font-size: 0.86rem;
+	max-height: 16rem;
+	overflow: auto;
+}
+.notebook-node-task {
+	min-width: 0;
+}
+/* In-place prompt editor: matches the read view's monospace prompt rendering so
+ * text does not reflow when an edit starts. */
+.notebook-node-editor {
+	width: 100%;
+	padding: 0.5rem;
+	border: 1px solid var(--notebook);
+	border-radius: 8px;
+	background: var(--bg);
+	color: var(--text);
+	font-family: var(--mono);
+	font-size: 0.86rem;
+	line-height: 1.45;
+	resize: vertical;
+}
+.notebook-node-title {
+	margin: 0;
+	font-size: 0.96rem;
+	line-height: 1.35;
+	font-weight: 650;
+	color: var(--text);
+}
+.notebook-node-details {
+	margin-top: 0.35rem;
+	color: var(--muted);
+	font-size: 0.76rem;
+}
+.notebook-node-details > summary {
+	width: fit-content;
+	cursor: pointer;
+	user-select: none;
+}
+.notebook-node-details[open] > summary {
+	margin-bottom: 0.55rem;
+}
+.notebook-agent-response {
+	margin-top: 0.75rem;
+	padding: 0.75rem 0.85rem;
+	border: 1px solid color-mix(in srgb, var(--notebook) 42%, var(--border));
+	border-left: 3px solid var(--notebook);
+	border-radius: 8px;
+	background: color-mix(in srgb, var(--notebook) 8%, var(--bg));
+}
+.notebook-agent-label {
+	margin-bottom: 0.45rem;
+	color: var(--notebook);
+	font-size: 0.68rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+.notebook-agent-response .bubble {
+	max-width: none;
+	padding: 0;
+	background: transparent;
+}
+.notebook-agent-working {
+	color: var(--muted);
+	font-size: 0.82rem;
+	font-style: italic;
+}
+.notebook-tool-activity {
+	margin-top: 0.65rem;
+	border: 1px solid var(--border);
+	border-radius: 7px;
+	overflow: hidden;
+	background: var(--bg);
+}
+.notebook-tool-activity-header {
+	display: flex;
+	justify-content: space-between;
+	gap: 0.75rem;
+	padding: 0.3rem 0.55rem;
+	border-bottom: 1px solid var(--border);
+	color: var(--muted);
+	font-size: 0.68rem;
+	font-weight: 650;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+.notebook-tool-window {
+	max-height: calc(3 * 1.75rem);
+	overflow-y: auto;
+	scrollbar-gutter: stable;
+}
+.notebook-tool-window .turn.tool {
+	display: flex;
+	min-height: 1.75rem;
+	margin: 0;
+	padding: 0.25rem 0.5rem;
+	border-bottom: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
+	flex-wrap: nowrap;
+}
+.notebook-tool-window .turn.tool:last-child {
+	border-bottom: 0;
+}
+.notebook-tool-window .tool-title {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.notebook-tool-window .tool-status {
+	flex: 0 0 auto;
+	margin-left: auto;
+}
+
+@media (max-width: 700px) {
+	.turn .bubble {
+		max-width: 95%;
+	}
+}

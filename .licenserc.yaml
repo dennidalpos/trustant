@@ -3,9 +3,10 @@
 #   license-eye header check   # report files missing the AGPL header
 #   license-eye header fix     # add the header to every file that lacks one
 #
-# Scope: this repository only. license-eye discovers files via `git ls-files`,
-# which does not descend into submodules, so each Trustant-owned submodule
-# (skills, oplugins-truinst, acp) carries its own
+# Scope: this repository, including the vendored acp/ directory (pi-acp is
+# excluded below). license-eye discovers files via `git ls-files`, which does
+# not descend into submodules, so each remaining Trustant-owned submodule
+# (skills, oplugins-truinst) carries its own
 # identical .licenserc.yaml and must be checked from inside it. The `oplugins`
 # (trustable-ai/openserverless-task) and `mcp` (apache/openserverless-mcp) submodules are
 # upstream Apache-2.0 projects with their own LICENSE/NOTICE and are excluded

@@ -119,10 +119,9 @@ The image must not restore the former `trustant-guardrails.ts` placeholder or
 claim policy capabilities beyond those documented in
 [trustant-pi-runtime.md](trustant-pi-runtime.md).
 
-`trustant-acp` is tracked as a Git submodule from
-`https://github.com/trustable-ai/trustant-acp.git`, following `main` while the
-parent repository pins the exact commit. Trustant builds must consume that
-checked-out revision and must not download a floating TruACP source archive or
+TruACP lives in this repository under `acp/` (with its pi-acp adapter under
+`acp/pi-acp/`); it is no longer a Git submodule, so the repository commit pins
+it. Trustant builds must consume that checked-out revision and must not download a floating TruACP source archive or
 depend on another developer worktree. The host build produces the portable
 JavaScript bundle; the Docker build runs the staged `setup.sh` to install that
 bundle and the Pi packages pinned by `trustant-acp/pi.version`. OpenCode is not

@@ -374,7 +374,7 @@ name (mcp-s3, postgres-mcp, trustant-redis-mcp, mcp-server-milvus,
 mongodb-mcp-server, openserverless-mcp), so "MCP ready" means all of them resolve
 on the guest's PATH.
 
-13. Build and install TruACP/Pi from the checked-out `trustant-acp` submodule.
+13. Build and install TruACP/Pi from the vendored `acp/` directory.
 
 Every Pi package must be pinned in `trustant-acp/pi.version`. Run
 `trustant-acp/setup.sh` from inside that directory so it builds the bundled UI,

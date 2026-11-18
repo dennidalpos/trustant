@@ -1,0 +1,842 @@
+/*
+ * Copyright 2025-2026 Nuvolaris Inc
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+import { mkdir, mkdtemp, writeFile } from "fs/promises";
+import { tmpdir } from "os";
+import { join } from "path";
+import { describe, expect, it } from "vitest";
+import {
+	loadTrustantRuntimeManifest,
+	isManagedActionMutation,
+	ManagedSemanticCircuit,
+	MANAGED_REPEATED_STREAM_ERROR,
+	managedAttemptSignature,
+	managedBootstrapBlockReason,
+	managedCheckerCommandBlockReason,
+	managedGeneratedArtifactBlockReason,
+	managedActionWasCreated,
+	managedMcpInvocation,
+	managedRedeployVerificationBlockReason,
+	managedRepeatedStreamTextDetected,
+	managedSecretAccessBlockReason,
+	managedServiceMcpMutationBlockReason,
+	managedShellCommandBlockReason,
+	managedPythonEnvironmentBlockReason,
+	managedToolResultFailed,
+	normalizePythonRequirement,
+	parsePythonRuntimeRequirements,
+	pathIsWithin,
+	pythonRuntimeLibraries,
+	readTrustantRuntimeStatus,
+	recordManagedMcpBootstrapResult,
+	requestTrustantRedeploy,
+	trustantRuntimeSystemPrompt,
+} from "../extensions/trustant-runtime";
+
+describe("Trustant Pi runtime extension", () => {
+	it("moves the provider repetition guard to upstream Pi's extension boundary", () => {
+		const phrase = Array.from(
+			{ length: 32 },
+			(_value, index) => `guard-word-${index}`,
+		).join(" ");
+		const repeated = {
+			role: "assistant",
+			content: [
+				{
+					type: "text",
+					text: Array.from({ length: 4 }, () => phrase).join(" "),
+				},
+			],
+		};
+		expect(managedRepeatedStreamTextDetected(repeated)).toBe(true);
+		expect(MANAGED_REPEATED_STREAM_ERROR).toContain(
+			"repeated the same streamed response",
+		);
+
+		const healthy = {
+			role: "assistant",
+			content: [
+				{
+					type: "text",
+					text: Array.from(
+						{ length: 301 },
+						(_value, index) => `healthy-turn-${index}`,
+					).join(" "),
+				},
+			],
+		};
+		expect(managedRepeatedStreamTextDetected(healthy)).toBe(false);
+	});
+
+	it("revalidates the host manifest and standard MCP config inside Pi", async () => {
+		const root = await mkdtemp(join(tmpdir(), "runtime-extension-"));
+		const workbench = join(root, "workbench");
+		const nested = join(workbench, "src");
+		const manifestPath = join(root, "runtime.json");
+		const watcherLog = join(root, "ops-ide-devel.log");
+		const mcpConfig = join(root, "mcp.json");
+		await mkdir(nested, { recursive: true });
+		await writeFile(
+			watcherLog,
+			[
+				"building packages/v1/projects.zip",
+				"API_KEY=super-secret-value",
+				'ops action update v1/login -p APP_SECRET "another-secret"',
+				"deployed packages/v1/projects.zip",
+			].join("\n"),
+			{ mode: 0o600 },
+		);
+		await writeFile(
+			join(workbench, ".mcp.json"),
+			JSON.stringify({
+				mcpServers: {
+					openserverless: {},
+					mongodb: {},
+				},
+			}),
+		);
+		await writeFile(
+			mcpConfig,
+			JSON.stringify({
+				mcpServers: {
+					openserverless: {
+						type: "stdio",
+						command: "openserverless-mcp",
+					},
+					mongodb: {
+						type: "stdio",
+						command: "mongodb-mcp-server",
+					},
+				},
+			}),
+			{ mode: 0o600 },
+		);
+		await writeFile(
+			manifestPath,
+			JSON.stringify({
+				version: 2,
+				workbenches: [
+					{
+						app: "example",
+						workspace: workbench,
+						developmentUrl: "http://localhost:5173",
+						browserUrl: "http://vite.example.test",
+						requiredMcpServers: ["mongodb", "openserverless"],
+						mcpConfig,
+						watcherLog,
+					},
+				],
+			}),
+		);
+
+		const manifest = loadTrustantRuntimeManifest(nested, {
+			TRUSTANT_MANAGED_RUNTIME: "1",
+			TRUSTANT_RUNTIME_CONFIG: manifestPath,
+		});
+		expect(manifest.requiredMcpServers).toEqual(["mongodb", "openserverless"]);
+		expect(pathIsWithin(workbench, nested)).toBe(true);
+		expect(pathIsWithin(workbench, join(root, "other"))).toBe(false);
+		expect(trustantRuntimeSystemPrompt(manifest)).toContain(
+			"service MCPs as discovery and read-only verification",
+		);
+		expect(trustantRuntimeSystemPrompt(manifest)).toContain(
+			"Browser-visible application URL: http://vite.example.test",
+		);
+		expect(trustantRuntimeSystemPrompt(manifest)).toContain(
+			"ops ide devel watcher is the sole owner",
+		);
+		expect(trustantRuntimeSystemPrompt(manifest)).toContain(
+			"call trustant_runtime_status",
+		);
+		expect(trustantRuntimeSystemPrompt(manifest)).toContain(
+			"use opaque random session tokens with an expiry",
+		);
+		expect(trustantRuntimeSystemPrompt(manifest)).toContain(
+			"OpenServerless auth_setup tool once",
+		);
+		expect(trustantRuntimeSystemPrompt(manifest)).toContain(
+			"Discover only the servers you are about to use",
+		);
+		expect(trustantRuntimeSystemPrompt(manifest)).toContain(
+			"Only the user may change application environment values",
+		);
+		const status = readTrustantRuntimeStatus(manifest, 2);
+		expect(status.lines.join("\n")).toContain(
+			"deployed packages/v1/projects.zip",
+		);
+		expect(status.lines.join("\n")).not.toContain("super-secret-value");
+		expect(status.lines.join("\n")).not.toContain("another-secret");
+		expect(status.lines.join("\n")).toContain("[REDACTED]");
+	});
+
+	it("enforces user-owned app env files while leaving value-free status available", () => {
+		expect(
+			managedSecretAccessBlockReason(
+				"read",
+				{ path: ".env" },
+				"/workbench/example",
+			),
+		).toContain("application env access");
+		expect(
+			managedSecretAccessBlockReason(
+				"write",
+				{ path: ".env.production" },
+				"/workbench/example",
+			),
+		).toContain("application env access");
+		expect(
+			managedSecretAccessBlockReason(
+				"shell",
+				{ command: "sed -n '1,20p' packages/.env" },
+				"/workbench/example",
+			),
+		).toContain("application env file");
+		expect(
+			managedSecretAccessBlockReason(
+				"mcp",
+				{ server: "openserverless", tool: "secret_status" },
+				"/workbench/example",
+			),
+		).toBeUndefined();
+		expect(
+			managedSecretAccessBlockReason(
+				"mcp",
+				{ server: "openserverless", tool: "secret_ensure" },
+				"/workbench/example",
+			),
+		).toContain("automatic environment-secret creation");
+		expect(
+			managedSecretAccessBlockReason(
+				"mcp",
+				{
+					tool: "openserverless_secret_ensure",
+					args: '{"name":"APP_SECRET"}',
+				},
+				"/workbench/example",
+				["openserverless"],
+			),
+		).toContain("automatic environment-secret creation");
+		expect(
+			managedSecretAccessBlockReason(
+				"mcp",
+				{ server: "openserverless", tool: "auth-setup" },
+				"/workbench/example",
+			),
+		).toBeUndefined();
+		expect(
+			managedSecretAccessBlockReason(
+				"mcp",
+				{ server: "openserverless", tool: "secret_bind" },
+				"/workbench/example",
+			),
+		).toBeUndefined();
+	});
+
+	it("blocks generated wrappers and archives while allowing business modules", () => {
+		const workspace = "/workbench/example";
+		expect(
+			managedGeneratedArtifactBlockReason(
+				"edit",
+				{ path: "packages/v1/login/__main__.py" },
+				workspace,
+			),
+		).toContain("OpenServerless-generated wrapper");
+		expect(
+			managedGeneratedArtifactBlockReason(
+				"write",
+				{ path: "/workbench/example/packages/v1/login.zip" },
+				workspace,
+			),
+		).toContain("deploy artifact");
+		expect(
+			managedGeneratedArtifactBlockReason(
+				"edit",
+				{ path: "packages/v1/login/login.py" },
+				workspace,
+			),
+		).toBeUndefined();
+		expect(
+			managedGeneratedArtifactBlockReason(
+				"edit",
+				{ path: "src/App.tsx" },
+				workspace,
+			),
+		).toBeUndefined();
+	});
+
+	it("requires an MCP-generated wrapper before a new action business module", async () => {
+		const workspace = await mkdtemp(
+			join(tmpdir(), "runtime-extension-workbench-"),
+		);
+		const action = join(workspace, "packages", "v1", "users");
+		await mkdir(action, { recursive: true });
+		expect(
+			managedGeneratedArtifactBlockReason(
+				"write",
+				{ path: "packages/v1/users/users.py" },
+				workspace,
+			),
+		).toContain("action scaffold");
+		await writeFile(join(action, "__main__.py"), "# generated\n");
+		expect(
+			managedGeneratedArtifactBlockReason(
+				"write",
+				{ path: "packages/v1/users/users.py" },
+				workspace,
+			),
+		).toBeUndefined();
+	});
+
+	it("keeps service MCPs read-only during reproducible application work", () => {
+		for (const [server, tool] of [
+			["postgres", "postgres_execute_sql"],
+			["redis", "redis_set"],
+			["mongodb", "insert_many"],
+			["s3", "put_object"],
+			["milvus", "upsert"],
+		]) {
+			expect(
+				managedServiceMcpMutationBlockReason("mcp", {
+					server,
+					tool,
+				}),
+			).toContain(`mutating ${server} MCP tool`);
+		}
+		expect(
+			managedServiceMcpMutationBlockReason("mcp", {
+				server: "postgres",
+				tool: "postgres_list_objects",
+			}),
+		).toBeUndefined();
+		expect(
+			managedServiceMcpMutationBlockReason(
+				"mcp",
+				{
+					tool: "postgres_execute_sql",
+					args: '{"sql":"drop table users"}',
+				},
+				["postgres"],
+			),
+		).toContain("mutating postgres MCP tool");
+		expect(
+			managedServiceMcpMutationBlockReason("mcp", {
+				server: "redis",
+				tool: "get",
+			}),
+		).toBeUndefined();
+		expect(
+			managedServiceMcpMutationBlockReason("mcp", {
+				server: "openserverless",
+				tool: "auth_setup",
+			}),
+		).toBeUndefined();
+	});
+
+	it("fails closed when the managed marker or manifest does not match", async () => {
+		const root = await mkdtemp(join(tmpdir(), "runtime-extension-"));
+		expect(() => loadTrustantRuntimeManifest(root, {})).toThrow(
+			"requires TRUSTANT_MANAGED_RUNTIME=1",
+		);
+	});
+
+	it("blocks deploy commands that race the managed development watcher", () => {
+		expect(
+			managedShellCommandBlockReason("bash", {
+				command:
+					"cd /workbench/app && timeout 120 ops ide deploy 2>&1 | tail -20",
+			}),
+		).toContain("managed ops ide devel watcher");
+		expect(
+			managedShellCommandBlockReason("bash", {
+				command:
+					"sleep 5 && cd /workbench/app && timeout 180 ops ide deploy",
+			}),
+		).toContain("do not retry");
+		expect(
+			managedShellCommandBlockReason("shell", {
+				command: "ops ide devel --fast",
+			}),
+		).toContain("managed ops ide devel watcher");
+	});
+
+	it("allows read-only commands that only mention the blocked command", () => {
+		expect(
+			managedShellCommandBlockReason("bash", {
+				command: "rg 'ops ide deploy' AGENTS.md",
+			}),
+		).toBeUndefined();
+	});
+
+	it("blocks destructive alternatives to MCP-owned application state", () => {
+		for (const command of [
+			"ops action update v1/login login.py",
+			"psql -c 'create table users(id text)'",
+			"pip install redis",
+			"python generate_wrappers.py",
+			"rm -rf packages/v1/login",
+			"cat > packages/v1/login/login.py <<'PY'",
+			"sed -i 's/a/b/' src/App.tsx",
+			"git reset --hard HEAD~1",
+		]) {
+			expect(
+				managedShellCommandBlockReason("bash", { command }),
+			).toBeTruthy();
+		}
+	});
+
+	it("blocks direct inspection and polling of watcher-owned action archives", () => {
+		for (const command of [
+			"ls -la /workbench/example/packages/v1/login.zip",
+			"find packages -type f -name '*.zip'",
+			"until [ -f packages/v1/register.zip ]; do sleep 2; done",
+			"stat packages/setup/init-admin.zip",
+		]) {
+			expect(
+				managedShellCommandBlockReason("bash", { command }),
+			).toContain("watcher-owned packages/**/*.zip");
+		}
+	});
+
+	it("allows the managed source checker without archive probing", () => {
+		expect(
+			managedShellCommandBlockReason("bash", {
+				command: "timeout 60 check_openserverless_actions.sh .",
+			}),
+		).toBeUndefined();
+	});
+
+	it("allows one unmasked checker run and blocks repetition without mutation", () => {
+		const command = "timeout 60 check_openserverless_actions.sh .";
+		expect(
+			managedCheckerCommandBlockReason(command, false),
+		).toBeUndefined();
+		expect(managedCheckerCommandBlockReason(command, true)).toContain(
+			"repeated action checker",
+		);
+		expect(
+			managedCheckerCommandBlockReason(
+				`${command} 2>&1 | head -40`,
+				false,
+			),
+		).toContain("masked action checker");
+	});
+
+	it("recognizes mutations that authorize one fresh checker run", () => {
+		expect(isManagedActionMutation("edit", { path: "src/App.tsx" })).toBe(
+			true,
+		);
+		expect(
+			isManagedActionMutation("mcp", {
+				server: "openserverless",
+				tool: "action_add_postgresql",
+			}),
+		).toBe(true);
+		expect(
+			isManagedActionMutation("mcp", {
+				server: "openserverless",
+				tool: "action_invoke",
+			}),
+		).toBe(false);
+		expect(isManagedActionMutation("mcp", { server: "postgres" })).toBe(
+			false,
+		);
+		expect(
+			isManagedActionMutation(
+				"mcp",
+				{
+					tool: "openserverless_action_new",
+					args: '{"endpoint":"v1/users"}',
+				},
+				["openserverless"],
+			),
+		).toBe(true);
+	});
+
+	it("normalizes the real pi-mcp-adapter proxy shape", () => {
+		expect(
+			managedMcpInvocation("mcp", {}, ["openserverless"]),
+		).toEqual({ mode: "status", args: {} });
+		expect(
+			managedMcpInvocation(
+				"mcp",
+				{ server: "openserverless" },
+				["openserverless"],
+			),
+		).toEqual({
+			mode: "list",
+			server: "openserverless",
+			args: {},
+		});
+		// Regression: trulongrun6 used the adapter's lazy-connect shape for
+		// every server; it must not be misclassified as global status.
+		expect(
+			managedMcpInvocation(
+				"mcp",
+				{ connect: "openserverless" },
+				["openserverless"],
+			),
+		).toEqual({
+			mode: "connect",
+			server: "openserverless",
+			args: {},
+		});
+		expect(
+			managedMcpInvocation(
+				"mcp",
+				{
+					tool: "openserverless_action_new",
+					args: '{"endpoint":"v1/users","public":true}',
+				},
+				["openserverless"],
+			),
+		).toEqual({
+			mode: "call",
+			server: "openserverless",
+			tool: "action_new",
+			args: { endpoint: "v1/users", public: true },
+		});
+	});
+
+	it("requires one safe host redeploy after a real action creation batch", async () => {
+		const invocation = managedMcpInvocation(
+			"mcp",
+			{
+				tool: "openserverless_action_new",
+				args: '{"endpoint":"v1/users"}',
+			},
+			["openserverless"],
+		);
+		const created = {
+			toolCallId: "create-1",
+			toolName: "mcp",
+			input: {},
+			content: [
+				{
+					type: "text",
+					text: "Created endpoint at /api/my/v1/users",
+				},
+			],
+			isError: false,
+			details: { mode: "call", success: true },
+		};
+		expect(managedActionWasCreated(invocation, created)).toBe(true);
+		expect(
+			managedActionWasCreated(invocation, {
+				...created,
+				content: [
+					{
+						type: "text",
+						text: "Check passed: endpoint already exists; no changes made.",
+					},
+				],
+			}),
+		).toBe(false);
+		expect(
+			managedRedeployVerificationBlockReason(
+				"trustant_runtime_status",
+				{},
+				true,
+				["openserverless"],
+			),
+		).toContain("trustant_runtime_redeploy");
+		expect(
+			managedRedeployVerificationBlockReason(
+				"edit",
+				{ path: "packages/v1/users/users.py" },
+				true,
+				["openserverless"],
+			),
+		).toBeUndefined();
+		expect(
+			managedRedeployVerificationBlockReason(
+				"trustant_runtime_redeploy",
+				{},
+				true,
+				["openserverless"],
+			),
+		).toBeUndefined();
+
+		let requestedUrl = "";
+		const result = await requestTrustantRedeploy(
+			"example",
+			async (input) => {
+				requestedUrl = String(input);
+				return new Response(
+					[
+						"event: status",
+						"data: Deploying actions...",
+						"",
+						"event: done",
+						"data: /guest/v1/users",
+						"data: /guest/v1/login",
+						"",
+					].join("\n"),
+					{ status: 200 },
+				);
+			},
+		);
+		expect(requestedUrl).toBe(
+			"http://127.0.0.1:8910/api/redeploy?name=example",
+		);
+		expect(result).toEqual({
+			app: "example",
+			actionList: "/guest/v1/users\n/guest/v1/login",
+		});
+		await expect(
+			requestTrustantRedeploy("example", async () => {
+				return new Response(
+					"event: error\ndata: ops ide deploy failed\n\n",
+					{ status: 200 },
+				);
+			}),
+		).rejects.toThrow("ops ide deploy failed");
+		await expect(
+			requestTrustantRedeploy(
+				"example",
+				async (_input, init) => {
+					return {
+						ok: true,
+						status: 200,
+						statusText: "OK",
+						text: () =>
+							new Promise<string>((_resolve, reject) => {
+								init?.signal?.addEventListener(
+									"abort",
+									() => reject(new Error("stream aborted")),
+									{ once: true },
+								);
+							}),
+					} as Response;
+				},
+				5,
+			),
+		).rejects.toThrow("timed out after 5ms");
+	});
+
+	it("does not hold file edits, shell, or discovery behind MCP discovery", () => {
+		// Regression (#75): an up-front bootstrap of every server cost one
+		// model round-trip per server before Pi could touch a file.
+		const required = ["browser", "openserverless", "postgres"];
+		const listed = new Set<string>();
+		for (const [toolName, input] of [
+			["write", { path: "src/App.tsx" }],
+			["edit", { path: "src/App.tsx" }],
+			["bash", { command: "ls src" }],
+			["mcp", {}],
+			["mcp", { connect: "openserverless" }],
+			["mcp", { server: "postgres" }],
+		] as const) {
+			expect(
+				managedBootstrapBlockReason(toolName, input, listed, required),
+			).toBeUndefined();
+		}
+	});
+
+	it("blocks a server's tool calls until that server alone is discovered", () => {
+		const required = ["browser", "openserverless", "postgres"];
+		const listed = new Set<string>();
+		const actionNew = {
+			tool: "openserverless_action_new",
+			args: '{"endpoint":"v1/users"}',
+		};
+		const postgresQuery = { tool: "postgres_query", args: "{}" };
+		const blocked = managedBootstrapBlockReason(
+			"mcp",
+			actionNew,
+			listed,
+			required,
+		);
+		expect(blocked).toContain('mcp({connect:"openserverless"})');
+		expect(blocked).not.toContain("postgres");
+
+		// Regression: this is the exact discovery shape Pi used in trulongrun6.
+		recordManagedMcpBootstrapResult(
+			managedMcpInvocation("mcp", { connect: "openserverless" }, required),
+			true,
+			listed,
+		);
+		expect(
+			managedBootstrapBlockReason("mcp", actionNew, listed, required),
+		).toBeUndefined();
+		expect(
+			managedBootstrapBlockReason("mcp", postgresQuery, listed, required),
+		).toContain('mcp({connect:"postgres"})');
+
+		recordManagedMcpBootstrapResult(
+			managedMcpInvocation("mcp", { server: "postgres" }, required),
+			true,
+			listed,
+		);
+		expect(
+			managedBootstrapBlockReason("mcp", postgresQuery, listed, required),
+		).toBeUndefined();
+	});
+
+	it("ignores failed connects", () => {
+		const required = ["openserverless"];
+		const listed = new Set<string>();
+		recordManagedMcpBootstrapResult(
+			managedMcpInvocation("mcp", { connect: "openserverless" }, required),
+			false,
+			listed,
+		);
+		expect(listed.size).toBe(0);
+		expect(
+			managedBootstrapBlockReason(
+				"mcp",
+				{ tool: "openserverless_action_new", args: "{}" },
+				listed,
+				required,
+			),
+		).toContain('mcp({connect:"openserverless"})');
+	});
+
+	it("opens the semantic circuit after three equivalent failures and resets on progress", () => {
+		const signature = managedAttemptSignature(
+			"mcp",
+			{
+				tool: "openserverless_action_new",
+				args: '{"endpoint":"v1/users"}',
+			},
+			["openserverless"],
+		);
+		const circuit = new ManagedSemanticCircuit();
+		for (let index = 0; index < 3; index += 1) {
+			expect(circuit.blockReason(signature)).toBeUndefined();
+			circuit.recordFailure(signature);
+		}
+		expect(circuit.blockReason(signature)).toContain(
+			"three semantically equivalent failures",
+		);
+		circuit.recordSuccess("write:packages/v1/users/users.py", true);
+		expect(circuit.blockReason(signature)).toBeUndefined();
+	});
+
+	it("recognizes adapter semantic failures even when isError is false", () => {
+		expect(
+			managedToolResultFailed({
+				toolCallId: "call-1",
+				toolName: "mcp",
+				input: {},
+				content: [{ type: "text", text: "call completed" }],
+				isError: false,
+				details: { mode: "call", error: "connection refused" },
+			}),
+		).toBe(true);
+		expect(
+			managedToolResultFailed({
+				toolCallId: "call-2",
+				toolName: "mcp",
+				input: {},
+				content: [{ type: "text", text: "healthy" }],
+				isError: false,
+				details: { mode: "call", success: true },
+			}),
+		).toBe(false);
+	});
+
+	it("reads the available Python libraries from the vendored runtime requirements.txt", () => {
+		const libraries = pythonRuntimeLibraries();
+		for (const name of ["requests", "redis", "pyyaml", "python-dotenv", "psycopg", "psycopg-binary", "numpy"]) {
+			expect(libraries).toContain(name);
+		}
+		for (const name of ["pillow", "scikit-learn", "pyjwt", "lightgbm"]) {
+			expect(libraries).not.toContain(name);
+		}
+		expect(
+			parsePythonRuntimeRequirements(
+				"# comment\n-r base.in\nPsycopg[binary]==3.3.5\n    # via -r requirements.in\nTyping_Extensions==4.0\n\n",
+			),
+		).toEqual(["psycopg", "typing-extensions"]);
+		expect(normalizePythonRequirement("Kafka_Python>=3; python_version>'3'")).toBe("kafka-python");
+	});
+
+	it("blocks Python virtualenvs and package installs from the shell", () => {
+		for (const command of [
+			"python3 -m venv .venv",
+			"cd packages && python -m venv venv",
+			"virtualenv env",
+			"uv venv",
+			"uv add pyjwt",
+			"uv pip install pillow",
+			"pip install pyjwt",
+			"poetry init",
+			"pipenv install",
+			"conda create -n app",
+			"echo pyjwt >> packages/v1/login/requirements.txt",
+			"mkdir .venv",
+		]) {
+			expect(
+				managedPythonEnvironmentBlockReason("bash", { command }),
+				command,
+			).toContain("implement anything else in code");
+		}
+		for (const command of [
+			"python3 packages/v1/login/login.py",
+			"cat requirements.txt",
+			"rg venv AGENTS.md",
+		]) {
+			expect(
+				managedPythonEnvironmentBlockReason("bash", { command }),
+				command,
+			).toBeUndefined();
+		}
+	});
+
+	it("blocks writes to Python dependency metadata and virtualenv paths", () => {
+		for (const path of [
+			"packages/v1/login/requirements.txt",
+			"requirements-dev.txt",
+			"pyproject.toml",
+			"Pipfile",
+			"setup.py",
+			".venv/lib/python3.12/site-packages/x.py",
+			"venv/bin/activate",
+		]) {
+			expect(
+				managedPythonEnvironmentBlockReason("write", { path, content: "" }),
+				path,
+			).toBeTruthy();
+			expect(
+				managedPythonEnvironmentBlockReason("edit", { path }),
+				path,
+			).toBeTruthy();
+		}
+		expect(
+			managedPythonEnvironmentBlockReason("write", {
+				path: "packages/v1/login/login.py",
+			}),
+		).toBeUndefined();
+	});
+
+	it("allows action_requirements only for libraries the runtime ships", () => {
+		expect(
+			managedPythonEnvironmentBlockReason("mcp", {
+				server: "openserverless",
+				tool: "action_requirements",
+				args: '{"endpoint":"v1/cache","library":"Redis"}',
+			}),
+		).toBeUndefined();
+		expect(
+			managedPythonEnvironmentBlockReason("mcp", {
+				server: "openserverless",
+				tool: "action_requirements",
+				args: '{"endpoint":"v1/login","library":"PyJWT"}',
+			}),
+		).toContain("not shipped by the action runtime");
+	});
+});

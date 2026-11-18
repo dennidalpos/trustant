@@ -132,7 +132,7 @@ so the observer does not feed itself.
 Steps of the Templates tutorial point at controls inside the left iframe, which
 is served from `opencode.<domain>` — a different origin, so the page cannot
 read that DOM. The TruACP UI ships a tour bridge (`web/tour-bridge.ts` in the
-`trustant-acp` submodule):
+`acp/` directory):
 
 - While a tutorial runs, the page posts `{source: "trustant-tour-host", type:
   "start"}` to the iframe, and `"stop"` when it ends. The request is repeated
