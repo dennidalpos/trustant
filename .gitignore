@@ -8,6 +8,8 @@ workspace
 workbench
 tmp/
 node_modules/
+__pycache__/
+.ruff_cache/
 test-results/
 playwright-report/
 blob-report/

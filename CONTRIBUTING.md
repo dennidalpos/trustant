@@ -53,8 +53,36 @@ downloaded binary, an ops prerequisite or a package in the image — update
 
 ## Before you open a pull request
 
+- `npm run lint` passes.
 - `go test ./...` passes.
 - `./deps.sh` was rerun if dependencies changed.
 - Specs under [spec/](spec/) are updated when behaviour changes — the spec is
   the source of truth, and is iterated on before the code.
 - The change is scoped to one issue.
+
+## Lint
+
+From the repository root, run `npm ci` to install the pinned Biome package,
+then run `npm run lint`. Use the Go version in `go.mod`, Python 3.11 or later
+for TOML validation, and PowerShell 7. Install the other development tools
+on your PATH using the versions in [DEPS](DEPS).
+
+- Install Ruff with `uv tool install ruff==0.14.14`.
+- Install [ShellCheck 0.11.0](https://github.com/koalaman/shellcheck/releases/tag/v0.11.0)
+  and [Hadolint 2.15.1](https://github.com/hadolint/hadolint/releases/tag/v2.15.1)
+  from their release pages or your package manager.
+- In PowerShell, run `Install-PSResource -Name PSScriptAnalyzer -Version 1.25.0 -Repository PSGallery -Scope CurrentUser`.
+
+The command runs Go vet for Linux, Biome for JavaScript, TypeScript, HTML
+(including embedded scripts and styles), CSS, JSON and YAML, Ruff for
+Python, ShellCheck for shell scripts, Hadolint for Dockerfiles,
+PSScriptAnalyzer for PowerShell, and syntax validation for TOML. It covers
+Trustant, the vendored TruACP and Pi ACP sources, React MCP, and tests.
+Submodules keep their own tooling. Generated bundles and third-party
+browser assets are excluded. Higher-severity diagnostics are the gate
+for ShellCheck, Hadolint and PSScriptAnalyzer.
+
+Lint does not build images, start the application, or rewrite sources.
+The Go step supplies temporary embed metadata outside the checkout when
+`_build.txt` is missing. Run `npm run lint:web -- web` to check just the
+main UI files.

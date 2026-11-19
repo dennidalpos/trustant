@@ -24,7 +24,6 @@ texts live in legal/licenses/<SPDX-id>.txt (committed); a missing SPDX text is
 fetched from spdx/license-list-data.
 """
 
-import io
 import hashlib
 import json
 import os
@@ -644,12 +643,12 @@ def main():
             if not originals and not notices:
                 continue
             b = ["%s %s (%s)" % (c["name"], c["version"], c["license"])]
-            b += ["  " + l for l in lines]
+            b += ["  " + line for line in lines]
             for filename, original in originals:
                 b += ["", "  LICENSE FILE: " + filename]
-                b += ["  | " + l if l else "  |" for l in original.split("\n")]
+                b += ["  | " + line if line else "  |" for line in original.split("\n")]
             for t in notices:
-                b += ["", "  NOTICE:"] + ["  | " + l if l else "  |" for l in t.split("\n")]
+                b += ["", "  NOTICE:"] + ["  | " + line if line else "  |" for line in t.split("\n")]
             blocks.append("\n".join(b))
         if not blocks:
             continue

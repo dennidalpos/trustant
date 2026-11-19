@@ -1,0 +1,55 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "files": {
+    "includes": [
+      "**",
+      "!!**/node_modules",
+      "!!acp/dist-*",
+      "!!acp/pi-acp/dist",
+      "!!acp/pi-acp/.dist",
+      "!!acp/pi-acp/.dist-cache",
+      "!!acp/server/web-bundle.generated.ts",
+      "!!web/tailwind.js",
+      "!!web/js/*.min.js",
+      "!!web/js/xterm.css",
+      "!!mcp",
+      "!!oplugins",
+      "!!oplugins-truinst",
+      "!!skills"
+    ]
+  },
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "html": {
+    "experimentalFullSupportEnabled": true,
+    "linter": { "enabled": true }
+  },
+  "yaml": {
+    "linter": { "enabled": true }
+  },
+  "linter": {
+    "rules": {
+      "preset": "none",
+      "correctness": {
+        "noConstAssign": "error",
+        "noDuplicateAttributes": "error",
+        "noInvalidBuiltinInstantiation": "error",
+        "noInvalidConstructorSuper": "error",
+        "noInvalidPositionAtImportRule": "error",
+        "noUnreachable": "error",
+        "noUnsafeFinally": "error"
+      },
+      "suspicious": {
+        "noDebugger": "error",
+        "noDuplicateCase": "error",
+        "noDuplicateJsxProps": "error",
+        "noDuplicateObjectKeys": "error",
+        "noImportAssign": "error",
+        "noWith": "error"
+      }
+    }
+  }
+}

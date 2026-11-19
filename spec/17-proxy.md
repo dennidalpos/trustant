@@ -103,5 +103,11 @@ The TruACP WebSocket hop is the shortest idle limit on the stream path: a
 provider that stays silent for more than 600s is cut there, before the
 one-hour proxy limit applies. `setup_test.go` pins the 600s hop values and
 `proxy_test.go` pins the one-hour proxy values so a change to either is made
-on purpose. Completion checks (a valid `finish_reason` versus an early close)
-belong to the ACP runtime and are tracked in the `acp` repository.
+on purpose.
+
+The TruACP integration tests exercise the OpenAI-compatible parser from the
+Pi release pinned in `acp/pi.version`. The local SSE fixture covers successful
+completion with `finish_reason` and explicit errors when the response ends
+without it, including a response that sends only `[DONE]` after partial text.
+Set `TRUSTANT_PI_AI_DIR` to the installed `@earendil-works/pi-ai` package directory,
+then run `npm test -- test/provider-stream.integration.ts` from `acp/`.

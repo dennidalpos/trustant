@@ -3,6 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "lint": "node tools/lint.mjs",
+    "lint:web": "biome lint",
     "e2e:issue98": "./tests/e2e_issue98.sh",
     "e2e:auth": "./tests/e2e_auth.sh",
     "e2e:private": "./tests/e2e_private_app.sh",
@@ -12,6 +14,7 @@
     "test:tutorial": "node --test tests/tutorial-spotlight.test.mjs"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.6.8",
     "@playwright/test": "1.56.1"
   }
 }

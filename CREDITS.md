@@ -61,6 +61,12 @@ kubectl and Helm (Apache-2.0), bun, yq, k3sup and uutils coreutils (MIT), and
 Ubuntu packages under their distribution licenses. Python application packages
 and npm production trees are listed in full in [DEPS](DEPS).
 
+Development lint uses [Biome](https://biomejs.dev) (MIT or Apache-2.0),
+[Ruff](https://github.com/astral-sh/ruff) (MIT),
+[ShellCheck](https://github.com/koalaman/shellcheck) and
+[Hadolint](https://github.com/hadolint/hadolint) (GPL-3.0-only), and
+[PSScriptAnalyzer](https://github.com/PowerShell/PSScriptAnalyzer) (MIT).
+
 ## License compatibility notes
 
 - AGPL-3.0-or-later code may include Apache-2.0, MIT, BSD, and similar

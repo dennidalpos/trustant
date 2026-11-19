@@ -14,9 +14,9 @@ exist upstream; **removed** upstream files that are no longer present.
 - Upstream: https://github.com/RAIT-09/obsidian-agent-client
 - Baseline revision: `0.11.0`
 - License: Apache-2.0, Copyright 2025-2026 RAIT-09
-- Files: 67 unmodified, 23 modified, 85 added, 76 removed upstream files
+- Files: 66 unmodified, 24 modified, 86 added, 76 removed upstream files
 
-### Modified (23)
+### Modified (24)
 
 - `.gitignore`
 - `.vscode/settings.json`
@@ -41,8 +41,9 @@ exist upstream; **removed** upstream files that are no longer present.
 - `src/utils/paths.ts`
 - `src/utils/platform.ts`
 - `test/platform.test.ts`
+- `vitest.config.mts`
 
-### Added (85)
+### Added (86)
 
 - `.env.example`
 - `.gitattributes`
@@ -101,6 +102,7 @@ exist upstream; **removed** upstream files that are no longer present.
 - `test/pi-config.test.ts`
 - `test/pi-thinking.test.ts`
 - `test/prompt-history.test.ts`
+- `test/provider-stream.integration.ts`
 - `test/redaction.test.ts`
 - `test/session-config.test.ts`
 - `test/session-delete-route.test.ts`
@@ -209,7 +211,7 @@ exist upstream; **removed** upstream files that are no longer present.
 - `docs/usage/session-manager.md`
 - `docs/usage/slash-commands.md`
 
-### Unmodified (67)
+### Unmodified (66)
 
 Listed as a count only; every tracked file not named above is identical to upstream.
 
@@ -264,9 +266,9 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 
 - Source: https://github.com/trustant/trustant-acp.git, gitlink before vendoring
 - Commit: `9786f796380aa9b2000d8cebd913fa41150c89ed`
-- Files: 162 unmodified, 11 modified, 2 added, 4 removed
+- Files: 161 unmodified, 12 modified, 3 added, 4 removed
 
-#### Modified (11)
+#### Modified (12)
 
 - `AGENTS.md`
 - `ARCHITECTURE.md`
@@ -277,13 +279,15 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 - `extensions/requirements.txt`
 - `package-lock.json`
 - `package.json`
+- `vitest.config.mts`
 - `web/ChatApp.tsx`
 - `web/transport.ts`
 
-#### Added (2)
+#### Added (3)
 
 - `LICENSE-Apache-2.0-obsidian-agent-client`
 - `UPSTREAM.md`
+- `test/provider-stream.integration.ts`
 
 #### Removed (4)
 
