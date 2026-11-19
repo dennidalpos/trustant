@@ -384,7 +384,7 @@
     {
       "section": "dev",
       "name": "@playwright/test (e2e tests)",
-      "version": "1.56.1",
+      "version": "1.65.1",
       "license": "Apache-2.0",
       "homepage": "https://github.com/microsoft/playwright",
       "source": "-",
@@ -613,7 +613,7 @@
     {
       "section": "npm-acp",
       "name": "@codemirror/state",
-      "version": "6.5.0",
+      "version": "6.7.6",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/@codemirror/state",
       "source": "path:acp/node_modules/@codemirror/state",
@@ -629,7 +629,7 @@
     {
       "section": "npm-acp",
       "name": "@codemirror/view",
-      "version": "6.38.6",
+      "version": "6.43.13",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/@codemirror/view",
       "source": "path:acp/node_modules/@codemirror/view",
@@ -661,7 +661,7 @@
     {
       "section": "npm-acp",
       "name": "@tanstack/react-virtual",
-      "version": "3.14.2",
+      "version": "3.14.26",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/@tanstack/react-virtual",
       "source": "path:acp/node_modules/@tanstack/react-virtual",
@@ -677,7 +677,7 @@
     {
       "section": "npm-acp",
       "name": "@tanstack/virtual-core",
-      "version": "3.17.0",
+      "version": "3.19.11",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/@tanstack/virtual-core",
       "source": "path:acp/node_modules/@tanstack/virtual-core",
@@ -2165,7 +2165,7 @@
     {
       "section": "npm-acp",
       "name": "semver",
-      "version": "7.8.2",
+      "version": "7.8.6",
       "license": "ISC",
       "homepage": "https://www.npmjs.com/package/semver",
       "source": "path:acp/node_modules/semver",
@@ -2437,7 +2437,7 @@
     {
       "section": "npm-acp",
       "name": "ws",
-      "version": "8.21.1",
+      "version": "8.23.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/ws",
       "source": "path:acp/node_modules/ws",

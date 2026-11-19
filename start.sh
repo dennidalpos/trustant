@@ -510,7 +510,7 @@ elif [ -n "$OLLAMA_TARBALL" ] && [ -s "$OLLAMA_TARBALL" ]; then
   # with the stale lib/ollama removed first so an upgrade cannot mix versions.
   rm -rf /usr/local/lib/ollama
   install -o0 -g0 -m755 -d /usr/local/bin /usr/local/lib/ollama
-  zstd -d -c "$OLLAMA_TARBALL" | tar -xf - -C /usr/local
+  zstd -d -c -f "$OLLAMA_TARBALL" | tar -xf - -C /usr/local
   [ -x /usr/local/bin/ollama ] || { echo "ollama tarball did not contain bin/ollama" >&2; exit 1; }
 
   # The service account and unit upstream's install.sh would have created.
@@ -776,6 +776,9 @@ ensure_openserverless_proxy() {
 wait_for_openwhisk() {
   local where=" in the VM"
   if $NATIVE_LINUX; then where=""; fi
+  run_privileged <<'GUEST'
+grep -qE '\bminiops\.me\b' /etc/hosts || echo "127.0.0.1 miniops.me" >> /etc/hosts
+GUEST
   echo "--- Waiting for OpenWhisk on http://miniops.me${where} ---"
   run_guest bash -euo pipefail -s <<'GUEST'
 TRIES=150      # x4s = 10 minutes per stage
@@ -783,7 +786,7 @@ DELAY=4
 
 up=0
 for _ in $(seq 1 $TRIES); do
-  if curl -fsS -m 5 -o /dev/null http://miniops.me; then up=1; break; fi
+  if curl --resolve miniops.me:80:127.0.0.1 -fsS -m 5 -o /dev/null http://miniops.me; then up=1; break; fi
   sleep $DELAY
 done
 [ "$up" = 1 ] || { echo "http://miniops.me never answered" >&2; exit 1; }
@@ -791,7 +794,7 @@ echo "http://miniops.me is answering"
 
 ready=0
 for _ in $(seq 1 $TRIES); do
-  desc="$(curl -fsS -m 5 http://miniops.me/api/info 2>/dev/null | jq -r .description 2>/dev/null || true)"
+  desc="$(curl --resolve miniops.me:80:127.0.0.1 -fsS -m 5 http://miniops.me/api/info 2>/dev/null | jq -r .description 2>/dev/null || true)"
   if [ "$desc" = "OpenWhisk" ]; then ready=1; break; fi
   sleep $DELAY
 done

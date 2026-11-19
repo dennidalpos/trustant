@@ -406,10 +406,13 @@ against a cluster that is merely booting. The check runs from where the cluster
 is (inside the VM on macOS, on this host on Linux), in two stages so a failure
 names the one that lost:
 
-1. `curl http://miniops.me` answers at all — traefik and the ingress are wired;
-2. `curl http://miniops.me/api/info | jq -r .description` returns `OpenWhisk` —
-   the controller itself is serving, not merely some other backend reachable
-   behind the same ingress.
+`start.sh` adds `127.0.0.1 miniops.me` to the guest's `/etc/hosts` when no
+matching entry is present. The readiness probes explicitly resolve
+`miniops.me:80` to `127.0.0.1` and keep `miniops.me` as the HTTP host for ingress
+routing.
+
+1. `http://miniops.me` answers through the local ingress.
+2. The `description` field from `http://miniops.me/api/info` is `OpenWhisk`.
 
 Each stage retries every 4s for up to 10 minutes and then aborts the run with the
 stage that timed out (the second one also reporting the last description seen).

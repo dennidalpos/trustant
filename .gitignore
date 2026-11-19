@@ -37,6 +37,14 @@ Trustant
 # Never commit it.
 .op.json
 *.lic
+/envcrypt.env
+
+# WSL virtual disks and local migration exports.
+/exports/
+*.vhd
+*.vhdx
+*.vhd.partial
+*.vhdx.partial
 
 # screenshot.sh copies the launched app's animation here so it can be previewed
 # in the editor. It is a scratch copy of <app>/screenshot.png, which is the

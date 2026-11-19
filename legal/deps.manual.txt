@@ -216,7 +216,7 @@ dev | air | latest | GPL-3.0-only | https://github.com/air-verse/air | -
 dev | g (Go version manager) | latest | MIT | https://github.com/voidint/g | -
 dev | license-eye (skywalking-eyes) | 0.8.0 | Apache-2.0 | https://github.com/apache/skywalking-eyes | -
 dev | ffmpeg (screenshot.sh) | distro | LGPL-2.1-or-later AND GPL-2.0-or-later | https://ffmpeg.org | -
-dev | @playwright/test (e2e tests) | 1.56.1 | Apache-2.0 | https://github.com/microsoft/playwright | -
+dev | @playwright/test (e2e tests) | 1.65.1 | Apache-2.0 | https://github.com/microsoft/playwright | -
 dev | Biome | 2.6.8 | MIT OR Apache-2.0 | https://biomejs.dev | -
 dev | Ruff | 0.14.14 | MIT | https://github.com/astral-sh/ruff | -
 dev | ShellCheck | 0.11.0 | GPL-3.0-only | https://github.com/koalaman/shellcheck | -

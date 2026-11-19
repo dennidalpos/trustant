@@ -61,6 +61,9 @@ kubectl and Helm (Apache-2.0), bun, yq, k3sup and uutils coreutils (MIT), and
 Ubuntu packages under their distribution licenses. Python application packages
 and npm production trees are listed in full in [DEPS](DEPS).
 
+Browser end-to-end tests use [Playwright](https://github.com/microsoft/playwright)
+(Apache-2.0).
+
 Development lint uses [Biome](https://biomejs.dev) (MIT or Apache-2.0),
 [Ruff](https://github.com/astral-sh/ruff) (MIT),
 [ShellCheck](https://github.com/koalaman/shellcheck) and

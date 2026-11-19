@@ -94,11 +94,11 @@ and the TruACP web UI.
 NAME                                               VERSION  LICENSE       HOMEPAGE
 ----                                               -------  -------       --------
 @agentclientprotocol/sdk                           0.28.1   Apache-2.0    https://www.npmjs.com/package/@agentclientprotocol/sdk
-@codemirror/state                                  6.5.0    MIT           https://www.npmjs.com/package/@codemirror/state
-@codemirror/view                                   6.38.6   MIT           https://www.npmjs.com/package/@codemirror/view
+@codemirror/state                                  6.7.6    MIT           https://www.npmjs.com/package/@codemirror/state
+@codemirror/view                                   6.43.13  MIT           https://www.npmjs.com/package/@codemirror/view
 @marijn/find-cluster-break                         1.0.2    MIT           https://www.npmjs.com/package/@marijn/find-cluster-break
-@tanstack/react-virtual                            3.14.2   MIT           https://www.npmjs.com/package/@tanstack/react-virtual
-@tanstack/virtual-core                             3.17.0   MIT           https://www.npmjs.com/package/@tanstack/virtual-core
+@tanstack/react-virtual                            3.14.26  MIT           https://www.npmjs.com/package/@tanstack/react-virtual
+@tanstack/virtual-core                             3.19.11  MIT           https://www.npmjs.com/package/@tanstack/virtual-core
 @types/debug                                       4.1.13   MIT           https://www.npmjs.com/package/@types/debug
 @types/estree                                      1.0.9    MIT           https://www.npmjs.com/package/@types/estree
 @types/estree-jsx                                  1.0.5    MIT           https://www.npmjs.com/package/@types/estree-jsx
@@ -191,7 +191,7 @@ remark-parse                                       11.0.0   MIT           https:
 remark-rehype                                      11.1.2   MIT           https://www.npmjs.com/package/remark-rehype
 remark-stringify                                   11.0.0   MIT           https://www.npmjs.com/package/remark-stringify
 scheduler                                          0.23.2   MIT           https://www.npmjs.com/package/scheduler
-semver                                             7.8.2    ISC           https://www.npmjs.com/package/semver
+semver                                             7.8.6    ISC           https://www.npmjs.com/package/semver
 space-separated-tokens                             2.0.2    MIT           https://www.npmjs.com/package/space-separated-tokens
 stringify-entities                                 4.0.4    MIT           https://www.npmjs.com/package/stringify-entities
 style-mod                                          4.1.3    MIT           https://www.npmjs.com/package/style-mod
@@ -208,7 +208,7 @@ unist-util-visit-parents                           6.0.2    MIT           https:
 vfile                                              6.0.3    MIT           https://www.npmjs.com/package/vfile
 vfile-message                                      4.0.3    MIT           https://www.npmjs.com/package/vfile-message
 w3c-keyname                                        2.2.8    MIT           https://www.npmjs.com/package/w3c-keyname
-ws                                                 8.21.1   MIT           https://www.npmjs.com/package/ws
+ws                                                 8.23.0   MIT           https://www.npmjs.com/package/ws
 zod                                                4.6.7    MIT           https://www.npmjs.com/package/zod
 zwitch                                             2.0.4    MIT           https://www.npmjs.com/package/zwitch
 
@@ -657,7 +657,7 @@ collected for them.
 
 NAME                                  VERSION  LICENSE                                 HOMEPAGE
 ----                                  -------  -------                                 --------
-@playwright/test (e2e tests)          1.56.1   Apache-2.0                              https://github.com/microsoft/playwright
+@playwright/test (e2e tests)          1.65.1   Apache-2.0                              https://github.com/microsoft/playwright
 air                                   latest   GPL-3.0-only                            https://github.com/air-verse/air
 Biome                                 2.6.8    MIT OR Apache-2.0                       https://biomejs.dev
 ffmpeg (screenshot.sh)                distro   LGPL-2.1-or-later AND GPL-2.0-or-later  https://ffmpeg.org
