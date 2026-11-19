@@ -33,6 +33,31 @@ A fork of https://github.com/svkozak/pi-acp at commit
 its files. Changes are described in [pi-acp/TRUSTANT_FORK.md](pi-acp/TRUSTANT_FORK.md)
 and listed per file in [../legal/VENDORED.md](../legal/VENDORED.md).
 
+## Restoring the original submodules
+
+`acp/` and `acp/pi-acp/` were submodules before they were vendored (commit
+`b06dc8d`). Their last submodule commits stay reachable in this repository's
+history as parents of that commit, so they must not be removed by a history
+rewrite:
+
+| Directory | Original repository | Last submodule commit |
+|---|---|---|
+| `acp/` | https://github.com/trustant/trustant-acp.git | `9786f796380aa9b2000d8cebd913fa41150c89ed` |
+| `acp/pi-acp/` | https://github.com/trustant/pi-acp | `4e526e5f64eaec647d78c919ba9dc071197c2517` |
+
+If the submodules are ever restored, [../legal/VENDORED.md](../legal/VENDORED.md)
+lists every file changed since then ("Delta against the original submodules").
+Export the changes as a patch to apply on the original repositories:
+
+```bash
+git diff --binary 9786f796380a^{tree} HEAD:acp > acp-since-submodule.patch
+git diff --binary 4e526e5f64ea^{tree} HEAD:acp/pi-acp > pi-acp-since-submodule.patch
+```
+
+(The first patch also contains the `pi-acp/` files; restrict it with a path
+filter if needed.) Do not drop the Apache-2.0 attribution when restoring: it
+belongs to the upstream project, not only to this repository.
+
 ## Tracking changes
 
 `python legal/vendored_changes.py` compares every file here with the baseline and

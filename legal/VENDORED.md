@@ -14,7 +14,7 @@ exist upstream; **removed** upstream files that are no longer present.
 - Upstream: https://github.com/RAIT-09/obsidian-agent-client
 - Baseline revision: `0.11.0`
 - License: Apache-2.0, Copyright 2025-2026 RAIT-09
-- Files: 67 unmodified, 23 modified, 83 added, 76 removed upstream files
+- Files: 67 unmodified, 23 modified, 85 added, 76 removed upstream files
 
 ### Modified (23)
 
@@ -42,11 +42,13 @@ exist upstream; **removed** upstream files that are no longer present.
 - `src/utils/platform.ts`
 - `test/platform.test.ts`
 
-### Added (83)
+### Added (85)
 
 - `.env.example`
 - `.gitattributes`
+- `LICENSE-Apache-2.0-obsidian-agent-client`
 - `SPEC.md`
+- `UPSTREAM.md`
 - `config.json`
 - `esbuild.server.mjs`
 - `esbuild.web.mjs`
@@ -251,3 +253,57 @@ Listed as a count only; every tracked file not named above is identical to upstr
 ### Unmodified (56)
 
 Listed as a count only; every tracked file not named above is identical to upstream.
+
+## Delta against the original submodules
+
+If the submodules are ever restored, these are the changes made since they were
+vendored. `modified`, `added` and `removed` are relative to the submodule commit.
+Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
+
+### `acp/`: original `acp` submodule
+
+- Source: https://github.com/trustant/trustant-acp.git, gitlink before vendoring
+- Commit: `9786f796380aa9b2000d8cebd913fa41150c89ed`
+- Files: 162 unmodified, 11 modified, 2 added, 4 removed
+
+#### Modified (11)
+
+- `AGENTS.md`
+- `ARCHITECTURE.md`
+- `CLAUDE.md`
+- `NOTICE`
+- `README.md`
+- `SPEC.md`
+- `extensions/requirements.txt`
+- `package-lock.json`
+- `package.json`
+- `web/ChatApp.tsx`
+- `web/transport.ts`
+
+#### Added (2)
+
+- `LICENSE-Apache-2.0-obsidian-agent-client`
+- `UPSTREAM.md`
+
+#### Removed (4)
+
+- `.gitmodules`
+- `.licenserc.yaml`
+- `CONTRIBUTING.md`
+- `pi-acp`
+
+### `acp/pi-acp/`: original `pi-acp` submodule
+
+- Source: https://github.com/trustant/pi-acp, nested gitlink before vendoring
+- Commit: `4e526e5f64eaec647d78c919ba9dc071197c2517`
+- Files: 74 unmodified, 1 modified, 0 added, 3 removed
+
+#### Modified (1)
+
+- `package-lock.json`
+
+#### Removed (3)
+
+- `.github/workflows/ci.yml`
+- `.github/workflows/github-release.yml`
+- `.github/workflows/npm-publish.yml`

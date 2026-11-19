@@ -25,6 +25,10 @@ upstream revision and writes legal/VENDORED.md:
 
 and lists upstream files that are no longer present ("removed").
 
+A second comparison is made against the original submodule commits that were
+vendored (kept in this repository's history), so the full delta is known if the
+submodules are ever restored.
+
   python legal/vendored_changes.py           # rewrite legal/VENDORED.md
   python legal/vendored_changes.py --check   # exit 1 when it is out of date
 
@@ -48,6 +52,17 @@ VENDORED = [
      "0.11.0", "Apache-2.0", "Copyright 2025-2026 RAIT-09"),
     ("acp/pi-acp", "pi-acp", "https://github.com/svkozak/pi-acp.git",
      "9e857dcc05a057404eb1537e5f31e5aef88a5863", "MIT", "Copyright (c) 2025 Sergii Kozak"),
+]
+
+
+# Original submodule commits that were vendored (reachable in this repository's
+# history through the merge commit that integrated them): directory, label,
+# commit, description.
+ORIGINAL_SUBMODULES = [
+    ("acp", "original `acp` submodule", "9786f796380aa9b2000d8cebd913fa41150c89ed",
+     "https://github.com/trustant/trustant-acp.git, gitlink before vendoring"),
+    ("acp/pi-acp", "original `pi-acp` submodule", "4e526e5f64eaec647d78c919ba9dc071197c2517",
+     "https://github.com/trustant/pi-acp, nested gitlink before vendoring"),
 ]
 
 
@@ -112,7 +127,8 @@ def tracked(directory, exclude):
 
 
 def compare(directory, name, url, rev, exclude):
-    clone = upstream_clone(name, url, rev)
+    # url None: the revision is read from this repository's own history.
+    clone = upstream_clone(name, url, rev) if url else ROOT
     upstream = {}
     for line in git("ls-tree", "-r", rev, cwd=clone).splitlines():
         meta, _, path = line.partition("\t")
@@ -166,6 +182,31 @@ def render():
                 lines.append("")
         lines += ["### Unmodified (%d)" % len(result["unmodified"]), "",
                   "Listed as a count only; every tracked file not named above is identical to upstream.", ""]
+    lines += [
+        "## Delta against the original submodules",
+        "",
+        "If the submodules are ever restored, these are the changes made since they were",
+        "vendored. `modified`, `added` and `removed` are relative to the submodule commit.",
+        "Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.",
+        "",
+    ]
+    for directory, label, commit, description in ORIGINAL_SUBMODULES:
+        exclude = ["pi-acp"] if directory == "acp" else []
+        result = compare(directory, label, None, commit, exclude)
+        lines += [
+            "### `%s/`: %s" % (directory, label),
+            "",
+            "- Source: %s" % description,
+            "- Commit: `%s`" % commit,
+            "- Files: %d unmodified, %d modified, %d added, %d removed"
+            % tuple(len(result[k]) for k in ("unmodified", "modified", "added", "removed")),
+            "",
+        ]
+        for key, title in (("modified", "Modified"), ("added", "Added"), ("removed", "Removed")):
+            if result[key]:
+                lines += ["#### %s (%d)" % (title, len(result[key])), ""]
+                lines += ["- `%s`" % p for p in result[key]]
+                lines.append("")
     return "\n".join(lines).rstrip("\n") + "\n"
 
 
