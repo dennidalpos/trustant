@@ -17,11 +17,15 @@ package main
 
 import (
 	"encoding/json"
+	"net/http"
 	"net/http/httptest"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"testing"
+	"time"
 )
 
 // --- pruneSharedPool ------------------------------------------------------
@@ -251,11 +255,199 @@ func TestBulkSaveStillCarriesAppProducedEntries(t *testing.T) {
 
 // --- deleting the app -----------------------------------------------------
 
+func installDeleteUserFixture(t *testing.T, root string) string {
+	t.Helper()
+	const fixture = `#!/bin/sh
+set -eu
+printf '%s\n' "$*" >> "$TEST_DELETE_ROOT/ops.log"
+case "$1 $2" in
+  "util kubectl")
+    [ "$3 $4 $6 $7 $8" = "-- get --ignore-not-found -o name" ]
+    app=${5#wsku/}
+    if [ -f "$TEST_DELETE_ROOT/$app.user" ]; then printf 'whiskuser/%s\n' "$app"; fi
+    ;;
+  "admin deleteuser")
+    if [ -f "$TEST_DELETE_ROOT/$3.deny" ]; then exit 2; fi
+    rm -f -- "$TEST_DELETE_ROOT/$3.user"
+    ;;
+  *) exit 3 ;;
+esac
+`
+	if err := os.WriteFile(filepath.Join(root, "ops"), []byte(fixture), 0755); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("PATH", root+string(os.PathListSeparator)+os.Getenv("PATH"))
+	t.Setenv("TEST_DELETE_ROOT", root)
+	return filepath.Join(root, "ops.log")
+}
+
+func TestDeleteRepoPreservesOtherRuntimeAndCanRetryPartialFailures(t *testing.T) {
+	node, err := exec.LookPath("node")
+	if err != nil {
+		t.Skip("Node is required for the TruACP fixture")
+	}
+	root := isolateSharedWorkspace(t)
+	opsLog := installDeleteUserFixture(t, root)
+	const active, inactive = "fixtureactive", "fixtureinactive"
+	workspaceApp := filepath.Join(WorkspaceDir, "workspace", inactive)
+	for _, app := range []string{active, inactive} {
+		makeWorkbench(t, app)
+		if err := os.MkdirAll(filepath.Join(WorkspaceDir, "workspace", app), 0755); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := saveWorkspaceConfig(&trustantConfig{
+		Apps: map[string]*AppConfig{active: {Password: "active-password"}, inactive: {Password: "inactive-password"}},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeCurrentApp(active); err != nil {
+		t.Fatal(err)
+	}
+	activePath, err := canonicalWorkbenchPath(active)
+	if err != nil {
+		t.Fatal(err)
+	}
+	leaderScript := filepath.Join(root, "truacp.cjs")
+	if err := os.WriteFile(leaderScript, []byte("setInterval(() => {}, 1000);\n"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	leader := exec.Command(node, leaderScript)
+	leader.Dir = activePath
+	leader.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+	if err := leader.Start(); err != nil {
+		t.Fatal(err)
+	}
+	pgid := leader.Process.Pid
+	leaderExited := make(chan struct{})
+	go func() {
+		_ = leader.Wait()
+		close(leaderExited)
+	}()
+	t.Cleanup(func() {
+		select {
+		case <-leaderExited:
+		default:
+			_ = leader.Process.Kill()
+			<-leaderExited
+		}
+	})
+	if err := writePgid(pgid); err != nil {
+		t.Fatal(err)
+	}
+
+	deleteApp := func(app string) *httptest.ResponseRecorder {
+		rec := httptest.NewRecorder()
+		handleRepo(rec, httptest.NewRequest(http.MethodDelete, "/api/repo",
+			strings.NewReader(`{"name":"`+app+`"}`)))
+		return rec
+	}
+	writeMarker := func(path, value string) {
+		t.Helper()
+		if err := os.WriteFile(path, []byte(value), 0600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	assertRuntimeIntact := func() {
+		t.Helper()
+		if current, err := readPgid(); err != nil || current != pgid || !managedRuntimeOwnsGroup(active, activePath, pgid) {
+			t.Fatalf("the other application's runtime changed: pgid=%d err=%v", current, err)
+		}
+	}
+	assertExists := func(path string) {
+		t.Helper()
+		if _, err := os.Stat(path); err != nil {
+			t.Fatal(err)
+		}
+	}
+	remoteUser := filepath.Join(root, inactive+".user")
+	denied := filepath.Join(root, inactive+".deny")
+	writeMarker(remoteUser, "")
+	writeMarker(denied, "")
+
+	// A launch or stop in progress uses the same lifecycle lock.
+	release := lockRuntimeLifecycle("launch fixture")
+	result := make(chan *httptest.ResponseRecorder, 1)
+	started := make(chan struct{})
+	go func() {
+		close(started)
+		result <- deleteApp(inactive)
+	}()
+	<-started
+	select {
+	case rec := <-result:
+		release()
+		t.Fatalf("delete ran during another lifecycle operation: %d %s", rec.Code, rec.Body)
+	case <-time.After(50 * time.Millisecond):
+		release()
+	}
+	rec := <-result
+	if rec.Code != http.StatusBadGateway || !strings.Contains(rec.Body.String(), "available for retry") {
+		t.Fatalf("failed remote deletion returned %d: %s", rec.Code, rec.Body)
+	}
+	assertRuntimeIntact()
+	assertExists(workspaceApp)
+	assertExists(filepath.Join(WorkbenchDir, inactive))
+	assertExists(remoteUser)
+
+	// A local failure after remote success must keep the app available to retry.
+	if err := os.Remove(denied); err != nil {
+		t.Fatal(err)
+	}
+	cfg, err := loadWorkspaceConfig()
+	if err != nil || cfg.Apps[inactive] == nil {
+		t.Fatalf("app configuration was not retained: %v", err)
+	}
+	writeMarker(filepath.Join(WorkspaceDir, "trustant.json"), "{")
+	rec = deleteApp(inactive)
+	if rec.Code != http.StatusInternalServerError || !strings.Contains(rec.Body.String(), "Configuration cleanup failed") {
+		t.Fatalf("partial deletion returned %d: %s", rec.Code, rec.Body)
+	}
+	assertRuntimeIntact()
+	assertExists(workspaceApp)
+	if _, err := os.Stat(remoteUser); !os.IsNotExist(err) {
+		t.Fatalf("fixture user should already be absent: %v", err)
+	}
+	if err := saveWorkspaceConfig(cfg); err != nil {
+		t.Fatal(err)
+	}
+	if rec = deleteApp(inactive); rec.Code != http.StatusNoContent {
+		t.Fatalf("retry returned %d: %s", rec.Code, rec.Body)
+	}
+	assertRuntimeIntact()
+	if _, err := os.Stat(workspaceApp); !os.IsNotExist(err) {
+		t.Fatalf("retry did not remove the repository: %v", err)
+	}
+	commands, err := os.ReadFile(opsLog)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := strings.Count(string(commands), "admin deleteuser "+inactive+"\n"); got != 2 {
+		t.Fatalf("want one denied and one successful user deletion, got %d: %s", got, commands)
+	}
+
+	if rec = deleteApp(active); rec.Code != http.StatusNoContent {
+		t.Fatalf("active app deletion returned %d: %s", rec.Code, rec.Body)
+	}
+	select {
+	case <-leaderExited:
+	case <-time.After(time.Second):
+		t.Fatal("deleted application's runtime did not stop")
+	}
+	if _, err := readPgid(); !os.IsNotExist(err) {
+		t.Fatalf("active app deletion retained the PGID marker: %v", err)
+	}
+	if _, err := readCurrentApp(); !os.IsNotExist(err) {
+		t.Fatalf("active app deletion retained the current marker: %v", err)
+	}
+}
+
 // TestDeleteRepoPrunesWhatTheAppShared is the whole point of the issue: the
 // pool is append-only, so without the prune a deleted app's resolved secrets
 // outlive it.
 func TestDeleteRepoPrunesWhatTheAppShared(t *testing.T) {
-	isolateSharedWorkspace(t)
+	root := isolateSharedWorkspace(t)
+	installDeleteUserFixture(t, root)
 	// handleDeleteRepo requires the bare repo to exist before it will act.
 	if err := os.MkdirAll(filepath.Join(WorkspaceDir, "workspace", "appsuite"), 0755); err != nil {
 		t.Fatalf("mkdir bare repo: %s", err)
@@ -310,7 +502,8 @@ func TestDeleteRepoPrunesWhatTheAppShared(t *testing.T) {
 // app-produced the moment a same-named app reappeared — handing a brand-new
 // app the deleted app's credentials until the first refresh.
 func TestRecreatingADeletedAppDoesNotInheritItsSecrets(t *testing.T) {
-	isolateSharedWorkspace(t)
+	root := isolateSharedWorkspace(t)
+	installDeleteUserFixture(t, root)
 	if err := os.MkdirAll(filepath.Join(WorkspaceDir, "workspace", "appsuite"), 0755); err != nil {
 		t.Fatalf("mkdir bare repo: %s", err)
 	}

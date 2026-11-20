@@ -119,39 +119,25 @@ func handlePublishPush(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Load config and optionally save repo
-	wsCfg, err := loadWorkspaceConfig()
-	if err != nil {
-		wsCfg = &trustantConfig{}
-	}
-	if wsCfg.Apps == nil {
-		wsCfg.Apps = make(map[string]*AppConfig)
-	}
-	if wsCfg.Apps[req.Name] == nil {
-		wsCfg.Apps[req.Name] = &AppConfig{
-			Development: make(map[string]string),
-			Production:  make(map[string]string),
-		}
-	}
-	if wsCfg.Apps[req.Name].Production == nil {
-		wsCfg.Apps[req.Name].Production = make(map[string]string)
-	}
-
-	// Save repo if provided
+	var opsRepo string
 	if req.Repo != "" {
 		if !repoPattern.MatchString(req.Repo) {
 			writePublishError(w, "Repo must be in format org/repo", http.StatusBadRequest)
 			return
 		}
-		wsCfg.Apps[req.Name].Production["OPS_REPO"] = req.Repo
-		if err := saveWorkspaceConfig(wsCfg); err != nil {
+		if err := updateWorkspaceConfig(func(wsCfg *trustantConfig) error {
+			wsCfg.ensureApp(req.Name).ensureProduction()["OPS_REPO"] = req.Repo
+			return nil
+		}); err != nil {
 			writePublishError(w, "Failed to save config: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
+		opsRepo = req.Repo
+	} else if wsCfg, err := loadWorkspaceConfig(); err == nil {
+		if app := wsCfg.Apps[req.Name]; app != nil {
+			opsRepo = app.Production["OPS_REPO"]
+		}
 	}
-
-	// Check if OPS_REPO is configured
-	opsRepo := wsCfg.Apps[req.Name].Production["OPS_REPO"]
 	if opsRepo == "" {
 		writePublishJSON(w, http.StatusOK, map[string]interface{}{"needs_config": true})
 		return
@@ -296,47 +282,45 @@ func handlePublishRemote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Load config and optionally save production values
-	wsCfg, err := loadWorkspaceConfig()
-	if err != nil {
-		wsCfg = &trustantConfig{}
-	}
-	if wsCfg.Apps == nil {
-		wsCfg.Apps = make(map[string]*AppConfig)
-	}
-	if wsCfg.Apps[req.Name] == nil {
-		wsCfg.Apps[req.Name] = &AppConfig{
-			Development: make(map[string]string),
-			Production:  make(map[string]string),
-		}
-	}
-	if wsCfg.Apps[req.Name].Production == nil {
-		wsCfg.Apps[req.Name].Production = make(map[string]string)
+	// Keep the destination settings, workbench env and global ops login together
+	// until deploy finishes. Launch and shared-variable login use the same lock.
+	unlock := lockRuntimeLifecycle("publish remote " + req.Name)
+	defer unlock()
+	if r.Context().Err() != nil {
+		return
 	}
 
-	// Save config if provided
-	configChanged := false
-	if req.ApiHost != "" {
-		wsCfg.Apps[req.Name].Production["OPS_APIHOST"] = req.ApiHost
-		configChanged = true
-	}
-	if req.User != "" {
-		wsCfg.Apps[req.Name].Production["OPS_USER"] = req.User
-		configChanged = true
-	}
-	if req.Password != "" {
-		wsCfg.Apps[req.Name].Production["OPS_PASSWORD"] = req.Password
-		configChanged = true
-	}
-	if configChanged {
-		if err := saveWorkspaceConfig(wsCfg); err != nil {
+	var wsCfg *trustantConfig
+	if req.ApiHost != "" || req.User != "" || req.Password != "" {
+		if err := updateWorkspaceConfig(func(cfg *trustantConfig) error {
+			prod := cfg.ensureApp(req.Name).ensureProduction()
+			if req.ApiHost != "" {
+				prod["OPS_APIHOST"] = req.ApiHost
+			}
+			if req.User != "" {
+				prod["OPS_USER"] = req.User
+			}
+			if req.Password != "" {
+				prod["OPS_PASSWORD"] = req.Password
+			}
+			wsCfg = cfg
+			return nil
+		}); err != nil {
 			writePublishError(w, "Failed to save config: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
+	} else {
+		wsCfg, _ = loadWorkspaceConfig()
+		if wsCfg == nil {
+			wsCfg = &trustantConfig{}
+		}
 	}
 
-	// Check all required production values are set
-	prod := wsCfg.Apps[req.Name].Production
+	// Check all required production values are set.
+	var prod map[string]string
+	if app := wsCfg.Apps[req.Name]; app != nil {
+		prod = app.Production
+	}
 	redactSecrets(w, prod["OPS_PASSWORD"])
 	if prod["OPS_APIHOST"] == "" || prod["OPS_USER"] == "" || prod["OPS_PASSWORD"] == "" {
 		writePublishJSON(w, http.StatusOK, map[string]interface{}{"needs_config": true})
@@ -445,13 +429,9 @@ func handlePublishRemote(w http.ResponseWriter, r *http.Request) {
 	// resolved: a production login is a real operation against a real cluster,
 	// and sweeping every producer would log into clusters the user never asked
 	// to touch. Non-fatal — the deploy of this app does not depend on it.
-	func() {
-		unlock := lockRuntimeLifecycle("resolve production shared " + req.Name)
-		defer unlock()
-		if _, err := resolveProductionShared(req.Name, prod["OPS_APIHOST"]); err != nil {
-			log.Printf("Warning: failed to resolve production shared values for %s: %s", req.Name, err)
-		}
-	}()
+	if _, err := resolveProductionShared(req.Name, prod["OPS_APIHOST"]); err != nil {
+		log.Printf("Warning: failed to resolve production shared values for %s: %s", req.Name, err)
+	}
 
 	// Run ops ide deploy
 	reportProgress(w, 6, "Deploying application...")

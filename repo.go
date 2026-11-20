@@ -19,6 +19,7 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -31,7 +32,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
-	"time"
 )
 
 // appPasswordAlphabet is deliberately alphanumeric: the value is passed to
@@ -551,20 +551,13 @@ func handlePostRepo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Store the password and initial config in workspace trustant.json
-	wsCfg, err := loadWorkspaceConfig()
-	if err != nil {
-		wsCfg = &trustantConfig{}
-	}
-	if wsCfg.Apps == nil {
-		wsCfg.Apps = make(map[string]*AppConfig)
-	}
-	wsCfg.Apps[req.Name] = &AppConfig{
-		Password:    localPassword,
-		Templates:   appTemplates,
-		Development: make(map[string]string),
-		Production:  make(map[string]string),
-	}
-	if err := saveWorkspaceConfig(wsCfg); err != nil {
+	if err := updateWorkspaceConfig(func(wsCfg *trustantConfig) error {
+		if wsCfg.Apps == nil {
+			wsCfg.Apps = make(map[string]*AppConfig)
+		}
+		wsCfg.Apps[req.Name] = &AppConfig{Password: localPassword, Templates: appTemplates}
+		return nil
+	}); err != nil {
 		log.Printf("Warning: failed to save password to config: %s", err)
 	}
 
@@ -634,63 +627,119 @@ func handleDeleteRepo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Check if workspace folder exists
+	unlock := lockRuntimeLifecycle("delete app " + req.Name)
+	defer unlock()
+
 	workspacePath := filepath.Join(WorkspaceDir, "workspace", req.Name)
-	if _, err := os.Stat(workspacePath); os.IsNotExist(err) {
-		http.Error(w, "Application not found", http.StatusNotFound)
+	if _, err := os.Stat(workspacePath); err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			http.Error(w, "Application not found", http.StatusNotFound)
+			return
+		}
+		log.Printf("Delete %s: failed to inspect workspace: %v", req.Name, err)
+		http.Error(w, "Could not inspect the application repository", http.StatusInternalServerError)
 		return
 	}
 
-	// Terminate any running processes (opencode/opsdevel) to avoid locked files
-	terminateLeftoverProcesses()
-
-	// Delete user with ops admin deleteuser
-	deleteUserCmd := exec.Command("ops", "admin", "deleteuser", req.Name)
-	if output, err := deleteUserCmd.CombinedOutput(); err != nil {
-		log.Printf("Warning: failed to delete user: %s, output: %s", err, string(output))
-		// Continue anyway to clean up the workspace
+	fail := func(status int, message string, err error) {
+		log.Printf("Delete %s: %s: %v", req.Name, message, err)
+		http.Error(w, message, status)
+	}
+	if err := stopRuntimeForDeletion(req.Name); err != nil {
+		fail(http.StatusConflict, "Runtime cleanup could not be completed. Local application data is available for retry.", err)
+		return
+	}
+	if err := deleteOpenServerlessUser(r.Context(), req.Name); err != nil {
+		fail(http.StatusBadGateway, "OpenServerless user cleanup failed. Local application data is available for retry.", err)
+		return
 	}
 
-	// Remove workspace folder (retry once for leftover locked files)
-	if err := os.RemoveAll(workspacePath); err != nil {
-		log.Printf("Warning: first remove attempt failed: %s, retrying...", err)
-		time.Sleep(1 * time.Second)
-		if err := os.RemoveAll(workspacePath); err != nil {
-			log.Printf("Warning: failed to remove workspace folder: %s", err)
-		}
-	}
-
-	// Also remove workbench folder if it exists
 	workbenchPath := filepath.Join(WorkbenchDir, req.Name)
 	if err := os.RemoveAll(workbenchPath); err != nil {
-		log.Printf("Warning: failed to remove workbench folder: %s", err)
+		fail(http.StatusInternalServerError, "OpenServerless cleanup completed. Workbench removal failed. Retry deletion.", err)
+		return
 	}
 
-	// Remove app entry from workspace config, along with everything the app
-	// shared. The pool is append-only otherwise, so without the prune the app's
-	// resolved secrets would outlive it forever — and, since ownership is
-	// derived from the name prefix matching an existing app, they would come
-	// back as editable hand-typed entries and be inherited by any app later
-	// created with the same name. Both happen in ONE save.
-	//
-	// Consumers of the pruned variables are already handled: resolveOneImport
-	// re-pends a ${{NAME}} reference whose target has left the pool rather than
-	// falling back to a different producer, so those apps ask the user at their
-	// next launch instead of silently binding to someone else's database.
-	wsCfg, err := loadWorkspaceConfig()
-	if err == nil {
-		if wsCfg.Apps != nil {
-			delete(wsCfg.Apps, req.Name)
+	// Keep the bare repository visible until the other cleanup steps finish,
+	// so the user can retry partial failures from the app list.
+	if err := updateWorkspaceConfig(func(cfg *trustantConfig) error {
+		pruned := pruneSharedPool(cfg, req.Name)
+		_, hasApp := cfg.Apps[req.Name]
+		if !hasApp && pruned == 0 && cfg.Current != req.Name {
+			return errWorkspaceConfigUnchanged
 		}
-		if pruned := pruneSharedPool(wsCfg, req.Name); pruned > 0 {
-			log.Printf("Shared: removed %d pool variables shared by %s", pruned, req.Name)
+		delete(cfg.Apps, req.Name)
+		if cfg.Current == req.Name {
+			cfg.Current = ""
 		}
-		if err := saveWorkspaceConfig(wsCfg); err != nil {
-			log.Printf("Warning: failed to update config after delete: %s", err)
-		}
+		return nil
+	}); err != nil {
+		fail(http.StatusInternalServerError, "OpenServerless and workbench cleanup completed. Configuration cleanup failed. Retry deletion.", err)
+		return
+	}
+	if err := os.RemoveAll(workspacePath); err != nil {
+		fail(http.StatusInternalServerError, "OpenServerless, workbench and configuration cleanup completed. Repository removal failed. Retry deletion.", err)
+		return
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+// stopRuntimeForDeletion runs under the lifecycle lock. It leaves the current
+// process group alone when the application being deleted does not own it.
+func stopRuntimeForDeletion(app string) error {
+	current, err := readCurrentApp()
+	if errors.Is(err, os.ErrNotExist) || (err == nil && current != app) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	pgid, err := readPgid()
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
+		return err
+	}
+	if processGroupAlive(pgid) {
+		workbenchPath, err := canonicalWorkbenchPath(app)
+		if err != nil {
+			return err
+		}
+		if !managedRuntimeOwnsGroup(app, workbenchPath, pgid) {
+			return fmt.Errorf("cannot verify ownership of process group %d", pgid)
+		}
+		if err := killPgid(pgid); err != nil {
+			return err
+		}
+	}
+	for _, path := range []string{getPgidFile(), getCurrentFile()} {
+		if err := os.Remove(path); err != nil && !errors.Is(err, os.ErrNotExist) {
+			return err
+		}
+	}
+	return updateWorkspaceConfig(func(cfg *trustantConfig) error {
+		if cfg.Current != app {
+			return errWorkspaceConfigUnchanged
+		}
+		cfg.Current = ""
+		return nil
+	})
+}
+
+// deleteOpenServerlessUser skips an already absent user so local cleanup can
+// resume after a previous request removed the user.
+func deleteOpenServerlessUser(ctx context.Context, app string) error {
+	probe := exec.CommandContext(ctx, "ops", "util", "kubectl", "--", "get", "wsku/"+app, "--ignore-not-found", "-o", "name")
+	output, err := probe.Output()
+	if err != nil {
+		return fmt.Errorf("check OpenServerless user: %w", err)
+	}
+	if strings.TrimSpace(string(output)) == "" {
+		return nil
+	}
+	if err := exec.CommandContext(ctx, "ops", "admin", "deleteuser", app).Run(); err != nil {
+		return fmt.Errorf("delete OpenServerless user: %w", err)
+	}
+	return nil
 }
 
 func handleRepo(w http.ResponseWriter, r *http.Request) {

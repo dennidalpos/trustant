@@ -267,7 +267,7 @@ func migrateToLayeredConfig() error {
 	}
 
 	log.Println("  Migrating configuration to layered format...")
-	wsCfg.Apps = make(map[string]*AppConfig)
+	apps := make(map[string]*AppConfig)
 
 	for _, entry := range entries {
 		if !entry.IsDir() {
@@ -288,22 +288,29 @@ func migrateToLayeredConfig() error {
 			log.Printf("  Warning: could not retrieve password for %s: %v", name, err)
 		}
 
-		wsCfg.Apps[name] = app
+		apps[name] = app
 	}
 
-	// Strip fields from workspace config that match base (keep only overrides + apps)
 	baseCfg, baseErr := loadBaseConfig()
-	if baseErr == nil {
-		if modelLimitsEqual(wsCfg.Models, baseCfg.Models) {
-			wsCfg.Models = nil
+	migrated := false
+	if err := updateWorkspaceConfig(func(current *trustantConfig) error {
+		if current.Apps != nil {
+			return errWorkspaceConfigUnchanged
 		}
-		// Do not collapse pi.default during legacy layered-config migration.
-		// Issue #51 has no OpenCode-to-Pi migration; the explicit Pi selection
-		// must remain visible in the workspace layer that Configure owns.
+		current.Apps = apps
+		// Strip model defaults, keeping the explicit Pi selection.
+		if baseErr == nil && modelLimitsEqual(current.Models, baseCfg.Models) {
+			current.Models = nil
+		}
+		migrated = true
+		return nil
+	}); err != nil {
+		return err
 	}
-
-	log.Printf("  Migrated %d app(s) to layered config", len(wsCfg.Apps))
-	return saveWorkspaceConfig(wsCfg)
+	if migrated {
+		log.Printf("  Migrated %d app(s) to layered config", len(apps))
+	}
+	return nil
 }
 
 // cleanupPgidFile reads and terminates process group from WorkbenchDir/pgid file

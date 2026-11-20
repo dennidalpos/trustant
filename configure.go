@@ -18,6 +18,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -31,6 +32,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 	"unicode"
 )
@@ -285,14 +287,75 @@ func loadBaseConfig() (*trustantConfig, error) {
 	return &cfg, nil
 }
 
-// loadWorkspaceConfig reads the workspace trustant.json (overrides)
+const workspaceConfigMode = 0600
+
+var (
+	workspaceConfigMu           sync.Mutex
+	errWorkspaceConfigUnchanged = errors.New("workspace configuration unchanged")
+)
+
+// updateWorkspaceConfig reads and updates the workspace layer under one lock.
+// Callers do external work before or after the callback, and take any runtime
+// lifecycle lock before entering this transaction.
+func updateWorkspaceConfig(change func(*trustantConfig) error) error {
+	workspaceConfigMu.Lock()
+	defer workspaceConfigMu.Unlock()
+
+	cfg, err := loadWorkspaceConfig()
+	if err != nil {
+		return err
+	}
+	if err := change(cfg); err != nil {
+		if errors.Is(err, errWorkspaceConfigUnchanged) {
+			return nil
+		}
+		return err
+	}
+	return saveWorkspaceConfig(cfg)
+}
+
+func (cfg *trustantConfig) ensureApp(name string) *AppConfig {
+	if cfg.Apps == nil {
+		cfg.Apps = make(map[string]*AppConfig)
+	}
+	if cfg.Apps[name] == nil {
+		cfg.Apps[name] = &AppConfig{}
+	}
+	return cfg.Apps[name]
+}
+
+func (app *AppConfig) ensureProduction() map[string]string {
+	if app.Production == nil {
+		app.Production = make(map[string]string)
+	}
+	return app.Production
+}
+
+// loadWorkspaceConfig reads the workspace trustant.json and secures older copies.
 func loadWorkspaceConfig() (*trustantConfig, error) {
 	configPath := filepath.Join(WorkspaceDir, "trustant.json")
-	data, err := os.ReadFile(configPath)
+	file, err := os.Open(configPath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return &trustantConfig{}, nil
 		}
+		return nil, fmt.Errorf("failed to read workspace trustant.json: %w", err)
+	}
+	defer file.Close()
+	info, err := file.Stat()
+	if err != nil {
+		return nil, fmt.Errorf("failed to inspect workspace trustant.json: %w", err)
+	}
+	if !info.Mode().IsRegular() {
+		return nil, fmt.Errorf("workspace trustant.json must be a regular file")
+	}
+	if info.Mode().Perm() != workspaceConfigMode {
+		if err := file.Chmod(workspaceConfigMode); err != nil {
+			return nil, fmt.Errorf("failed to secure workspace trustant.json: %w", err)
+		}
+	}
+	data, err := io.ReadAll(file)
+	if err != nil {
 		return nil, fmt.Errorf("failed to read workspace trustant.json: %w", err)
 	}
 	var cfg trustantConfig
@@ -437,7 +500,24 @@ func saveWorkspaceConfig(cfg *trustantConfig) error {
 	if err := os.MkdirAll(WorkspaceDir, 0755); err != nil {
 		return fmt.Errorf("failed to create workspace dir: %w", err)
 	}
-	return os.WriteFile(configPath, formatted, 0644)
+	file, err := os.CreateTemp(WorkspaceDir, ".trustant.json.tmp-*")
+	if err != nil {
+		return fmt.Errorf("failed to create workspace configuration file: %w", err)
+	}
+	defer func() {
+		_ = file.Close()
+		_ = os.Remove(file.Name())
+	}()
+	if err := file.Chmod(workspaceConfigMode); err != nil {
+		return fmt.Errorf("failed to secure workspace configuration file: %w", err)
+	}
+	if _, err := file.Write(formatted); err != nil {
+		return fmt.Errorf("failed to write workspace configuration file: %w", err)
+	}
+	if err := file.Close(); err != nil {
+		return fmt.Errorf("failed to close workspace configuration file: %w", err)
+	}
+	return os.Rename(file.Name(), configPath)
 }
 
 const (
@@ -2606,54 +2686,41 @@ func handlePostConfiguration(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Preserve existing apps and current from workspace config
-	wsCfg, wsErr := loadWorkspaceConfig()
-	if wsErr == nil {
-		if wsCfg.Apps != nil && cfg.Apps == nil {
-			cfg.Apps = wsCfg.Apps
+	var validationError string
+	if err := updateWorkspaceConfig(func(wsCfg *trustantConfig) error {
+		// These fields belong to the application, runtime, shared-variable
+		// and license handlers. The configuration form may echo stale values.
+		cfg.Apps = wsCfg.Apps
+		cfg.Current = wsCfg.Current
+		cfg.PredefinedEnv = wsCfg.PredefinedEnv
+		cfg.SharedProduction = wsCfg.SharedProduction
+		cfg.LegacyPredefinedEnvProduction = nil
+		cfg.License = wsCfg.License
+		cfg.LicenseHost = wsCfg.LicenseHost
+		cfg.LicenseEmail = wsCfg.LicenseEmail
+		cfg.ProvisioningToken = wsCfg.ProvisioningToken
+		cfg.RegisterURL = ""
+		if cfg.Git == nil {
+			cfg.Git = wsCfg.Git
 		}
-		if wsCfg.Current != "" && cfg.Current == "" {
-			cfg.Current = wsCfg.Current
-		}
-		if wsCfg.Notebook != nil && cfg.Notebook == nil {
+		if cfg.Notebook == nil {
 			cfg.Notebook = wsCfg.Notebook
 		}
-		// saveWorkspaceConfig writes the whole struct, so a payload that omits
-		// predefined_env would erase it. The Configure page echoes the field
-		// back, but a stale tab or any other client need not; preserving it here
-		// is what stops saving a provider from wiping the user's variables.
-		//
-		// An EMPTY map is treated the same as an absent one. The page snapshots
-		// the config at boot and echoes that snapshot, so a palette edited after
-		// load comes back as the stale `{}` it was at boot — which is not nil and
-		// used to sail straight through this guard and overwrite the palette.
-		// This endpoint does not manage predefined_env at all (the card uses
-		// /api/predefined-env), and several other pages POST here without
-		// touching it, so no caller has a legitimate reason to clear it this way.
-		// Clearing happens by removing the rows on the card.
-		if len(wsCfg.PredefinedEnv) > 0 && len(cfg.PredefinedEnv) == 0 {
-			cfg.PredefinedEnv = wsCfg.PredefinedEnv
+		if err := normalizeNotebookConfig(&cfg); err != nil {
+			validationError = "Invalid notebook configuration: " + err.Error()
+			return err
 		}
-		// Same guard for the production pool. No page posts it here at all — it
-		// is written only by a publish — so an omitted or empty map always means
-		// "unchanged", never "clear".
-		if len(wsCfg.SharedProduction) > 0 && len(cfg.SharedProduction) == 0 {
-			cfg.SharedProduction = wsCfg.SharedProduction
+		if err := validatePiModelSelection(&cfg); err != nil {
+			validationError = "Invalid model selection: " + err.Error()
+			return err
 		}
-		cfg.LegacyPredefinedEnvProduction = nil
-	}
-
-	if err := normalizeNotebookConfig(&cfg); err != nil {
-		http.Error(w, "Invalid notebook configuration: "+err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if err := validatePiModelSelection(&cfg); err != nil {
-		http.Error(w, "Invalid model selection: "+err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if err := saveWorkspaceConfig(&cfg); err != nil {
+		*wsCfg = cfg
+		return nil
+	}); err != nil {
+		if validationError != "" {
+			http.Error(w, validationError, http.StatusBadRequest)
+			return
+		}
 		http.Error(w, "Failed to save configuration: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -3122,96 +3189,92 @@ func handlePostAppConfig(w http.ResponseWriter, r *http.Request, name, workspace
 		return
 	}
 
-	wsCfg, err := loadWorkspaceConfig()
-	if err != nil {
-		http.Error(w, "Failed to load config: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if wsCfg.Apps == nil {
-		wsCfg.Apps = make(map[string]*AppConfig)
-	}
-	if wsCfg.Apps[name] == nil {
-		wsCfg.Apps[name] = &AppConfig{}
-	}
-
 	// Imports are declared in .env.dist, not here: an import row arrives with the
 	// value the pool gave it, and an unresolved one legitimately has none.
+	bindings := readAppEnvDistBindings(name)
 	importNames := make(map[string]bool)
-	for _, b := range readAppEnvDistBindings(name) {
+	for _, b := range bindings {
 		importNames[b.Name] = true
 	}
 
-	// An imported row arrives carrying the value its pool entry resolved to, not
-	// the ${{X}} reference that is stored. Writing that copy back would cut the
-	// link to the producer, so a value equal to its resolution keeps whatever
-	// was stored before (the reference, or nothing for a followed dev choice).
-	devResolved, prodResolved := map[string]string{}, map[string]string{}
-	var oldDev, oldProd map[string]string
-	if wsCfg.Apps[name] != nil {
-		oldDev, oldProd = wsCfg.Apps[name].Development, wsCfg.Apps[name].Production
-	}
-	if cfg, err := loadTrustantConfig(); err == nil {
-		dev := map[string]string{}
-		if a := cfg.Apps[name]; a != nil && a.Development != nil {
-			dev = a.Development
+	base, baseErr := loadBaseConfig()
+	var validationError string
+	if err := updateWorkspaceConfig(func(wsCfg *trustantConfig) error {
+		// An imported row arrives carrying the value its pool entry resolved to, not
+		// the ${{X}} reference that is stored. Writing that copy back would cut the
+		// link to the producer, so a value equal to its resolution keeps whatever
+		// was stored before (the reference, or nothing for a followed dev choice).
+		devResolved, prodResolved := map[string]string{}, map[string]string{}
+		var oldDev, oldProd map[string]string
+		if app := wsCfg.Apps[name]; app != nil {
+			oldDev, oldProd = app.Development, app.Production
 		}
-		for _, b := range readAppEnvDistBindings(name) {
-			if res := resolveOneImport(b, dev, cfg.PredefinedEnv); res.Source != "" {
-				devResolved[b.Name] = res.Value
+		if baseErr == nil {
+			cfg := mergeConfigs(base, wsCfg)
+			dev := map[string]string{}
+			if a := cfg.Apps[name]; a != nil && a.Development != nil {
+				dev = a.Development
 			}
-		}
-		if a := cfg.Apps[name]; a != nil {
-			if host := a.Production["OPS_APIHOST"]; sharedHostKey(host) != "" {
-				for _, res := range resolveProductionImportsFrom(cfg, name, host) {
-					if res.Source != "" {
-						prodResolved[res.Name] = res.Value
+			for _, b := range bindings {
+				if res := resolveOneImport(b, dev, cfg.PredefinedEnv); res.Source != "" {
+					devResolved[b.Name] = res.Value
+				}
+			}
+			if a := cfg.Apps[name]; a != nil {
+				if host := a.Production["OPS_APIHOST"]; sharedHostKey(host) != "" {
+					for _, res := range resolveProductionImportsFrom(cfg, name, host) {
+						if res.Source != "" {
+							prodResolved[res.Name] = res.Value
+						}
 					}
 				}
 			}
 		}
-	}
 
-	devVars := make(map[string]string)
-	prodVars := make(map[string]string)
-	for _, v := range req.Vars {
-		if r, ok := devResolved[v.Name]; ok && v.DevValue == r {
-			v.DevValue = oldDev[v.Name]
-		}
-		if r, ok := prodResolved[v.Name]; ok && v.ProdValue == r {
-			v.ProdValue = oldProd[v.Name]
-		}
-		if v.Name == "" {
-			continue
-		}
-		if isServiceRuntimeEnvKey(v.Name) {
-			continue
-		}
-		// The env editor holds only variables that have a value. A blank one is
-		// not an under-specified variable to be carried along: it belongs in
-		// .env.dist, edited in the Import tab, where the pool can fill it. The two
-		// files are disjoint and this is the half that enforces it
-		// (spec/19-import.md).
-		if strings.TrimSpace(v.DevValue) == "" && strings.TrimSpace(v.ProdValue) == "" {
-			if importNames[v.Name] {
+		devVars := make(map[string]string)
+		prodVars := make(map[string]string)
+		for _, v := range req.Vars {
+			if r, ok := devResolved[v.Name]; ok && v.DevValue == r {
+				v.DevValue = oldDev[v.Name]
+			}
+			if r, ok := prodResolved[v.Name]; ok && v.ProdValue == r {
+				v.ProdValue = oldProd[v.Name]
+			}
+			if v.Name == "" {
 				continue
 			}
-			writeJSONError(w, http.StatusBadRequest,
-				fmt.Sprintf("%q has no value. Give it one, or declare it in the Import tab to take its value from a shared variable.", v.Name))
+			if isServiceRuntimeEnvKey(v.Name) {
+				continue
+			}
+			// The env editor holds only variables that have a value. A blank one is
+			// not an under-specified variable to be carried along: it belongs in
+			// .env.dist, edited in the Import tab, where the pool can fill it. The two
+			// files are disjoint and this is the half that enforces it
+			// (spec/19-import.md).
+			if strings.TrimSpace(v.DevValue) == "" && strings.TrimSpace(v.ProdValue) == "" {
+				if importNames[v.Name] {
+					continue
+				}
+				validationError = fmt.Sprintf("%q has no value. Give it one, or declare it in the Import tab to take its value from a shared variable.", v.Name)
+				return errors.New(validationError)
+			}
+			if v.DevValue != "" {
+				devVars[v.Name] = v.DevValue
+			}
+			if v.ProdValue != "" {
+				prodVars[v.Name] = v.ProdValue
+			}
+		}
+
+		app := wsCfg.ensureApp(name)
+		app.Development = devVars
+		app.Production = prodVars
+		return nil
+	}); err != nil {
+		if validationError != "" {
+			writeJSONError(w, http.StatusBadRequest, validationError)
 			return
 		}
-		if v.DevValue != "" {
-			devVars[v.Name] = v.DevValue
-		}
-		if v.ProdValue != "" {
-			prodVars[v.Name] = v.ProdValue
-		}
-	}
-
-	wsCfg.Apps[name].Development = devVars
-	wsCfg.Apps[name].Production = prodVars
-
-	if err := saveWorkspaceConfig(wsCfg); err != nil {
 		http.Error(w, "Failed to save: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -3279,18 +3342,16 @@ func handleDeletePredefinedEnv(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	wsCfg, err := loadWorkspaceConfig()
-	if err != nil {
-		http.Error(w, "Failed to read configuration: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	removed := removeSharedPoolVar(wsCfg, name)
-	if removed > 0 {
-		if err := saveWorkspaceConfig(wsCfg); err != nil {
-			http.Error(w, "Failed to save configuration: "+err.Error(), http.StatusInternalServerError)
-			return
+	var removed int
+	if err := updateWorkspaceConfig(func(wsCfg *trustantConfig) error {
+		removed = removeSharedPoolVar(wsCfg, name)
+		if removed == 0 {
+			return errWorkspaceConfigUnchanged
 		}
+		return nil
+	}); err != nil {
+		http.Error(w, "Failed to save configuration: "+err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -3388,34 +3449,31 @@ func handlePostPredefinedEnv(w http.ResponseWriter, r *http.Request) {
 		predefined[name] = v.Value
 	}
 
-	wsCfg, err := loadWorkspaceConfig()
+	base, err := loadBaseConfig()
 	if err != nil {
 		http.Error(w, "Failed to read configuration: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	// App-produced values are derived from a .env.shared and are refreshed on
-	// every launch. The page renders them read-only, but it posts the whole set,
-	// so carry them over verbatim rather than letting a stale tab drop or
-	// rewrite one — the edit would be silently undone by the next refresh
-	// anyway, and dropping one would break a consumer until then.
-	cfg, err := loadTrustantConfig()
-	if err != nil {
-		http.Error(w, "Failed to read configuration: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-	for name, value := range wsCfg.PredefinedEnv {
-		if _, ok := sharedProducerOf(name, cfg.Apps); ok {
-			predefined[name] = value
+	if err := updateWorkspaceConfig(func(wsCfg *trustantConfig) error {
+		// App-produced values are derived from a .env.shared and are refreshed on
+		// every launch. The page renders them read-only, but it posts the whole set,
+		// so carry them over verbatim rather than letting a stale tab drop or
+		// rewrite one — the edit would be silently undone by the next refresh
+		// anyway, and dropping one would break a consumer until then.
+		apps := mergeConfigs(base, wsCfg).Apps
+		for name, value := range wsCfg.PredefinedEnv {
+			if _, ok := sharedProducerOf(name, apps); ok {
+				predefined[name] = value
+			}
 		}
-	}
 
-	if len(predefined) == 0 {
-		wsCfg.PredefinedEnv = nil
-	} else {
-		wsCfg.PredefinedEnv = predefined
-	}
-	if err := saveWorkspaceConfig(wsCfg); err != nil {
+		if len(predefined) == 0 {
+			wsCfg.PredefinedEnv = nil
+		} else {
+			wsCfg.PredefinedEnv = predefined
+		}
+		return nil
+	}); err != nil {
 		http.Error(w, "Failed to save configuration: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -3448,13 +3506,6 @@ func importDefaultPredefinedEnv() error {
 		return nil
 	}
 
-	// The workspace layer, not the merged one: saving a merged config would
-	// fold the base defaults into the workspace file.
-	wsCfg, err := loadWorkspaceConfig()
-	if err != nil {
-		return fmt.Errorf("failed to read configuration: %w", err)
-	}
-
 	// Sorted so a truncated import at the cap is deterministic rather than
 	// dependent on map iteration order.
 	names := make([]string, 0, len(parsed))
@@ -3465,36 +3516,41 @@ func importDefaultPredefinedEnv() error {
 
 	added := make([]string, 0, len(names))
 	dropped := 0
-	for _, name := range names {
-		if !predefinedEnvNamePattern.MatchString(name) {
-			log.Printf("  Skipping invalid variable name in %s: %s", defaultEnvFileName, name)
-			continue
+	if err := updateWorkspaceConfig(func(wsCfg *trustantConfig) error {
+		for _, name := range names {
+			if !predefinedEnvNamePattern.MatchString(name) {
+				log.Printf("  Skipping invalid variable name in %s: %s", defaultEnvFileName, name)
+				continue
+			}
+			// Present with an empty value is a deliberate "recorded, no value yet"
+			// state (spec/2a-config.md); it counts as present and is kept.
+			if _, exists := wsCfg.PredefinedEnv[name]; exists {
+				continue
+			}
+			if len(wsCfg.PredefinedEnv) >= maxPredefinedEnvVars {
+				dropped++
+				continue
+			}
+			if wsCfg.PredefinedEnv == nil {
+				wsCfg.PredefinedEnv = make(map[string]string)
+			}
+			wsCfg.PredefinedEnv[name] = parsed[name]
+			added = append(added, name)
 		}
-		// Present with an empty value is a deliberate "recorded, no value yet"
-		// state (spec/2a-config.md); it counts as present and is kept.
-		if _, exists := wsCfg.PredefinedEnv[name]; exists {
-			continue
+		if dropped > 0 {
+			log.Printf("  Dropped %d variable(s) from %s: predefined_env is at its limit of %d",
+				dropped, defaultEnvFileName, maxPredefinedEnvVars)
 		}
-		if len(wsCfg.PredefinedEnv) >= maxPredefinedEnvVars {
-			dropped++
-			continue
+		if len(added) == 0 {
+			// Nothing new: do not write, or the config file churns on every restart.
+			return errWorkspaceConfigUnchanged
 		}
-		if wsCfg.PredefinedEnv == nil {
-			wsCfg.PredefinedEnv = make(map[string]string)
-		}
-		wsCfg.PredefinedEnv[name] = parsed[name]
-		added = append(added, name)
-	}
-	if dropped > 0 {
-		log.Printf("  Dropped %d variable(s) from %s: predefined_env is at its limit of %d",
-			dropped, defaultEnvFileName, maxPredefinedEnvVars)
+		return nil
+	}); err != nil {
+		return fmt.Errorf("failed to save configuration: %w", err)
 	}
 	if len(added) == 0 {
-		// Nothing new: do not write, or the config file churns on every restart.
 		return nil
-	}
-	if err := saveWorkspaceConfig(wsCfg); err != nil {
-		return fmt.Errorf("failed to save configuration: %w", err)
 	}
 	// Names only. Values may be credentials.
 	log.Printf("  Imported %d variable(s) from %s: %s", len(added), defaultEnvFileName, strings.Join(added, ", "))

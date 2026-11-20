@@ -2727,17 +2727,17 @@
                 document.getElementById('deleteSpinner').classList.add('hidden');
 
                 if (response.ok) {
-                    document.getElementById('deleteResultText').innerHTML = 'Application deleted successfully';
+                    document.getElementById('deleteResultText').textContent = 'Application deleted successfully';
                     document.getElementById('deleteResultText').className = feedbackClass('success');
                 } else {
                     const error = await response.text();
-                    document.getElementById('deleteResultText').innerHTML = 'Failed to delete: ' + error;
+                    document.getElementById('deleteResultText').textContent = 'Failed to delete: ' + error.trim();
                     document.getElementById('deleteResultText').className = feedbackClass('error');
                 }
                 document.getElementById('deleteResult').classList.remove('hidden');
             } catch (error) {
                 document.getElementById('deleteSpinner').classList.add('hidden');
-                document.getElementById('deleteResultText').innerHTML = error.message;
+                document.getElementById('deleteResultText').textContent = error.message;
                 document.getElementById('deleteResultText').className = feedbackClass('error');
                 document.getElementById('deleteResult').classList.remove('hidden');
             }

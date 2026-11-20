@@ -26,6 +26,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 )
 
 // --- the store ------------------------------------------------------------
@@ -294,6 +295,140 @@ func TestOpsLoginKeepsSharedValuesInEnvFiles(t *testing.T) {
 }
 
 // --- the publish gate -----------------------------------------------------
+
+type publishProgressProbe struct {
+	*httptest.ResponseRecorder
+	marker  string
+	reached func()
+}
+
+func (p *publishProgressProbe) Flush() {
+	p.ResponseRecorder.Flush()
+	if p.reached != nil && strings.Contains(p.Body.String(), p.marker) {
+		reached := p.reached
+		p.reached = nil
+		reached()
+	}
+}
+
+func TestRemotePublishKeepsItsOpsDestination(t *testing.T) {
+	const firstHost = "https://first.example.test"
+	const secondHost = "https://second.example.test"
+	for _, scenario := range []struct {
+		name       string
+		deployFail string
+		firstEvent string
+	}{
+		{name: "both succeed", firstEvent: "event: done"},
+		{name: "second succeeds after the first fails", deployFail: firstHost, firstEvent: "event: error"},
+	} {
+		t.Run(scenario.name, func(t *testing.T) {
+			root := isolateSharedWorkspace(t)
+			originalLicense := EnableLicense
+			EnableLicense = false
+			t.Cleanup(func() { EnableLicense = originalLicense })
+			makeWorkbench(t, "demoapp")
+			if err := saveSharedEnv("demoapp", map[string]string{"DEMOAPP__DB": "<.postgres.url>"}); err != nil {
+				t.Fatal(err)
+			}
+			const fakeOps = `#!/bin/sh
+set -eu
+[ "$1 $3" = "ide --mode=production" ]
+host=$(sed -n 's/^OPS_APIHOST=//p' .env.production)
+config=$HOME/.ops/config.json
+case "$2" in
+  login)
+    test ! -e "$config"
+    mkdir -p "$HOME/.ops"
+    printf '{"postgres":{"url":"%s"}}\n' "$host" > "$config"
+    ;;
+  deploy)
+    test "$(cat "$config")" = "$(printf '{"postgres":{"url":"%s"}}' "$host")"
+    test "$host" != "$FAIL_DEPLOY_HOST" || exit 20
+    ;;
+  *) exit 2 ;;
+esac
+printf '%s %s\n' "$2" "$host"
+`
+			if err := os.WriteFile(filepath.Join(root, "ops"), []byte(fakeOps), 0755); err != nil {
+				t.Fatal(err)
+			}
+			t.Setenv("PATH", root+string(os.PathListSeparator)+os.Getenv("PATH"))
+			t.Setenv("FAIL_DEPLOY_HOST", scenario.deployFail)
+
+			publish := func(host string, recorder http.ResponseWriter) {
+				req := httptest.NewRequest(http.MethodPost, "/api/publish/remote",
+					strings.NewReader(`{"name":"demoapp","apihost":"`+host+`","user":"demo","password":"fixture-password"}`))
+				req.Header.Set("Accept", "text/event-stream")
+				handlePublishRemote(recorder, req)
+			}
+
+			secondStarted := make(chan struct{})
+			secondProceed := make(chan struct{})
+			secondDone := make(chan struct{})
+			second := &publishProgressProbe{
+				ResponseRecorder: httptest.NewRecorder(),
+				marker:           "Checking license and production configuration",
+				reached: func() {
+					close(secondStarted)
+					<-secondProceed
+				},
+			}
+			first := &publishProgressProbe{
+				ResponseRecorder: httptest.NewRecorder(),
+				marker:           "Deploying application",
+				reached: func() {
+					go func() {
+						defer close(secondDone)
+						publish(secondHost, second)
+					}()
+					select {
+					case <-secondStarted:
+					case <-time.After(5 * time.Second):
+						t.Error("second publish did not reach its first progress event")
+					}
+					if runtimeLifecycleMu.TryLock() {
+						runtimeLifecycleMu.Unlock()
+						t.Error("first publish released the lifecycle lock before deploy")
+					}
+					close(secondProceed)
+				},
+			}
+			publish(firstHost, first)
+			if first.reached != nil {
+				t.Fatalf("first publish never reached deploy: %s", first.Body)
+			}
+			<-secondDone
+
+			firstOutput := first.Body.String()
+			if !strings.Contains(firstOutput, scenario.firstEvent) || !strings.Contains(firstOutput, "login "+firstHost) {
+				t.Fatalf("unexpected first publish events: %s", firstOutput)
+			}
+			firstDeployResult := "deploy " + firstHost
+			if scenario.deployFail != "" {
+				firstDeployResult = "exit status 20"
+			}
+			if !strings.Contains(firstOutput, firstDeployResult) {
+				t.Fatalf("first deploy did not reach its expected result: %s", firstOutput)
+			}
+			secondOutput := second.Body.String()
+			for _, expected := range []string{"login " + secondHost, "deploy " + secondHost, "event: done"} {
+				if !strings.Contains(secondOutput, expected) {
+					t.Fatalf("second publish is missing %q: %s", expected, secondOutput)
+				}
+			}
+			cfg, err := loadWorkspaceConfig()
+			if err != nil {
+				t.Fatal(err)
+			}
+			for _, host := range []string{firstHost, secondHost} {
+				if got := productionPool(cfg, host)["DEMOAPP__DB"]; got != host {
+					t.Errorf("shared value for %s = %q", host, got)
+				}
+			}
+		})
+	}
+}
 
 func TestPublishGateReturnsPendingImportsBeforeAnyOps(t *testing.T) {
 	cfg := productionTestConfig(nil, map[string]string{

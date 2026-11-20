@@ -283,8 +283,9 @@ broken dev server; a publish with one deploys an app pointed at nothing.
 Resolving runs `ops ide login` for another app against the single global
 `~/.ops/config.json`. Doing that while an app's launch is mid-flight would hand
 that launch the wrong service bindings, so every entry point holds
-`lockRuntimeLifecycle`. Launch and publish already hold it; the `/api/shared`
-endpoints and the `handlePostRepo` hook take it explicitly.
+`lockRuntimeLifecycle`. Remote publish holds it from reading the destination
+settings through deploy. Launch, the `/api/shared` endpoints and the
+`handlePostRepo` hook use the same lock when they log in to resolve bindings.
 
 ### The login starts from a clean file
 

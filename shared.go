@@ -649,17 +649,12 @@ func refreshSharedPool(restoreApp string) {
 	if len(resolved) == 0 {
 		return
 	}
-	wsCfg, err := loadWorkspaceConfig()
+	stored, err := storeDevelopmentShared(resolved)
 	if err != nil {
-		log.Printf("Warning: failed to load workspace config for shared refresh: %s", err)
-		return
-	}
-	stored := foldIntoSharedPool(wsCfg, resolved, cfg.Apps)
-	if len(stored) == 0 {
-		return
-	}
-	if err := saveWorkspaceConfig(wsCfg); err != nil {
 		log.Printf("Warning: failed to save shared variables: %s", err)
+		return
+	}
+	if len(stored) == 0 {
 		return
 	}
 	log.Printf("Shared: refreshed %d variables into the pool: %v", len(stored), stored)
@@ -676,22 +671,30 @@ func refreshSharedForApp(app string) ([]string, error) {
 	if len(resolved) == 0 {
 		return nil, nil
 	}
-	cfg, err := loadTrustantConfig()
-	if err != nil {
-		return nil, err
-	}
-	wsCfg, err := loadWorkspaceConfig()
-	if err != nil {
-		return nil, err
-	}
-	stored := foldIntoSharedPool(wsCfg, resolved, cfg.Apps)
-	if len(stored) == 0 {
-		return nil, nil
-	}
-	if err := saveWorkspaceConfig(wsCfg); err != nil {
-		return nil, err
+	stored, err := storeDevelopmentShared(resolved)
+	if err != nil || len(stored) == 0 {
+		return stored, err
 	}
 	log.Printf("Shared: stored %d variables produced by %s: %v", len(stored), app, stored)
+	return stored, nil
+}
+
+// storeDevelopmentShared folds the resolved values into the latest workspace.
+func storeDevelopmentShared(resolved map[string]string) ([]string, error) {
+	base, err := loadBaseConfig()
+	if err != nil {
+		return nil, err
+	}
+	var stored []string
+	if err := updateWorkspaceConfig(func(wsCfg *trustantConfig) error {
+		stored = foldIntoSharedPool(wsCfg, resolved, mergeConfigs(base, wsCfg).Apps)
+		if len(stored) == 0 {
+			return errWorkspaceConfigUnchanged
+		}
+		return nil
+	}); err != nil {
+		return nil, err
+	}
 	return stored, nil
 }
 
@@ -705,17 +708,13 @@ func resolveProductionShared(app, host string) ([]string, error) {
 	declared := loadSharedEnv(app)
 	if len(declared) == 0 {
 		// An app that stopped exporting must not keep its old secrets here.
-		wsCfg, err := loadWorkspaceConfig()
-		if err != nil {
-			return nil, err
-		}
-		if _, had := wsCfg.SharedProduction[sharedHostKey(host)][app]; had {
-			setProductionShared(wsCfg, host, app, nil)
-			if err := saveWorkspaceConfig(wsCfg); err != nil {
-				return nil, err
+		return nil, updateWorkspaceConfig(func(wsCfg *trustantConfig) error {
+			if _, had := wsCfg.SharedProduction[sharedHostKey(host)][app]; !had {
+				return errWorkspaceConfigUnchanged
 			}
-		}
-		return nil, nil
+			setProductionShared(wsCfg, host, app, nil)
+			return nil
+		})
 	}
 	tree, err := opsConfigTree()
 	if err != nil {
@@ -740,12 +739,10 @@ func resolveProductionShared(app, host string) ([]string, error) {
 	}
 	// Replace, never merge: the publish just read this app's declarations
 	// against this cluster, so whatever it no longer resolves is gone.
-	wsCfg, err := loadWorkspaceConfig()
-	if err != nil {
-		return nil, err
-	}
-	setProductionShared(wsCfg, host, app, resolved)
-	if err := saveWorkspaceConfig(wsCfg); err != nil {
+	if err := updateWorkspaceConfig(func(wsCfg *trustantConfig) error {
+		setProductionShared(wsCfg, host, app, resolved)
+		return nil
+	}); err != nil {
 		return nil, err
 	}
 	stored := make([]string, 0, len(resolved))

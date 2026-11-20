@@ -147,15 +147,22 @@ Return success
   "name: <name>
 }`
 
-Check if there is the folder `<workspacedir>/workspace/<name>`
+The handler holds the same lifecycle lock as launch and stop for the whole
+operation. It returns 404 when the bare repository is absent.
 
-Delete the user with `ops admin deleteuser <name>`
+1. If this app is active, verify the live TruACP group belongs to its workbench,
+   stop it and clear its runtime markers. Runtime cleanup errors return 409.
+2. Check for the local OpenServerless user. Run `ops admin deleteuser <name>`
+   if the user exists. A failed check or deletion returns 502 and retains the
+   application data for retry. A successful check for an absent user lets a
+   retry proceed to local cleanup.
+3. Remove the workbench, then remove the app settings and its shared variables
+   from the workspace configuration in one update.
+4. Remove the bare repository last and return 204.
 
-Remove the folder  `<workspacedir>/workspace/<name>`
-
-Also remove the folder `<workbenchdir>/<name>` if it exists.
-
-Remove the app entry from `<WorkspaceDir>/trustant.json` under `apps.<name>`.
+A local cleanup failure returns 500 with the failed step and any completed
+cleanup. The bare repository stays listed until earlier steps finish. Retry
+from the app list after addressing the reported failure.
 
 # GET /api/repo
 

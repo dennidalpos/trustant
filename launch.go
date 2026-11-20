@@ -796,12 +796,10 @@ func writeCurrentApp(name string) error {
 	if err := os.WriteFile(getCurrentFile(), []byte(name), 0644); err != nil {
 		return err
 	}
-	wsCfg, err := loadWorkspaceConfig()
-	if err != nil {
-		return err
-	}
-	wsCfg.Current = name
-	return saveWorkspaceConfig(wsCfg)
+	return updateWorkspaceConfig(func(wsCfg *trustantConfig) error {
+		wsCfg.Current = name
+		return nil
+	})
 }
 
 // readCurrentApp reads the current app name from the current file
@@ -860,10 +858,11 @@ func canonicalWorkbenchPath(app string) (string, error) {
 // removeCurrentFile removes the current app name file and clears it from workspace config
 func removeCurrentFile() {
 	os.Remove(getCurrentFile())
-	wsCfg, err := loadWorkspaceConfig()
-	if err == nil {
+	if err := updateWorkspaceConfig(func(wsCfg *trustantConfig) error {
 		wsCfg.Current = ""
-		saveWorkspaceConfig(wsCfg)
+		return nil
+	}); err != nil {
+		log.Printf("Warning: failed to clear current app: %s", err)
 	}
 }
 
@@ -1348,25 +1347,13 @@ func handleLaunchGet(w http.ResponseWriter, r *http.Request, app string) {
 		remotePassword := strings.TrimSpace(string(kubegetOutput))
 		if remotePassword != storedPassword && remotePassword != "" {
 			log.Printf("Password mismatch for %s, updating stored password", app)
-			wsCfg, err := loadWorkspaceConfig()
-			if err == nil {
-				if wsCfg.Apps == nil {
-					wsCfg.Apps = make(map[string]*AppConfig)
-				}
-				if wsCfg.Apps[app] == nil {
-					wsCfg.Apps[app] = &AppConfig{
-						Development: make(map[string]string),
-						Production:  make(map[string]string),
-					}
-				}
-				wsCfg.Apps[app].Password = remotePassword
-				if err := saveWorkspaceConfig(wsCfg); err != nil {
-					log.Printf("Warning: failed to update stored password: %s", err)
-				}
-				// Regenerate .env with updated password
-				if err := generateAppEnvFiles(app); err != nil {
-					log.Printf("Warning: failed to regenerate .env after password update: %s", err)
-				}
+			if err := updateWorkspaceConfig(func(wsCfg *trustantConfig) error {
+				wsCfg.ensureApp(app).Password = remotePassword
+				return nil
+			}); err != nil {
+				log.Printf("Warning: failed to update stored password: %s", err)
+			} else if err := generateAppEnvFiles(app); err != nil {
+				log.Printf("Warning: failed to regenerate .env after password update: %s", err)
 			}
 		}
 	}
@@ -1744,7 +1731,7 @@ func findDevelPids(pgid int) ([]int, error) {
 	lines := strings.Split(strings.TrimSpace(string(output)), "\n")
 	for _, line := range lines {
 		pid, err := strconv.Atoi(strings.TrimSpace(line))
-		if err != nil {
+		if err != nil || pid <= 0 || pid == pgid {
 			continue
 		}
 
@@ -1794,8 +1781,41 @@ func waitForPortFree(port int, timeout time.Duration) error {
 	return fmt.Errorf("port %d still listening after %v", port, timeout)
 }
 
+// managedRuntimeOwnsGroup checks the app marker against the live TruACP leader.
+// The group ID alone can be stale or refer to another workbench.
+func managedRuntimeOwnsGroup(app, workbenchPath string, pgid int) bool {
+	current, err := readCurrentApp()
+	if err != nil || current != app || pgid <= 0 {
+		return false
+	}
+	if group, err := syscall.Getpgid(pgid); err != nil || group != pgid {
+		return false
+	}
+	procDir := filepath.Join("/proc", strconv.Itoa(pgid))
+	cwd, err := os.Readlink(filepath.Join(procDir, "cwd"))
+	if err != nil || cwd != workbenchPath {
+		return false
+	}
+	command, err := os.ReadFile(filepath.Join(procDir, "cmdline"))
+	if err != nil {
+		return false
+	}
+	args := bytes.SplitN(command, []byte{0}, 3)
+	// The installed TruACP launcher execs Node with truacp.cjs as its script.
+	return len(args) >= 2 && filepath.Base(string(args[1])) == "truacp.cjs"
+}
+
+func processInGroup(pid, pgid int) bool {
+	group, err := syscall.Getpgid(pid)
+	return err == nil && group == pgid
+}
+
 // handleRedeploy handles GET /api/redeploy?name=<app> - restarts ops ide devel, streaming progress via SSE
 func handleRedeploy(w http.ResponseWriter, r *http.Request) {
+	serveRedeploy(w, r, opsdevelPort)
+}
+
+func serveRedeploy(w http.ResponseWriter, r *http.Request, previewPort int) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -1848,6 +1868,11 @@ func handleRedeploy(w http.ResponseWriter, r *http.Request) {
 		flusher.Flush()
 	}
 
+	if !managedRuntimeOwnsGroup(name, workbenchPath, pgid) {
+		send("error", "This application does not own the running session. Launch it before redeploying.")
+		return
+	}
+
 	// Step 1: Terminate ops ide devel
 	send("status", "Terminating ops ide devel...")
 	log.Printf("Redeploy: finding devel PIDs in process group %d...", pgid)
@@ -1855,13 +1880,15 @@ func handleRedeploy(w http.ResponseWriter, r *http.Request) {
 
 	if len(develPids) > 0 {
 		for _, pid := range develPids {
-			syscall.Kill(pid, syscall.SIGTERM)
+			if processInGroup(pid, pgid) {
+				syscall.Kill(pid, syscall.SIGTERM)
+			}
 		}
 		deadline := time.Now().Add(5 * time.Second)
 		for time.Now().Before(deadline) {
 			allDead := true
 			for _, pid := range develPids {
-				if err := syscall.Kill(pid, 0); err == nil {
+				if processInGroup(pid, pgid) {
 					allDead = false
 					break
 				}
@@ -1872,16 +1899,16 @@ func handleRedeploy(w http.ResponseWriter, r *http.Request) {
 			time.Sleep(250 * time.Millisecond)
 		}
 		for _, pid := range develPids {
-			if err := syscall.Kill(pid, 0); err == nil {
+			if processInGroup(pid, pgid) {
 				syscall.Kill(pid, syscall.SIGKILL)
 			}
 		}
 	}
 
 	// Step 2: Wait for port free
-	send("status", "Waiting for port 5173 to be free...")
-	if err := waitForPortFree(opsdevelPort, 10*time.Second); err != nil {
-		send("error", fmt.Sprintf("Port %d did not free up: %s", opsdevelPort, err))
+	send("status", fmt.Sprintf("Waiting for port %d to be free...", previewPort))
+	if err := waitForPortFree(previewPort, 10*time.Second); err != nil {
+		send("error", fmt.Sprintf("Port %d did not free up: %s", previewPort, err))
 		return
 	}
 
@@ -1956,12 +1983,12 @@ func handleRedeploy(w http.ResponseWriter, r *http.Request) {
 
 	// Step 6: Wait for dev server to respond
 	send("status", "Waiting for dev server to be ready...")
-	log.Printf("Redeploy: waiting for HTTP response on port %d...", opsdevelPort)
-	if err := waitForHTTP(opsdevelPort, 30*time.Second); err != nil {
+	log.Printf("Redeploy: waiting for HTTP response on port %d...", previewPort)
+	if err := waitForHTTP(previewPort, 30*time.Second); err != nil {
 		send("error", fmt.Sprintf("Dev server not responding: %s", err))
 		return
 	}
-	log.Printf("Redeploy: dev server on port %d is responding", opsdevelPort)
+	log.Printf("Redeploy: dev server on port %d is responding", previewPort)
 
 	// Done - send action list as the data
 	send("done", actionList)

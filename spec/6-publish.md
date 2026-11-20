@@ -127,6 +127,11 @@ Request:
 
 Where `apihost`, `user`, `password` are optional (only sent when user provides them).
 
+After validating the application name, remote publish holds the runtime
+lifecycle lock from reading the workspace configuration through deploy. This
+serializes it with other remote publishes, launches and shared-variable logins
+in the Trustant process. Returning on an error releases the lock.
+
 1. Validate `name` with the standard name pattern
 2. If config fields are provided, save them to `apps.<name>.production` as `OPS_APIHOST`, `OPS_USER`, `OPS_PASSWORD`
 3. Read all 3 from production config. If any are empty, return `{"needs_config": true}`
@@ -151,7 +156,7 @@ Where `apihost`, `user`, `password` are optional (only sent when user provides t
    replacing that app's previous values for the host (`resolveProductionShared`). Only the app being
    published is resolved — a production login is a real operation against a real
    cluster, and sweeping every producer would log into clusters the user never
-   asked to touch. Non-fatal; taken under the runtime lifecycle lock.
+   asked to touch. Non-fatal.
 7. Run `ops ide deploy --mode=production` in the workbench directory, so the deploy loads `.env.production` (the ide plugin reads `.env.<mode>` before `.env`)
 8. Return `{"message": "Published successfully", "output": "..."}` on success, or
    `{"error": "...", "output": "..."}` on failure. On success `output` carries

@@ -200,11 +200,14 @@ func handlePublishProvision(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if token := strings.TrimSpace(req.Token); token != "" {
-		cfg.ProvisioningToken = token
-		if err := saveWorkspaceConfig(cfg); err != nil {
+		if err := updateWorkspaceConfig(func(current *trustantConfig) error {
+			current.ProvisioningToken = token
+			return nil
+		}); err != nil {
 			writePublishJSON(w, http.StatusInternalServerError, map[string]string{"error": "Failed to save config: " + err.Error()})
 			return
 		}
+		cfg.ProvisioningToken = token
 	}
 	token := strings.TrimSpace(cfg.ProvisioningToken)
 	if token == "" {
@@ -235,11 +238,15 @@ func handlePublishProvision(w http.ResponseWriter, r *http.Request) {
 	exists, err := createProvisionedUser(r.Context(), host, token, user, password, email)
 	if errors.Is(err, errInvalidProvisioningToken) {
 		log.Printf("Provisioning %s on %s: invalid token, removing it", user, host)
-		if cfg, loadErr := loadWorkspaceConfig(); loadErr == nil {
-			cfg.ProvisioningToken = ""
-			if saveErr := saveWorkspaceConfig(cfg); saveErr != nil {
-				log.Printf("Failed to remove the invalid provisioning token: %v", saveErr)
+		if err := updateWorkspaceConfig(func(current *trustantConfig) error {
+			// The token can have been replaced while the request was in flight.
+			if strings.TrimSpace(current.ProvisioningToken) != token || strings.TrimSpace(current.LicenseHost) != host {
+				return errWorkspaceConfigUnchanged
 			}
+			current.ProvisioningToken = ""
+			return nil
+		}); err != nil {
+			log.Printf("Failed to remove the invalid provisioning token: %v", err)
 		}
 		writePublishJSON(w, http.StatusOK, map[string]interface{}{
 			"needs_token": true, "token_invalid": true, "host": host,
@@ -262,25 +269,18 @@ func handlePublishProvision(w http.ResponseWriter, r *http.Request) {
 	}
 
 	reportProgress(w, 3, "Saving production configuration...")
-	cfg, err = loadWorkspaceConfig()
-	if err != nil {
-		writePublishJSON(w, http.StatusInternalServerError, map[string]string{"error": "Failed to load config: " + err.Error()})
-		return
-	}
-	if cfg.Apps == nil {
-		cfg.Apps = make(map[string]*AppConfig)
-	}
-	if cfg.Apps[req.Name] == nil {
-		cfg.Apps[req.Name] = &AppConfig{Password: password, Development: map[string]string{}}
-	}
-	if cfg.Apps[req.Name].Production == nil {
-		cfg.Apps[req.Name].Production = make(map[string]string)
-	}
-	prod := cfg.Apps[req.Name].Production
-	prod["OPS_APIHOST"] = host
-	prod["OPS_USER"] = user
-	prod["OPS_PASSWORD"] = password
-	if err := saveWorkspaceConfig(cfg); err != nil {
+	if err := updateWorkspaceConfig(func(cfg *trustantConfig) error {
+		app := cfg.Apps[req.Name]
+		if app == nil {
+			app = cfg.ensureApp(req.Name)
+			app.Password = password
+		}
+		prod := app.ensureProduction()
+		prod["OPS_APIHOST"] = host
+		prod["OPS_USER"] = user
+		prod["OPS_PASSWORD"] = password
+		return nil
+	}); err != nil {
 		writePublishJSON(w, http.StatusInternalServerError, map[string]string{"error": "Failed to save config: " + err.Error()})
 		return
 	}

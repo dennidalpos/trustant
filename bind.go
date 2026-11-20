@@ -543,69 +543,61 @@ func pendingImports(appName string) ([]ImportResolution, error) {
 // production selects the publish side: choices are validated against host's
 // production pool and written to apps.<name>.production.
 func applyImportChoices(appName string, choices map[string]string, literals map[string]string, production bool, host string) error {
-	cfg, err := loadTrustantConfig()
+	base, err := loadBaseConfig()
 	if err != nil {
 		return err
 	}
-	pool := cfg.PredefinedEnv
-	if production {
-		if sharedHostKey(host) == "" {
-			return fmt.Errorf("a production choice needs the target host")
-		}
-		pool = productionPool(cfg, host)
-	}
-	for _, source := range choices {
-		if strings.TrimSpace(source) == "" {
-			continue
-		}
-		if _, ok := pool[source]; !ok {
-			if production {
-				return fmt.Errorf("shared variable %q does not exist on %s", source, sharedHostKey(host))
+	return updateWorkspaceConfig(func(wsCfg *trustantConfig) error {
+		cfg := mergeConfigs(base, wsCfg)
+		pool := cfg.PredefinedEnv
+		if production {
+			if sharedHostKey(host) == "" {
+				return fmt.Errorf("a production choice needs the target host")
 			}
-			return fmt.Errorf("shared variable %q does not exist", source)
+			pool = productionPool(cfg, host)
 		}
-	}
-
-	wsCfg, err := loadWorkspaceConfig()
-	if err != nil {
-		return err
-	}
-	if wsCfg.Apps == nil {
-		wsCfg.Apps = make(map[string]*AppConfig)
-	}
-	if wsCfg.Apps[appName] == nil {
-		wsCfg.Apps[appName] = &AppConfig{}
-	}
-	appCfg := wsCfg.Apps[appName]
-	if appCfg.Development == nil {
-		appCfg.Development = make(map[string]string)
-	}
-	if appCfg.Production == nil {
-		appCfg.Production = make(map[string]string)
-	}
-	target := appCfg.Development
-	if production {
-		target = appCfg.Production
-	}
-
-	// The reference IS the value, so choosing a producer and typing a literal are
-	// the same write. A literal simply replaces the reference, which is how an
-	// override stops tracking the pool.
-	for name, source := range choices {
-		source = strings.TrimSpace(source)
-		if source == "" {
-			continue
+		for _, source := range choices {
+			if strings.TrimSpace(source) == "" {
+				continue
+			}
+			if _, ok := pool[source]; !ok {
+				if production {
+					return fmt.Errorf("shared variable %q does not exist on %s", source, sharedHostKey(host))
+				}
+				return fmt.Errorf("shared variable %q does not exist", source)
+			}
 		}
-		target[name] = importRef(source)
-	}
-	for name, value := range literals {
-		if strings.TrimSpace(value) == "" {
-			continue
-		}
-		target[name] = value
-	}
 
-	return saveWorkspaceConfig(wsCfg)
+		appCfg := wsCfg.ensureApp(appName)
+		if appCfg.Development == nil {
+			appCfg.Development = make(map[string]string)
+		}
+		if appCfg.Production == nil {
+			appCfg.Production = make(map[string]string)
+		}
+		target := appCfg.Development
+		if production {
+			target = appCfg.Production
+		}
+
+		// The reference IS the value, so choosing a producer and typing a literal are
+		// the same write. A literal simply replaces the reference, which is how an
+		// override stops tracking the pool.
+		for name, source := range choices {
+			source = strings.TrimSpace(source)
+			if source == "" {
+				continue
+			}
+			target[name] = importRef(source)
+		}
+		for name, value := range literals {
+			if strings.TrimSpace(value) == "" {
+				continue
+			}
+			target[name] = value
+		}
+		return nil
+	})
 }
 
 // --- HTTP ------------------------------------------------------------------

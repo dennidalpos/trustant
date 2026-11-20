@@ -387,20 +387,17 @@ func handleLicense(w http.ResponseWriter, r *http.Request) {
 			})
 			return
 		}
-		cfg, err := loadWorkspaceConfig()
-		if err != nil {
-			http.Error(w, "Failed to load config: "+err.Error(), http.StatusInternalServerError)
-			return
-		}
-		cfg.License = token
-		// The first licensed host and the license email seed the provisioning
-		// settings; both stay editable on Configure.
-		cfg.LicenseHost = ""
-		if len(payload.Hosts) > 0 {
-			cfg.LicenseHost = strings.TrimSpace(payload.Hosts[0])
-		}
-		cfg.LicenseEmail = strings.TrimSpace(payload.Email)
-		if err := saveWorkspaceConfig(cfg); err != nil {
+		if err := updateWorkspaceConfig(func(cfg *trustantConfig) error {
+			cfg.License = token
+			// The first licensed host and the license email seed the provisioning
+			// settings; both stay editable on Configure.
+			cfg.LicenseHost = ""
+			if len(payload.Hosts) > 0 {
+				cfg.LicenseHost = strings.TrimSpace(payload.Hosts[0])
+			}
+			cfg.LicenseEmail = strings.TrimSpace(payload.Email)
+			return nil
+		}); err != nil {
 			http.Error(w, "Failed to save config: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -408,15 +405,12 @@ func handleLicense(w http.ResponseWriter, r *http.Request) {
 		writeLicenseStatus(w, currentLicenseStatus())
 
 	case http.MethodDelete:
-		cfg, err := loadWorkspaceConfig()
-		if err != nil {
-			http.Error(w, "Failed to load config: "+err.Error(), http.StatusInternalServerError)
-			return
-		}
-		cfg.License = ""
-		cfg.LicenseHost = ""
-		cfg.LicenseEmail = ""
-		if err := saveWorkspaceConfig(cfg); err != nil {
+		if err := updateWorkspaceConfig(func(cfg *trustantConfig) error {
+			cfg.License = ""
+			cfg.LicenseHost = ""
+			cfg.LicenseEmail = ""
+			return nil
+		}); err != nil {
 			http.Error(w, "Failed to save config: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -474,19 +468,16 @@ func handleLicenseSettings(w http.ResponseWriter, r *http.Request) {
 		badRequest("Invalid license email: " + email)
 		return
 	}
-	cfg, err := loadWorkspaceConfig()
-	if err != nil {
-		http.Error(w, "Failed to load config: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-	cfg.LicenseHost = host
-	cfg.LicenseEmail = email
-	if req.ClearToken {
-		cfg.ProvisioningToken = ""
-	} else if token := strings.TrimSpace(req.ProvisioningToken); token != "" {
-		cfg.ProvisioningToken = token
-	}
-	if err := saveWorkspaceConfig(cfg); err != nil {
+	if err := updateWorkspaceConfig(func(cfg *trustantConfig) error {
+		cfg.LicenseHost = host
+		cfg.LicenseEmail = email
+		if req.ClearToken {
+			cfg.ProvisioningToken = ""
+		} else if token := strings.TrimSpace(req.ProvisioningToken); token != "" {
+			cfg.ProvisioningToken = token
+		}
+		return nil
+	}); err != nil {
 		http.Error(w, "Failed to save config: "+err.Error(), http.StatusInternalServerError)
 		return
 	}

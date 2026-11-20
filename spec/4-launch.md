@@ -1020,13 +1020,18 @@ Response content type: `text/event-stream`
 
 - Check `name` query parameter is valid and workbench exists at `<workbenchdir>/<name>`
 - Check that a pgid file exists (there must be a running session to redeploy)
+- Under the lifecycle lock, confirm that `current` names the requested app
+  and the recorded PGID identifies a live TruACP group leader in that app's
+  canonical workbench. If ownership cannot be confirmed, send an SSE `error`
+  before signaling the watcher or running any `ops` command.
 
 ## Step 1: Terminate ops ide devel
 
 Find and terminate only the `ops ide devel` child process (not the entire process group — truacp must keep running):
 
 - Run `pgrep -g <pgid>` to list all PIDs in the process group
-- For each PID, check if its command line (via `ps -p <pid> -o args=`) contains `ops ide devel`, `vite`, or `5173`
+- Skip the group leader and check the remaining command lines (via `ps -p <pid> -o args=`) for `ops ide devel`, `vite`, or `5173`
+- Check that each matched process still belongs to the recorded group before signaling it
 - Send SIGTERM to the matched devel PIDs, then wait up to 5 seconds for them to exit
 - If they don't exit, send SIGKILL to the matched PIDs
 

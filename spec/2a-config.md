@@ -7,6 +7,13 @@ Configuration uses a two-layer system based on `trustant.json`:
 1. **Base config** (`trustant.json` in the app root directory) — immutable defaults shipped with the application
 2. **Workspace config** (`<WorkspaceDir>/trustant.json`) — user overrides, created on first save or migration
 
+The workspace file can contain credentials. On POSIX filesystems, Trustant saves it with mode `0600` and tightens the permissions of older files when it loads them. A failed permission repair is reported as a configuration read error.
+
+Workspace writers in the Trustant process read the latest configuration, apply
+their changes and save under one lock. The save replaces the file atomically
+on POSIX, so a reader sees a complete snapshot. A failed validation leaves
+the stored document intact.
+
 Loading merges both layers: workspace fields override base fields. Maps (models, env) are merged key-by-key. The workspace file only needs to contain overrides and the `apps` section.
 
 ## trustant.json structure
@@ -316,7 +323,8 @@ This endpoint replaces the previous `GET /api/ollama-tags?host=&port=` (which wa
 - `loadWorkspaceConfig()` — reads `<WorkspaceDir>/trustant.json` (returns empty if missing)
 - `mergeConfigs(base, override)` — merges workspace overrides onto base
 - `loadTrustantConfig()` — returns the merged result (base + workspace)
-- `saveWorkspaceConfig(cfg)` — writes only the workspace file
+- `updateWorkspaceConfig(change)` — reads and updates the workspace layer in one transaction
+- `saveWorkspaceConfig(cfg)` — replaces the workspace file with the completed snapshot
 
 ## Per-app .env generation
 
@@ -673,29 +681,10 @@ renders as "Saved N variables."
 
 ### Preservation
 
-`saveWorkspaceConfig` writes the whole struct, so any field a client omits is
-erased. `predefined_env` is therefore preserved on **both** sides, and both are
-required:
-
-- `handlePostConfiguration` re-attaches it from the existing workspace config
-  when the payload omits it **or sends an empty map**, alongside `apps`,
-  `current` and `notebook`;
-- the Configure page's `buildConfig()` echoes it back, as it already does for
-  `apps`, because that POST is a full-document write;
-- and the page keeps `config.predefined_env` **in step with every palette write**
-  via `syncPredefinedEnvIntoConfig()`, called after each save and after each load.
-
-Without all three, saving a provider from the Configure page silently wipes the
-user's predefined variables.
-
-The third is the one that is easy to miss. `config` is snapshotted at boot and
-nothing else on the page updates it, so a palette edited *after* load was echoed
-back as the value it had at boot — usually `{}`. An empty map is **not** `nil`,
-so a guard testing only for `nil` let it through and the full-document write
-overwrote the palette. `POST /api/configuration` does not manage
-`predefined_env` at all (the card uses `/api/predefined-env`), and other pages
-POST here without touching it, so **no caller may clear it this way**: clearing
-is expressed by removing the rows on the card.
+`POST /api/configuration` preserves the current predefined variables and
+production shared pool even if an older client includes a copy of either field.
+The Configure card reads and writes the palette through `/api/predefined-env`.
+Production shared values are refreshed by publish.
 
 ### Importing from a file
 
@@ -899,7 +888,7 @@ the GitHub token value.
 
 The unified save endpoint used by `configure.html` and by the splash provider-choice handlers. Performs two steps in order and returns a single JSON result:
 
-1. **Persist** — write the payload to the workspace `trustant.json`. Preserve the existing `apps` section if not included in the request. Regenerate `.env` and `.env.production` files for all apps that have a workbench directory.
+1. **Persist** — save provider, model, Git and notebook settings to the workspace `trustant.json`. Preserve the current application records, runtime selection, shared variables, license and provisioning settings. Their own handlers update those fields. Regenerate `.env` and `.env.production` for all apps that have a workbench directory.
    The optional `notebook.github_token` request field is write-only and is
    stored in the private workspace secret file, never in `trustant.json`.
    Omitting it preserves the current token; `notebook.clear_token=true`
@@ -1031,7 +1020,7 @@ its immediate catalog-reselect redirect. This guarantees that a successful
 configuration can exit the configure screen even if a status response changes
 concurrently; normal `modelsVersion` checks resume on the next app-list load.
 
-The `buildConfig()` function preserves `provider`, `base_url`, `api_key`, `apps`, and `predefined_env` fields when saving — this POST is a full-document write, so a field left out is erased. (The `register_url` field is exposed read-only by `loadTrustantConfig` from the `AIP_REGISTER_URL` env var and must not be sent back on save.)
+The `buildConfig()` function sends provider, model, Git and notebook settings. `loadTrustantConfig` exposes the read-only `register_url` derived from `AIP_REGISTER_URL`.
 
 The Configure page also owns a **Shared Variables** card (`id="sharedVariables"`,
 linked from the app list header), sitting between Template Repository and Git

@@ -17,6 +17,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -25,10 +26,149 @@ import (
 	"os/exec"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
 )
+
+func TestWorkspaceConfigPermissions(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("requires POSIX file permissions")
+	}
+	originalWorkspace := WorkspaceDir
+	WorkspaceDir = t.TempDir()
+	t.Cleanup(func() { WorkspaceDir = originalWorkspace })
+	path := filepath.Join(WorkspaceDir, "trustant.json")
+
+	assertPrivate := func() {
+		t.Helper()
+		info, err := os.Stat(path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if mode := info.Mode().Perm(); mode != 0600 {
+			t.Fatalf("workspace configuration mode = %04o, want 0600", mode)
+		}
+	}
+	assertReadable := func(wantProvider string) {
+		t.Helper()
+		cfg, err := loadWorkspaceConfig()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if cfg.Provider != wantProvider {
+			t.Fatalf("workspace provider = %q, want %q", cfg.Provider, wantProvider)
+		}
+	}
+
+	assertReadable("")
+	if err := saveWorkspaceConfig(&trustantConfig{Provider: "private"}); err != nil {
+		t.Fatal(err)
+	}
+	assertPrivate()
+	assertReadable("private")
+
+	if err := os.Chmod(path, 0644); err != nil {
+		t.Fatal(err)
+	}
+	assertReadable("private")
+	assertPrivate()
+
+	if err := os.Chmod(path, 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := saveWorkspaceConfig(&trustantConfig{Provider: "ollama"}); err != nil {
+		t.Fatal(err)
+	}
+	assertPrivate()
+	assertReadable("ollama")
+}
+
+func TestWorkspaceConfigConcurrentUpdates(t *testing.T) {
+	isolateSharedWorkspace(t)
+	if err := os.MkdirAll(WorkbenchDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := saveWorkspaceConfig(&trustantConfig{Provider: "private", License: "fixture-license"}); err != nil {
+		t.Fatal(err)
+	}
+	snapshot, err := os.Open(filepath.Join(WorkspaceDir, "trustant.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer snapshot.Close()
+
+	rejected := errors.New("invalid update")
+	if err := updateWorkspaceConfig(func(cfg *trustantConfig) error {
+		cfg.Provider = "rejected"
+		return rejected
+	}); !errors.Is(err, rejected) {
+		t.Fatalf("rejected update returned %v", err)
+	}
+
+	const appCount = 16
+	appName := func(i int) string { return fmt.Sprintf("fixtureapp%02d", i) }
+	for i := range appCount {
+		name := appName(i)
+		if err := os.MkdirAll(filepath.Join(WorkspaceDir, "workspace", name), 0755); err != nil {
+			t.Fatal(err)
+		}
+	}
+	start := make(chan struct{})
+	results := make(chan error, appCount+2)
+	post := func(path, body string, handle http.HandlerFunc) error {
+		rec := httptest.NewRecorder()
+		handle(rec, httptest.NewRequest(http.MethodPost, path, strings.NewReader(body)))
+		if rec.Code != http.StatusOK {
+			return fmt.Errorf("%s: status %d: %s", path, rec.Code, rec.Body)
+		}
+		return nil
+	}
+	for i := range appCount {
+		go func() {
+			name := appName(i)
+			<-start
+			results <- post("/api/appconfig/"+name, `{"vars":[{"name":"PORT","dev_value":"3000"}]}`, handleAppConfig)
+		}()
+	}
+	go func() {
+		<-start
+		results <- post("/api/predefined-env", `{"vars":[{"name":"DB","value":"fixture"}]}`, handlePredefinedEnv)
+	}()
+	go func() {
+		<-start
+		results <- writeCurrentApp(appName(0))
+	}()
+	close(start)
+	for range appCount + 2 {
+		if err := <-results; err != nil {
+			t.Error(err)
+		}
+	}
+
+	cfg, err := loadWorkspaceConfig()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if cfg.Provider != "private" || cfg.License != "fixture-license" ||
+		cfg.Current != appName(0) || cfg.PredefinedEnv["DB"] != "fixture" {
+		t.Error("a workspace setting was lost or a rejected change was saved")
+	}
+	for i := range appCount {
+		name := appName(i)
+		if app := cfg.Apps[name]; app == nil || app.Development["PORT"] != "3000" {
+			t.Errorf("app update for %s was lost", name)
+		}
+	}
+	var previous trustantConfig
+	if err := json.NewDecoder(snapshot).Decode(&previous); err != nil {
+		t.Fatal(err)
+	}
+	if previous.Provider != "private" || previous.Current != "" || len(previous.Apps) != 0 {
+		t.Error("a save modified the already-open configuration instead of replacing it")
+	}
+}
 
 func writeActionDeployArtifact(t *testing.T, actionDir string) string {
 	t.Helper()
