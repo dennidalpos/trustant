@@ -173,6 +173,9 @@ them — but new users reach the same outcome through **Private AI**.
 ## Trustant Cloud selected
 
 1. Open a centered iframe overlay covering 80% of the viewport (width and height, centered on the page) loading the URL from `register_url` on the merged config (sourced from the `AIP_REGISTER_URL` env var; see [2a-config.md](2a-config.md)). The overlay has a "Cancel" button that closes the iframe and returns to the choice modal without saving anything.
+   The dialog is named **Trustant Cloud sign-up** and the iframe is titled
+   **Create your Trustant account**. Tab and Shift+Tab cycle between the
+   dialog controls and the embedded page.
 2. Listen for `message` events from the iframe. Expected payload (matches what ai-proxy `success.html` posts today):
 
    ```json

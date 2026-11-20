@@ -239,7 +239,7 @@
                 </div>
                 <div>
                     <label for="appName" class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">Application Name</label>
-                    <input type="text" id="appName" required
+                    <input type="text" id="appName" data-modal-initial-focus required
                         pattern="[a-zA-Z][a-zA-Z0-9]{5,19}"
                         title="Must start with a letter, contain only alphanumeric characters, and be 6-20 characters long"
                         class="nu-input w-full px-3 py-2">
@@ -1294,6 +1294,7 @@
         async function loadStarters() {
             try {
                 const response = await fetch('/api/starters');
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const data = await response.json();
                 starters = Array.isArray(data.starters) ? data.starters : [];
                 applicationGroups = (data.applications && typeof data.applications === 'object')
@@ -1336,7 +1337,6 @@
             refreshAddAppSshKeyNotice();
             refreshGitHubRepositories(true);
             loadStarters();
-            document.getElementById('appName').focus();
         }
 
         function hideAddModal() {
@@ -3237,6 +3237,11 @@
 
         document.getElementById('addAppForm').addEventListener('submit', addApp);
         document.getElementById('applicationConfigForm').addEventListener('submit', addApplicationFromCatalog);
+        document.getElementById('addModal').addEventListener('keydown', (e) => {
+            if (e.key !== 'Escape') return;
+            e.preventDefault();
+            hideAddModal();
+        });
         document.getElementById('applicationPrev').addEventListener('click', () => stepApplication(-1));
         document.getElementById('applicationNext').addEventListener('click', () => stepApplication(1));
         // Arrow keys step the carousel too, but only while it is what the modal

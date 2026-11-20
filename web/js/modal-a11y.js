@@ -26,9 +26,11 @@
     'use strict';
 
     var FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), ' +
-        'select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+        'select:not([disabled]), textarea:not([disabled]), iframe:not([tabindex="-1"]), ' +
+        '[tabindex]:not([tabindex="-1"]):not([data-modal-focus-end])';
     var opened = []; // stack of { modal, returnTo }
     var uid = 0;
+    var wrappingBackward = false;
 
     function isOpen(el) { return !el.classList.contains('hidden'); }
 
@@ -60,7 +62,7 @@
         opened.push({ modal: modal, returnTo: document.activeElement });
         // Respect a focus the page already placed inside the modal.
         if (modal.contains(document.activeElement)) return;
-        var target = modal.querySelector('[autofocus]') || visibleFocusables(modal)[0];
+        var target = modal.querySelector('[data-modal-initial-focus], [autofocus]') || visibleFocusables(modal)[0];
         if (!target) {
             var panel = modal.firstElementChild || modal;
             if (!panel.hasAttribute('tabindex')) panel.setAttribute('tabindex', '-1');
@@ -91,6 +93,13 @@
 
     function watch(modal) {
         enhance(modal);
+        // Tab events inside a frame do not bubble to the containing page.
+        var end = modal.querySelector('[data-modal-focus-end]');
+        if (end) end.addEventListener('focus', function () {
+            if (wrappingBackward) return;
+            var first = visibleFocusables(modal)[0];
+            if (first) first.focus();
+        });
         observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
         if (isOpen(modal)) onOpen(modal);
     }
@@ -102,7 +111,18 @@
         if (!items.length) { e.preventDefault(); return; }
         var first = items[0], last = items[items.length - 1];
         if (!top.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
-        else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (e.shiftKey && document.activeElement === first) {
+            var end = top.querySelector('[data-modal-focus-end]');
+            if (end) {
+                // Let native Shift+Tab enter the last control of the frame.
+                wrappingBackward = true;
+                end.focus();
+                wrappingBackward = false;
+            } else {
+                e.preventDefault();
+                last.focus();
+            }
+        }
         else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     });
 

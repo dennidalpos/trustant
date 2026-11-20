@@ -229,9 +229,15 @@ When the index publishes no applications — or could not be loaded — **neithe
 the mode switch nor the tab strip is rendered** and the modal is exactly the
 starter form, titled "New Application".
 
+An empty starter list from a successful response indicates that no starters
+are published. A network failure, unsuccessful HTTP response, or upstream
+warning with an empty list shows that the catalog is unavailable.
+
 Switching modes never loses the other mode's state: the starter form keeps its
 radio selection and any typed name. Reopening the modal always resets to
 **New application**, with the catalog back at its first group and carousel.
+The modal focuses the application name when opened. Escape closes either mode
+and returns focus to **Add App**.
 
 ### Template mode
 
@@ -242,6 +248,7 @@ keeps the default modal size, so the larger size lasts only as long as the
 catalog is being browsed — switching to New application, closing the modal, or reopening it
 all restore the default. Below 900px wide, where half a viewport would be
 unusable, the width falls back to the near-full width the modal uses elsewhere.
+Mode labels and subtitles wrap within their buttons on narrow screens.
 
 Each tab shows **one application at a time**, full width, with a **left and
 right arrow** either side stepping through the group in published order. The

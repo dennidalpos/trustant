@@ -145,6 +145,11 @@ textarea {
     overflow-y: auto;
 }
 
+#addAppModes .nu-btn {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
 .nu-modal-scrim {
     background: rgb(0 0 0 / .5);
 }

@@ -103,14 +103,16 @@
     </div>
 
     <!-- Trustant Register Iframe Overlay -->
-    <div id="registerOverlay" class="fixed inset-0 nu-modal-scrim hidden items-center justify-center z-50">
+    <div id="registerOverlay" class="fixed inset-0 nu-modal-scrim hidden items-center justify-center z-50"
+        aria-labelledby="registerTitle">
         <div class="nu-modal flex flex-col" style="width:80%;height:80%;">
             <div class="flex items-center justify-between px-4 py-2 border-b border-[color:var(--nu-rule)]">
-                <span class="text-sm font-medium">Trustant Cloud sign-up</span>
+                <span id="registerTitle" class="text-sm font-medium">Trustant Cloud sign-up</span>
                 <button onclick="cancelRegister()"
                     class="nu-btn nu-btn-secondary nu-btn-compact">Cancel</button>
             </div>
             <iframe id="registerIframe" title="Create your Trustant account" class="flex-1 w-full" src="about:blank"></iframe>
+            <span class="sr-only" tabindex="0" data-modal-focus-end></span>
         </div>
     </div>
 
