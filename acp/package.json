@@ -2,10 +2,8 @@
 	"name": "trustant-acp",
 	"version": "0.11.0",
 	"description": "Standalone ACP client — use AI coding agents via the Agent Client Protocol",
-	"main": "main.js",
 	"scripts": {
 		"dev": "bash run.sh",
-		"dev:plugin": "node esbuild.config.mjs",
 		"setup:agents": "bash setup.sh",
 		"serve": "tsx server/index.ts",
 		"serve:trureact": "tsx server/index.ts --dir /home/msciab.guest/workbench/trureact/ --port 4097",
@@ -17,9 +15,8 @@
 		"build": "npm run build:web && npm run build:server",
 		"test": "vitest run",
 		"test:watch": "vitest",
-		"version": "node version-bump.mjs && git add manifest.json versions.json",
-		"format": "prettier --write \"src/**/*.{ts,tsx}\" \"*.css\"",
-		"format:check": "prettier --check \"src/**/*.{ts,tsx}\" \"*.css\"",
+		"format": "prettier --write \"src/**/*.{ts,tsx}\"",
+		"format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
 		"lint": "npm --prefix .. run lint:web -- acp",
 		"lint:fix": "npm --prefix .. run lint:web -- --write acp"
 	},

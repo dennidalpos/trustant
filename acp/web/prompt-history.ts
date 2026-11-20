@@ -37,11 +37,9 @@ export function createPromptHistoryCursor(draft = ""): PromptHistoryCursor {
 /**
  * Navigate the user-prompt history without depending on React or the DOM.
  *
- * WHY: the managed web UI and the Obsidian UI must offer the same shell-like
- * prompt recall while preserving an unfinished draft. Keeping the transition
- * pure makes boundary and draft behavior deterministic and independently
- * testable; the caller remains responsible for deciding when arrow keys should
- * be intercepted instead of moving a multiline textarea cursor.
+ * Preserve unfinished drafts when recalling prompts. Keeping navigation pure
+ * makes boundary and draft behavior deterministic and testable. The caller
+ * decides when arrow keys navigate history or move the textarea cursor.
  */
 export function navigatePromptHistory(
 	prompts: string[],

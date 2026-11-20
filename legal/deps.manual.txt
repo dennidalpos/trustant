@@ -210,20 +210,6 @@ python | xxhash | * | BSD-2-Clause | https://pypi.org/project/xxhash | pypi
 python | zstandard | * | BSD-3-Clause | https://pypi.org/project/zstandard | pypi
 
 # --- 11. Development environment only (not distributed) ---------------------
-dev | obsidian (legacy plugin API types) | 1.14.4 | MIT | https://github.com/obsidianmd/obsidian-api | -
-dev | eslint-plugin-obsidianmd (legacy plugin) | 0.6.0 | MIT | https://github.com/obsidianmd/eslint-plugin | -
-dev | @eslint-community/eslint-plugin-eslint-comments (legacy plugin) | 4.8.1 | MIT | https://github.com/eslint-community/eslint-plugin-eslint-comments | -
-dev | @eslint/config-helpers (legacy plugin) | 0.7.0 | Apache-2.0 | https://github.com/eslint/rewrite | -
-dev | @eslint/core (legacy plugin) | 1.2.1 | Apache-2.0 | https://github.com/eslint/rewrite | -
-dev | @eslint/json (legacy plugin) | 2.1.1 | Apache-2.0 | https://github.com/eslint/json | -
-dev | @eslint/plugin-kit (legacy plugin) | 0.7.3 | Apache-2.0 | https://github.com/eslint/rewrite | -
-dev | @humanwhocodes/momoa (legacy plugin) | 3.3.13 | Apache-2.0 | https://github.com/humanwhocodes/momoa | -
-dev | eslint-plugin-n (legacy plugin) | 17.24.0 | MIT | https://github.com/eslint-community/eslint-plugin-n | -
-dev | eslint-plugin-no-unsanitized (legacy plugin) | 4.1.5 | MPL-2.0 | https://github.com/mozilla/eslint-plugin-no-unsanitized | -
-dev | globrex (legacy plugin) | 0.1.2 | MIT | https://github.com/terkelg/globrex | -
-dev | ts-declaration-location (legacy plugin) | 1.0.7 | BSD-3-Clause | https://github.com/RebeccaStevens/ts-declaration-location | -
-dev | @codemirror/state (legacy plugin) | 6.7.6 | MIT | https://codemirror.net/ | -
-dev | @codemirror/view (legacy plugin) | 6.43.13 | MIT | https://codemirror.net/ | -
 dev | Lima | latest | Apache-2.0 | https://github.com/lima-vm/lima | -
 dev | k3s | via ops | Apache-2.0 | https://github.com/k3s-io/k3s | -
 dev | kubefwd | 1.25.18 | Apache-2.0 | https://github.com/txn2/kubefwd | url:https://raw.githubusercontent.com/txn2/kubefwd/v{v}/LICENSE,https://raw.githubusercontent.com/txn2/kubefwd/v{v}/NOTICE

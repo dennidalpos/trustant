@@ -91,12 +91,13 @@ function panel(
 }
 
 describe("template UI", () => {
-	it("keeps ordinary chat disabled until an agent is selected and exposes the toolbar", () => {
+	it("keeps ordinary chat disabled while agents load and exposes the toolbar", () => {
 		const html = renderToStaticMarkup(React.createElement(ChatApp));
 		expect(html).toContain("Open templates");
 		expect(html).toContain("Run next step");
 		expect(html).toContain("Run all steps");
-		expect(html).toContain("Please Select Agent");
+		expect(html).toContain('placeholder="Loading agents…" disabled=""');
+		expect(html).toContain('<button disabled="">Send</button>');
 	});
 
 	// The composer now shows Stop while a run-all is in flight as well as during

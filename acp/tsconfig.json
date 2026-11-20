@@ -1,11 +1,5 @@
 {
 	"compilerOptions": {
-		"baseUrl": ".",
-		"paths": {
-			"obsidian": ["./obsidian-legacy/node_modules/obsidian"],
-			"@codemirror/state": ["./obsidian-legacy/node_modules/@codemirror/state"],
-			"@codemirror/view": ["./obsidian-legacy/node_modules/@codemirror/view"]
-		},
 		"inlineSourceMap": true,
 		"inlineSources": true,
 		"module": "ESNext",

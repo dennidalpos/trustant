@@ -18,11 +18,9 @@
 /**
  * Lean standalone browser chat UI.
  *
- * Deliberately does NOT reuse the Obsidian-coupled ChatPanel/MessageBubble
- * (which require an AgentClientPlugin instance). Instead it builds its own view
- * model straight from streamed SessionUpdates over AcpTransport, covering the
- * "core chat" scope: agent picker, streaming assistant text (react-markdown),
- * thoughts, tool calls, permission prompts, and an input box.
+ * Builds its view model from streamed session updates over the browser
+ * transport. It renders agent selection, assistant text, thoughts, tool calls,
+ * permission prompts, notebooks and the composer.
  */
 import React, {
 	useCallback,

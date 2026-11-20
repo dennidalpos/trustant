@@ -12,29 +12,15 @@ Non-goals: mobile support; reusing any external editor's markdown/theme engines.
 
 ## 2. Architecture overview
 
-The codebase is cleanly layered. ACP protocol handling is confined to `src/acp/`, business logic to `src/services/` and `src/hooks/`, and interface **ports** decouple the UI from the runtime (`ISettingsAccess`, `IVaultAccess`, `IChatViewHost`, `IChatViewContainer`). Agent events flow through a single `onSessionUpdate` channel.
+The ACP core lives in `src/acp/`. The Node server owns agent sessions, configuration, filesystem access and HTTP/WebSocket transport. The React browser client lives in `web/`.
 
-**Responsibilities split across the two processes:**
-
-| Concern | Module | Standalone mechanism |
-|---|---|---|
-| Server bootstrap | `server/index.ts`, `main.ts` | Node server bootstrap + browser app bootstrap |
-| Views | `ChatView.tsx`, `SessionManagerView.tsx`, Modals | Browser routes / React modals |
-| Settings UI | `SettingsTab.ts` | React settings form over `config.json` |
-| Secrets | `acp-client.ts` | `process.env` (`.env` file) |
-| Settings persistence | `settings-service.ts` | JSON file read/write |
-| Session files | `session-storage.ts` | Node `fs` (server) |
-| Chat export | `chat-exporter.ts` | Node `fs` (server) |
-| cwd source | `ChatPanel.tsx` | user-chosen project dir / `process.cwd()` (see §10e) |
-| Markdown | `MarkdownRenderer.tsx` | `react-markdown` + remark plugins |
-| OS detection | `platform.ts`, `paths.ts`, others | `process.platform` |
-| Icons | ~10 components | `lucide-react` |
-| Toasts / menus | several | React toast / menu components |
-| Networking | `update-checker.ts` | `fetch` |
-| @-mentions | `vault-service.ts` | fs walk + fuzzy over cwd |
-| Styling | `styles.css` | ~30 design tokens in `:root` (light+dark) |
-
-**Portable core (framework-agnostic):** `acp/type-converter.ts`, `acp/acp-handler.ts`, `acp/permission-handler.ts`; all of `types/`; pure `services/` (`message-state`, `message-sender`, `session-state`, `session-helpers`, `settings-normalizer`, `view-registry`); most `hooks/`; pure React (`PermissionBanner`, `TerminalBlock`, `SuggestionPopup`); `utils/logger`, `utils/text`.
+| Concern | Module |
+|---|---|
+| Server and browser entry points | `server/index.ts`, `web/main.tsx` |
+| Browser UI | `web/ChatApp.tsx`, `web/styles.css` |
+| Configuration and session persistence | `server/config-store.ts`, `server/session-store.ts` |
+| Agent lifecycle | `server/acp-host.ts`, `src/acp/acp-client.ts` |
+| Notebook data | `src/services/notebook.ts` |
 
 In Trustant-managed mode the Node host also owns MCP selection. It validates a
 credential-free workbench `.mcp.json` against the private mode-`0600`
@@ -51,10 +37,10 @@ Two processes, one repo (monorepo or two build targets):
 ┌────────────────────────────┐         ┌─────────────────────────────────────┐
 │  Browser (React UI)        │  WS +   │  Node server (localhost:PORT)        │
 │                            │  REST   │                                      │
-│  ChatPanel + ui/*          │◄───────►│  transport (ws/http)                 │
-│  hooks/*                   │         │  ─ AcpClient  ─ TerminalManager      │
-│  onSessionUpdate consumer  │         │  ─ SessionStorage (fs)               │
-│  react-markdown renderer   │         │  ─ chat-exporter (fs)                │
+│  ChatApp + panels          │◄───────►│  transport (ws/http)                 │
+│  browser state             │         │  ─ AcpClient  ─ TerminalManager      │
+│  onSessionUpdate consumer  │         │  ─ Session store (fs)               │
+│  react-markdown renderer   │         │  ─ export (fs)                       │
 │  design-token stylesheet   │         │  ─ mention file reads (fs)           │
 │                            │         │  ─ config.json load/save             │
 └────────────────────────────┘         │  spawns → claude/codex/pi            │
@@ -64,9 +50,8 @@ Two processes, one repo (monorepo or two build targets):
 - **Server owns all Node-only capabilities**: `child_process.spawn` (agents + terminals), `fs` (sessions, export, mentions), `config.json` I/O, env/secret resolution, WSL/Windows PATH logic (`platform.ts`, `paths.ts`).
 - **Browser owns rendering only**: React UI, markdown, styling. No `child_process`, no `fs`.
 - **Transport**: one **WebSocket** carries the streaming `session/update` events (the existing single `onSessionUpdate` channel serializes cleanly to WS messages) and permission/terminal requests; **REST** endpoints handle request/response calls (`initialize`, `newSession`, `sendPrompt`, `listSessions`, `loadSession`, `resumeSession`, `forkSession`, agent-owned `deleteSession`, `setSessionConfigOption`, `cancel`, config get/save, local session history get/delete, export).
-- **Client-side transport shim** implements the same surface the UI expects today (an `AcpClient`-shaped facade) so `hooks/*` and `ChatPanel` change minimally — they call methods that now issue REST/WS instead of touching an in-process `AcpClient`.
 
-### 3.1 Directory layout (proposed)
+### 3.1 Directory layout
 
 ```
 server/                  # Node
@@ -90,15 +75,13 @@ config.json              # user config (see §5)
 .env                     # secret values (gitignored)
 ```
 
-Shared pure modules (`types/`, `settings-normalizer`, `session-helpers`, `message-*`) are imported by both sides.
+## 4. Agent launching
 
-## 4. Agent launching (unchanged core)
-
-Agent spawn logic in `acp/acp-client.ts` + `utils/platform.ts` is kept; only the injected dependencies change:
+The ACP client and platform utilities manage agent subprocesses.
 
 - **command / args / env**: from `config.json` agent entry (see §5).
-- **API key**: resolved from `process.env[envVarName]` (was `secretStorage`), injected into the agent's env under the mapped variable — Claude→`ANTHROPIC_API_KEY`, Codex→`OPENAI_API_KEY`, Pi→`PI_API_KEY`. `buildAgentConfigWithApiKey` keeps this mapping; `session-helpers` unchanged in shape.
-- **cwd**: user-chosen project directory (server flag / config / **runtime change-directory** / per-session override), replacing `FileSystemAdapter.getBasePath()`. cwd remains the entire filesystem contract with the agent. The default cwd (`projectDir`) can be changed at runtime without restarting the server, and each new session may be created against a chosen cwd — see §10e.
+- **API key**: resolved from `process.env[envVarName]` and injected into the agent's environment under the mapped variable — Claude→`ANTHROPIC_API_KEY`, Codex→`OPENAI_API_KEY`, Pi→`PI_API_KEY`.
+- **cwd**: project directory selected by a server flag, config, a runtime directory change, or a per-session override. The default cwd (`projectDir`) can be changed at runtime without restarting the server, and each new session may be created against a chosen cwd — see §10e.
 - **shell wrapping**: login-shell (`$SHELL -l -c`), Windows `cmd.exe`, WSL `wsl.exe --exec` logic in `platform.ts` kept verbatim; `Platform` → `process.platform` shim.
 - **process teardown**: `detached` process group + `process.kill(-pid)` (Unix) / `taskkill /T /F` (Windows) kept.
 
@@ -144,7 +127,6 @@ Single JSON file, loaded at server start, hot-reloadable via the settings API. S
 - **`.env`** (gitignored) holds the actual keys: `ANTHROPIC_API_KEY=...`, `OPENAI_API_KEY=...`, `PI_API_KEY=...`. Server loads it (`dotenv` or manual) into `process.env`.
 - **Secrets location** — the server reads exactly one secrets file, given by `--env <path>` and loaded **before** the `--dir` chdir (§10a), so the path never depends on the working directory. The target directory's own `.env` is deliberately **not** read: that checkout is user content, and reading it would let an app inject or shadow provider credentials. `loadDotEnv` never overwrites an already-set variable, so externally-supplied keys (exported in the environment) win over the file. Omitting `--env` loads no file at all — keys then come purely from the environment.
 - Config is authored fresh in `config.json`; there is no import path from other tools.
-- `settings-service.ts` keeps its reactive `ISettingsAccess` surface; only the backing (`config-store.ts` read/write of `config.json`) changes. `useSettings` (`useSyncExternalStore`) is unchanged.
 
 ## 6. Transport contract
 
@@ -170,22 +152,15 @@ Single JSON file, loaded at server start, hot-reloadable via the settings API. S
 - `GET /mentions/search?q=`, `GET /mentions/read?path=` (project-dir-scoped)
 - `GET /update-check`
 
-**Client shim** (`web/acp-transport.ts`) exposes the same method names `hooks/*` already call, so `useAgent`, `useAgentSession`, `useAgentMessages`, `useSessionHistory` are largely untouched. The shim subscribes to the WS and re-emits through the existing `onSessionUpdate` listener set.
+The browser transport in `web/transport.ts` sends HTTP requests and subscribes to WebSocket events.
 
-## 7. UI
+## 7. Browser UI
 
-- **Icons**: `lucide-react`; `IconButton.tsx`/`LucideIcon` is the single wrapper, decoupling ~10 components at once.
-- **Toasts / menus / dropdowns / modals**: React toast component; React menu/dropdown; React `Modal` subclasses (`ChangeDirectoryModal`, `EditTitleModal`, `SessionHistoryModal`). `ChangeDirectoryModal` is backed by the trustant-acp server's `POST /api/directory` and starts a new session in the chosen cwd — see §10e.
-- **Markdown** (`MarkdownRenderer.tsx`): `react-markdown` + `remark-gfm` + `remark-math`/`rehype-katex` (LaTeX) + a small remark plugin for `[[wikilinks]]` (only if `promptInjection.wikiLinks`). Internal-link clicks are an app-level "open file" action (opens in project dir / OS).
-- **Views**: `ChatView`/`FloatingChatView`/`SessionManagerView` are browser routes/panels. `FloatingChatView` renders into a plain `document.body` div with an `IChatViewHost` shim — the mount model for the web app.
-- **cwd / paths**: `ChatPanel` cwd is the project dir from config/server, changeable at runtime via the header directory control (§10e); `ToolCallBlock` base-path relative display uses the same project dir value.
-- **Hotkey event bus**: hotkeys dispatch through a browser `EventTarget`/emitter.
+`web/ChatApp.tsx` renders the conversation, permissions, composer and notebook controls. The Node server supplies the project directory and handles directory changes (see §10e).
 
 ## 8. Styling
 
-- ~30 design tokens (`--text-muted`, `--background-modifier-border`, `--text-normal`, `--background-primary/secondary`, `--interactive-accent`, `--text-accent`, `--font-monospace`, `--color-red/green/yellow/orange`, `--line-height-normal`, …) live in a `theme.css` `:root` block with a `.theme-dark` / `prefers-color-scheme: dark` variant.
-- `.markdown-rendered` content styles style the react-markdown output.
-- The runtime `--ac-chat-font-size` var is set from `config.display.fontSize`.
+`web/styles.css` defines the browser UI's theme and component styles.
 
 ## 9. Build & packaging
 
@@ -197,24 +172,15 @@ Single JSON file, loaded at server start, hot-reloadable via the settings API. S
 - The development launcher reports when TruACP starts. Once the HTTP listener
   is bound, the server prints the browser URL using the listening port and a
   reachable address, preferring the Lima interface for wildcard binds.
-- Deps: `react-markdown`, `remark-gfm`, `remark-math`, `rehype-katex`, `lucide-react`, a WS lib (`ws`), `dotenv`, an http framework (or Node `http`).
+- Markdown uses `react-markdown` and `remark-gfm`. The server uses Node HTTP and `ws`.
 - Core deps: `@agentclientprotocol/sdk`, `react`/`react-dom`, `@tanstack/react-virtual`, `diff`, `zod`, `semver`.
-- The legacy Obsidian plugin builds separately through `npm run dev:plugin`. Its
-  host supplies the Obsidian and CodeMirror APIs. Plugin types and ESLint tooling
-  are installed separately from the lockfile in `obsidian-legacy/`.
 - `npm run serve` runs the server directly via `tsx`; the installed `truacp` binary
   runs the bundled build. Both serve the embedded web bundle at `localhost:<port>`
   (default 4096).
 
 ## 10. Component map
 
-1. **Server core** — `acp/*` + `platform.ts`/`paths.ts`; `server/` with an `AcpClient` per session, `config.json` load, `.env` secrets. Agent spawn is verifiable end-to-end via the `--cli` harness (§10a) with no UI.
-2. **Persistence on fs** — `session-storage.ts` and `chat-exporter.ts` on Node `fs`; `config-store.ts` is the `ISettingsAccess` backing.
-3. **Transport** — WS + REST endpoints; client-side `transport.ts` shim exposing the `AcpClient` surface the hooks expect.
-4. **UI** — `lucide` icons, React toasts/menus/modals; `ChatPanel` mounts in the browser via the floating-view pattern.
-5. **Markdown + styling** — react-markdown renderer; design-token `theme.css`.
-6. **Settings** — React form over `config.json`.
-7. **Packaging** — two build targets, `npm start`.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the directory map.
 
 ## 10a. Server runtime (`server/index.ts`)
 

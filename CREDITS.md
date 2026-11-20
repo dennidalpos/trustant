@@ -64,14 +64,6 @@ and npm production trees are listed in full in [DEPS](DEPS).
 
 Browser end-to-end tests use [Playwright](https://github.com/microsoft/playwright)
 (Apache-2.0).
-The optional Obsidian plugin tooling uses the [Obsidian API types](https://github.com/obsidianmd/obsidian-api),
-[Obsidian ESLint plugin](https://github.com/obsidianmd/eslint-plugin) and
-[CodeMirror](https://codemirror.net/) types, all MIT.
-Its development dependencies include ESLint's config helpers, core, JSON plugin
-and plugin kit, plus Momoa (Apache-2.0), eslint-plugin-eslint-comments,
-eslint-plugin-n and Globrex (MIT), eslint-plugin-no-unsanitized (MPL-2.0), and
-ts-declaration-location (BSD-3-Clause). Versions and project URLs are listed in
-[DEPS](DEPS).
 
 Development setup uses [kubefwd](https://github.com/txn2/kubefwd) and
 [SkyWalking Eyes](https://github.com/apache/skywalking-eyes) (Apache-2.0).

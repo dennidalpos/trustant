@@ -14,11 +14,12 @@ exist upstream; **removed** upstream files that are no longer present.
 - Upstream: https://github.com/RAIT-09/obsidian-agent-client
 - Baseline revision: `0.11.0`
 - License: Apache-2.0, Copyright 2025-2026 RAIT-09
-- Files: 64 unmodified, 26 modified, 89 added, 76 removed upstream files
+- Files: 11 unmodified, 21 modified, 86 added, 134 removed upstream files
 
-### Modified (26)
+### Modified (21)
 
 - `.gitignore`
+- `.vscode/extensions.json`
 - `.vscode/settings.json`
 - `AGENTS.md`
 - `ARCHITECTURE.md`
@@ -26,18 +27,12 @@ exist upstream; **removed** upstream files that are no longer present.
 - `LICENSE`
 - `NOTICE`
 - `README.md`
-- `esbuild.config.mjs`
-- `eslint.config.mjs`
 - `package-lock.json`
 - `package.json`
 - `src/acp/acp-client.ts`
 - `src/acp/acp-handler.ts`
 - `src/acp/terminal-handler.ts`
-- `src/plugin.ts`
-- `src/services/session-helpers.ts`
-- `src/types/agent.ts`
 - `src/types/session.ts`
-- `src/ui/ChatPanel.tsx`
 - `src/utils/error-utils.ts`
 - `src/utils/paths.ts`
 - `src/utils/platform.ts`
@@ -45,7 +40,7 @@ exist upstream; **removed** upstream files that are no longer present.
 - `tsconfig.json`
 - `vitest.config.mts`
 
-### Added (89)
+### Added (86)
 
 - `.env.example`
 - `.gitattributes`
@@ -57,9 +52,6 @@ exist upstream; **removed** upstream files that are no longer present.
 - `esbuild.web.mjs`
 - `extensions/requirements.txt`
 - `extensions/trustant-runtime.ts`
-- `obsidian-legacy/eslint.config.mjs`
-- `obsidian-legacy/package-lock.json`
-- `obsidian-legacy/package.json`
 - `pi.integrity`
 - `pi.version`
 - `run.sh`
@@ -137,8 +129,9 @@ exist upstream; **removed** upstream files that are no longer present.
 - `web/tour-bridge.ts`
 - `web/transport.ts`
 
-### Removed (76)
+### Removed (134)
 
+- `.claude/skills/release-notes/SKILL.md`
 - `.github/FUNDING.yml`
 - `.github/ISSUE_TEMPLATE/bug_report.yml`
 - `.github/ISSUE_TEMPLATE/config.yml`
@@ -215,8 +208,65 @@ exist upstream; **removed** upstream files that are no longer present.
 - `docs/usage/session-history.md`
 - `docs/usage/session-manager.md`
 - `docs/usage/slash-commands.md`
+- `esbuild.config.mjs`
+- `eslint.config.mjs`
+- `manifest.json`
+- `src/hooks/useAgent.ts`
+- `src/hooks/useAgentMessages.ts`
+- `src/hooks/useAgentSession.ts`
+- `src/hooks/useChatActions.ts`
+- `src/hooks/useHistoryModal.ts`
+- `src/hooks/useSessionHistory.ts`
+- `src/hooks/useSettings.ts`
+- `src/hooks/useSuggestions.ts`
+- `src/main.ts`
+- `src/plugin.ts`
+- `src/services/chat-exporter.ts`
+- `src/services/message-sender.ts`
+- `src/services/message-state.ts`
+- `src/services/session-helpers.ts`
+- `src/services/session-state.ts`
+- `src/services/session-storage.ts`
+- `src/services/settings-normalizer.ts`
+- `src/services/settings-service.ts`
+- `src/services/update-checker.ts`
+- `src/services/vault-service.ts`
+- `src/services/view-registry.ts`
+- `src/types/agent.ts`
+- `src/types/obsidian-internals.d.ts`
+- `src/ui/ChangeDirectoryModal.ts`
+- `src/ui/ChatContext.ts`
+- `src/ui/ChatHeader.tsx`
+- `src/ui/ChatPanel.tsx`
+- `src/ui/ChatView.tsx`
+- `src/ui/EditTitleModal.ts`
+- `src/ui/ErrorBanner.tsx`
+- `src/ui/FloatingButton.tsx`
+- `src/ui/FloatingChatView.tsx`
+- `src/ui/InputArea.tsx`
+- `src/ui/InputToolbar.tsx`
+- `src/ui/MessageBubble.tsx`
+- `src/ui/MessageList.tsx`
+- `src/ui/PermissionBanner.tsx`
+- `src/ui/SessionHistoryModal.tsx`
+- `src/ui/SessionManagerView.tsx`
+- `src/ui/SettingsTab.ts`
+- `src/ui/SuggestionPopup.tsx`
+- `src/ui/TerminalBlock.tsx`
+- `src/ui/ToolCallBlock.tsx`
+- `src/ui/shared/AttachmentStrip.tsx`
+- `src/ui/shared/IconButton.tsx`
+- `src/ui/shared/MarkdownRenderer.tsx`
+- `src/ui/view-host.ts`
+- `src/utils/mention-parser.ts`
+- `src/utils/text.ts`
+- `styles.css`
+- `test/stubs/obsidian.ts`
+- `tsconfig.eslint.json`
+- `version-bump.mjs`
+- `versions.json`
 
-### Unmodified (64)
+### Unmodified (11)
 
 Listed as a count only; every tracked file not named above is identical to upstream.
 
@@ -271,10 +321,13 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 
 - Source: https://github.com/trustant/trustant-acp.git, gitlink before vendoring
 - Commit: `9786f796380aa9b2000d8cebd913fa41150c89ed`
-- Files: 149 unmodified, 24 modified, 6 added, 4 removed
+- Files: 87 unmodified, 28 modified, 3 added, 62 removed
 
-#### Modified (24)
+#### Modified (28)
 
+- `.gitignore`
+- `.vscode/extensions.json`
+- `.vscode/settings.json`
 - `AGENTS.md`
 - `ARCHITECTURE.md`
 - `CLAUDE.md`
@@ -282,7 +335,6 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 - `README.md`
 - `SPEC.md`
 - `esbuild.web.mjs`
-- `eslint.config.mjs`
 - `extensions/requirements.txt`
 - `package-lock.json`
 - `package.json`
@@ -295,26 +347,83 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 - `server/index.ts`
 - `setup.md`
 - `test/claude-install.test.ts`
+- `test/notebook-ui.test.ts`
 - `tsconfig.json`
 - `vitest.config.mts`
 - `web/ChatApp.tsx`
+- `web/prompt-history.ts`
 - `web/transport.ts`
 
-#### Added (6)
+#### Added (3)
 
 - `LICENSE-Apache-2.0-obsidian-agent-client`
 - `UPSTREAM.md`
-- `obsidian-legacy/eslint.config.mjs`
-- `obsidian-legacy/package-lock.json`
-- `obsidian-legacy/package.json`
 - `test/provider-stream.integration.ts`
 
-#### Removed (4)
+#### Removed (62)
 
+- `.claude/skills/release-notes/SKILL.md`
 - `.gitmodules`
 - `.licenserc.yaml`
 - `CONTRIBUTING.md`
+- `esbuild.config.mjs`
+- `eslint.config.mjs`
+- `manifest.json`
 - `pi-acp`
+- `src/hooks/useAgent.ts`
+- `src/hooks/useAgentMessages.ts`
+- `src/hooks/useAgentSession.ts`
+- `src/hooks/useChatActions.ts`
+- `src/hooks/useHistoryModal.ts`
+- `src/hooks/useSessionHistory.ts`
+- `src/hooks/useSettings.ts`
+- `src/hooks/useSuggestions.ts`
+- `src/main.ts`
+- `src/plugin.ts`
+- `src/services/chat-exporter.ts`
+- `src/services/message-sender.ts`
+- `src/services/message-state.ts`
+- `src/services/session-helpers.ts`
+- `src/services/session-state.ts`
+- `src/services/session-storage.ts`
+- `src/services/settings-normalizer.ts`
+- `src/services/settings-service.ts`
+- `src/services/update-checker.ts`
+- `src/services/vault-service.ts`
+- `src/services/view-registry.ts`
+- `src/types/agent.ts`
+- `src/types/obsidian-internals.d.ts`
+- `src/ui/ChangeDirectoryModal.ts`
+- `src/ui/ChatContext.ts`
+- `src/ui/ChatHeader.tsx`
+- `src/ui/ChatPanel.tsx`
+- `src/ui/ChatView.tsx`
+- `src/ui/EditTitleModal.ts`
+- `src/ui/ErrorBanner.tsx`
+- `src/ui/FloatingButton.tsx`
+- `src/ui/FloatingChatView.tsx`
+- `src/ui/InputArea.tsx`
+- `src/ui/InputToolbar.tsx`
+- `src/ui/MessageBubble.tsx`
+- `src/ui/MessageList.tsx`
+- `src/ui/PermissionBanner.tsx`
+- `src/ui/SessionHistoryModal.tsx`
+- `src/ui/SessionManagerView.tsx`
+- `src/ui/SettingsTab.ts`
+- `src/ui/SuggestionPopup.tsx`
+- `src/ui/TerminalBlock.tsx`
+- `src/ui/ToolCallBlock.tsx`
+- `src/ui/shared/AttachmentStrip.tsx`
+- `src/ui/shared/IconButton.tsx`
+- `src/ui/shared/MarkdownRenderer.tsx`
+- `src/ui/view-host.ts`
+- `src/utils/mention-parser.ts`
+- `src/utils/text.ts`
+- `styles.css`
+- `test/stubs/obsidian.ts`
+- `tsconfig.eslint.json`
+- `version-bump.mjs`
+- `versions.json`
 
 ### `acp/pi-acp/`: original `pi-acp` submodule
 
