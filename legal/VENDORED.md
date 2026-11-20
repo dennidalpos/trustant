@@ -271,9 +271,9 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 
 - Source: https://github.com/trustant/trustant-acp.git, gitlink before vendoring
 - Commit: `9786f796380aa9b2000d8cebd913fa41150c89ed`
-- Files: 151 unmodified, 22 modified, 6 added, 4 removed
+- Files: 149 unmodified, 24 modified, 6 added, 4 removed
 
-#### Modified (22)
+#### Modified (24)
 
 - `AGENTS.md`
 - `ARCHITECTURE.md`
@@ -290,9 +290,11 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 - `pi.version`
 - `run.sh`
 - `server/acp-host.ts`
+- `server/claude-version.ts`
 - `server/config-store.ts`
 - `server/index.ts`
 - `setup.md`
+- `test/claude-install.test.ts`
 - `tsconfig.json`
 - `vitest.config.mts`
 - `web/ChatApp.tsx`

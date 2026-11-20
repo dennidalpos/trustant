@@ -123,7 +123,7 @@
 	 * Two stages. Collapsing the buttons alone still leaves the app name, the
 	 * git status text and the device toggle, which together need ~370px — on a
 	 * genuinely small window the bar is still clipped. `is-collapsed-tight`
-	 * drops those too.
+	 * reflows the editor toolbar and hides its app name.
 	 *
 	 * Every decision is made from the widest state, so the measurement never
 	 * depends on which state we happen to be in when called. The class list is

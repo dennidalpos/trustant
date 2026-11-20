@@ -29,7 +29,8 @@
  * version is reported as not installed and the user is asked again.
  */
 export const CLAUDE_PACKAGES = [
-	{ name: "@anthropic-ai/claude-code", version: "2.1.216" },
+	// Includes the macOS Edit sandbox fix in GHSA-5xjx-9qx6-jcrv.
+	{ name: "@anthropic-ai/claude-code", version: "2.1.329" },
 	{ name: "@agentclientprotocol/claude-agent-acp", version: "0.60.0" },
 ] as const;
 

@@ -229,6 +229,7 @@ function nodesFromPrompts(prompts: string[]): NotebookNode[] {
 
 export function ChatApp(): React.ReactElement {
 	const [agents, setAgents] = useState<AgentInfo[]>([]);
+	const [agentLoadState, setAgentLoadState] = useState<"loading" | "error" | "loaded">("loading");
 	const [agentId, setAgentId] = useState<string>("");
 	const [defaultAgentId, setDefaultAgentId] = useState<string>("");
 	const [projectDir, setProjectDir] = useState<string>("");
@@ -369,16 +370,28 @@ export function ChatApp(): React.ReactElement {
 	// preselected and auto-connected below; the pull-down still lets the user
 	// switch or fall back to the "Select agent" placeholder.
 	const autoSelectedRef = useRef(false);
-	useEffect(() => {
-		transport
-			.getAgents()
-			.then((info) => {
-				setAgents(info.agents);
-				setProjectDir(info.projectDir);
-				setDefaultAgentId(info.defaultAgentId);
-			})
-			.catch((e) => setError(String(e.message ?? e)));
+	// A failed catalog is distinct from an empty one and can be retried in place.
+	const loadAgents = useCallback(async () => {
+		setAgentLoadState("loading");
+		try {
+			const info = await transport.getAgents();
+			setAgents(info.agents);
+			setProjectDir(info.projectDir);
+			setDefaultAgentId(info.defaultAgentId);
+			setAgentLoadState("loaded");
+		} catch {
+			setAgentLoadState("error");
+		}
 	}, []);
+	useEffect(() => {
+		void loadAgents();
+	}, [loadAgents]);
+
+	function retryAgents() {
+		// The catalog prompt can disappear while loading or auto-connecting.
+		scrollRef.current?.focus();
+		void loadAgents();
+	}
 
 	// Subscribe to the streamed updates once.
 	useEffect(() => {
@@ -2095,7 +2108,7 @@ export function ChatApp(): React.ReactElement {
 				<select
 					className="agent-select"
 					value={agentId}
-					disabled={busy || running}
+					disabled={busy || running || agentLoadState !== "loaded" || agents.length === 0}
 					onChange={(e) => void selectAgent(e.target.value)}
 				>
 					<option value="">Select agent</option>
@@ -2644,6 +2657,9 @@ export function ChatApp(): React.ReactElement {
 			<div
 				className="messages"
 				ref={scrollRef}
+				role="region"
+				aria-label="Conversation"
+				tabIndex={-1}
 				onScroll={handleChatScroll}
 			>
 				{turns.map((t, index) => (
@@ -2708,7 +2724,23 @@ export function ChatApp(): React.ReactElement {
 					</div>
 				)}
 				{!ready && !busy && turns.length === 0 && (
-					<div className="empty">Please Select Agent</div>
+					<div className="empty">
+						{agentLoadState === "loading" ? (
+							<span role="status">Loading agents…</span>
+						) : agentLoadState === "error" ? (
+							<>
+								<span role="alert">Could not load agents. Try again.</span>{" "}
+								<button type="button" onClick={retryAgents}>Retry</button>
+							</>
+						) : agents.length === 0 ? (
+							<>
+								<span role="status">No agents available. Configure an agent and try again.</span>{" "}
+								<button type="button" onClick={retryAgents}>Retry</button>
+							</>
+						) : (
+							"Please Select Agent"
+						)}
+					</div>
 				)}
 				{ready && turns.length === 0 && !notebook && (
 					<div className="empty">
@@ -2740,7 +2772,7 @@ export function ChatApp(): React.ReactElement {
 					rows={1}
 					value={input}
 					placeholder={
-						ready ? READY_COMPOSER_PLACEHOLDER : "Please Select Agent"
+						ready ? READY_COMPOSER_PLACEHOLDER : agentLoadState === "loading" ? "Loading agents…" : agentLoadState === "error" ? "Agent list unavailable" : agents.length === 0 ? "No agents available" : "Please Select Agent"
 					}
 					disabled={!ready || running || notebookBusy}
 					onChange={(e) => handleComposerChange(e.target.value)}

@@ -287,8 +287,8 @@ The app list has no split layout to shrink, so the global terminal is a
   against `/api/terminal/` with **no name** — the client never sends a path.
 - Escape, the Close button and a backdrop click all close the modal **and the
   socket**; closing terminates the shell, the same contract as the pane. The
-  Escape handler returns early so closing the terminal does not also dismiss the
-  page's other modals.
+  Escape handler runs before xterm handles the key, including when the shell has
+  focus. It closes only the Terminal modal.
 - The same vendored xterm assets are loaded; no new dependency.
 
 # Vendoring

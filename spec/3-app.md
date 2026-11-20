@@ -64,9 +64,15 @@ only** and every hidden label is still readable as a tooltip.
 - **Two stages.** Collapsing the buttons alone is not enough: the app name, the
   git status text and the device toggle together need roughly 370px. Under
   `is-collapsed` the app name is truncated and the git status drops to its
-  coloured dot; when even that does not fit, `is-collapsed-tight` also hides
-  the app name and the device preview toggle (the preview can still be resized
-  by dragging the divider).
+  coloured dot; when even that does not fit, `is-collapsed-tight` hides the app
+  name and wraps the groups and controls onto additional rows. Device controls
+  remain available, controls have at least 44px touch targets, and long route
+  labels are ellipsized.
+- **Pulldowns.** In compact mode, Tutorial, Config and Utils open below the bar
+  within its horizontal edges. In the expanded bar they open below their own
+  triggers. A trigger exposes its expanded state. Tab reaches the menu items
+  in document order, and Escape closes the menu and returns focus from an
+  item to its trigger.
 - **Hysteresis.** Collapsing makes the bar narrower, which would clear the
   overflow and expand it again — an endless loop driven by our own DOM writes.
   Collapsing is therefore decided on real overflow, while expanding is decided
@@ -108,7 +114,7 @@ The pulldown closes after an item is selected, when the user clicks outside, or 
 
 # Utils Pulldown
 
-Replace the previous standalone "Revert", "Redeploy", and "Upload" toolbar buttons with a single **Utils** pulldown menu. It sits on the left side of the toolbar, immediately to the right of the Config pulldown, so the two pulldowns are grouped together. Its dropdown is left-anchored like the Config one.
+Replace the previous standalone "Revert", "Redeploy", and "Upload" toolbar buttons with a single **Utils** pulldown menu. It sits on the left side of the toolbar, immediately to the right of the Config pulldown, so the two pulldowns are grouped together. In the expanded toolbar its dropdown is left-anchored like Config.
 
 The button shows the label "Utils" and a chevron-down icon. Clicking it toggles a dropdown containing, in this order:
 

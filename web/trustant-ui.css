@@ -292,15 +292,72 @@ textarea {
     display: none;
 }
 
-/* The device preview toggle is three icon-only segments; the preview can also
- * be resized by dragging the divider, so it is the safest thing to drop when
- * space runs out entirely. */
-.is-collapsed-tight #deviceToggle {
+.is-collapsed-tight #appName {
     display: none;
 }
 
-.is-collapsed-tight #appName {
-    display: none;
+/* At the tightest width, reflow both groups instead of clipping actions. */
+#topBar.is-collapsed-tight {
+    height: auto;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    gap: .25rem;
+    padding: .25rem .5rem;
+}
+
+#topBar.is-collapsed-tight .toolbar-group {
+    height: auto;
+    max-width: 100%;
+    flex-wrap: wrap;
+    gap: .25rem;
+}
+
+#topBar.is-collapsed-tight .toolbar-spacer { display: none; }
+#topBar.is-collapsed-tight .toolbar-group > img { height: 2rem; }
+
+#topBar.is-collapsed-tight .nu-btn,
+#topBar.is-collapsed-tight .nu-segment-btn {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+}
+
+/* In compact mode, anchor menus to the bar so a trigger near the right edge
+   cannot push its menu out of the viewport. */
+#topBar.is-collapsed .toolbar-pulldown {
+    position: static;
+}
+
+#topBar.is-collapsed .toolbar-menu {
+    left: .5rem;
+    right: .5rem;
+    min-width: 0;
+}
+
+#topBar.is-collapsed-tight .toolbar-menu > button {
+    min-height: 2.75rem;
+}
+
+#topBar button:focus-visible {
+    outline: 2px solid var(--nu-brand);
+    outline-offset: 2px;
+}
+
+#topBar #deviceToggle button:focus-visible,
+#topBar .toolbar-menu > button:focus-visible {
+    outline-offset: -2px;
+}
+
+#topBar.is-collapsed-tight #routeLabel {
+    max-width: 6rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#topBar.is-collapsed-tight + #workbenchBody {
+    height: auto;
+    flex: 1 1 0;
+    min-height: 0;
 }
 
 .nu-btn:disabled {

@@ -46,6 +46,10 @@ with a real shell running in `$WORKBENCH_DIR` itself — **not** in any one app'
 checkout, because an app has no workbench until it is launched, so a per-app
 terminal here would be unavailable for most cards. It connects to
 `/api/terminal/` with no app name. See [12-terminal.md](12-terminal.md).
+The terminal's scripts and stylesheet load on first opening, and are reused on
+later openings. While loading, the modal reports progress; a load failure
+offers recovery by closing and reopening it. Closing while loading must not
+start a shell after the modal has closed.
 
 It will list the applications, using the backend api. The page includes compact
 summary metrics for total applications, production-configured applications,
@@ -439,6 +443,8 @@ authentication mechanism. Its saved commit-author values remain unchanged and
 become visible again after disconnecting GitHub.
 
 ## SSH Key link
+
+If the application list cannot be loaded, show an accessible error with a Retry button. A successful empty list shows the empty inventory state instead. Retry moves focus to the application count, which stays mounted and announces loading and the result. The request runs again without reloading the page.
 
 If the SSH key is available, show an "SSH Key" link below the applications list. Clicking it opens the same SSH key popup described above.
 

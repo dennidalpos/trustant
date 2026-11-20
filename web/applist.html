@@ -28,11 +28,8 @@
     <script src="js/bind.js"></script>
     <script src="js/shared.js"></script>
     <script src="js/github-account.js"></script>
-    <script src="js/xterm.min.js"></script>
-    <script src="js/xterm-addon-fit.min.js"></script>
     <!-- Resumes any tutorial that crosses over from app.html. -->
     <script src="js/tutorial.js" defer></script>
-    <link rel="stylesheet" href="js/xterm.css">
     <link rel="stylesheet" href="trustant-ui.css">
 </head>
 <body class="min-h-screen">
@@ -102,7 +99,7 @@
                 <div>
                     <p class="nu-mono text-xs uppercase text-[color:var(--nu-muted)]">Workbench inventory</p>
                     <h2 class="text-2xl font-light text-[color:var(--nu-ink)] mt-1">Applications</h2>
-                    <p id="appCount" role="status" aria-live="polite" aria-atomic="true" class="text-sm text-[color:var(--nu-muted)] mt-1">Loading...</p>
+                    <p id="appCount" tabindex="-1" role="status" aria-live="polite" aria-atomic="true" class="text-sm text-[color:var(--nu-muted)] mt-1">Loading...</p>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
                     <div class="relative flex-1 lg:w-80">
@@ -757,6 +754,7 @@
                 <h3 class="text-lg font-medium">Terminal</h3>
                 <button onclick="hideTerminalModal()" class="nu-btn nu-btn-secondary">Close</button>
             </div>
+            <div id="terminalStatus" role="status" aria-live="polite"></div>
             <div id="terminalHost" class="flex-1 min-h-0 bg-black"></div>
         </div>
     </div>
@@ -2231,22 +2229,42 @@
             }
         }
 
+        let appLoadState = 'loading';
+
+        function retryApps() {
+            // The list gets replaced on loading. Keep focus on its persistent status.
+            document.getElementById('appCount').focus();
+            void loadApps();
+        }
+
         async function loadApps() {
+            appLoadState = 'loading';
+            renderApps();
             try {
                 const response = await fetch('/api/repo');
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const apps = await response.json();
-                allApps = apps || [];
+                if (!Array.isArray(apps)) throw new Error('Invalid application list');
+                allApps = apps;
+                appLoadState = 'loaded';
                 renderApps();
             } catch (error) {
                 console.error('Failed to load apps:', error);
-                document.getElementById('appList').innerHTML =
-                    '<p class="text-red-500 text-center py-4 md:col-span-2 xl:col-span-3">Failed to load applications</p>';
-                updateAppCount(0, 0);
+                appLoadState = 'error';
+                renderApps();
             }
         }
 
         function renderApps() {
             const appList = document.getElementById('appList');
+            if (appLoadState !== 'loaded') {
+                document.getElementById('appCount').textContent = appLoadState === 'loading' ? 'Loading applications…' : 'Application count unavailable';
+                ['totalAppsMetric', 'productionAppsMetric', 'developmentAppsMetric', 'repoAppsMetric'].forEach(id => setText(id, '—'));
+                appList.innerHTML = appLoadState === 'loading'
+                    ? '<p>Loading applications…</p>'
+                    : '<div class="md:col-span-2 xl:col-span-3 text-center py-4"><p role="alert">Could not load applications. Try again.</p><button type="button" class="nu-btn nu-btn-primary mt-2" onclick="retryApps()">Retry</button></div>';
+                return;
+            }
             const search = (document.getElementById('appSearch')?.value || '').trim().toLowerCase();
             const sortBy = document.getElementById('appSort')?.value || 'name';
             const apps = allApps
@@ -3070,6 +3088,45 @@
             let term = null;
             let fit = null;
             let socket = null;
+            let resourceLoads = {};
+            let openGeneration = 0;
+            const status = document.getElementById('terminalStatus');
+
+            function loadResource(url, stylesheet = false) {
+                if (resourceLoads[url]) return resourceLoads[url];
+                resourceLoads[url] = new Promise((resolve, reject) => {
+                    const element = document.createElement(stylesheet ? 'link' : 'script');
+                    if (stylesheet) { element.rel = 'stylesheet'; element.href = url; }
+                    else element.src = url;
+                    element.onload = resolve;
+                    element.onerror = () => {
+                        element.remove();
+                        delete resourceLoads[url];
+                        reject(new Error('Could not load ' + url));
+                    };
+                    document.head.appendChild(element);
+                });
+                return resourceLoads[url];
+            }
+
+            async function loadTerminal() {
+                const generation = ++openGeneration;
+                status.textContent = 'Loading terminal…';
+                try {
+                    await Promise.all([
+                        loadResource('js/xterm.css', true),
+                        loadResource('js/xterm.min.js').then(() => loadResource('js/xterm-addon-fit.min.js'))
+                    ]);
+                    if (generation !== openGeneration || !window.terminalModalOpen()) return;
+                    status.textContent = '';
+                    openTerminal();
+                    setTimeout(sendResize, 50);
+                } catch (error) {
+                    if (generation !== openGeneration || !window.terminalModalOpen()) return;
+                    console.error('Failed to load terminal:', error);
+                    status.textContent = 'Could not load the terminal. Close and open it to try again.';
+                }
+            }
 
             function sendResize() {
                 if (!fit || !term || !socket || socket.readyState !== WebSocket.OPEN) return;
@@ -3139,11 +3196,12 @@
                 modal.classList.add('flex');
                 button.classList.add('nu-btn-primary');
                 button.classList.remove('nu-btn-secondary');
-                openTerminal();
-                setTimeout(sendResize, 50);
+                loadTerminal();
             };
 
             window.hideTerminalModal = function() {
+                ++openGeneration;
+                status.textContent = '';
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
                 button.classList.remove('nu-btn-primary');
@@ -3156,6 +3214,14 @@
                 if (e.target === modal) hideTerminalModal();
             });
 
+            // xterm handles Escape inside its textarea before it reaches bubble listeners.
+            document.addEventListener('keydown', (event) => {
+                if (event.key !== 'Escape' || !window.terminalModalOpen()) return;
+                event.preventDefault();
+                event.stopPropagation();
+                hideTerminalModal();
+            }, true);
+
             window.addEventListener('resize', () => {
                 if (window.terminalModalOpen()) sendResize();
             });
@@ -3167,10 +3233,6 @@
         // Close modals on escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                if (window.terminalModalOpen && window.terminalModalOpen()) {
-                    hideTerminalModal();
-                    return;
-                }
                 hideAddModal();
                 if (typeof hideSSHKeyModal === 'function') hideSSHKeyModal();
                 hideDeleteModal();

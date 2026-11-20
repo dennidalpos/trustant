@@ -44,7 +44,7 @@
     <!-- Top Bar (10% height) -->
     <div id="topBar" data-collapse class="h-[10%] nu-topbar flex items-center px-4 gap-3 relative">
         <!-- Left group: logo, app name, config pulldown, utils pulldown -->
-        <div class="flex items-center gap-3 h-full shrink-0">
+        <div class="toolbar-group flex items-center gap-3 h-full shrink-0">
             <img src="trustant-logo.svg" alt="Trustant Logo" class="h-[80%] w-auto">
             <h1 id="appName" class="text-xl font-medium text-[color:var(--nu-ink)] whitespace-nowrap"></h1>
             <div id="creditsBox" class="hidden items-center gap-1 px-2 py-1 nu-status-pill text-xs">
@@ -62,25 +62,25 @@
             </button>
             <!-- Tutorial pulldown (spec/16-tutorial.md): second in the bar,
                  immediately after the sidebar open/close toggle. -->
-            <div class="relative">
-                <button id="tutorialBtn" onclick="toggleTutorialMenu()" title="Guided walkthroughs of the editor" aria-label="Tutorial menu"
+            <div class="relative toolbar-pulldown">
+                <button id="tutorialBtn" onclick="toggleToolbarMenu('tutorial')" aria-expanded="false" aria-controls="tutorialMenu" title="Guided walkthroughs of the editor" aria-label="Tutorial menu"
                     class="nu-btn nu-btn-secondary flex items-center gap-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                     <span class="nu-btn-label">Tutorial</span>
                     <svg class="w-3 h-3 ml-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div id="tutorialMenu" class="hidden absolute left-0 top-full mt-1 nu-dropdown py-1 z-50 min-w-[190px]">
-                    <button onclick="hideTutorialMenu(); Tutorial.start('notebook')"
+                <div id="tutorialMenu" class="toolbar-menu hidden absolute left-0 top-full mt-1 nu-dropdown py-1 z-50 min-w-[190px]">
+                    <button onclick="closeToolbarMenu('tutorial'); Tutorial.start('notebook')"
                         class="nu-menu-item">
                         <svg class="w-4 h-4 text-[color:var(--nu-brand)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3h9a2 2 0 012 2v11a2 2 0 01-2 2h-1M6 7h9a2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V9a2 2 0 012-2z"/></svg>
                         Templates
                     </button>
-                    <button onclick="hideTutorialMenu(); Tutorial.start('menus')"
+                    <button onclick="closeToolbarMenu('tutorial'); Tutorial.start('menus')"
                         class="nu-menu-item">
                         <svg class="w-4 h-4 text-[color:var(--nu-brand)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h10"/></svg>
                         Menus
                     </button>
-                    <button onclick="hideTutorialMenu(); Tutorial.start('toolbar')"
+                    <button onclick="closeToolbarMenu('tutorial'); Tutorial.start('toolbar')"
                         class="nu-menu-item">
                         <svg class="w-4 h-4 text-[color:var(--nu-brand)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="6" rx="1"/><path stroke-linecap="round" d="M7 14h10M7 18h6"/></svg>
                         Toolbar
@@ -92,72 +92,72 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M4 19h16a1 1 0 001-1V6a1 1 0 00-1-1H4a1 1 0 00-1 1v12a1 1 0 001 1z"/></svg>
                 <span class="nu-btn-label">Terminal</span>
             </button>
-            <div class="relative">
-                <button id="configBtn" onclick="toggleConfigMenu()" title="Edit this app's environment, skills and agent instructions" aria-label="Config menu"
+            <div class="relative toolbar-pulldown">
+                <button id="configBtn" onclick="toggleToolbarMenu('config')" aria-expanded="false" aria-controls="configMenu" title="Edit this app's environment, skills and agent instructions" aria-label="Config menu"
                     class="nu-btn nu-btn-secondary flex items-center gap-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.573-1.066z"/><circle cx="12" cy="12" r="3"/></svg>
                     <span class="nu-btn-label">Config</span>
                     <svg class="w-3 h-3 ml-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div id="configMenu" class="hidden absolute left-0 top-full mt-1 nu-dropdown py-1 z-50 min-w-[160px]">
-                    <button id="configEnv" onclick="hideConfigMenu(); showEnvModal()"
+                <div id="configMenu" class="toolbar-menu hidden absolute left-0 top-full mt-1 nu-dropdown py-1 z-50 min-w-[160px]">
+                    <button id="configEnv" onclick="closeToolbarMenu('config'); showEnvModal()"
                         class="nu-menu-item">
                         <svg class="w-4 h-4 text-[color:var(--nu-brand)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.573-1.066z"/><circle cx="12" cy="12" r="3"/></svg>
                         Env
                     </button>
-                    <button id="configSkills" onclick="hideConfigMenu(); showSkillsModal()"
+                    <button id="configSkills" onclick="closeToolbarMenu('config'); showSkillsModal()"
                         class="nu-menu-item">
                         <svg class="w-4 h-4 text-[color:var(--nu-brand)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                         Skills
                     </button>
-                    <button id="configAgents" onclick="hideConfigMenu(); showMemoryModal()"
+                    <button id="configAgents" onclick="closeToolbarMenu('config'); showMemoryModal()"
                         class="nu-menu-item">
                         <svg class="w-4 h-4 text-[color:var(--nu-brand)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
                         AGENTS.md
                     </button>
                 </div>
             </div>
-            <div class="relative">
-                <button id="utilsBtn" onclick="toggleUtilsMenu()" title="More actions: revert, redeploy, clean, files and upload" aria-label="Utils menu"
+            <div class="relative toolbar-pulldown">
+                <button id="utilsBtn" onclick="toggleToolbarMenu('utils')" aria-expanded="false" aria-controls="utilsMenu" title="More actions: revert, redeploy, clean, files and upload" aria-label="Utils menu"
                     class="nu-btn nu-btn-secondary flex items-center gap-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
                     <span class="nu-btn-label">Utils</span>
                     <svg class="w-3 h-3 ml-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div id="utilsMenu" class="hidden absolute left-0 top-full mt-1 nu-dropdown py-1 z-50 min-w-[160px]">
-                    <button id="utilsRevert" onclick="hideUtilsMenu(); showRevertModal()" disabled
+                <div id="utilsMenu" class="toolbar-menu hidden absolute left-0 top-full mt-1 nu-dropdown py-1 z-50 min-w-[160px]">
+                    <button id="utilsRevert" onclick="closeToolbarMenu('utils'); showRevertModal()" disabled
                         class="nu-menu-item">
                         <svg class="w-4 h-4 text-[color:var(--nu-signal)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a5 5 0 010 10H9M3 10l4-4m-4 4l4 4"/></svg>
                         Revert
                     </button>
-                    <button id="utilsReload" onclick="hideUtilsMenu(); reloadRightIframe()"
+                    <button id="utilsReload" onclick="closeToolbarMenu('utils'); reloadRightIframe()"
                         title="Reload the preview iframe only"
                         class="nu-menu-item">
                         <svg class="w-4 h-4 text-[color:var(--nu-brand)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 20v-5h-5M19.418 9A7.999 7.999 0 006.01 5.99L4 8m0 8l2.01 2.01A7.999 7.999 0 0019.418 15"/></svg>
                         Reload
                     </button>
-                    <button id="utilsRedeploy" onclick="hideUtilsMenu(); redeploy()"
+                    <button id="utilsRedeploy" onclick="closeToolbarMenu('utils'); redeploy()"
                         title="Full server-side redeploy"
                         class="nu-menu-item">
                         <svg class="w-4 h-4 text-[color:var(--nu-brand)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-6.463 0 4.493 4.493 0 006.463 0zm8.1-2.093a4.493 4.493 0 00-.052-6.32 4.493 4.493 0 00-6.32-.052"/></svg>
                         Redeploy
                     </button>
-                    <button id="utilsClean" onclick="hideUtilsMenu(); cleanWorkbench()"
+                    <button id="utilsClean" onclick="closeToolbarMenu('utils'); cleanWorkbench()"
                         class="nu-menu-item">
                         <svg class="w-4 h-4 text-[color:var(--nu-brand)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-6.714 2.143L12 21l-2.286-6.857L3 12l6.714-2.143L12 3z"/></svg>
                         Clean
                     </button>
-                    <button id="utilsDebug" onclick="hideUtilsMenu(); openDebugWindow()"
+                    <button id="utilsDebug" onclick="closeToolbarMenu('utils'); openDebugWindow()"
                         class="nu-menu-item">
                         <svg class="w-4 h-4 text-[color:var(--nu-brand)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h6m-6 4h10M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"/></svg>
                         Debug
                     </button>
-                    <button id="utilsFiles" onclick="hideUtilsMenu(); showFilesModal()"
+                    <button id="utilsFiles" onclick="closeToolbarMenu('utils'); showFilesModal()"
                         class="nu-menu-item">
                         <svg class="w-4 h-4 text-[color:var(--nu-brand)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         Files
                     </button>
-                    <button id="utilsUpload" onclick="hideUtilsMenu(); triggerUpload()"
+                    <button id="utilsUpload" onclick="closeToolbarMenu('utils'); triggerUpload()"
                         class="nu-menu-item">
                         <svg class="w-4 h-4 text-[color:var(--nu-brand)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0-12l-4 4m4-4l4 4"/></svg>
                         Upload
@@ -166,9 +166,9 @@
             </div>
             <input type="file" id="fileInput" class="hidden" onchange="handleFileUpload(event)">
         </div>
-        <div class="flex-1"></div>
+        <div class="toolbar-spacer flex-1"></div>
         <!-- Right group: git status, commit, device toggle, route, query, back -->
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="toolbar-group flex items-center gap-2 shrink-0">
             <div id="gitStatus" class="nu-status-pill flex items-center gap-1 px-2 py-1 text-xs">
                 <span id="gitDot" class="w-2.5 h-2.5 rounded-full bg-green-500 inline-block"></span>
                 <span id="gitText">No changes</span>
@@ -540,30 +540,30 @@
             return null;
         }
 
-        // Config menu functions
-        function toggleConfigMenu() {
-            document.getElementById('configMenu').classList.toggle('hidden');
-        }
-        function hideConfigMenu() {
-            document.getElementById('configMenu').classList.add('hidden');
+        const toolbarMenuNames = ['tutorial', 'config', 'utils'];
+
+        function toggleToolbarMenu(name) {
+            const menu = document.getElementById(name + 'Menu');
+            if (!menu.classList.contains('hidden')) {
+                closeToolbarMenu(name);
+                return;
+            }
+            toolbarMenuNames.forEach(closeToolbarMenu);
+            menu.classList.remove('hidden');
+            document.getElementById(name + 'Btn').setAttribute('aria-expanded', 'true');
         }
 
-        // Utils menu functions
-        function toggleUtilsMenu() {
-            document.getElementById('utilsMenu').classList.toggle('hidden');
-        }
-        function hideUtilsMenu() {
-            document.getElementById('utilsMenu').classList.add('hidden');
+        function closeToolbarMenu(name) {
+            const menu = document.getElementById(name + 'Menu');
+            if (menu.classList.contains('hidden')) return;
+
+            const restoreFocus = menu.contains(document.activeElement);
+            const button = document.getElementById(name + 'Btn');
+            menu.classList.add('hidden');
+            button.setAttribute('aria-expanded', 'false');
+            if (restoreFocus) button.focus();
         }
 
-        // Tutorial menu functions — the tutorials themselves live in
-        // js/tutorial.js (spec/16-tutorial.md).
-        function toggleTutorialMenu() {
-            document.getElementById('tutorialMenu').classList.toggle('hidden');
-        }
-        function hideTutorialMenu() {
-            document.getElementById('tutorialMenu').classList.add('hidden');
-        }
         function openDebugWindow() {
             if (!appName) {
                 alert('No application is open.');
@@ -573,23 +573,11 @@
             window.open(url, 'trustant-debug-' + appName, 'width=1000,height=720');
         }
 
-        // Close pulldowns when clicking outside
-        document.addEventListener('click', (e) => {
-            const configMenu = document.getElementById('configMenu');
-            const configBtn = document.getElementById('configBtn');
-            if (!configMenu.contains(e.target) && !configBtn.contains(e.target)) {
-                configMenu.classList.add('hidden');
-            }
-            const utilsMenu = document.getElementById('utilsMenu');
-            const utilsBtn = document.getElementById('utilsBtn');
-            if (!utilsMenu.contains(e.target) && !utilsBtn.contains(e.target)) {
-                utilsMenu.classList.add('hidden');
-            }
-            const tutorialMenu = document.getElementById('tutorialMenu');
-            const tutorialBtn = document.getElementById('tutorialBtn');
-            if (!tutorialMenu.contains(e.target) && !tutorialBtn.contains(e.target)) {
-                tutorialMenu.classList.add('hidden');
-            }
+        document.addEventListener('click', (event) => {
+            toolbarMenuNames.forEach((name) => {
+                const button = document.getElementById(name + 'Btn');
+                if (!button.parentElement.contains(event.target)) closeToolbarMenu(name);
+            });
         });
 
         const leftURL = getCookie('LEFT');
@@ -969,6 +957,11 @@
         // Close modal on escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
+                const openMenu = toolbarMenuNames.find((name) => !document.getElementById(name + 'Menu').classList.contains('hidden'));
+                if (openMenu) {
+                    closeToolbarMenu(openMenu);
+                    return;
+                }
                 if (!document.getElementById('saveResult').classList.contains('hidden')) {
                     hideSaveModal();
                 }
@@ -981,8 +974,6 @@
                     hideRevertModal();
                 }
                 hideUnsavedModal();
-                hideConfigMenu();
-                hideUtilsMenu();
                 hideEnvModal();
                 hideSkillsModal();
                 hideSkillsUpdateModal();

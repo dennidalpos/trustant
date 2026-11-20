@@ -26,6 +26,17 @@
     <script src="js/modal-a11y.js" defer></script>
     <script src="js/github-account.js"></script>
     <link rel="stylesheet" href="trustant-ui.css">
+    <style>
+        @media (max-width: 700px) {
+            .models-table, .models-table tbody, .models-table tr, .models-table td { display: block; width: 100%; }
+            .models-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+            .models-table tbody tr { padding: .75rem 0; border-bottom: 1px solid var(--nu-rule); }
+            .models-table tbody tr:last-child { border-bottom: 0; }
+            .models-table td { border: 0; padding: .35rem 0; text-align: left; overflow-wrap: anywhere; }
+            .models-table td[data-label]::before { content: attr(data-label); display: block; color: var(--nu-muted); margin-bottom: .25rem; }
+            .models-table input, .models-table button { min-height: 44px; }
+        }
+    </style>
 </head>
 <body class="min-h-screen">
     <header class="nu-topbar">
@@ -108,7 +119,7 @@
                     Refresh
                 </button>
             </div>
-            <table class="nu-table text-sm">
+            <table class="nu-table models-table text-sm">
                 <thead>
                     <tr>
                         <th class="text-left">Model</th>
@@ -792,20 +803,22 @@
                 const reason = policy.allowed ? '' : `<div class="mt-1 text-xs text-[color:var(--nu-muted)]">${escapeHtml(policy.reason)}</div>`;
                 return `
                 <tr>
-                    <td class="nu-code text-xs">${escapeHtml(name)}</td>
-                    <td>
+                    <td data-label="Model" class="nu-code text-xs">${escapeHtml(name)}</td>
+                    <td data-label="Context Size">
                         <input type="text" value="${escapeAttr(formatSize(effectiveContext(models[name])))}"
+                            aria-label="Context Size for ${escapeAttr(name)}"
                             onchange="setModelLimit('${escapeAttr(name)}', 'maxToken', this.value, this)"
                             title="Context window. Empty uses the default (${formatSize(DEFAULT_CONTEXT)})."
                             class="nu-input nu-code w-24 px-2 py-1 text-xs">
                     </td>
-                    <td>
+                    <td data-label="Max Output">
                         <input type="text" value="${escapeAttr(formatSize(effectiveMaxOutput(models[name])))}"
+                            aria-label="Max Output for ${escapeAttr(name)}"
                             onchange="setModelLimit('${escapeAttr(name)}', 'maxOutput', this.value, this)"
                             title="Maximum output tokens. Empty uses the default (${formatSize(DEFAULT_MAX_OUTPUT)})."
                             class="nu-input nu-code w-24 px-2 py-1 text-xs">
                     </td>
-                    <td>
+                    <td data-label="For coding">
                         <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs ${badgeClass}">
                             ${badgeText}
                         </span>

@@ -536,7 +536,10 @@ The chat UI connects to a default agent and lets the user switch:
   empty `Select agent` placeholder tears the chat back down to the disabled state.
 - Until an agent is connected, the chat area is **disabled** and shows
   **"Please Select Agent"** (both as the empty-state message and the textarea
-  placeholder).
+  placeholder) when agents are available. A failed catalog load instead offers
+  Retry without reloading; an empty catalog says no agents are available.
+  Retry moves focus to the conversation region before the catalog prompt
+  changes. The region keeps focus as loading, empty results or agents appear.
 - Selecting an agent from the pull-down (or the auto-select) **connects immediately**
   (`initialize` + `newSession`) — there is no separate Connect button. During the
   attempt the header shows "Connecting…"; on success it shows "● \<agent name\>" and
