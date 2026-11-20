@@ -338,6 +338,8 @@ TruACP server `.env`.
 
 - Trustant's main **Configure** screen owns the global template repository,
   branch/ref, and write token, under a **Template Repository** heading.
+  Each field is associated with its visible label. The token field has a
+  persistent, associated instruction explaining how to keep the current token.
 - Repository/ref are persisted in workspace `trustant.json`; the token is
   write-only and stored separately in a mode-`0600` file under
   `<WorkspaceDir>/.trustant/secrets/`.

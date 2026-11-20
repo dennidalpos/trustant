@@ -102,7 +102,7 @@
                 <div>
                     <p class="nu-mono text-xs uppercase text-[color:var(--nu-muted)]">Workbench inventory</p>
                     <h2 class="text-2xl font-light text-[color:var(--nu-ink)] mt-1">Applications</h2>
-                    <p id="appCount" class="text-sm text-[color:var(--nu-muted)] mt-1">Loading...</p>
+                    <p id="appCount" role="status" aria-live="polite" aria-atomic="true" class="text-sm text-[color:var(--nu-muted)] mt-1">Loading...</p>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
                     <div class="relative flex-1 lg:w-80">
@@ -112,25 +112,25 @@
                         <input id="appSearch" type="search" placeholder="Search apps or repositories"
                             class="nu-input w-full pl-9 pr-3 py-2 text-sm placeholder:text-[color:var(--nu-muted)] placeholder:opacity-100">
                     </div>
-                    <select id="appSort"
+                    <select id="appSort" aria-label="Sort applications by"
                         class="nu-input px-3 py-2 text-sm">
                         <option value="name">Name</option>
                         <option value="repo">Repository</option>
                     </select>
                     <div class="inline-flex rounded border border-[color:var(--nu-rule)] overflow-hidden bg-white">
-                        <button id="gridViewBtn" type="button" onclick="setAppView('grid')" title="Show applications as cards"
+                        <button id="gridViewBtn" type="button" aria-pressed="false" onclick="setAppView('grid')" title="Show applications as cards"
                             class="nu-segment-btn">Grid</button>
-                        <button id="listViewBtn" type="button" onclick="setAppView('list')" title="Show applications as a list"
+                        <button id="listViewBtn" type="button" aria-pressed="true" onclick="setAppView('list')" title="Show applications as a list"
                             class="nu-segment-btn nu-segment-btn-active">List</button>
                     </div>
                 </div>
             </div>
             <div class="flex flex-wrap gap-2 mb-4">
-                <button id="filterAllBtn" type="button" onclick="setAppFilter('all')" title="Show every application"
+                <button id="filterAllBtn" type="button" aria-pressed="true" onclick="setAppFilter('all')" title="Show every application"
                     class="nu-chip nu-chip-active px-3 py-1.5 text-sm font-medium">All</button>
-                <button id="filterProductionBtn" type="button" onclick="setAppFilter('production')" title="Show only applications that have been published"
+                <button id="filterProductionBtn" type="button" aria-pressed="false" onclick="setAppFilter('production')" title="Show only applications that have been published"
                     class="nu-chip px-3 py-1.5 text-sm font-medium hover:bg-[color:var(--nu-accent)]">Production</button>
-                <button id="filterDevelopmentBtn" type="button" onclick="setAppFilter('development')" title="Show only applications that have never been published"
+                <button id="filterDevelopmentBtn" type="button" aria-pressed="false" onclick="setAppFilter('development')" title="Show only applications that have never been published"
                     class="nu-chip px-3 py-1.5 text-sm font-medium hover:bg-[color:var(--nu-accent)]">Development only</button>
             </div>
             <div id="appList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -2410,18 +2410,20 @@
             Object.entries(filterIds).forEach(([key, id]) => {
                 const el = document.getElementById(id);
                 if (!el) return;
-                el.className = key === appFilter
+                const pressed = key === appFilter;
+                el.setAttribute('aria-pressed', String(pressed));
+                el.className = pressed
                     ? 'nu-chip nu-chip-active px-3 py-1.5 text-sm font-medium'
                     : 'nu-chip px-3 py-1.5 text-sm font-medium hover:bg-[color:var(--nu-accent)]';
             });
-            const grid = document.getElementById('gridViewBtn');
-            const list = document.getElementById('listViewBtn');
-            if (grid) grid.className = appView === 'grid'
-                ? 'nu-segment-btn nu-segment-btn-active'
-                : 'nu-segment-btn';
-            if (list) list.className = appView === 'list'
-                ? 'nu-segment-btn nu-segment-btn-active'
-                : 'nu-segment-btn';
+            const viewIds = { grid: 'gridViewBtn', list: 'listViewBtn' };
+            Object.entries(viewIds).forEach(([key, id]) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const pressed = key === appView;
+                el.setAttribute('aria-pressed', String(pressed));
+                el.classList.toggle('nu-segment-btn-active', pressed);
+            });
         }
 
         function updateAppSummary(apps) {
@@ -2437,13 +2439,15 @@
         function updateAppCount(visible, total) {
             const el = document.getElementById('appCount');
             if (!el) return;
+            let message;
             if (!total) {
-                el.textContent = 'No applications';
+                message = 'No applications';
             } else if (visible === total) {
-                el.textContent = total === 1 ? '1 application' : `${total} applications`;
+                message = total === 1 ? '1 application' : `${total} applications`;
             } else {
-                el.textContent = `${visible} of ${total} applications`;
+                message = `${visible} of ${total} applications`;
             }
+            if (el.textContent !== message) el.textContent = message;
         }
 
         function setText(id, value) {

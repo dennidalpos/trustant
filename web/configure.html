@@ -200,25 +200,26 @@
             </p>
             <div class="space-y-3">
                 <div>
-                    <label class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">Repository</label>
+                    <label for="notebookRepository" class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">Repository</label>
                     <input type="text" id="notebookRepository" placeholder="trustable-ai/templates"
                         class="nu-input w-full px-3 py-2 text-sm">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">Branch / ref</label>
+                    <label for="notebookRef" class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">Branch / ref</label>
                     <input type="text" id="notebookRef" placeholder="main"
                         class="nu-input w-full px-3 py-2 text-sm">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">GitHub token</label>
+                    <label for="notebookGitHubToken" class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">GitHub token</label>
                     <input type="password" id="notebookGitHubToken" autocomplete="new-password"
-                        placeholder="Leave empty to keep the configured token"
+                        aria-describedby="notebookTokenHint"
                         oninput="renderNotebookTokenStatus()"
                         class="nu-input w-full px-3 py-2 text-sm">
-                    <p id="notebookTokenStatus" class="text-xs text-[color:var(--nu-muted)] mt-2"></p>
-                    <p class="text-xs text-[color:var(--nu-muted)] mt-1">
+                    <p id="notebookTokenHint" class="text-xs text-[color:var(--nu-muted)] mt-2">
+                        Leave empty to keep the configured token.
                         The token is write-only and is used only by Trustant. Public templates remain readable without it.
                     </p>
+                    <p id="notebookTokenStatus" class="text-xs text-[color:var(--nu-muted)] mt-1"></p>
                 </div>
                 <label class="flex items-center gap-2 text-sm text-[color:var(--nu-muted)]">
                     <input type="checkbox" id="notebookClearToken" onchange="renderNotebookTokenStatus()">
@@ -624,7 +625,7 @@
                 return;
             }
             status.textContent = config.notebook?.has_token
-                ? 'Write access configured. Leave this field empty to keep the current token.'
+                ? 'Write access configured.'
                 : 'No token configured. Template save, add, and remove actions will stay disabled.';
         }
 

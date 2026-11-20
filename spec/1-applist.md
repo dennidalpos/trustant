@@ -54,6 +54,9 @@ search, sort by name or repository, segmented filters for all/production/
 development-only, a grid view, a denser list view as the default, and a visible count of
 matching applications. Searching filters by app name, repository, production
 host, and production user without calling the backend again.
+The sort control has a stable accessible name. Filter and view buttons expose
+their pressed state, and the results count updates in a polite live region
+while focus stays on the current control.
 The 24 px summary values have a contrast ratio of at least 3:1 against their
 cards. The search placeholder has a contrast ratio of at least 4.5:1 against
 the input background.
