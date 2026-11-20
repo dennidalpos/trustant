@@ -44,7 +44,7 @@
     <!-- Top Bar (10% height) -->
     <div id="topBar" data-collapse class="h-[10%] nu-topbar flex items-center px-4 gap-3 relative">
         <!-- Left group: logo, app name, config pulldown, utils pulldown -->
-        <div class="flex items-center gap-3 h-full shrink-0">
+        <div class="toolbar-group flex items-center gap-3 h-full shrink-0">
             <img src="trustant-logo.svg" alt="Trustant Logo" class="h-[80%] w-auto">
             <h1 id="appName" class="text-xl font-medium text-[color:var(--nu-ink)] whitespace-nowrap"></h1>
             <div id="creditsBox" class="hidden items-center gap-1 px-2 py-1 nu-status-pill text-xs">
@@ -166,9 +166,9 @@
             </div>
             <input type="file" id="fileInput" class="hidden" onchange="handleFileUpload(event)">
         </div>
-        <div class="flex-1"></div>
+        <div class="toolbar-spacer flex-1"></div>
         <!-- Right group: git status, commit, device toggle, route, query, back -->
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="toolbar-group flex items-center gap-2 shrink-0">
             <div id="gitStatus" class="nu-status-pill flex items-center gap-1 px-2 py-1 text-xs">
                 <span id="gitDot" class="w-2.5 h-2.5 rounded-full bg-green-500 inline-block"></span>
                 <span id="gitText">No changes</span>

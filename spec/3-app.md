@@ -64,9 +64,10 @@ only** and every hidden label is still readable as a tooltip.
 - **Two stages.** Collapsing the buttons alone is not enough: the app name, the
   git status text and the device toggle together need roughly 370px. Under
   `is-collapsed` the app name is truncated and the git status drops to its
-  coloured dot; when even that does not fit, `is-collapsed-tight` also hides
-  the app name and the device preview toggle (the preview can still be resized
-  by dragging the divider).
+  coloured dot; when even that does not fit, `is-collapsed-tight` hides the app
+  name and wraps the groups and controls onto additional rows. Device controls
+  remain available, controls have at least 44px touch targets, and long route
+  labels are ellipsized.
 - **Hysteresis.** Collapsing makes the bar narrower, which would clear the
   overflow and expand it again — an endless loop driven by our own DOM writes.
   Collapsing is therefore decided on real overflow, while expanding is decided
