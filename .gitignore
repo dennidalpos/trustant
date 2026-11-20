@@ -38,6 +38,7 @@ Trustant
 .op.json
 *.lic
 /envcrypt.env
+/aaa.local.code-workspace
 
 # WSL virtual disks and local migration exports.
 /exports/
