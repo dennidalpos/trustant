@@ -1,4 +1,4 @@
-ARG OLLAMA_VERSION=0.32.14
+ARG OLLAMA_VERSION=0.40.16
 # NOTE: there is deliberately no OPS_REPO/OPS_BRANCH here. `ops` resolves its
 # task source from the binary (installed via n7s.co/get-ops-tru, which pins
 # trustable-ai/openserverless-task); both variables still OVERRIDE that default,
@@ -7,9 +7,9 @@ ARG OLLAMA_VERSION=0.32.14
 # cannot drift back to the upstream Milvus MCP or a floating branch.
 ARG MILVUS_MCP_REPO=https://github.com/trustable-ai/mcp-server-milvus.git
 ARG MILVUS_MCP_REF=a7e624f3057a0d739528bca3ed92504943224ceb
-ARG GH_VERSION=2.96.0
-ARG GH_SHA_AMD64=83d5c2ccad5498f58bf6368acb1ab32588cf43ab3a4b1c301bf36328b1c8bd60
-ARG GH_SHA_ARM64=06f86ec7103d41993b76cd78072f43595c34aaa56506d971d9860e67140bf909
+ARG GH_VERSION=2.105.0
+ARG GH_SHA_AMD64=79e7ab5db738c48777b696e374f8b428f0647debfb424f44d2f426370407fe2f
+ARG GH_SHA_ARM64=b1278c75107423d818f1937fd92cafc9e5e9b606631568f68d7fb816f5885a02
 
 ########################################################## loader
 FROM ubuntu:24.04 AS loader
@@ -41,6 +41,8 @@ USER root
 COPY --from=loader /etc/environment /etc/environment
 COPY --from=loader /usr/local/bin/ollama /usr/local/bin/ollama
 COPY --from=loader /usr/local/lib/ollama/*.so* /usr/local/lib/ollama/
+# Ollama starts this runner as a subprocess when loading models.
+COPY --from=loader /usr/local/lib/ollama/llama-server /usr/local/lib/ollama/
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN \

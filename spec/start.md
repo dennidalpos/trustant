@@ -327,7 +327,7 @@ CUDA/ROCm drivers. In the VM this changes nothing — it is CPU-only either way.
 
 ## Pinned kubefwd in the VM
 
-Install `kubefwd` 1.25.16 as `/usr/local/bin/kubefwd` on every finish path, so
+Install `kubefwd` 1.25.18 as `/usr/local/bin/kubefwd` on every finish path, so
 both new and reused `trudev` VMs satisfy repository-root `run.sh`. Select the
 official Linux archive for `x86_64` or `arm64`, verify its pinned SHA-256 before
 installation, install atomically with mode `0755`, and verify the installed
@@ -637,7 +637,7 @@ Run the same helpers the macOS finish path runs, against this host:
   same `dist/` cache (see above). Unlike the VM, a native host is not restricted
   to CPU, but the cached tarball path installs no GPU drivers — only the
   upstream-installer fallback detects CUDA/ROCm;
-- the pinned `kubefwd` 1.25.16 with its SHA-256 verification;
+- the pinned `kubefwd` 1.25.18 with its SHA-256 verification;
 - the `gh` and `jq` apt packages.
 
 Then wait for OpenWhisk on `http://miniops.me` (see above), run `./setup.sh`

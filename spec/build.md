@@ -148,10 +148,14 @@ lifecycle uses it to reclaim listeners left without a valid process-group
 marker; image behavior must not depend on an undeclared base-package accident.
 
 Both environments also install the official GitHub CLI from the pinned
-`GH_VERSION=2.96.0` Linux archive. The Dockerfile owns checked-in SHA-256 values
+`GH_VERSION=2.105.0` Linux archive. The Dockerfile owns checked-in SHA-256 values
 for amd64 and arm64; both the image and repository-root setup verify the
 matching checksum before installing `/usr/local/bin/gh`. Builds never resolve a
 floating GitHub CLI release or copy a host developer's GitHub configuration.
+
+The Ollama loader supplies the `ollama` binary, its CPU libraries, and the
+`llama-server` executable to the runtime stage. Ollama starts that executable
+when it loads a model.
 
 Both environments install the same Trustant-owned Redis MCP stdio wrapper:
 `image/redis-mcp` becomes `trustant-redis-mcp`, while the pinned upstream

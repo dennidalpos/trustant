@@ -472,10 +472,10 @@ Downloaded by image/Dockerfile (and by start.sh/setup.sh in the dev VM).
 
 NAME                      VERSION  LICENSE            HOMEPAGE
 ----                      -------  -------            --------
-gh (GitHub CLI)           2.96.0   MIT                https://github.com/cli/cli
+gh (GitHub CLI)           2.105.0  MIT                https://github.com/cli/cli
 mcp-s3                    1.3.0    Apache-2.0         https://github.com/txn2/mcp-s3
 Node.js (NodeSource)      24.x     MIT                https://nodejs.org
-ollama                    0.32.14  MIT                https://github.com/ollama/ollama
+ollama                    0.40.16  MIT                https://github.com/ollama/ollama
 ops (OpenServerless CLI)  latest   Apache-2.0         https://github.com/apache/openserverless-cli
 uv (/usr/bin/uv)          latest   Apache-2.0 OR MIT  https://github.com/astral-sh/uv
 
@@ -520,13 +520,13 @@ tree, with its license files, is installed under the global node_modules.
 
 NAME                                    VERSION  LICENSE     HOMEPAGE
 ----                                    -------  -------     --------
-@agentclientprotocol/codex-acp          1.1.4    Apache-2.0  https://www.npmjs.com/package/@agentclientprotocol/codex-acp
+@agentclientprotocol/codex-acp          2.8.0    Apache-2.0  https://github.com/agentclientprotocol/codex-acp
 @earendil-works/pi-agent-core           0.82.0   MIT         https://github.com/earendil-works/pi
 @earendil-works/pi-ai                   0.82.0   MIT         https://github.com/earendil-works/pi
 @earendil-works/pi-coding-agent         0.82.0   MIT         https://github.com/earendil-works/pi
 @earendil-works/pi-storage-sqlite-node  0.82.0   MIT         https://github.com/earendil-works/pi
 @earendil-works/pi-tui                  0.82.0   MIT         https://github.com/earendil-works/pi
-@openai/codex                           0.144.6  Apache-2.0  https://github.com/openai/codex
+@openai/codex                           0.170.0  Apache-2.0  https://github.com/openai/codex
 mongodb-mcp-server                      1.9.0    Apache-2.0  https://github.com/mongodb-js/mongodb-mcp-server
 pi-mcp-adapter                          2.11.0   MIT         https://www.npmjs.com/package/pi-mcp-adapter
 pi-web-access                           0.13.0   MIT         https://www.npmjs.com/package/pi-web-access
@@ -664,8 +664,8 @@ ffmpeg (screenshot.sh)                distro   LGPL-2.1-or-later AND GPL-2.0-or-
 g (Go version manager)                latest   MIT                                     https://github.com/voidint/g
 Hadolint                              2.15.1   GPL-3.0-only                            https://github.com/hadolint/hadolint
 k3s                                   via ops  Apache-2.0                              https://github.com/k3s-io/k3s
-kubefwd                               1.25.16  Apache-2.0                              https://github.com/txn2/kubefwd
-license-eye (skywalking-eyes)         0.8.0    Apache-2.0                              https://github.com/apache/skywalking-eyes
+kubefwd                               1.25.18  Apache-2.0                              https://github.com/txn2/kubefwd
+license-eye (skywalking-eyes)         0.9.0    Apache-2.0                              https://github.com/apache/skywalking-eyes
 Lima                                  latest   Apache-2.0                              https://github.com/lima-vm/lima
 PSScriptAnalyzer                      1.25.0   MIT                                     https://github.com/PowerShell/PSScriptAnalyzer
 Ruff                                  0.14.14  MIT                                     https://github.com/astral-sh/ruff

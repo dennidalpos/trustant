@@ -916,7 +916,19 @@ func normalizeOllamaModelName(name string) string {
 // non-nil error: callers fall back to pulling everything rather than silently
 // skipping an install that never happened.
 func installedOllamaModels(root string) (map[string]bool, error) {
-	client := &http.Client{Timeout: 10 * time.Second}
+	names, err := ollamaModelNames(root, &http.Client{Timeout: 10 * time.Second})
+	if err != nil {
+		return nil, err
+	}
+	installed := make(map[string]bool, len(names)*2)
+	for _, name := range names {
+		installed[name] = true
+		installed[normalizeOllamaModelName(name)] = true
+	}
+	return installed, nil
+}
+
+func ollamaModelNames(root string, client *http.Client) ([]string, error) {
 	resp, err := client.Get(strings.TrimRight(root, "/") + "/api/tags")
 	if err != nil {
 		return nil, err
@@ -933,16 +945,15 @@ func installedOllamaModels(root string) (map[string]bool, error) {
 	if err := json.NewDecoder(resp.Body).Decode(&payload); err != nil {
 		return nil, err
 	}
-	installed := make(map[string]bool, len(payload.Models)*2)
+	names := make([]string, 0, len(payload.Models))
 	for _, m := range payload.Models {
 		name := strings.TrimSpace(m.Name)
 		if name == "" {
 			continue
 		}
-		installed[name] = true
-		installed[normalizeOllamaModelName(name)] = true
+		names = append(names, name)
 	}
-	return installed, nil
+	return names, nil
 }
 
 const (

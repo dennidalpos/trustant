@@ -73,8 +73,8 @@ apt | zstd (build stage only) | distro | BSD-3-Clause OR GPL-2.0-only | https://
 
 # --- 6. Container image: downloaded binaries and runtimes -------------------
 binary | Node.js (NodeSource) | 24.x | MIT | https://nodejs.org | url:https://raw.githubusercontent.com/nodejs/node/v24.x/LICENSE
-binary | ollama | 0.32.14 | MIT | https://github.com/ollama/ollama | url:https://raw.githubusercontent.com/ollama/ollama/v{v}/LICENSE
-binary | gh (GitHub CLI) | 2.96.0 | MIT | https://github.com/cli/cli | url:https://raw.githubusercontent.com/cli/cli/v{v}/LICENSE
+binary | ollama | 0.40.16 | MIT | https://github.com/ollama/ollama | url:https://raw.githubusercontent.com/ollama/ollama/v{v}/LICENSE
+binary | gh (GitHub CLI) | 2.105.0 | MIT | https://github.com/cli/cli | url:https://raw.githubusercontent.com/cli/cli/v{v}/LICENSE
 binary | uv (/usr/bin/uv) | latest | Apache-2.0 OR MIT | https://github.com/astral-sh/uv | url:https://raw.githubusercontent.com/astral-sh/uv/main/LICENSE-MIT,https://raw.githubusercontent.com/astral-sh/uv/main/LICENSE-APACHE
 binary | ops (OpenServerless CLI) | latest | Apache-2.0 | https://github.com/apache/openserverless-cli | url:https://raw.githubusercontent.com/apache/openserverless-cli/main/LICENSE,https://raw.githubusercontent.com/apache/openserverless-cli/main/NOTICE
 binary | mcp-s3 | 1.3.0 | Apache-2.0 | https://github.com/txn2/mcp-s3 | url:https://raw.githubusercontent.com/txn2/mcp-s3/v{v}/LICENSE
@@ -107,6 +107,7 @@ npmglobal | @earendil-works/pi-agent-core | * | MIT | https://github.com/earendi
 npmglobal | @earendil-works/pi-storage-sqlite-node | * | MIT | https://github.com/earendil-works/pi | url:https://raw.githubusercontent.com/earendil-works/pi/v{v}/LICENSE
 npmglobal | @earendil-works/pi-coding-agent | * | MIT | https://github.com/earendil-works/pi | url:https://raw.githubusercontent.com/earendil-works/pi/v{v}/LICENSE
 npmglobal | @openai/codex | * | Apache-2.0 | https://github.com/openai/codex | url:https://raw.githubusercontent.com/openai/codex/rust-v{v}/LICENSE,https://raw.githubusercontent.com/openai/codex/rust-v{v}/NOTICE
+npmglobal | @agentclientprotocol/codex-acp | * | Apache-2.0 | https://github.com/agentclientprotocol/codex-acp | npm:@agentclientprotocol/codex-acp@{v}
 
 # --- 9. Container image: Python tools (uv tool install) ---------------------
 pytool | milvus-cli | 1.2.1 | Apache-2.0 | https://github.com/zilliztech/milvus_cli | pypi:milvus-cli==1.2.1
@@ -211,10 +212,10 @@ python | zstandard | * | BSD-3-Clause | https://pypi.org/project/zstandard | pyp
 # --- 11. Development environment only (not distributed) ---------------------
 dev | Lima | latest | Apache-2.0 | https://github.com/lima-vm/lima | -
 dev | k3s | via ops | Apache-2.0 | https://github.com/k3s-io/k3s | -
-dev | kubefwd | 1.25.16 | Apache-2.0 | https://github.com/txn2/kubefwd | -
+dev | kubefwd | 1.25.18 | Apache-2.0 | https://github.com/txn2/kubefwd | url:https://raw.githubusercontent.com/txn2/kubefwd/v{v}/LICENSE,https://raw.githubusercontent.com/txn2/kubefwd/v{v}/NOTICE
 dev | air | latest | GPL-3.0-only | https://github.com/air-verse/air | -
 dev | g (Go version manager) | latest | MIT | https://github.com/voidint/g | -
-dev | license-eye (skywalking-eyes) | 0.8.0 | Apache-2.0 | https://github.com/apache/skywalking-eyes | -
+dev | license-eye (skywalking-eyes) | 0.9.0 | Apache-2.0 | https://github.com/apache/skywalking-eyes | url:https://raw.githubusercontent.com/apache/skywalking-eyes/v{v}/LICENSE,https://raw.githubusercontent.com/apache/skywalking-eyes/v{v}/NOTICE
 dev | ffmpeg (screenshot.sh) | distro | LGPL-2.1-or-later AND GPL-2.0-or-later | https://ffmpeg.org | -
 dev | @playwright/test (e2e tests) | 1.65.1 | Apache-2.0 | https://github.com/microsoft/playwright | -
 dev | Biome | 2.6.8 | MIT OR Apache-2.0 | https://biomejs.dev | -

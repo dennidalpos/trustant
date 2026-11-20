@@ -266,9 +266,9 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 
 - Source: https://github.com/trustant/trustant-acp.git, gitlink before vendoring
 - Commit: `9786f796380aa9b2000d8cebd913fa41150c89ed`
-- Files: 161 unmodified, 12 modified, 3 added, 4 removed
+- Files: 156 unmodified, 17 modified, 3 added, 4 removed
 
-#### Modified (12)
+#### Modified (17)
 
 - `AGENTS.md`
 - `ARCHITECTURE.md`
@@ -279,6 +279,11 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 - `extensions/requirements.txt`
 - `package-lock.json`
 - `package.json`
+- `pi.integrity`
+- `pi.version`
+- `server/acp-host.ts`
+- `server/config-store.ts`
+- `setup.md`
 - `vitest.config.mts`
 - `web/ChatApp.tsx`
 - `web/transport.ts`

@@ -133,9 +133,9 @@ GH_VERSION="$(grep -m1 '^ARG GH_VERSION=' image/Dockerfile 2>/dev/null | cut -d=
 
 # Keep the release identity and both supported archive digests in source so a
 # clean VM never depends on a mutable "latest" asset.
-KUBEFWD_VERSION="1.25.16"
-KUBEFWD_SHA_AMD64="07275cad05b2427069071160125b8cb29e94dd44582f685ce6d966fa9e7fb7d7"
-KUBEFWD_SHA_ARM64="e01ade02d919be2c7e306543f0a65de2e629c254ef16b51ecb45830b0044a3e8"
+KUBEFWD_VERSION="1.25.18"
+KUBEFWD_SHA_AMD64="457988d3b8fb3b39889b680e44be3b3804c0ae739602361110a94643168975b9"
+KUBEFWD_SHA_ARM64="69773325ea72b2eff410aad34437f5277c920961f437ad84ed7d154538260574"
 
 # The current macOS user + the folder start.sh runs from. Both are mirrored into
 # the VM: a guest user with the same name and UID owns a virtiofs mount of this

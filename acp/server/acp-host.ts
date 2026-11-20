@@ -86,6 +86,18 @@ export function buildAgentConfig(
 		workingDirectory,
 	};
 
+	// Keep older copies of the built-in configuration on the installed pin.
+	if (
+		agent.id === "codex" &&
+		agent.command === "npx" &&
+		agent.args.length === 2 &&
+		agent.args[0] === "-y" &&
+		agent.args[1] === "@agentclientprotocol/codex-acp"
+	) {
+		base.command = "codex-acp";
+		base.args = [];
+	}
+
 	if (agent.id === "claude") {
 		// WHY: Claude Code is proprietary and is not shipped with Trustant. It
 		// may only run from the on-demand install made after the user accepted

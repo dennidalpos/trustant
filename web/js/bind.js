@@ -258,6 +258,9 @@
         this.values = {};
         this.mode = 'development';
         this.host = '';
+        this.opening = 0;
+        this.suggestions = {};
+        this.saving = false;
     }
 
     ImportResolver.prototype.el = function (suffix) {
@@ -280,11 +283,15 @@
     // options: { mode: 'production', host } opens the publish popup for a host.
     ImportResolver.prototype.open = async function (appName, rows, options) {
         options = options || {};
+        const opening = ++this.opening;
         this.appName = appName;
         this.mode = options.mode === 'production' ? 'production' : 'development';
         this.host = options.host || '';
         this.choices = {};
         this.values = {};
+        this.suggestions = {};
+        this.saving = false;
+        let error = '';
 
         if (rows && rows.length) {
             this.rows = rows;
@@ -293,10 +300,12 @@
                 const response = await fetch(this.url());
                 if (!response.ok) throw new Error(await response.text());
                 const data = await response.json();
+                if (opening !== this.opening) return;
                 this.rows = data.resolutions || [];
             } catch (err) {
+                if (opening !== this.opening) return;
                 this.rows = [];
-                this.showError('Failed to load variables: ' + err.message);
+                error = 'Failed to load variables: ' + err.message;
             }
         }
 
@@ -321,7 +330,7 @@
                   + 'imported from another application are filled from the shared variable '
                   + 'you choose here.';
         }
-        this.showError('');
+        this.showError(error);
         this.render();
 
         const modal = this.el('Modal');
@@ -329,9 +338,50 @@
             modal.classList.remove('hidden');
             modal.classList.add('flex');
         }
+        if (this.mode === 'development' && this.rows.some((row) =>
+            row.pending && (row.name === 'AI_BASE_URL' || row.name === 'AI_CHAT_MODEL'))) {
+            void this.loadSuggestions(opening);
+        }
+    };
+
+    ImportResolver.prototype.loadSuggestions = async function (opening) {
+        try {
+            const response = await fetch(this.url() + '?suggestions=1');
+            if (!response.ok) return;
+            const data = await response.json();
+            if (opening !== this.opening) return;
+            this.suggestions = data.suggestions || {};
+            this.renderSuggestions();
+        } catch {
+            // Manual entry and shared references remain available offline.
+        }
+    };
+
+    ImportResolver.prototype.renderSuggestions = function () {
+        const url = this.suggestions.baseURL;
+        const urlRow = this.rows.find((row) => row.name === 'AI_BASE_URL');
+        const selectedURL = this.values.AI_BASE_URL ?? urlRow?.value ?? '';
+        const usesSharedURL = !!this.choices.AI_BASE_URL &&
+            this.choices.AI_BASE_URL !== (urlRow?.source || urlRow?.suggested);
+        const matchesURL = !usesSharedURL && (!selectedURL.trim() ||
+            selectedURL.trim().replace(/\/+$/, '') === url);
+        const options = {
+            AI_BASE_URL: url ? [url] : [],
+            AI_CHAT_MODEL: matchesURL ? this.suggestions.models || [] : []
+        };
+        for (const [name, values] of Object.entries(options)) {
+            const list = this.el('Suggestions-' + name);
+            if (!list) continue;
+            list.replaceChildren(...values.map((value) => {
+                const option = document.createElement('option');
+                option.value = value;
+                return option;
+            }));
+        }
     };
 
     ImportResolver.prototype.close = function () {
+        ++this.opening;
         const modal = this.el('Modal');
         if (modal) {
             modal.classList.add('hidden');
@@ -360,9 +410,14 @@
             return;
         }
 
-        body.innerHTML = this.rows.map((row, i) => {
+        body.innerHTML = this.rows.map((row) => {
             const label = `<div class="nu-mono text-xs font-semibold">${escapeHTML(row.name)}</div>`;
             let control;
+            const editable = this.mode === 'development' && row.pending &&
+                ['AI_BASE_URL', 'AI_CHAT_MODEL', 'AI_API_KEY'].includes(row.name);
+            const literalID = this.prefix + 'Value-' + row.name;
+            const choiceID = this.prefix + 'Choice-' + row.name;
+            const suggestionsID = this.prefix + 'Suggestions-' + row.name;
 
             if (row.matches && row.matches.length) {
                 // A wildcard: the user picks which producer feeds it. The current
@@ -376,11 +431,14 @@
                     })
                 ).join('');
                 control = `
-                    <select onchange="${g}.setChoice('${escapeHTML(row.name)}', this.value)"
+                    <select ${editable ? `id="${choiceID}" aria-label="${row.name} shared variable"` : ''}
+                        onchange="${g}.setChoice('${escapeHTML(row.name)}', this.value)"
                         class="nu-input nu-mono text-xs w-full">${options}</select>
                     <div class="text-[11px] text-[color:var(--nu-muted)] mt-1">
                       matches <span class="nu-code">${escapeHTML(row.pattern)}</span>
                     </div>`;
+            } else if (editable) {
+                control = '';
             } else if (row.pattern && !row.source) {
                 // Declared as an import but nothing matches: the producer is not
                 // installed here. Typing the value is the only way forward, and
@@ -409,6 +467,17 @@
                     <div class="nu-mono text-xs text-[color:var(--nu-muted)] px-2 py-1">${escapeHTML(maskValue(row.value))}</div>
                     ${from}`;
             }
+            if (editable) {
+                const secret = row.name === 'AI_API_KEY';
+                control += `
+                    <input id="${literalID}" type="${secret ? 'password' : 'text'}"
+                        ${secret ? 'autocomplete="off"' : `list="${suggestionsID}"`}
+                        aria-label="${row.name} value"
+                        oninput="${g}.setValue('${row.name}', this.value)"
+                        placeholder="${row.matches?.length ? 'Or enter a value' : 'Enter a value'}"
+                        class="nu-input nu-mono text-xs w-full" />
+                    ${secret ? '' : `<datalist id="${suggestionsID}"></datalist>`}`;
+            }
 
             const flag = row.pending
                 ? `<span class="text-[11px] text-amber-500 ml-2">${row.suggested ? 'confirm' : 'needs a value'}</span>`
@@ -427,20 +496,27 @@
                   ${control}
                 </div>`;
         }).join('');
+        this.renderSuggestions();
     };
 
     ImportResolver.prototype.setChoice = function (name, source) {
         if (source) {
             this.choices[name] = source;
             delete this.values[name];
+            const input = this.el('Value-' + name);
+            if (input) input.value = '';
         } else {
             delete this.choices[name];
         }
+        if (name === 'AI_BASE_URL') this.renderSuggestions();
     };
 
     ImportResolver.prototype.setValue = function (name, value) {
         this.values[name] = value;
         delete this.choices[name];
+        const select = this.el('Choice-' + name);
+        if (select) select.value = '';
+        if (name === 'AI_BASE_URL') this.renderSuggestions();
     };
 
     // Every variable must end up with a value, so the popup refuses to confirm
@@ -455,6 +531,7 @@
     };
 
     ImportResolver.prototype.confirm = async function () {
+        if (this.saving) return false;
         this.showError('');
         const missing = this.unresolved();
         if (missing.length) {
@@ -462,6 +539,8 @@
             return false;
         }
 
+        const opening = this.opening;
+        this.saving = true;
         try {
             const response = await fetch(this.url(), {
                 method: 'POST',
@@ -469,6 +548,7 @@
                 body: JSON.stringify({ choices: this.choices, values: this.values })
             });
             const data = await response.json().catch(() => ({}));
+            if (opening !== this.opening) return false;
             if (!response.ok) {
                 this.showError(data.error || 'Failed to save');
                 return false;
@@ -477,8 +557,10 @@
             if (this.onResolved) this.onResolved(this.appName);
             return true;
         } catch (err) {
-            this.showError('Failed to save: ' + err.message);
+            if (opening === this.opening) this.showError('Failed to save: ' + err.message);
             return false;
+        } finally {
+            if (opening === this.opening) this.saving = false;
         }
     };
 

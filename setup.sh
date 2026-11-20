@@ -253,15 +253,23 @@ ok "air is available"
 # .licenserc.yaml: `license-eye header check` reports files missing the header,
 # `header fix` adds it. WHY pinned: @latest silently changes the header
 # recognition pattern, which would rewrite already-headered files.
-LICENSE_EYE_VERSION="v0.8.0"
+LICENSE_EYE_MODULE="github.com/apache/skywalking-eyes"
+LICENSE_EYE_VERSION="v0.9.0"
+license_eye_version() {
+  local bin
+  bin="$(command -v license-eye)" || return 0
+  go version -m "$bin" | awk -v module="$LICENSE_EYE_MODULE" '$1 == "mod" && $2 == module { print $3 }'
+}
 echo "--- Checking license-eye ---"
-if ! command -v license-eye &>/dev/null; then
-  warn "license-eye not found, installing..."
-  go install "github.com/apache/skywalking-eyes/cmd/license-eye@${LICENSE_EYE_VERSION}" \
+if [[ "$(license_eye_version)" != "$LICENSE_EYE_VERSION" ]]; then
+  warn "Installing license-eye ${LICENSE_EYE_VERSION}..."
+  go install "${LICENSE_EYE_MODULE}/cmd/license-eye@${LICENSE_EYE_VERSION}" \
     || fail "go install license-eye failed"
+  hash -r
 fi
-command -v license-eye &>/dev/null || fail "license-eye installation failed"
-ok "license-eye is available"
+[[ "$(license_eye_version)" == "$LICENSE_EYE_VERSION" ]] \
+  || fail "license-eye version mismatch: expected ${LICENSE_EYE_VERSION}"
+ok "license-eye ${LICENSE_EYE_VERSION} is available"
 
 # --- 5. Install Node 24 via NodeSource if npm is missing (may be from the .deb) ---
 echo "--- Checking npm ---"
@@ -395,7 +403,7 @@ ok "local k3s API is ready"
 
 # start.sh owns installation for trudev; setup validates the same prerequisite
 # explicitly so WSL/local-k3s fails before run.sh can leave a partial dev loop.
-KUBEFWD_VERSION="1.25.16"
+KUBEFWD_VERSION="1.25.18"
 command -v kubefwd &>/dev/null \
   || fail "kubefwd ${KUBEFWD_VERSION} is required (trudev: run start.sh on macOS; native Linux: run ./start.sh; WSL: install the pinned Linux release)"
 KUBEFWD_INSTALLED_VERSION="$(

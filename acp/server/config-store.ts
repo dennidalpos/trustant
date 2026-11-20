@@ -78,8 +78,8 @@ export const DEFAULT_CONFIG: StandaloneConfig = {
 		codex: {
 			id: "codex",
 			displayName: "Codex",
-			command: "npx",
-			args: ["-y", "@agentclientprotocol/codex-acp"],
+			command: "codex-acp",
+			args: [],
 			env: [],
 			apiKeyEnvVar: "OPENAI_API_KEY",
 		},

@@ -17,11 +17,14 @@ package main
 
 import (
 	"encoding/json"
+	"io"
+	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
+	"sync/atomic"
 	"testing"
 )
 
@@ -147,6 +150,65 @@ func bindTestApp(t *testing.T, dev map[string]string, pool map[string]string, di
 		t.Fatalf("save config: %s", err)
 	}
 	return workbenchPath
+}
+
+func TestImportOllamaSuggestions(t *testing.T) {
+	workbench := bindTestApp(t, nil, map[string]string{"AI_API_KEY": "shared-test-secret"},
+		"AI_BASE_URL=\nAI_CHAT_MODEL=\nAI_API_KEY=\n")
+	if err := os.Rename(workbench, filepath.Join(WorkbenchDir, "demoapp")); err != nil {
+		t.Fatal(err)
+	}
+	var requests atomic.Int32
+	ollama := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests.Add(1)
+		if r.Method != http.MethodGet || r.URL.Path != "/api/tags" {
+			t.Errorf("unexpected Ollama request %s %s", r.Method, r.URL.Path)
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		_, _ = io.WriteString(w, `{"models":[{"name":"z:custom"},{"name":"a"},{"name":"a:latest"}]}`)
+	}))
+	t.Cleanup(ollama.Close)
+	originalEndpoint := OllamaEndpoint
+	OllamaEndpoint = ollama.URL
+	t.Cleanup(func() { OllamaEndpoint = originalEndpoint })
+
+	cfg, err := loadWorkspaceConfig()
+	if err != nil {
+		t.Fatal(err)
+	}
+	cfg.Provider, cfg.BaseURL, cfg.APIKey = "ollama", ollama.URL+"/v1", "global-test-secret"
+	if err := saveWorkspaceConfig(cfg); err != nil {
+		t.Fatal(err)
+	}
+
+	get := func(query string) *httptest.ResponseRecorder {
+		t.Helper()
+		rec := httptest.NewRecorder()
+		handleImports(rec, httptest.NewRequest("GET", "/api/imports/demoapp"+query, nil))
+		return rec
+	}
+	get("")
+	get("?mode=production&host=example.test&suggestions=1")
+	if requests.Load() != 0 {
+		t.Fatalf("Ollama queried outside the development suggestions request: %d", requests.Load())
+	}
+
+	rec := get("?suggestions=1")
+	var result map[string]importSuggestions
+	if rec.Code != http.StatusOK || json.Unmarshal(rec.Body.Bytes(), &result) != nil {
+		t.Fatalf("unexpected response %d: %s", rec.Code, rec.Body.String())
+	}
+	want := importSuggestions{BaseURL: ollama.URL + "/v1", Models: []string{"a", "z:custom"}}
+	if !reflect.DeepEqual(result, map[string]importSuggestions{"suggestions": want}) || requests.Load() != 1 ||
+		strings.Contains(rec.Body.String(), "test-secret") || rec.Header().Get("Cache-Control") != "no-store" {
+		t.Fatalf("unexpected suggestions or request count (%d): %s", requests.Load(), rec.Body.String())
+	}
+
+	ollama.Close()
+	if got := strings.TrimSpace(get("?suggestions=1").Body.String()); got != `{"suggestions":{}}` {
+		t.Fatalf("unavailable Ollama should yield no suggestions, got %s", got)
+	}
 }
 
 // An exact binding reads the pool entry of its own name; a wildcard with one

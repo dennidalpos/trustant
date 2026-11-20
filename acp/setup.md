@@ -98,7 +98,8 @@ hardcoded in `setup.sh`.** Each line is a literal npm install spec,
 
 ```
 # Codex — CLI + ACP adapter
-@openai/codex@0.144.6
+@openai/codex@0.170.0
+@agentclientprotocol/codex-acp@2.8.0
 ...
 @earendil-works/pi-ai@0.82.0
 @earendil-works/pi-tui@0.82.0
@@ -109,7 +110,8 @@ hardcoded in `setup.sh`.** Each line is a literal npm install spec,
 
 `setup.sh` reads the file, passes CLI/ACP specs to `npm install -g`, and registers
 the two Pi extension specs as `npm:<package>@<version>` with `pi install`.
-Upgrading an agent or extension is therefore a one-line edit here.
+Update the reviewed integrity in `pi.integrity` when changing a Codex or Pi
+runtime pin.
 
 The upstream Pi package set is a single reviewed release. Before installation,
 `setup.sh` compares `npm view <spec> dist.integrity` with the checked-in SHA-512

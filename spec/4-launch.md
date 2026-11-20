@@ -166,6 +166,16 @@ missing variable simply continues.
 Cancelling the editor abandons the launch. Nothing was started on the cluster,
 so there is nothing to undo.
 
+For pending development variables, the popup can fetch
+`GET /api/imports/<app>?suggestions=1`. This returns only suggested values.
+When Ollama is configured and its model list is reachable, the popup offers its
+OpenAI-compatible URL for `AI_BASE_URL` and the installed models for
+`AI_CHAT_MODEL`. A different URL leaves the model field available for manual
+entry. These fields and `AI_API_KEY` accept a manual value even when a shared
+reference is offered. The workspace provider key is never included in the
+suggestions response. The publish popup continues to use the target host's
+production pool.
+
 ### Use shared values
 
 When the workspace has shared variables (`predefined_env`, see

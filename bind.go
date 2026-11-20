@@ -36,11 +36,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 )
 
 // EnvBinding is one .env.dist line: the app's own variable name, and the
@@ -647,7 +649,7 @@ func handleImports(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		handleImportsGet(w, app)
+		handleImportsGet(w, app, r.URL.Query().Get("suggestions") == "1")
 	case http.MethodPost:
 		handleImportsSave(w, r, app)
 	default:
@@ -655,7 +657,7 @@ func handleImports(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleImportsGet(w http.ResponseWriter, app string) {
+func handleImportsGet(w http.ResponseWriter, app string, includeSuggestions bool) {
 	resolutions, err := resolveImports(app)
 	if err != nil {
 		writeJSONError(w, http.StatusInternalServerError, err.Error())
@@ -665,6 +667,11 @@ func handleImportsGet(w http.ResponseWriter, app string) {
 	cfg, err := loadTrustantConfig()
 	if err != nil {
 		writeJSONError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if includeSuggestions {
+		w.Header().Set("Cache-Control", "no-store")
+		writeJSON(w, map[string]importSuggestions{"suggestions": importOllamaSuggestions(cfg, resolutions)})
 		return
 	}
 	poolNames := make([]string, 0, len(cfg.PredefinedEnv))
@@ -688,6 +695,55 @@ func handleImportsGet(w http.ResponseWriter, app string) {
 		"resolutions": resolutions,
 		"pool":        poolNames,
 	})
+}
+
+type importSuggestions struct {
+	BaseURL string   `json:"baseURL,omitempty"`
+	Models  []string `json:"models,omitempty"`
+}
+
+func importOllamaSuggestions(cfg *trustantConfig, rows []ImportResolution) importSuggestions {
+	if cfg.Provider != "ollama" {
+		return importSuggestions{}
+	}
+	var needsURL, needsModel bool
+	for _, row := range rows {
+		needsURL = needsURL || row.Pending && row.Name == "AI_BASE_URL"
+		needsModel = needsModel || row.Pending && row.Name == "AI_CHAT_MODEL"
+	}
+	if !needsURL && !needsModel {
+		return importSuggestions{}
+	}
+
+	root, _ := resolveOllamaRoot(cfg)
+	endpoint, err := url.Parse(root)
+	if err != nil || endpoint.Hostname() == "" || (endpoint.Scheme != "http" && endpoint.Scheme != "https") ||
+		endpoint.User != nil || endpoint.RawQuery != "" || endpoint.Fragment != "" {
+		return importSuggestions{}
+	}
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+		CheckRedirect: func(*http.Request, []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
+	names, err := ollamaModelNames(root, client)
+	if err != nil {
+		return importSuggestions{}
+	}
+	suggestions := importSuggestions{BaseURL: piBaseURL(cfg)}
+	if needsModel {
+		seen := make(map[string]bool)
+		sort.Strings(names)
+		for _, name := range names {
+			key := normalizeOllamaModelName(name)
+			if !seen[key] {
+				suggestions.Models = append(suggestions.Models, name)
+				seen[key] = true
+			}
+		}
+	}
+	return suggestions
 }
 
 func handleProductionImportsGet(w http.ResponseWriter, app, host string) {
@@ -760,7 +816,7 @@ func handleImportsSave(w http.ResponseWriter, r *http.Request, app string) {
 		}
 	}
 
-	handleImportsGet(w, app)
+	handleImportsGet(w, app, false)
 }
 
 // saveImportBindings validates and writes .env.dist. Validation is total: one

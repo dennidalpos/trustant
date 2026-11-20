@@ -4,8 +4,8 @@
 #
 # Format: one literal npm install spec per line, `<module>@<version>`.
 # Every line MUST carry a version — setup.sh aborts on an unpinned entry.
-# Blank lines and `#` comments are ignored. To upgrade, edit a version here;
-# nothing else needs to change.
+# Blank lines and `#` comments are ignored. Update the reviewed SRI in
+# pi.integrity when changing an integrity pin.
 
 # Claude Code is NOT listed here on purpose: everything in this file ends up
 # in the published image, and Claude Code is proprietary. Its pins live in
@@ -15,8 +15,8 @@
 # Codex — CLI + ACP adapter
 # (@zed-industries/codex-acp is deprecated in favour of the
 #  @agentclientprotocol scope; same codex-acp bin, drop-in.)
-@openai/codex@0.144.6
-@agentclientprotocol/codex-acp@1.1.4
+@openai/codex@0.170.0
+@agentclientprotocol/codex-acp@2.8.0
 
 # Pi CLI and core — exact upstream release. setup.sh verifies the five package
 # integrities recorded in pi.integrity before installing them as one lockstep

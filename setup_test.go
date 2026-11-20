@@ -284,6 +284,16 @@ func TestPythonMCPServersPinTheMCPSDK(t *testing.T) {
 	}
 }
 
+func TestImageCopiesOllamaCPURunner(t *testing.T) {
+	content, err := os.ReadFile(filepath.Join("image", "Dockerfile"))
+	if err != nil {
+		t.Fatalf("read image/Dockerfile: %s", err)
+	}
+	if !strings.Contains(string(content), "COPY --from=loader /usr/local/lib/ollama/llama-server /usr/local/lib/ollama/") {
+		t.Fatal("image/Dockerfile must copy the llama-server executable with the CPU libraries")
+	}
+}
+
 func TestGitHubCLIIsPinnedForVMAndImage(t *testing.T) {
 	setupContent, err := os.ReadFile("setup.sh")
 	if err != nil {
@@ -298,7 +308,7 @@ func TestGitHubCLIIsPinnedForVMAndImage(t *testing.T) {
 	// install the same verified GitHub CLI. Asserting the literal in both files
 	// would force exactly the drift this contract exists to prevent.
 	for _, required := range []string{
-		"ARG GH_VERSION=2.96.0",
+		"ARG GH_VERSION=2.105.0",
 		"ARG GH_SHA_AMD64=",
 		"ARG GH_SHA_ARM64=",
 	} {
@@ -316,7 +326,7 @@ func TestGitHubCLIIsPinnedForVMAndImage(t *testing.T) {
 			t.Fatalf("setup.sh must read the GitHub CLI pin from image/Dockerfile, missing %q", required)
 		}
 	}
-	if strings.Contains(setup, "GH_VERSION=2.96.0") {
+	if strings.Contains(setup, "GH_VERSION=2.105.0") {
 		t.Fatal("setup.sh must not hardcode GH_VERSION; it reads the pin from image/Dockerfile")
 	}
 
@@ -539,7 +549,7 @@ func TestStartInstallsPinnedKubefwdForSupportedArchitectures(t *testing.T) {
 	}
 	start := string(content)
 	for _, required := range []string{
-		`KUBEFWD_VERSION="1.25.16"`,
+		`KUBEFWD_VERSION="1.25.18"`,
 		`kubefwd_Linux_${archive_arch}.tar.gz`,
 		`KUBEFWD_SHA_AMD64=`,
 		`KUBEFWD_SHA_ARM64=`,

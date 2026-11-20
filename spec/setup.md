@@ -136,7 +136,8 @@ then install air (go install github.com/air-verse/air@latest)
 
 then install license-eye, the Apache skywalking-eyes license-header tool, at a
 pinned version (go install
-github.com/apache/skywalking-eyes/cmd/license-eye@v0.8.0). It enforces the AGPL
+github.com/apache/skywalking-eyes/cmd/license-eye@v0.9.0). Setup checks the
+installed Go module version and installs the pin when it differs. It enforces the AGPL
 headers declared in `.licenserc.yaml`: `license-eye header check` reports files
 missing a header, `license-eye header fix` adds one. The version is pinned
 rather than `@latest` because the header recognition pattern changes between
@@ -237,7 +238,7 @@ missing (apt via passwordless sudo, the pinned upstream Milvus CLI via uv):
 - lsof, required by Trustant's orphaned TruACP/Vite listener recovery
 - milvus-cli 1.2.1, installed globally with its upstream entry points under
   `/usr/local/bin`
-- GitHub CLI 2.96.0, installed from the official Linux tarball under
+- GitHub CLI 2.105.0, installed from the official Linux tarball under
   `/usr/local/bin/gh`
 
 (uv itself was ensured in step 3. There is no `/opt/homebrew` in the VM.

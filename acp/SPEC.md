@@ -118,7 +118,7 @@ Single JSON file, loaded at server start, hot-reloadable via the settings API. S
       "env": [],
       "apiKeyEnvVar": "ANTHROPIC_API_KEY"               // was apiKeySecretId
     },
-    "codex":  { "id": "codex",  "displayName": "Codex",  "command": "npx", "args": ["-y", "@agentclientprotocol/codex-acp"], "env": [], "apiKeyEnvVar": "OPENAI_API_KEY" },
+    "codex":  { "id": "codex",  "displayName": "Codex",  "command": "codex-acp", "args": [], "env": [], "apiKeyEnvVar": "OPENAI_API_KEY" },
     "pi":     { "id": "pi",     "displayName": "Pi",     "command": "npx", "args": ["-y", "pi-acp"], "env": [], "apiKeyEnvVar": "PI_API_KEY" }
   },
   "customAgents": [
@@ -479,8 +479,8 @@ Each line is a **literal npm install spec**, `<module>@<version>`. `#` comments
 and blank lines are ignored:
 
 ```
-@openai/codex@0.144.6
-@agentclientprotocol/codex-acp@1.1.4
+@openai/codex@0.170.0
+@agentclientprotocol/codex-acp@2.8.0
 pi-mcp-adapter@2.11.0
 pi-web-access@0.13.0
 ```
