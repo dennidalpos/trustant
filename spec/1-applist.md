@@ -54,6 +54,9 @@ search, sort by name or repository, segmented filters for all/production/
 development-only, a grid view, a denser list view as the default, and a visible count of
 matching applications. Searching filters by app name, repository, production
 host, and production user without calling the backend again.
+The 24 px summary values have a contrast ratio of at least 3:1 against their
+cards. The search placeholder has a contrast ratio of at least 4.5:1 against
+the input background.
 
 The visual language follows the current Nuvolaris website system: Work Sans for
 UI text, lightweight headings, a near-paper background, small 4px radii, thin
