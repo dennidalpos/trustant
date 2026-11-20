@@ -16,12 +16,178 @@
 package main
 
 import (
+	"context"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
+	"time"
 )
+
+func runStartupFixture(t *testing.T, script string) (string, error) {
+	t.Helper()
+	bash, err := exec.LookPath("bash")
+	if runtime.GOOS == "windows" {
+		// The Windows bash launcher starts WSL. Use Git Bash to keep the
+		// fixture on the host and avoid booting a registered distribution.
+		git, gitErr := exec.LookPath("git")
+		if gitErr != nil {
+			t.Skip("Git Bash is required on Windows")
+		}
+		bash = filepath.Join(filepath.Dir(filepath.Dir(git)), "bin", "bash.exe")
+		_, err = os.Stat(bash)
+	}
+	if err != nil {
+		t.Skipf("Bash is required: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	t.Setenv("BASH_ENV", "")
+	cmd := exec.CommandContext(ctx, bash, "--noprofile", "--norc", "-euo", "pipefail", "-s")
+	cmd.Stdin = strings.NewReader(script)
+	output, err := cmd.CombinedOutput()
+	if ctx.Err() != nil {
+		t.Fatalf("Bash fixture timed out: %s", output)
+	}
+	return string(output), err
+}
+
+func TestSetupOpenServerlessPromptFixture(t *testing.T) {
+	raw, err := os.ReadFile("setup.sh")
+	if err != nil {
+		t.Fatal(err)
+	}
+	source := strings.ReplaceAll(string(raw), "\r\n", "\n")
+	_, source, found := strings.Cut(source, "# OpenServerless bash aliases/prompt:")
+	guard, _, complete := strings.Cut(source, "\nfi\n")
+	if !found || !complete || !strings.Contains(guard, "/mnt/lima-cidata") {
+		t.Fatal("setup.sh is missing the OpenServerless prompt block or Lima marker")
+	}
+	// Execute the production guard with the Lima mount redirected into the
+	// fixture's home. The real mount and the user's aliases are never used.
+	guard = strings.Replace(guard, "/mnt/lima-cidata", `"$FIXTURE_HOME/lima-cidata"`, 1)
+
+	for _, tc := range []struct {
+		name, distro, host string
+		lima, installs     bool
+	}{
+		{name: "native host with matching hostname", host: "trudev"},
+		{name: "unrelated WSL", distro: "Trustant-Demo", host: "trudev"},
+		{name: "Trustant WSL", distro: "trudev", host: "windows", installs: true},
+		{name: "unrelated Lima guest", lima: true, host: "other"},
+		{name: "Trustant Lima guest", lima: true, host: "lima-trudev", installs: true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			home := t.TempDir()
+			aliases := filepath.Join(home, ".bash_aliases")
+			if err := os.WriteFile(aliases, []byte("existing alias\n"), 0600); err != nil {
+				t.Fatal(err)
+			}
+			if tc.lima {
+				if err := os.Mkdir(filepath.Join(home, "lima-cidata"), 0700); err != nil {
+					t.Fatal(err)
+				}
+			}
+			t.Setenv("WSL_DISTRO_NAME", tc.distro)
+			t.Setenv("FIXTURE_HOST", tc.host)
+			t.Setenv("FIXTURE_HOME", filepath.ToSlash(home))
+			output, err := runStartupFixture(t, `
+export HOME="$FIXTURE_HOME"
+hostname() { printf '%s\n' "$FIXTURE_HOST"; }
+curl() { printf 'OpenServerless fixture alias\n'; }
+ok() { :; }
+warn() { return 1; }
+# OpenServerless bash aliases/prompt:`+guard+"\nfi\n")
+			if err != nil {
+				t.Fatalf("execute setup prompt block: %v\n%s", err, output)
+			}
+			want := "existing alias\n"
+			if tc.installs {
+				want = "OpenServerless fixture alias\n"
+			}
+			got, err := os.ReadFile(aliases)
+			if err != nil || string(got) != want {
+				t.Fatalf("aliases = %q, err = %v, want %q", got, err, want)
+			}
+		})
+	}
+}
+
+func TestStartOpenWhiskReadinessFixture(t *testing.T) {
+	raw, err := os.ReadFile("start.sh")
+	if err != nil {
+		t.Fatal(err)
+	}
+	source := strings.ReplaceAll(string(raw), "\r\n", "\n")
+	_, source, found := strings.Cut(source, "\nwait_for_openwhisk() {\n")
+	body, _, complete := strings.Cut(source, "\n}\n\n")
+	if !found || !complete {
+		t.Fatal("start.sh is missing the OpenWhisk readiness function")
+	}
+
+	// Run the actual guest script with fixture commands. Every HTTP request
+	// must retain the loopback override and the expected ingress hostname.
+	const fixture = `
+NATIVE_LINUX=false
+run_privileged() { while IFS= read -r line; do :; done; }
+run_guest() { "$@"; }
+ok() { printf '%s\n' "$1"; }
+seq() { printf '1\n2\n'; }
+sleep() { :; }
+curl() {
+    if [[ "$1" != --resolve || "$2" != miniops.me:80:127.0.0.1 ]]; then
+        return 22
+    fi
+    case "${!#}" in
+        http://miniops.me)
+            [[ "$FIXTURE_RESPONSE" != no-ingress ]]
+            ;;
+        http://miniops.me/api/info)
+            if [[ "$FIXTURE_RESPONSE" == wrong-backend ]]; then
+                printf '{"description":"Other service"}\n'
+            else
+                printf '{"description":"OpenWhisk"}\n'
+            fi
+            ;;
+        *)
+            return 22
+            ;;
+    esac
+}
+jq() {
+    [[ "$*" == "-r .description" ]]
+    IFS= read -r response
+    case "$response" in
+        '{"description":"OpenWhisk"}') printf 'OpenWhisk\n' ;;
+        '{"description":"Other service"}') printf 'Other service\n' ;;
+        *) return 1 ;;
+    esac
+}
+export -f seq sleep curl jq
+`
+	for _, tc := range []struct {
+		response, message string
+		succeeds          bool
+	}{
+		{"ready", "OpenWhisk is serving on http://miniops.me in the VM", true},
+		{"no-ingress", "http://miniops.me never answered", false},
+		{"wrong-backend", "never reported description OpenWhisk (last: Other service)", false},
+	} {
+		t.Run(tc.response, func(t *testing.T) {
+			t.Setenv("FIXTURE_RESPONSE", tc.response)
+			output, err := runStartupFixture(t, fixture+"\nwait_for_openwhisk() {\n"+body+"\n}\nwait_for_openwhisk\n")
+			if (err == nil) != tc.succeeds || !strings.Contains(output, tc.message) {
+				t.Fatalf("readiness err = %v, want success = %t and output containing %q\n%s", err, tc.succeeds, tc.message, output)
+			}
+			if !tc.succeeds && strings.Contains(output, "OpenWhisk is serving") {
+				t.Fatalf("readiness reported success after failure:\n%s", output)
+			}
+		})
+	}
+}
 
 func TestSetupInstallsCheckedOutOpenServerlessMCP(t *testing.T) {
 	content, err := os.ReadFile("setup.sh")
