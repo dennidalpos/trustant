@@ -83,6 +83,7 @@ Server flags: `--dir` (project directory), `--port` (default 4096), `--config` (
 
 `npm run dev:plugin` builds the legacy Obsidian plugin from `src/main.ts` using `esbuild.config.mjs`. Obsidian supplies its API and CodeMirror at runtime.
 For legacy source type information and Obsidian-specific lint, run `npm ci --prefix obsidian-legacy` and `npm run --prefix obsidian-legacy lint` from `acp/`. The standalone web and server builds use the standard `acp/` installation.
+The optional Obsidian linter supports Node.js 20.19 and later in the 20.x series, 22.13 and later in the 22.x series, and Node.js 24 or later.
 
 ## Agents
 

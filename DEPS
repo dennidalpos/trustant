@@ -649,26 +649,36 @@ Installed by start.sh / start.ps1 / setup.sh / run.sh on a developer
 machine or dev VM. Not part of the binary or the image; no notices are
 collected for them.
 
-NAME                                      VERSION  LICENSE                                 HOMEPAGE
-----                                      -------  -------                                 --------
-@codemirror/state (legacy plugin)         6.7.6    MIT                                     https://codemirror.net/
-@codemirror/view (legacy plugin)          6.43.13  MIT                                     https://codemirror.net/
-@playwright/test (e2e tests)              1.65.1   Apache-2.0                              https://github.com/microsoft/playwright
-air                                       latest   GPL-3.0-only                            https://github.com/air-verse/air
-Biome                                     2.6.8    MIT OR Apache-2.0                       https://biomejs.dev
-eslint-plugin-obsidianmd (legacy plugin)  0.1.9    MIT                                     https://github.com/obsidianmd/eslint-plugin-obsidianmd
-ffmpeg (screenshot.sh)                    distro   LGPL-2.1-or-later AND GPL-2.0-or-later  https://ffmpeg.org
-g (Go version manager)                    latest   MIT                                     https://github.com/voidint/g
-Hadolint                                  2.15.1   GPL-3.0-only                            https://github.com/hadolint/hadolint
-k3s                                       via ops  Apache-2.0                              https://github.com/k3s-io/k3s
-kubefwd                                   1.25.18  Apache-2.0                              https://github.com/txn2/kubefwd
-license-eye (skywalking-eyes)             0.9.0    Apache-2.0                              https://github.com/apache/skywalking-eyes
-Lima                                      latest   Apache-2.0                              https://github.com/lima-vm/lima
-obsidian (legacy plugin API types)        1.14.4   MIT                                     https://github.com/obsidianmd/obsidian-api
-PSScriptAnalyzer                          1.25.0   MIT                                     https://github.com/PowerShell/PSScriptAnalyzer
-Ruff                                      0.14.14  MIT                                     https://github.com/astral-sh/ruff
-ShellCheck                                0.11.0   GPL-3.0-only                            https://github.com/koalaman/shellcheck
-WSL2 / Ubuntu-24.04 distro (Windows)      -        LicenseRef-Debian-Copyright             https://ubuntu.com
+NAME                                                          VERSION  LICENSE                                 HOMEPAGE
+----                                                          -------  -------                                 --------
+@codemirror/state (legacy plugin)                             6.7.6    MIT                                     https://codemirror.net/
+@codemirror/view (legacy plugin)                              6.43.13  MIT                                     https://codemirror.net/
+@eslint-community/eslint-plugin-eslint-comments (legacy plugin)  4.8.1    MIT                                     https://github.com/eslint-community/eslint-plugin-eslint-comments
+@eslint/config-helpers (legacy plugin)                        0.7.0    Apache-2.0                              https://github.com/eslint/rewrite
+@eslint/core (legacy plugin)                                  1.2.1    Apache-2.0                              https://github.com/eslint/rewrite
+@eslint/json (legacy plugin)                                  2.1.1    Apache-2.0                              https://github.com/eslint/json
+@eslint/plugin-kit (legacy plugin)                            0.7.3    Apache-2.0                              https://github.com/eslint/rewrite
+@humanwhocodes/momoa (legacy plugin)                          3.3.13   Apache-2.0                              https://github.com/humanwhocodes/momoa
+@playwright/test (e2e tests)                                  1.65.1   Apache-2.0                              https://github.com/microsoft/playwright
+air                                                           latest   GPL-3.0-only                            https://github.com/air-verse/air
+Biome                                                         2.6.8    MIT OR Apache-2.0                       https://biomejs.dev
+eslint-plugin-n (legacy plugin)                               17.24.0  MIT                                     https://github.com/eslint-community/eslint-plugin-n
+eslint-plugin-no-unsanitized (legacy plugin)                  4.1.5    MPL-2.0                                 https://github.com/mozilla/eslint-plugin-no-unsanitized
+eslint-plugin-obsidianmd (legacy plugin)                      0.6.0    MIT                                     https://github.com/obsidianmd/eslint-plugin
+ffmpeg (screenshot.sh)                                        distro   LGPL-2.1-or-later AND GPL-2.0-or-later  https://ffmpeg.org
+g (Go version manager)                                        latest   MIT                                     https://github.com/voidint/g
+globrex (legacy plugin)                                       0.1.2    MIT                                     https://github.com/terkelg/globrex
+Hadolint                                                      2.15.1   GPL-3.0-only                            https://github.com/hadolint/hadolint
+k3s                                                           via ops  Apache-2.0                              https://github.com/k3s-io/k3s
+kubefwd                                                       1.25.18  Apache-2.0                              https://github.com/txn2/kubefwd
+license-eye (skywalking-eyes)                                 0.9.0    Apache-2.0                              https://github.com/apache/skywalking-eyes
+Lima                                                          latest   Apache-2.0                              https://github.com/lima-vm/lima
+obsidian (legacy plugin API types)                            1.14.4   MIT                                     https://github.com/obsidianmd/obsidian-api
+PSScriptAnalyzer                                              1.25.0   MIT                                     https://github.com/PowerShell/PSScriptAnalyzer
+Ruff                                                          0.14.14  MIT                                     https://github.com/astral-sh/ruff
+ShellCheck                                                    0.11.0   GPL-3.0-only                            https://github.com/koalaman/shellcheck
+ts-declaration-location (legacy plugin)                       1.0.7    BSD-3-Clause                            https://github.com/RebeccaStevens/ts-declaration-location
+WSL2 / Ubuntu-24.04 distro (Windows)                          -        LicenseRef-Debian-Copyright             https://ubuntu.com
 
 
 LICENSE NOTES
