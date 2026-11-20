@@ -10,6 +10,21 @@ Repository knowledge lives in the SecondBrain dossier; code, guides, and publish
 - Write only to this repository's dossier `repos/<repo>/`, only through SecondBrain scripts or MCP write tools. Work folders come from the work tool's init mode; sessions, retention, and cleanup rules load from `sb prompt`.
 - Commits, pushes, deletions, and publication require specific authorization.
 - Every task you create or update must run unattended. For an autonomous task, ask the user for what `needsInfo` or the readiness result reports missing (files in scope, checks to run, acceptance, inputs, decisions) with the client's structured question tool; skip it only when the user says otherwise, then set `execution` to `user_required`.
+
+## Toolchain and local lint
+
+- Use the Go version declared in `go.mod` (currently 1.25.5). Development setup and the image use Ubuntu 24.04 and Node.js 24.
+- Run `npm ci` and `npm run lint` from the root for cross-language lint. The Go vet step targets Linux and supplies a temporary `_build.txt` overlay when needed. For a UI-only lint pass, run `npm run lint:web -- web`.
+
+## Component checks
+
+- At the root, use `npm run test:tutorial` for spotlight changes and `npm run test:e2e-providers` for provider harness and session-tree changes.
+- In `acp/`, use `npm test` for TruACP and `npm run build` to verify both bundles. In `acp/pi-acp/`, use `npm test` for adapter changes. In `react-mcp/`, use `npm run typecheck` and `npm test` for React project validation changes.
+
+## Browser sources and generated bundles
+
+- Edit `web/` for the main Trustant UI and `acp/web/` for the assistant UI. The Go server serves the main UI from disk in development and embeds it in production.
+- Regenerate `acp/dist-web/`, `acp/server/web-bundle.generated.ts`, and `acp/dist-bin/` through the TruACP build. Keep edits in the source files.
 <!-- secondbrain:repository:end -->
 
 ## Scope and authorization
