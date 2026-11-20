@@ -80,7 +80,7 @@ is copied into the image.
 NAME                            VERSION             LICENSE            HOMEPAGE
 ----                            -------             -------            --------
 mcp (openserverless-mcp)        main@baf14007f910   Apache-2.0         https://github.com/trustant/openserverless-mcp
-oplugins (openserverless-task)  0.9.0@455258e93971  Apache-2.0         https://github.com/trustable-ai/openserverless-task
+oplugins (openserverless-task)  0.9.0@27b281eb7615  Apache-2.0         https://github.com/trustable-ai/openserverless-task
 oplugins-truinst                main@b65d58d49a3a   AGPL-3.0-or-later  https://github.com/trustant/oplugins-truinst
 skills                          main@56d349b6174e   Apache-2.0         https://github.com/trustable-ai/skills
 

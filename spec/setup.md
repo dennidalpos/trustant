@@ -92,10 +92,10 @@ the guest user's own $HOME).
 
 2. check ops is in the path and that it resolves the Trustant task source
 
-ops may already be present from the VM's trustant package. If ops is missing,
-install it and add ~/.ops/linux-<arch>/bin to the path:
-
-curl -sL n7s.co/get-ops-tru | bash
+Check the current PATH first, then `~/.local/bin` for an existing `ops`. If it is
+absent, download `https://n7s.co/get-ops-tru` over HTTPS and run it only after a
+successful, nonempty download. Setup reports download and installer failures
+separately. Add `~/.ops/linux-<arch>/bin` to PATH for the tools `ops` installs.
 
 Use `get-ops-tru`, NOT `get-ops`. They are different installers: `get-ops`
 resolves `apache/openserverless-task` and the Apache CLI build, while

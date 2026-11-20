@@ -1825,7 +1825,7 @@ mcp (openserverless-mcp) main@baf14007f910 (Apache-2.0)
   | This product includes software developed at
   | The Apache Software Foundation (http://www.apache.org/).
 
-oplugins (openserverless-task) 0.9.0@455258e93971 (Apache-2.0)
+oplugins (openserverless-task) 0.9.0@27b281eb7615 (Apache-2.0)
 
   LICENSE FILE: LICENSE
   |                                  Apache License

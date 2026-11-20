@@ -149,6 +149,7 @@ ok "WORKBENCH_DIR exists: ${WORKBENCH_DIR_EXPANDED}"
 echo "--- Checking ops ---"
 
 OPS_SOURCE_EXPECTED="https://github.com/trustable-ai/openserverless-task"
+OPS_INSTALL_URL="https://n7s.co/get-ops-tru"
 
 # Fail loudly on a leftover export before looking at anything else: it would make
 # the assertion below pass or fail for the wrong reason, and it is the single
@@ -162,11 +163,19 @@ for v in OPS_REPO OPS_BRANCH; do
   fi
 done
 
+# Non-login shells can omit the directory used by the Trustant installer.
+if ! command -v ops &>/dev/null && [[ -f "$HOME/.local/bin/ops" && -x "$HOME/.local/bin/ops" ]]; then
+  add_to_path "$HOME/.local/bin"
+  hash -r
+fi
+
 if ! command -v ops &>/dev/null; then
   warn "ops not found in PATH, installing..."
-  # get-ops-tru, NOT get-ops: they are different installers. get-ops resolves
-  # apache/openserverless-task and the Apache CLI build.
-  curl -sL n7s.co/get-ops-tru | bash || fail "ops install failed"
+  # Wait for a complete download before running the script.
+  ops_installer=$(curl -fsSL --proto '=https' --proto-redir '=https' "$OPS_INSTALL_URL") \
+    || fail "could not download the Trustant ops installer from $OPS_INSTALL_URL"
+  [[ -n "$ops_installer" ]] || fail "the Trustant ops installer from $OPS_INSTALL_URL is empty"
+  bash <<< "$ops_installer" || fail "the Trustant ops installer exited with an error"
   add_to_path "$HOME/.local/bin"
   add_to_path "$HOME/.ops/linux-${ARCH}/bin"
   hash -r
@@ -182,7 +191,7 @@ OPS_SOURCE_ACTUAL=$(ops_info_value OPS_REPO)
 if [[ "$OPS_SOURCE_ACTUAL" != "$OPS_SOURCE_EXPECTED" ]]; then
   warn "ops resolves its task source from '${OPS_SOURCE_ACTUAL:-<unset>}'"
   warn "expected '${OPS_SOURCE_EXPECTED}'"
-  warn "Reinstall the Trustant ops: curl -sL n7s.co/get-ops-tru | bash"
+  warn "Reinstall the Trustant ops from $OPS_INSTALL_URL, then re-run setup.sh"
   fail "ops task source mismatch"
 fi
 ok "ops resolves the Trustant task source ($OPS_SOURCE_EXPECTED)"

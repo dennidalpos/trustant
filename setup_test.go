@@ -55,6 +55,61 @@ func runStartupFixture(t *testing.T, script string) (string, error) {
 	return string(output), err
 }
 
+func TestSetupOpsInstallerFixture(t *testing.T) {
+	raw, err := os.ReadFile("setup.sh")
+	if err != nil {
+		t.Fatal(err)
+	}
+	source := strings.ReplaceAll(string(raw), "\r\n", "\n")
+	_, source, found := strings.Cut(source, `echo "--- Checking ops ---"`+"\n")
+	section, _, complete := strings.Cut(source, "# --- 3.")
+	if !found || !complete {
+		t.Fatal("setup.sh is missing the ops installation section")
+	}
+
+	for _, tc := range []struct {
+		mode, want string
+		fails      bool
+	}{
+		{mode: "existing", want: "ops resolves the Trustant task source"},
+		{mode: "download", want: "could not download the Trustant ops installer", fails: true},
+		{mode: "empty", want: "is empty", fails: true},
+		{mode: "installer", want: "the Trustant ops installer exited with an error", fails: true},
+	} {
+		t.Run(tc.mode, func(t *testing.T) {
+			t.Setenv("FIXTURE_HOME", filepath.ToSlash(t.TempDir()))
+			t.Setenv("FIXTURE_MODE", tc.mode)
+			output, err := runStartupFixture(t, `
+export HOME="$FIXTURE_HOME"
+if [[ "$OSTYPE" == msys || "$OSTYPE" == cygwin ]]; then HOME=$(cygpath -u "$HOME"); fi
+unset OPS_REPO OPS_BRANCH
+ARCH=amd64
+mkdir -p "$HOME/.local/bin"
+if [[ "$FIXTURE_MODE" == existing ]]; then
+  printf '#!/bin/bash\necho "OPS_REPO: https://github.com/trustable-ai/openserverless-task"\n' > "$HOME/.local/bin/ops"
+  chmod +x "$HOME/.local/bin/ops"
+fi
+command() { [[ -x "$HOME/.local/bin/ops" && ":$PATH:" == *":$HOME/.local/bin:"* ]]; }
+add_to_path() { export PATH="$1:$PATH"; }
+ok() { echo "$1"; }
+warn() { echo "$1"; }
+fail() { echo "$1"; exit 1; }
+curl() {
+  case "$FIXTURE_MODE" in
+    download) echo 'echo partial-installer-ran'; return 18 ;;
+    empty) return 0 ;;
+    installer) echo 'exit 7' ;;
+    *) echo 'unexpected-download'; return 1 ;;
+  esac
+}
+`+section)
+			if (err != nil) != tc.fails || !strings.Contains(output, tc.want) || strings.Contains(output, "partial-installer-ran") {
+				t.Fatalf("want %q with failure=%t, got %v\n%s", tc.want, tc.fails, err, output)
+			}
+		})
+	}
+}
+
 func TestSetupOpenServerlessPromptFixture(t *testing.T) {
 	raw, err := os.ReadFile("setup.sh")
 	if err != nil {
@@ -931,16 +986,11 @@ func TestOpsInstallsFromTrustantSourceWithoutObsoleteEnvVars(t *testing.T) {
 		files[name] = string(content)
 	}
 
-	// The installer must be get-ops-tru everywhere ops is installed. Matching on
-	// the bare "n7s.co/get-ops" prefix would also match "get-ops-tru", so assert
-	// on the pipe-to-bash form that an install actually takes.
-	for _, name := range []string{"setup.sh", filepath.Join("image", "Dockerfile")} {
-		if !strings.Contains(files[name], "n7s.co/get-ops-tru | bash") {
-			t.Fatalf("%s must install ops with n7s.co/get-ops-tru", name)
-		}
-		if strings.Contains(files[name], "n7s.co/get-ops | bash") {
-			t.Fatalf("%s installs ops from n7s.co/get-ops, which resolves the Apache fork; use get-ops-tru", name)
-		}
+	if !strings.Contains(files["setup.sh"], `OPS_INSTALL_URL="https://n7s.co/get-ops-tru"`) {
+		t.Fatal("setup.sh must use the Trustant ops installer over HTTPS")
+	}
+	if dockerfile := files[filepath.Join("image", "Dockerfile")]; !strings.Contains(dockerfile, "n7s.co/get-ops-tru | bash") || strings.Contains(dockerfile, "n7s.co/get-ops | bash") {
+		t.Fatal("image/Dockerfile must install ops with n7s.co/get-ops-tru")
 	}
 
 	// No file may declare or export either variable. Comments explaining why they

@@ -7472,10 +7472,10 @@
     {
       "section": "submodule",
       "name": "oplugins (openserverless-task)",
-      "version": "0.9.0@455258e93971",
+      "version": "0.9.0@27b281eb7615",
       "license": "Apache-2.0",
       "homepage": "https://github.com/trustable-ai/openserverless-task",
-      "revision": "455258e93971cab00d1811d409f172b9260a2761",
+      "revision": "27b281eb7615c9094f1c6edab10a2b4fe2fd621c",
       "source": "path:oplugins",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
