@@ -14,31 +14,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Derived from obsidian-agent-client (Apache-2.0), Copyright 2025-2026 RAIT-09; unmodified apart from this header.
+ * Derived from obsidian-agent-client (Apache-2.0), Copyright 2025-2026 RAIT-09; modified by Nuvolaris Inc. (see legal/VENDORED.md).
  */
 
-import tsparser from "@typescript-eslint/parser";
-import { defineConfig } from "eslint/config";
-import obsidianmd from "eslint-plugin-obsidianmd";
-import tseslint from "typescript-eslint";
-
-export default defineConfig([
-	{
-		ignores: ["node_modules/", "main.js", "docs/"],
-	},
-	...obsidianmd.configs.recommended,
-	...tseslint.configs.recommended,
-	{
-		files: ["**/*.ts", "**/*.tsx"],
-		languageOptions: {
-			parser: tsparser,
-			parserOptions: { project: "./tsconfig.eslint.json" },
-		},
-		rules: {
-			// Preserve existing rules
-			"@typescript-eslint/no-unused-vars": ["error", { args: "none" }],
-			"@typescript-eslint/ban-ts-comment": "off",
-			"@typescript-eslint/no-empty-function": "off",
-		},
-	},
-]);
+// Keep ESLint discovery in acp/ while the legacy rules and packages live in
+// the optional Obsidian tooling installation.
+export { default } from "./obsidian-legacy/eslint.config.mjs";

@@ -96,8 +96,11 @@ files with mode `000`, which must not enter Air's checksum scan.
 host-reachable address, resolved in this order: the `current.ip` written by
 `start.sh` under `${XDG_CONFIG_HOME:-$HOME/.config}/trustant/` (on a native
 Linux host this is the LAN address, so the printed URL also works from another
-machine), then the lima0 address inside the VM, then 127.0.0.1;
-no deployment URL is printed. Right after the URL it prints "Interrupt with ^C"
+machine), then the lima0 address inside the VM, then 127.0.0.1.
+The launcher reports startup before Air runs and marks the server ready only
+after an HTTP probe to `/api/version` with the GUI hostname succeeds. If the
+server takes more than 60 seconds, it prints the expected link and continues
+checking while Air is alive. After readiness it prints "Interrupt with ^C"
 and how to restart: "Use .\start.ps1 to restart" inside WSL (detected by
 `WSL_DISTRO_NAME`, or `microsoft` in `/proc/version`), otherwise — the Lima VM
 or a native Ubuntu host — "Use ./start.sh to restart";

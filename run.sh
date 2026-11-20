@@ -345,10 +345,6 @@ fi
 # handled without an unmatched `*` warning on the first clean run.
 sudo chown -Rf "$(id -u):$(id -g)" "$WORKSPACE_DIR" "$WORKBENCH_DIR"
 
-# 3. launch air in background (hot-reloads the Go binary on :8910)
-air &
-AIR_PID=$!
-
 # 5. Trustant handles Ollama Cloud sign-in from the web UI via
 #    /api/ollama-connect. Do not call `ops trustant signin` here: that helper
 #    can invoke legacy Docker-based Ollama commands that are not valid for Lima
@@ -364,17 +360,36 @@ SUPPORT_IP_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/trustant/current.ip"
 IP="$(cat "$SUPPORT_IP_FILE" 2>/dev/null | tr -d '[:space:]')"
 [[ -n "$IP" ]] || IP="$(ip -4 -o addr show lima0 2>/dev/null | awk '{print $4}' | cut -d/ -f1)"
 [[ -n "$IP" ]] || IP="127.0.0.1"
-URL="http://trustant.${IP}.nip.io:8910/"
+GUI_HOST="trustant.${IP}.nip.io"
+URL="http://${GUI_HOST}:8910/"
 
-# Wait until air has built and the server is actually listening on :8910, then
-# print the URL LAST so it is not buried under air's build output.
-for _ in $(seq 1 60); do
-    ss -ltn 2>/dev/null | grep -q ':8910 ' && break
+# Air can keep running while the application builds or retries a failed build.
+echo "Trustant server: starting (waiting for HTTP on port 8910)"
+air &
+AIR_PID=$!
+
+# Use the real GUI hostname for routing and resolve it locally for this probe.
+# Startup should not depend on external DNS or an HTTP proxy.
+deadline=$((SECONDS + 60))
+while kill -0 "$AIR_PID" 2>/dev/null; do
+    if curl --fail --silent --max-time 2 --noproxy '*' \
+        --resolve "${GUI_HOST}:8910:127.0.0.1" "${URL}api/version" -o /dev/null; then
+        printf '\nTrustant server: ready\nOpen the GUI: %s\n' "$URL"
+        break
+    fi
+    if (( deadline > 0 && SECONDS >= deadline )); then
+        printf '\nTrustant server: still waiting for HTTP (60 seconds elapsed)\n'
+        printf 'GUI URL when ready: %s\nCheck the Air output for startup errors.\n' "$URL"
+        deadline=0
+    fi
     sleep 1
 done
-echo ""
-echo "Trustant is running. open this URL in your browser:"
-echo "    $URL"
+if ! kill -0 "$AIR_PID" 2>/dev/null; then
+    echo "Trustant server: Air exited. Check the startup output above." >&2
+    status=0
+    wait "$AIR_PID" || status=$?
+    exit "$((status == 0 ? 1 : status))"
+fi
 echo "Interrupt with ^C"
 # WSL is restarted from PowerShell; Lima and native Ubuntu from start.sh.
 if [[ -n "${WSL_DISTRO_NAME:-}" ]] || grep -qi microsoft /proc/version 2>/dev/null; then

@@ -18,8 +18,8 @@
 /**
  * Browser bundle build for the standalone web UI.
  *
- * Separate from esbuild.config.mjs (which builds the Obsidian CJS plugin). This
- * targets the browser: bundles web/main.tsx → dist-web/main.js (IIFE), emits
+ * This entry point keeps the standalone build independent of the Obsidian host API.
+ * It bundles web/main.tsx → dist-web/main.js (IIFE), emits
  * main.css, and copies index.html. The Node server serves dist-web/ at /.
  *
  * It also embeds the built bundle into the server itself by generating

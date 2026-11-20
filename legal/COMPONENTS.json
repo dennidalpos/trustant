@@ -383,6 +383,28 @@
     },
     {
       "section": "dev",
+      "name": "@codemirror/state (legacy plugin)",
+      "version": "6.7.6",
+      "license": "MIT",
+      "homepage": "https://codemirror.net/",
+      "source": "-",
+      "status": "development-only",
+      "obligation": "Development input; not identified as a shipped runtime by this inventory.",
+      "evidence": []
+    },
+    {
+      "section": "dev",
+      "name": "@codemirror/view (legacy plugin)",
+      "version": "6.43.13",
+      "license": "MIT",
+      "homepage": "https://codemirror.net/",
+      "source": "-",
+      "status": "development-only",
+      "obligation": "Development input; not identified as a shipped runtime by this inventory.",
+      "evidence": []
+    },
+    {
+      "section": "dev",
       "name": "@playwright/test (e2e tests)",
       "version": "1.65.1",
       "license": "Apache-2.0",
@@ -409,6 +431,17 @@
       "version": "2.6.8",
       "license": "MIT OR Apache-2.0",
       "homepage": "https://biomejs.dev",
+      "source": "-",
+      "status": "development-only",
+      "obligation": "Development input; not identified as a shipped runtime by this inventory.",
+      "evidence": []
+    },
+    {
+      "section": "dev",
+      "name": "eslint-plugin-obsidianmd (legacy plugin)",
+      "version": "0.1.9",
+      "license": "MIT",
+      "homepage": "https://github.com/obsidianmd/eslint-plugin-obsidianmd",
       "source": "-",
       "status": "development-only",
       "obligation": "Development input; not identified as a shipped runtime by this inventory.",
@@ -486,6 +519,17 @@
       "version": "latest",
       "license": "Apache-2.0",
       "homepage": "https://github.com/lima-vm/lima",
+      "source": "-",
+      "status": "development-only",
+      "obligation": "Development input; not identified as a shipped runtime by this inventory.",
+      "evidence": []
+    },
+    {
+      "section": "dev",
+      "name": "obsidian (legacy plugin API types)",
+      "version": "1.14.4",
+      "license": "MIT",
+      "homepage": "https://github.com/obsidianmd/obsidian-api",
       "source": "-",
       "status": "development-only",
       "obligation": "Development input; not identified as a shipped runtime by this inventory.",
@@ -607,54 +651,6 @@
         {
           "file": "LICENSE",
           "sha256": "6ed4f049cce59e05197d585bdf8a39980b45d546d6ea718ee344555f3a867c3a"
-        }
-      ]
-    },
-    {
-      "section": "npm-acp",
-      "name": "@codemirror/state",
-      "version": "6.7.6",
-      "license": "MIT",
-      "homepage": "https://www.npmjs.com/package/@codemirror/state",
-      "source": "npm:@codemirror/state@6.7.6",
-      "status": "license-files-collected",
-      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
-      "evidence": [
-        {
-          "file": "LICENSE",
-          "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07"
-        }
-      ]
-    },
-    {
-      "section": "npm-acp",
-      "name": "@codemirror/view",
-      "version": "6.43.13",
-      "license": "MIT",
-      "homepage": "https://www.npmjs.com/package/@codemirror/view",
-      "source": "npm:@codemirror/view@6.43.13",
-      "status": "license-files-collected",
-      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
-      "evidence": [
-        {
-          "file": "LICENSE",
-          "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07"
-        }
-      ]
-    },
-    {
-      "section": "npm-acp",
-      "name": "@marijn/find-cluster-break",
-      "version": "1.0.2",
-      "license": "MIT",
-      "homepage": "https://www.npmjs.com/package/@marijn/find-cluster-break",
-      "source": "npm:@marijn/find-cluster-break@1.0.2",
-      "status": "license-files-collected",
-      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
-      "evidence": [
-        {
-          "file": "LICENSE",
-          "sha256": "9360b00fdd091f05c783b568bdd46c679c41b72415599252de98949462ea1acb"
         }
       ]
     },
@@ -943,22 +939,6 @@
         {
           "file": "license",
           "sha256": "ca4662cb5d1b738fbe5350c0d5485ba11773b4b7208974082ae6e129a52d631d"
-        }
-      ]
-    },
-    {
-      "section": "npm-acp",
-      "name": "crelt",
-      "version": "1.0.6",
-      "license": "MIT",
-      "homepage": "https://www.npmjs.com/package/crelt",
-      "source": "npm:crelt@1.0.6",
-      "status": "license-files-collected",
-      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
-      "evidence": [
-        {
-          "file": "LICENSE",
-          "sha256": "23852ebf6aef7fadffc92514b3c5df163a8651f2c3ed0dbb494cb49d93bd5de5"
         }
       ]
     },
@@ -2212,22 +2192,6 @@
     },
     {
       "section": "npm-acp",
-      "name": "style-mod",
-      "version": "4.1.3",
-      "license": "MIT",
-      "homepage": "https://www.npmjs.com/package/style-mod",
-      "source": "npm:style-mod@4.1.3",
-      "status": "license-files-collected",
-      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
-      "evidence": [
-        {
-          "file": "LICENSE",
-          "sha256": "cb4474e26547397169061d3586c00022cda5330a1b64fa13e872319f3b63aff1"
-        }
-      ]
-    },
-    {
-      "section": "npm-acp",
       "name": "style-to-js",
       "version": "1.1.21",
       "license": "MIT",
@@ -2415,22 +2379,6 @@
         {
           "file": "license",
           "sha256": "dd1081884a92952802f4803110a6bb543acea9a814c786d58605b4c1219b5ebb"
-        }
-      ]
-    },
-    {
-      "section": "npm-acp",
-      "name": "w3c-keyname",
-      "version": "2.2.8",
-      "license": "MIT",
-      "homepage": "https://www.npmjs.com/package/w3c-keyname",
-      "source": "npm:w3c-keyname@2.2.8",
-      "status": "license-files-collected",
-      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
-      "evidence": [
-        {
-          "file": "LICENSE",
-          "sha256": "869c30f368eb08735e779027b9f4bc9fea2f39624351856aebe42741f0bc0884"
         }
       ]
     },
@@ -3973,10 +3921,10 @@
     {
       "section": "npm-piacp",
       "name": "zod",
-      "version": "3.25.76",
+      "version": "4.6.7",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/zod",
-      "source": "npm:zod@3.25.76",
+      "source": "npm:zod@4.6.7",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -5461,10 +5409,10 @@
     {
       "section": "npm-reactmcp",
       "name": "zod",
-      "version": "3.25.76",
+      "version": "4.6.7",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/zod",
-      "source": "npm:zod@3.25.76",
+      "source": "npm:zod@4.6.7",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [

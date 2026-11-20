@@ -14,9 +14,9 @@ exist upstream; **removed** upstream files that are no longer present.
 - Upstream: https://github.com/RAIT-09/obsidian-agent-client
 - Baseline revision: `0.11.0`
 - License: Apache-2.0, Copyright 2025-2026 RAIT-09
-- Files: 66 unmodified, 24 modified, 86 added, 76 removed upstream files
+- Files: 64 unmodified, 26 modified, 89 added, 76 removed upstream files
 
-### Modified (24)
+### Modified (26)
 
 - `.gitignore`
 - `.vscode/settings.json`
@@ -27,6 +27,7 @@ exist upstream; **removed** upstream files that are no longer present.
 - `NOTICE`
 - `README.md`
 - `esbuild.config.mjs`
+- `eslint.config.mjs`
 - `package-lock.json`
 - `package.json`
 - `src/acp/acp-client.ts`
@@ -41,9 +42,10 @@ exist upstream; **removed** upstream files that are no longer present.
 - `src/utils/paths.ts`
 - `src/utils/platform.ts`
 - `test/platform.test.ts`
+- `tsconfig.json`
 - `vitest.config.mts`
 
-### Added (86)
+### Added (89)
 
 - `.env.example`
 - `.gitattributes`
@@ -55,6 +57,9 @@ exist upstream; **removed** upstream files that are no longer present.
 - `esbuild.web.mjs`
 - `extensions/requirements.txt`
 - `extensions/trustant-runtime.ts`
+- `obsidian-legacy/eslint.config.mjs`
+- `obsidian-legacy/package-lock.json`
+- `obsidian-legacy/package.json`
 - `pi.integrity`
 - `pi.version`
 - `run.sh`
@@ -211,7 +216,7 @@ exist upstream; **removed** upstream files that are no longer present.
 - `docs/usage/session-manager.md`
 - `docs/usage/slash-commands.md`
 
-### Unmodified (66)
+### Unmodified (64)
 
 Listed as a count only; every tracked file not named above is identical to upstream.
 
@@ -266,9 +271,9 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 
 - Source: https://github.com/trustant/trustant-acp.git, gitlink before vendoring
 - Commit: `9786f796380aa9b2000d8cebd913fa41150c89ed`
-- Files: 156 unmodified, 17 modified, 3 added, 4 removed
+- Files: 151 unmodified, 22 modified, 6 added, 4 removed
 
-#### Modified (17)
+#### Modified (22)
 
 - `AGENTS.md`
 - `ARCHITECTURE.md`
@@ -276,22 +281,30 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 - `NOTICE`
 - `README.md`
 - `SPEC.md`
+- `esbuild.web.mjs`
+- `eslint.config.mjs`
 - `extensions/requirements.txt`
 - `package-lock.json`
 - `package.json`
 - `pi.integrity`
 - `pi.version`
+- `run.sh`
 - `server/acp-host.ts`
 - `server/config-store.ts`
+- `server/index.ts`
 - `setup.md`
+- `tsconfig.json`
 - `vitest.config.mts`
 - `web/ChatApp.tsx`
 - `web/transport.ts`
 
-#### Added (3)
+#### Added (6)
 
 - `LICENSE-Apache-2.0-obsidian-agent-client`
 - `UPSTREAM.md`
+- `obsidian-legacy/eslint.config.mjs`
+- `obsidian-legacy/package-lock.json`
+- `obsidian-legacy/package.json`
 - `test/provider-stream.integration.ts`
 
 #### Removed (4)
@@ -305,11 +318,12 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 
 - Source: https://github.com/trustant/pi-acp, nested gitlink before vendoring
 - Commit: `4e526e5f64eaec647d78c919ba9dc071197c2517`
-- Files: 74 unmodified, 1 modified, 0 added, 3 removed
+- Files: 73 unmodified, 2 modified, 0 added, 3 removed
 
-#### Modified (1)
+#### Modified (2)
 
 - `package-lock.json`
+- `package.json`
 
 #### Removed (3)
 

@@ -79,9 +79,10 @@ Server flags: `--dir` (project directory), `--port` (default 4096), `--config` (
 | `npm run serve` | Start the server (`tsx server/index.ts`) |
 | `npm run build` | Build the web bundle and the server |
 | `npm test` | Unit tests (Vitest) |
-| `npm run lint`, `npm run format:check` | ESLint and Prettier checks |
+| `npm run lint`, `npm run format:check` | Biome lint and Prettier checks |
 
-`npm run dev:plugin` builds a legacy editor-plugin bundle from `esbuild.config.mjs`; it is not part of the Trustant runtime.
+`npm run dev:plugin` builds the legacy Obsidian plugin from `src/main.ts` using `esbuild.config.mjs`. Obsidian supplies its API and CodeMirror at runtime.
+For legacy source type information and Obsidian-specific lint, run `npm ci --prefix obsidian-legacy` and `npm run --prefix obsidian-legacy lint` from `acp/`. The standalone web and server builds use the standard `acp/` installation.
 
 ## Agents
 

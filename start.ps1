@@ -503,11 +503,8 @@ function Show-NextSteps {
 }
 
 # --- final step: ./run.sh (default), VS Code (-v), or neither (-n) ------------
-# The Windows counterpart of start.sh's finish block. start.sh cannot take this
-# step itself: its native-Linux path - the one WSL takes - deliberately disables
-# both ("if $NATIVE_LINUX; then OPEN_VSCODE=0; RUN_APP=0; fi"), because on a
-# native host it has no VM to shell into. So the choice is made here instead,
-# and start.sh stays Windows-unaware.
+# Provision with start.sh -n so its native-Linux path cannot start the dev
+# server before PowerShell applies the Windows final-step flags.
 
 # Opens VS Code on the mounted worktree over the WSL remote authority. There is
 # no Remote-SSH hop as there is on macOS: the sources are on the Windows
@@ -537,13 +534,13 @@ if ($NoStart) {
 # --- run start.sh inside the distribution, on the mount ----------------------
 # `bash ./start.sh` rather than `./start.sh`: the exec bit on a Windows-hosted
 # file depends on the automount options, and this does not care.
-Write-Step "Running ./start.sh in '$Distro' as '$User'"
+Write-Step "Running ./start.sh -n in '$Distro' as '$User'"
 # Both payloads are cached under dist/ on the Windows side of the mount, so this
 # cost is paid once: a later -k / re-run reinstalls from those files. Say so, or
 # the warning reads as a per-run price and invites destroying the cache.
 Write-Warn 'start.sh downloads a ~4GB package plus a ~1.5GB ollama build and installs k3s inside the distribution'
 Write-Warn 'both are cached in dist\ on this drive - later runs reuse them and do not re-download'
-& wsl.exe -d $Distro -u $User --cd $RepoWsl -- bash ./start.sh
+& wsl.exe -d $Distro -u $User --cd $RepoWsl -- bash ./start.sh -n
 $startExit = $LASTEXITCODE
 if ($startExit -ne 0) {
     Restore-Console
@@ -575,6 +572,6 @@ Write-Host 'Press Control-C to stop. Use .\start.ps1 to start again.'
 & wsl.exe -d $Distro -u $User --cd $RepoWsl -- bash ./run.sh
 $runExit = $LASTEXITCODE
 
-Show-NextSteps 'Trustant development environment ready'
+Show-NextSteps "Trustant development server exited (code $runExit)"
 Restore-Console
 exit $runExit

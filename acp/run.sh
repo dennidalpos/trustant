@@ -171,7 +171,7 @@ pids+=($!)
 # --exclude web-bundle.generated.ts: the esbuild watcher rewrites that file on
 # every frontend edit, and tsx watches server/ — without this, editing a .tsx
 # file needlessly restarts the backend (and drops in-flight agent sessions).
-echo "→ server : $ACP_DIR on :$ACP_PORT (env: $ACP_ENV)"
+echo "TruACP server: starting on port $ACP_PORT (project: $ACP_DIR)"
 npx tsx watch --exclude server/web-bundle.generated.ts server/index.ts \
 	--config "$CONFIG_PATH" \
 	--dir "$ACP_DIR" \

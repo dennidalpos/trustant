@@ -210,6 +210,10 @@ python | xxhash | * | BSD-2-Clause | https://pypi.org/project/xxhash | pypi
 python | zstandard | * | BSD-3-Clause | https://pypi.org/project/zstandard | pypi
 
 # --- 11. Development environment only (not distributed) ---------------------
+dev | obsidian (legacy plugin API types) | 1.14.4 | MIT | https://github.com/obsidianmd/obsidian-api | -
+dev | eslint-plugin-obsidianmd (legacy plugin) | 0.1.9 | MIT | https://github.com/obsidianmd/eslint-plugin-obsidianmd | -
+dev | @codemirror/state (legacy plugin) | 6.7.6 | MIT | https://codemirror.net/ | -
+dev | @codemirror/view (legacy plugin) | 6.43.13 | MIT | https://codemirror.net/ | -
 dev | Lima | latest | Apache-2.0 | https://github.com/lima-vm/lima | -
 dev | k3s | via ops | Apache-2.0 | https://github.com/k3s-io/k3s | -
 dev | kubefwd | 1.25.18 | Apache-2.0 | https://github.com/txn2/kubefwd | url:https://raw.githubusercontent.com/txn2/kubefwd/v{v}/LICENSE,https://raw.githubusercontent.com/txn2/kubefwd/v{v}/NOTICE

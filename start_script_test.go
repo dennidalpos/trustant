@@ -21,6 +21,21 @@ import (
 	"testing"
 )
 
+func TestWindowsStartProvisionsBeforeLaunchingServer(t *testing.T) {
+	content, err := os.ReadFile("start.ps1")
+	if err != nil {
+		t.Fatal(err)
+	}
+	script := string(content)
+	const wslCommand = `& wsl.exe -d $Distro -u $User --cd $RepoWsl -- bash ./`
+	provision := strings.Index(script, wslCommand+"start.sh -n")
+	flags := strings.Index(script, "\nif ($NoRun) {")
+	launch := strings.Index(script, wslCommand+"run.sh")
+	if provision < 0 || flags <= provision || launch <= flags {
+		t.Fatal("start.ps1 must provision with start.sh -n, apply the final-step flags, then run the server")
+	}
+}
+
 // The workbench is ephemeral scratch space: it MUST NOT survive a pod restart,
 // because committing is the only thing that makes work durable. An older image
 // symlinked $HOME/workbench onto the persistent $HOME/workspace volume, which

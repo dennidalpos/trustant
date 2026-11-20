@@ -346,15 +346,21 @@ async function runServer(
 	await new Promise<void>((resolve) =>
 		httpServer.listen(port, host_addr, resolve),
 	);
-	const ip = advertisedIp();
+	// Honor an explicit bind address and report the actual port for ephemeral binds.
+	const address = httpServer.address();
+	const listeningPort =
+		address && typeof address === "object" ? address.port : port;
+	const ip =
+		host_addr === "0.0.0.0" || host_addr === "::" ? advertisedIp() : host_addr;
+	const urlHost = ip.includes(":") ? `[${ip}]` : ip;
 	console.error(
-		`Standalone ACP client listening\n` +
+		`TruACP server: ready\n` +
+			`  Open the GUI: http://${urlHost}:${listeningPort}/\n` +
 			`  Bind: ${host_addr}\n` +
 			`  IP: ${machineIp()}\n` +
-			`  Port: ${port}\n` +
+			`  Port: ${listeningPort}\n` +
 			`  Current dir: ${process.cwd()}\n` +
-			`  URL: http://${ip}:${port}\n` +
-			`  WebSocket: ws://${ip}:${port}${WS_PATH}\n` +
+			`  WebSocket: ws://${urlHost}:${listeningPort}${WS_PATH}\n` +
 			`  Project dir: ${host.projectDir()}\n` +
 			`  Agents: ${Object.keys(config.agents).join(", ")}`,
 	);

@@ -94,9 +94,6 @@ and the TruACP web UI.
 NAME                                               VERSION  LICENSE       HOMEPAGE
 ----                                               -------  -------       --------
 @agentclientprotocol/sdk                           0.28.1   Apache-2.0    https://www.npmjs.com/package/@agentclientprotocol/sdk
-@codemirror/state                                  6.7.6    MIT           https://www.npmjs.com/package/@codemirror/state
-@codemirror/view                                   6.43.13  MIT           https://www.npmjs.com/package/@codemirror/view
-@marijn/find-cluster-break                         1.0.2    MIT           https://www.npmjs.com/package/@marijn/find-cluster-break
 @tanstack/react-virtual                            3.14.26  MIT           https://www.npmjs.com/package/@tanstack/react-virtual
 @tanstack/virtual-core                             3.19.11  MIT           https://www.npmjs.com/package/@tanstack/virtual-core
 @types/debug                                       4.1.13   MIT           https://www.npmjs.com/package/@types/debug
@@ -115,7 +112,6 @@ character-entities-html4                           2.1.0    MIT           https:
 character-entities-legacy                          3.0.0    MIT           https://www.npmjs.com/package/character-entities-legacy
 character-reference-invalid                        2.0.1    MIT           https://www.npmjs.com/package/character-reference-invalid
 comma-separated-tokens                             2.0.3    MIT           https://www.npmjs.com/package/comma-separated-tokens
-crelt                                              1.0.6    MIT           https://www.npmjs.com/package/crelt
 debug                                              4.4.3    MIT           https://www.npmjs.com/package/debug
 decode-named-character-reference                   1.3.0    MIT           https://www.npmjs.com/package/decode-named-character-reference
 dequal                                             2.0.3    MIT           https://www.npmjs.com/package/dequal
@@ -194,7 +190,6 @@ scheduler                                          0.23.2   MIT           https:
 semver                                             7.8.6    ISC           https://www.npmjs.com/package/semver
 space-separated-tokens                             2.0.2    MIT           https://www.npmjs.com/package/space-separated-tokens
 stringify-entities                                 4.0.4    MIT           https://www.npmjs.com/package/stringify-entities
-style-mod                                          4.1.3    MIT           https://www.npmjs.com/package/style-mod
 style-to-js                                        1.1.21   MIT           https://www.npmjs.com/package/style-to-js
 style-to-object                                    1.0.14   MIT           https://www.npmjs.com/package/style-to-object
 trim-lines                                         3.0.1    MIT           https://www.npmjs.com/package/trim-lines
@@ -207,7 +202,6 @@ unist-util-visit                                   5.1.0    MIT           https:
 unist-util-visit-parents                           6.0.2    MIT           https://www.npmjs.com/package/unist-util-visit-parents
 vfile                                              6.0.3    MIT           https://www.npmjs.com/package/vfile
 vfile-message                                      4.0.3    MIT           https://www.npmjs.com/package/vfile-message
-w3c-keyname                                        2.2.8    MIT           https://www.npmjs.com/package/w3c-keyname
 ws                                                 8.23.0   MIT           https://www.npmjs.com/package/ws
 zod                                                4.6.7    MIT           https://www.npmjs.com/package/zod
 zwitch                                             2.0.4    MIT           https://www.npmjs.com/package/zwitch
@@ -221,7 +215,7 @@ Full production tree of acp/pi-acp/package-lock.json.
 NAME                      VERSION  LICENSE     HOMEPAGE
 ----                      -------  -------     --------
 @agentclientprotocol/sdk  0.26.0   Apache-2.0  https://www.npmjs.com/package/@agentclientprotocol/sdk
-zod                       3.25.76  MIT         https://www.npmjs.com/package/zod
+zod                       4.6.7    MIT         https://www.npmjs.com/package/zod
 
 
 8. OPENSERVERLESS-MCP (mcp) - NPM PRODUCTION DEPENDENCIES
@@ -426,7 +420,7 @@ unpipe                     1.0.0    MIT           https://www.npmjs.com/package/
 vary                       1.1.2    MIT           https://www.npmjs.com/package/vary
 which                      2.0.2    ISC           https://www.npmjs.com/package/which
 wrappy                     1.0.2    ISC           https://www.npmjs.com/package/wrappy
-zod                        3.25.76  MIT           https://www.npmjs.com/package/zod
+zod                        4.6.7    MIT           https://www.npmjs.com/package/zod
 zod-to-json-schema         3.25.2   ISC           https://www.npmjs.com/package/zod-to-json-schema
 
 
@@ -655,22 +649,26 @@ Installed by start.sh / start.ps1 / setup.sh / run.sh on a developer
 machine or dev VM. Not part of the binary or the image; no notices are
 collected for them.
 
-NAME                                  VERSION  LICENSE                                 HOMEPAGE
-----                                  -------  -------                                 --------
-@playwright/test (e2e tests)          1.65.1   Apache-2.0                              https://github.com/microsoft/playwright
-air                                   latest   GPL-3.0-only                            https://github.com/air-verse/air
-Biome                                 2.6.8    MIT OR Apache-2.0                       https://biomejs.dev
-ffmpeg (screenshot.sh)                distro   LGPL-2.1-or-later AND GPL-2.0-or-later  https://ffmpeg.org
-g (Go version manager)                latest   MIT                                     https://github.com/voidint/g
-Hadolint                              2.15.1   GPL-3.0-only                            https://github.com/hadolint/hadolint
-k3s                                   via ops  Apache-2.0                              https://github.com/k3s-io/k3s
-kubefwd                               1.25.18  Apache-2.0                              https://github.com/txn2/kubefwd
-license-eye (skywalking-eyes)         0.9.0    Apache-2.0                              https://github.com/apache/skywalking-eyes
-Lima                                  latest   Apache-2.0                              https://github.com/lima-vm/lima
-PSScriptAnalyzer                      1.25.0   MIT                                     https://github.com/PowerShell/PSScriptAnalyzer
-Ruff                                  0.14.14  MIT                                     https://github.com/astral-sh/ruff
-ShellCheck                            0.11.0   GPL-3.0-only                            https://github.com/koalaman/shellcheck
-WSL2 / Ubuntu-24.04 distro (Windows)  -        LicenseRef-Debian-Copyright             https://ubuntu.com
+NAME                                      VERSION  LICENSE                                 HOMEPAGE
+----                                      -------  -------                                 --------
+@codemirror/state (legacy plugin)         6.7.6    MIT                                     https://codemirror.net/
+@codemirror/view (legacy plugin)          6.43.13  MIT                                     https://codemirror.net/
+@playwright/test (e2e tests)              1.65.1   Apache-2.0                              https://github.com/microsoft/playwright
+air                                       latest   GPL-3.0-only                            https://github.com/air-verse/air
+Biome                                     2.6.8    MIT OR Apache-2.0                       https://biomejs.dev
+eslint-plugin-obsidianmd (legacy plugin)  0.1.9    MIT                                     https://github.com/obsidianmd/eslint-plugin-obsidianmd
+ffmpeg (screenshot.sh)                    distro   LGPL-2.1-or-later AND GPL-2.0-or-later  https://ffmpeg.org
+g (Go version manager)                    latest   MIT                                     https://github.com/voidint/g
+Hadolint                                  2.15.1   GPL-3.0-only                            https://github.com/hadolint/hadolint
+k3s                                       via ops  Apache-2.0                              https://github.com/k3s-io/k3s
+kubefwd                                   1.25.18  Apache-2.0                              https://github.com/txn2/kubefwd
+license-eye (skywalking-eyes)             0.9.0    Apache-2.0                              https://github.com/apache/skywalking-eyes
+Lima                                      latest   Apache-2.0                              https://github.com/lima-vm/lima
+obsidian (legacy plugin API types)        1.14.4   MIT                                     https://github.com/obsidianmd/obsidian-api
+PSScriptAnalyzer                          1.25.0   MIT                                     https://github.com/PowerShell/PSScriptAnalyzer
+Ruff                                      0.14.14  MIT                                     https://github.com/astral-sh/ruff
+ShellCheck                                0.11.0   GPL-3.0-only                            https://github.com/koalaman/shellcheck
+WSL2 / Ubuntu-24.04 distro (Windows)      -        LicenseRef-Debian-Copyright             https://ubuntu.com
 
 
 LICENSE NOTES

@@ -194,8 +194,14 @@ Single JSON file, loaded at server start, hot-reloadable via the settings API. S
   `esbuild.server.mjs`. `npm run build` chains both and produces
   `dist-bin/truacp.cjs`; installation is owned exclusively by `setup.sh`
   (see §10a "Single-bundle build").
+- The development launcher reports when TruACP starts. Once the HTTP listener
+  is bound, the server prints the browser URL using the listening port and a
+  reachable address, preferring the Lima interface for wildcard binds.
 - Deps: `react-markdown`, `remark-gfm`, `remark-math`, `rehype-katex`, `lucide-react`, a WS lib (`ws`), `dotenv`, an http framework (or Node `http`).
 - Core deps: `@agentclientprotocol/sdk`, `react`/`react-dom`, `@tanstack/react-virtual`, `diff`, `zod`, `semver`.
+- The legacy Obsidian plugin builds separately through `npm run dev:plugin`. Its
+  host supplies the Obsidian and CodeMirror APIs. Plugin types and ESLint tooling
+  are installed separately from the lockfile in `obsidian-legacy/`.
 - `npm run serve` runs the server directly via `tsx`; the installed `truacp` binary
   runs the bundled build. Both serve the embedded web bundle at `localhost:<port>`
   (default 4096).

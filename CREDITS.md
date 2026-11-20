@@ -48,6 +48,7 @@ and `acp/NOTICE`, and per-file changes are tracked in
   `pi-agent-core`, `pi-storage-sqlite-node`, `pi-coding-agent`), MIT.
 - [Agent Client Protocol](https://agentclientprotocol.com) SDK and the Codex ACP
   adapter, Apache-2.0.
+- [Zod](https://zod.dev/) schema validation for the ACP and React MCP SDKs, MIT.
 - [OpenAI Codex CLI](https://github.com/openai/codex), Apache-2.0.
 - Claude Code is not distributed with Trustant; TruACP installs it on demand
   after the user accepts Anthropic's terms.
@@ -63,6 +64,9 @@ and npm production trees are listed in full in [DEPS](DEPS).
 
 Browser end-to-end tests use [Playwright](https://github.com/microsoft/playwright)
 (Apache-2.0).
+The optional Obsidian plugin tooling uses the [Obsidian API types](https://github.com/obsidianmd/obsidian-api),
+[Obsidian ESLint plugin](https://github.com/obsidianmd/eslint-plugin-obsidianmd) and
+[CodeMirror](https://codemirror.net/) types, all MIT.
 
 Development setup uses [kubefwd](https://github.com/txn2/kubefwd) and
 [SkyWalking Eyes](https://github.com/apache/skywalking-eyes) (Apache-2.0).

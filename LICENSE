@@ -2551,12 +2551,12 @@ The license for original unRAR code has the following restriction:
 ===============================================================================
 License: MIT
 ===============================================================================
-Used by 268 components (see DEPS), including: @codemirror/state,
-@codemirror/view, @earendil-works/pi-agent-core, @earendil-works/pi-ai,
-@earendil-works/pi-coding-agent, @earendil-works/pi-storage-sqlite-node,
-@earendil-works/pi-tui, @hono/node-server, @marijn/find-cluster-break,
-@modelcontextprotocol/sdk, @tailwindcss/browser (web/tailwind.js),
-@tanstack/react-virtual, ...
+Used by 266 components (see DEPS), including: @codemirror/state (legacy
+plugin), @codemirror/view (legacy plugin), @earendil-works/pi-agent-core,
+@earendil-works/pi-ai, @earendil-works/pi-coding-agent,
+@earendil-works/pi-storage-sqlite-node, @earendil-works/pi-tui,
+@hono/node-server, @modelcontextprotocol/sdk, @tailwindcss/browser
+(web/tailwind.js), @tanstack/react-virtual, @tanstack/virtual-core, ...
 -------------------------------------------------------------------------------
 
 MIT License

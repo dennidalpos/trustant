@@ -792,20 +792,17 @@ which fetches `mcp`, `acp` and `acp/pi-acp` at their pinned commits itself).
 
 ## The final step
 
-`start.ps1` owns the finish, exactly as the macOS half of `start.sh` does, and
-for a reason that cannot be worked around from the shell side: WSL reaches
-`start.sh` through its **native-Linux** path, and that path deliberately
-disables both final steps (`if $NATIVE_LINUX; then OPEN_VSCODE=0; RUN_APP=0;
-fi`) because a native host has no VM to shell into. `-v`/`-n` handed to
-`start.sh` from here would therefore be swallowed. The choice is made in
-`start.ps1` after `start.sh` returns 0, and `start.sh` stays Windows-unaware:
+`start.ps1` provisions WSL with `bash ./start.sh -n`. The native-Linux path
+would otherwise start the dev server itself. PowerShell chooses the final
+step after provisioning returns successfully:
 
 - **default** — `./run.sh` inside the distribution, in the foreground, on the
   mount, as the mirrored user, with **no arguments**:
   `wsl -d <distro> -u <user> --cd <path> -- bash ./run.sh`. `bash ./run.sh` for
   the same reason `start.sh` is invoked that way. It stays in the foreground
   because `run.sh` owns `kubefwd` and `air`, so Ctrl-C is how the dev server is
-  stopped; its exit code is the script's exit code.
+  stopped. `run.sh` prints the HTTP startup status and GUI link, and its exit
+  code becomes the PowerShell script's exit code.
 - **`-v`** — open VS Code on the mounted worktree instead, over the **WSL remote
   authority**: `code --remote wsl+<distro> <linux path>`. Never `ssh-remote+` —
   there is no ssh hop here. The launch comes from Windows rather than a `code .`
