@@ -12,8 +12,8 @@ convention-compatible repository instead of typing one.
 # Where starters come from
 
 Starters and applications are published as a **static `index.json`**, generated
-from the `trustable-ai/.github` repository by `support/index.py` — its format
-and generation rules are specified in [15a-index.md](15a-index.md).
+by `support/index.py` in the `trustable-ai/.github` repository. Trustant reads
+the published format through the `starterIndex` type in [starters.go](../starters.go).
 
 The canonical URL is **`https://trustant.ai/index.json`**, served by GitHub
 Pages.

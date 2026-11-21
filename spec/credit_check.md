@@ -1,6 +1,6 @@
 # Checking credits from a client
 
-Client contract for the credit-gating endpoints exposed by the ai-proxy. Companion to [CREDITS.md](CREDITS.md) (which is the server-side spec). Offline publishing authorization is unrelated and lives in [14-license.md](14-license.md).
+Client contract for the credit-gating endpoints exposed by the ai-proxy. The ai-proxy's server-side `CREDITS.md` documents its accounting and web UI. See the [Trustant Credits API](3-app.md#credits-api) for how Trustant forwards requests to the proxy. Offline publishing authorization is unrelated and lives in [14-license.md](14-license.md).
 
 This document is implementation-language agnostic and aimed at SDK authors and integrators who already hold an API key (`aip_<id>.<sig>`) and want to:
 
@@ -82,7 +82,7 @@ Error body shape (shared across all credit endpoints):
 
 ### Notes for clients
 
-- The proxy returns `credits` **verbatim** from the stored column; it does not recompute on read. The value is updated by the accounting transaction that runs after each `/v1/*` call, so it can lag a single in-flight request (eventual consistency — see [CREDITS.md §4](CREDITS.md#4-accounting-integration)). Don't poll faster than ~1 Hz; you won't see anything new.
+- The proxy returns `credits` **verbatim** from the stored column; it does not recompute on read. The value is updated by the accounting transaction that runs after each `/v1/*` call, so it can lag a single in-flight request (eventual consistency). See “Accounting Integration” (§4) in the ai-proxy's server-side `CREDITS.md`. Don't poll faster than ~1 Hz; you won't see anything new.
 - `credits` can be `0` or **negative** when the user just crossed the threshold (the gate fires on the *next* request, not retroactively). Treat any non-positive value as "out of credit" and surface accordingly.
 - `credits` can be `null` — that means the server has the gate disabled. In that case `out_of_credit` will be `false` and the user can spend without limit. UIs should show "—" or hide the credit widget entirely.
 - Cache freely on the client; invalidate on any of: a successful top-up, a `402 out_of_credit` from `/v1/*`, or user-initiated refresh.
@@ -91,7 +91,7 @@ Error body shape (shared across all credit endpoints):
 
 Machine-to-machine top-up. The bearer key identifies the user; the resulting `top_ups` row is recorded with `actor='self'`.
 
-> Humans typically use the web form at `/_register/top-up` (email + password) instead — see [CREDITS.md §8](CREDITS.md#8-web-ui). The JSON endpoint is for clients that already hold a key and want to top up programmatically.
+> Humans typically use the web form at `/_register/top-up` (email + password). See [AIP base URLs](3-app.md#aip-base-urls) for the form URL in Trustant and “Web UI” (§8) in the ai-proxy's server-side `CREDITS.md` for the proxy UI. The JSON endpoint is for clients that already hold a key and want to top up programmatically.
 
 ### Request
 

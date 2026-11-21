@@ -432,7 +432,7 @@ Application env values remain owned by the Trustant configuration UI; the
 agent reports a missing variable instead of synthesizing or synchronizing it.
 
 Pi extensions (`pi-mcp-adapter`, `pi-web-access`) are pinned in
-[trustant-acp/pi.version](../trustant-acp/pi.version), one
+[acp/pi.version](../acp/pi.version), one
 `<module>@<version>` npm install spec per line. The `pi` executable/core and
 `pi-acp` are built from separately pinned nested Trustant forks under
 `trustant-acp/pi` and `trustant-acp/pi-acp`; setup must never replace either

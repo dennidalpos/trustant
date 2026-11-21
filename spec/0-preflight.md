@@ -122,9 +122,11 @@ migrated, read, or deleted.
 
 # startup ownership of the workspace
 
-`$HOME/workspace` is the only mounted `hostPath` volume
-([oplugins-truinst/trustant/sts.yaml](../oplugins-truinst/trustant/sts.yaml)), so it
-is the only tree whose ownership can actually be wrong on a container start.
+`$HOME/workspace` is the only mounted `hostPath` volume, so it is the only tree
+whose ownership can actually be wrong on a container start. The StatefulSet
+manifest is `trustant/sts.yaml` in the `oplugins-truinst` submodule listed in
+[`.gitmodules`](../.gitmodules). In a checkout with the submodule initialized,
+the manifest is at `oplugins-truinst/trustant/sts.yaml`.
 The entrypoint ([image/start.sh](../image/start.sh)) therefore chowns **that
 path only**. It MUST NOT recursively chown bare `$HOME`: everything else in the
 container is image content already owned correctly by the `Dockerfile`'s
