@@ -158,6 +158,8 @@ The browser transport in `web/transport.ts` sends HTTP requests and subscribes t
 
 `web/ChatApp.tsx` renders the conversation, permissions, composer and notebook controls. The Node server supplies the project directory and handles directory changes (see §10e).
 
+Live ACP tool calls in chat and notebook activity can show plain text in a collapsed **Tool output** disclosure. Each supplied content snapshot replaces the previous text. Status-only updates leave it in place. The server applies its existing redaction before limiting the text to 8 KiB of UTF-8. TruACP excludes the text from saved messages and notebook state and suppresses it during ACP history replay. An agent may retain its own native history separately. Structured diff and terminal references keep their existing behavior.
+
 ## 8. Styling
 
 `web/styles.css` defines the browser UI's theme and component styles.

@@ -223,4 +223,6 @@ dev | Ruff | 0.14.14 | MIT | https://github.com/astral-sh/ruff | -
 dev | ShellCheck | 0.11.0 | GPL-3.0-only | https://github.com/koalaman/shellcheck | -
 dev | Hadolint | 2.15.1 | GPL-3.0-only | https://github.com/hadolint/hadolint | -
 dev | PSScriptAnalyzer | 1.25.0 | MIT | https://github.com/PowerShell/PSScriptAnalyzer | -
+dev | @types/node (TruACP) | 24.19.2 | MIT | https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/node | npm:@types/node@24.19.2
+dev | undici-types (TruACP) | 7.24.6 | MIT | https://github.com/nodejs/undici | npm:undici-types@7.24.6
 dev | WSL2 / Ubuntu-24.04 distro (Windows) | - | LicenseRef-Debian-Copyright | https://ubuntu.com | -

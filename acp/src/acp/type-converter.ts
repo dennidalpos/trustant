@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Derived from obsidian-agent-client (Apache-2.0), Copyright 2025-2026 RAIT-09; unmodified apart from this header.
+ * Derived from obsidian-agent-client (Apache-2.0), Copyright 2025-2026 RAIT-09; modified by Nuvolaris Inc. (see legal/VENDORED.md).
  */
 
 import * as acp from "@agentclientprotocol/sdk";
@@ -51,16 +51,6 @@ interface AcpSessionResponse {
  */
 export class AcpTypeConverter {
 	/**
-	 * Convert ACP ToolCallContent to domain ToolCallContent.
-	 *
-	 * Filters out content types that are not supported by the domain model:
-	 * - Supports: "diff", "terminal"
-	 * - Ignores: "content" (not implemented in UI)
-	 *
-	 * @param acpContent - Tool call content from ACP protocol
-	 * @returns Domain model tool call content, or undefined if input is null/empty
-	 */
-	/**
 	 * Convert ACP AvailableCommand[] to domain SlashCommand[].
 	 */
 	static toSlashCommands(
@@ -73,6 +63,7 @@ export class AcpTypeConverter {
 		}));
 	}
 
+	/** Convert the structured diff and terminal blocks used by existing callers. */
 	static toToolCallContent(
 		acpContent: acp.ToolCallContent[] | undefined | null,
 	): ToolCallContent[] | undefined {
@@ -94,10 +85,24 @@ export class AcpTypeConverter {
 					terminalId: item.terminalId,
 				});
 			}
-			// "content" type is intentionally ignored (not implemented in UI)
 		}
 
 		return converted.length > 0 ? converted : undefined;
+	}
+
+	/** A supplied content snapshot replaces the live text, even if it is empty. */
+	static toLiveToolText(
+		content: acp.ToolCallContent[] | undefined | null,
+	): string | undefined {
+		return content
+			?.flatMap((item) =>
+				item.type === "content" &&
+				item.content?.type === "text" &&
+				typeof item.content.text === "string"
+					? [item.content.text]
+					: [],
+			)
+			.join("\n");
 	}
 
 	/**

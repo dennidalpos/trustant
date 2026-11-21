@@ -85,6 +85,7 @@ export class AcpHandler {
 		private getWorkingDirectory: () => string,
 		private getCurrentSessionId: () => string | null,
 		private logger: Logger,
+		private isReplayingHistory: () => boolean = () => false,
 	) {}
 
 	// ====================================================================
@@ -153,6 +154,9 @@ export class AcpHandler {
 					status: update.status || "pending",
 					kind: update.kind ?? undefined,
 					content: AcpTypeConverter.toToolCallContent(update.content),
+					liveText: this.isReplayingHistory()
+						? undefined
+						: AcpTypeConverter.toLiveToolText(update.content),
 					locations: update.locations ?? undefined,
 					rawInput: update.rawInput as
 						| { [k: string]: unknown }

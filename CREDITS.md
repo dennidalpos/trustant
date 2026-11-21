@@ -65,6 +65,10 @@ and npm production trees are listed in full in [DEPS](DEPS).
 Browser end-to-end tests use [Playwright](https://github.com/microsoft/playwright)
 (Apache-2.0).
 
+TruACP development uses the Node.js declarations from
+[DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/node)
+and their transitive [Undici](https://github.com/nodejs/undici) declarations (MIT).
+
 Development setup uses [kubefwd](https://github.com/txn2/kubefwd) and
 [SkyWalking Eyes](https://github.com/apache/skywalking-eyes) (Apache-2.0).
 

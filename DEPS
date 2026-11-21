@@ -652,6 +652,7 @@ collected for them.
 NAME                                  VERSION  LICENSE                                 HOMEPAGE
 ----                                  -------  -------                                 --------
 @playwright/test (e2e tests)          1.65.1   Apache-2.0                              https://github.com/microsoft/playwright
+@types/node (TruACP)                  24.19.2  MIT                                     https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/node
 air                                   latest   GPL-3.0-only                            https://github.com/air-verse/air
 Biome                                 2.6.8    MIT OR Apache-2.0                       https://biomejs.dev
 ffmpeg (screenshot.sh)                distro   LGPL-2.1-or-later AND GPL-2.0-or-later  https://ffmpeg.org
@@ -664,6 +665,7 @@ Lima                                  latest   Apache-2.0                       
 PSScriptAnalyzer                      1.25.0   MIT                                     https://github.com/PowerShell/PSScriptAnalyzer
 Ruff                                  0.14.14  MIT                                     https://github.com/astral-sh/ruff
 ShellCheck                            0.11.0   GPL-3.0-only                            https://github.com/koalaman/shellcheck
+undici-types (TruACP)                 7.24.6   MIT                                     https://github.com/nodejs/undici
 WSL2 / Ubuntu-24.04 distro (Windows)  -        LicenseRef-Debian-Copyright             https://ubuntu.com
 
 

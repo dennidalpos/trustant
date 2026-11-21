@@ -22,8 +22,8 @@
  * One AcpClient per agentId (a spawned agent process), created lazily and
  * reused across that agent's sessions — mirroring the plugin's one-client-per-
  * view model, but keyed by agent for a single-user local server. Every client's
- * single onSessionUpdate channel is forwarded verbatim as a `sessionUpdate` WS
- * event, so the browser sees exactly what the ACP core emits.
+ * single onSessionUpdate channel is redacted and forwarded as a `sessionUpdate`
+ * WebSocket event.
  */
 import { AcpClient } from "../src/acp/acp-client";
 import type { AcpRuntimeConfig } from "../src/acp/acp-runtime";
@@ -46,6 +46,28 @@ import {
 
 /** Sink for server→client events (the WS broadcast). */
 export type EventSink = (event: WsEvent) => void;
+
+const LIVE_TOOL_TEXT_MAX_BYTES = 8 * 1024;
+const utf8 = new TextEncoder();
+
+export function prepareSessionUpdate(
+	update: SessionUpdate,
+	secrets: readonly string[],
+): SessionUpdate {
+	const redacted = redactSensitiveValue(update, secrets);
+	if (
+		(redacted.type === "tool_call" || redacted.type === "tool_call_update") &&
+		redacted.liveText
+	) {
+		// Redact before truncating so a credential at the byte boundary cannot leak.
+		const { read } = utf8.encodeInto(
+			redacted.liveText,
+			new Uint8Array(LIVE_TOOL_TEXT_MAX_BYTES),
+		);
+		redacted.liveText = redacted.liveText.slice(0, read);
+	}
+	return redacted;
+}
 
 export class SessionHost {
 	private readonly clients = new Map<string, AcpClient>();
@@ -97,7 +119,7 @@ export class SessionHost {
 			client.onSessionUpdate((update: SessionUpdate) =>
 				this.emit({
 					type: "sessionUpdate",
-					update: redactSensitiveValue(
+					update: prepareSessionUpdate(
 						update,
 						this.redactionSecrets.get(agentId) ?? [],
 					),

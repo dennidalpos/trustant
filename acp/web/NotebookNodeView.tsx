@@ -25,9 +25,11 @@ import type {
 	NotebookToolOutput,
 } from "../src/types/notebook";
 import { toolStatusPresentation } from "./tool-status";
+import { ToolOutputDisclosure } from "./ToolOutputDisclosure";
 
 interface NotebookNodeViewProps {
 	node: NotebookNode;
+	liveToolText: ReadonlyMap<string, string>;
 	selected: boolean;
 	editing: boolean;
 	/** True while this node's prompt is in flight. */
@@ -49,6 +51,7 @@ interface NotebookNodeViewProps {
 
 export function NotebookNodeView({
 	node,
+	liveToolText,
 	selected,
 	editing,
 	running,
@@ -95,7 +98,9 @@ export function NotebookNodeView({
 
 	useEffect(() => {
 		const activity = activityRef.current;
-		if (activity) activity.scrollTop = activity.scrollHeight;
+		if (activity && !activity.querySelector(".tool-output[open]")) {
+			activity.scrollTop = activity.scrollHeight;
+		}
 	}, [toolOutputs.length, latestTool?.id, latestTool?.status]);
 
 	// A run appends an assistant output before the prompt is sent, so the
@@ -298,6 +303,7 @@ export function NotebookNodeView({
 									<span className="tool-status">
 										{presentation.label}
 									</span>
+									<ToolOutputDisclosure text={liveToolText.get(output.id)} />
 								</div>
 							);
 						})}

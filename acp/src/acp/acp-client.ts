@@ -170,6 +170,7 @@ export class AcpClient {
 	private isInitializedFlag = false;
 	private currentAgentId: string | null = null;
 	private currentSessionId: string | null = null;
+	private sessionLoadsInFlight = 0;
 
 	// Callbacks (none — all events flow through onSessionUpdate via AcpHandler)
 
@@ -203,6 +204,7 @@ export class AcpClient {
 			() => this.currentConfig?.workingDirectory ?? "",
 			() => this.currentSessionId,
 			this.logger,
+			() => this.sessionLoadsInFlight > 0,
 		);
 	}
 
@@ -1052,6 +1054,7 @@ export class AcpClient {
 
 		// Set sessionId before await so replay updates pass the sessionId filter
 		this.currentSessionId = sessionId;
+		this.sessionLoadsInFlight++;
 
 		try {
 			this.logger.log(`[AcpClient] Loading session: ${sessionId}...`);
@@ -1073,6 +1076,8 @@ export class AcpClient {
 		} catch (error) {
 			this.logger.error("[AcpClient] Load Session Error:", error);
 			throw error;
+		} finally {
+			this.sessionLoadsInFlight--;
 		}
 	}
 

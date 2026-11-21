@@ -394,6 +394,17 @@
     },
     {
       "section": "dev",
+      "name": "@types/node (TruACP)",
+      "version": "24.19.2",
+      "license": "MIT",
+      "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/node",
+      "source": "npm:@types/node@24.19.2",
+      "status": "development-only",
+      "obligation": "Development input; not identified as a shipped runtime by this inventory.",
+      "evidence": []
+    },
+    {
+      "section": "dev",
       "name": "air",
       "version": "latest",
       "license": "GPL-3.0-only",
@@ -520,6 +531,17 @@
       "license": "GPL-3.0-only",
       "homepage": "https://github.com/koalaman/shellcheck",
       "source": "-",
+      "status": "development-only",
+      "obligation": "Development input; not identified as a shipped runtime by this inventory.",
+      "evidence": []
+    },
+    {
+      "section": "dev",
+      "name": "undici-types (TruACP)",
+      "version": "7.24.6",
+      "license": "MIT",
+      "homepage": "https://github.com/nodejs/undici",
+      "source": "npm:undici-types@7.24.6",
       "status": "development-only",
       "obligation": "Development input; not identified as a shipped runtime by this inventory.",
       "evidence": []

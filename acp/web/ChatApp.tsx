@@ -86,6 +86,7 @@ interface LocalTemplate {
 }
 import { NotebookPanel } from "./NotebookPanel";
 import { NotebookNodeView } from "./NotebookNodeView";
+import { ToolOutputDisclosure } from "./ToolOutputDisclosure";
 import {
 	classifyComposerSubmission,
 	formatShellFailure,
@@ -242,6 +243,10 @@ export function ChatApp(): React.ReactElement {
 	const [elapsedSeconds, setElapsedSeconds] = useState(0);
 	const [error, setError] = useState<string | null>(null);
 	const [turns, setTurns] = useState<Turn[]>([]);
+	// Keep ACP text out of notebook state, which is saved to disk.
+	const [liveToolText, setLiveToolText] = useState<ReadonlyMap<string, string>>(
+		() => new Map(),
+	);
 	const [permission, setPermission] = useState<PendingPermission | null>(
 		null,
 	);
@@ -450,6 +455,20 @@ export function ChatApp(): React.ReactElement {
 
 	const applyUpdate = useCallback((u: SessionUpdate) => {
 		const notebookNodeId = activeNotebookNodeRef.current;
+		if (
+			(u.type === "tool_call" || u.type === "tool_call_update") &&
+			u.sessionId === sessionRef.current &&
+			u.liveText !== undefined
+		) {
+			const { toolCallId, liveText } = u;
+			setLiveToolText((previous) => {
+				if ((previous.get(toolCallId) ?? "") === liveText) return previous;
+				const next = new Map(previous);
+				if (liveText) next.set(toolCallId, liveText);
+				else next.delete(toolCallId);
+				return next;
+			});
+		}
 		switch (u.type) {
 			case "agent_message_chunk":
 				if (notebookNodeId) {
@@ -830,6 +849,7 @@ export function ChatApp(): React.ReactElement {
 			setError(null);
 			setPermission(null);
 			setTurns([]);
+			setLiveToolText(new Map());
 			setNotebook(null);
 			setEditingNotebookNode(null);
 			setMovingNotebookNode(null);
@@ -1246,6 +1266,7 @@ export function ChatApp(): React.ReactElement {
 			setEditingNotebookNode(null);
 			setMovingNotebookNode(null);
 			setTurns([]);
+			setLiveToolText(new Map());
 			setPermission(null);
 			setConfigOptions(configured);
 			setActivity(null);
@@ -1326,6 +1347,7 @@ export function ChatApp(): React.ReactElement {
 			setHistoryError(null);
 			setBusy(true);
 			setTurns([]);
+			setLiveToolText(new Map());
 			setPermission(null);
 			setError(null);
 			setInput("");
@@ -2664,6 +2686,7 @@ export function ChatApp(): React.ReactElement {
 					<TurnView
 						key={t.id}
 						turn={t}
+						liveToolText={liveToolText.get(t.id)}
 						laterTurns={turns.slice(index + 1)}
 						active={running}
 						onPin={
@@ -2680,6 +2703,7 @@ export function ChatApp(): React.ReactElement {
 					<NotebookNodeView
 						key={node.id}
 						node={node}
+						liveToolText={liveToolText}
 						selected={notebook.selectedNodeId === node.id}
 						editing={editingNotebookNode === node.id}
 						running={runningNotebookNode === node.id}
@@ -2898,12 +2922,14 @@ function CopyablePre({
 
 function TurnView({
 	turn,
+	liveToolText,
 	laterTurns,
 	active,
 	onPin,
 	pinLabel = "New template",
 }: {
 	turn: Turn;
+	liveToolText?: string;
 	laterTurns: Turn[];
 	active: boolean;
 	/** Promote this message into a template step; absent when unavailable. */
@@ -2987,6 +3013,7 @@ function TurnView({
 			<span className="tool-icon">🛠</span>
 			<span className="tool-title">{turn.title}</span>
 			<span className="tool-status">{presentation.label}</span>
+			<ToolOutputDisclosure text={liveToolText} />
 		</div>
 	);
 }

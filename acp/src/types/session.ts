@@ -320,6 +320,8 @@ export interface ToolCall extends SessionUpdateBase {
 	status: ToolCallStatus;
 	kind?: ToolKind;
 	content?: ToolCallContent[];
+	/** Live tool output, separate from content that can enter message history. */
+	liveText?: string;
 	locations?: ToolCallLocation[];
 	rawInput?: { [k: string]: unknown };
 	permissionRequest?: {
@@ -343,6 +345,8 @@ export interface ToolCallUpdate extends SessionUpdateBase {
 	status?: ToolCallStatus;
 	kind?: ToolKind;
 	content?: ToolCallContent[];
+	/** Replacement live output. Undefined leaves the previous text in place. */
+	liveText?: string;
 	locations?: ToolCallLocation[];
 	rawInput?: { [k: string]: unknown };
 	permissionRequest?: {

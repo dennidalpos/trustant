@@ -307,6 +307,22 @@ body {
 .turn.tool.status-failed .tool-status {
 	color: var(--error-text);
 }
+.turn.tool:has(.tool-output) {
+	flex-wrap: wrap;
+}
+.tool-output {
+	flex-basis: 100%;
+	min-width: 0;
+	color: var(--text);
+}
+.tool-output summary {
+	cursor: pointer;
+}
+.tool-output pre {
+	margin: 0.25rem 0 0;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
 
 /* permission prompt */
 .permission {
@@ -1056,13 +1072,15 @@ body {
 	overflow-y: auto;
 	scrollbar-gutter: stable;
 }
+.notebook-tool-window:has(.tool-output[open]) {
+	max-height: 16rem;
+}
 .notebook-tool-window .turn.tool {
 	display: flex;
 	min-height: 1.75rem;
 	margin: 0;
 	padding: 0.25rem 0.5rem;
 	border-bottom: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
-	flex-wrap: nowrap;
 }
 .notebook-tool-window .turn.tool:last-child {
 	border-bottom: 0;

@@ -14,9 +14,9 @@ exist upstream; **removed** upstream files that are no longer present.
 - Upstream: https://github.com/RAIT-09/obsidian-agent-client
 - Baseline revision: `0.11.0`
 - License: Apache-2.0, Copyright 2025-2026 RAIT-09
-- Files: 11 unmodified, 21 modified, 87 added, 134 removed upstream files
+- Files: 10 unmodified, 22 modified, 88 added, 134 removed upstream files
 
-### Modified (21)
+### Modified (22)
 
 - `.gitignore`
 - `.vscode/extensions.json`
@@ -32,6 +32,7 @@ exist upstream; **removed** upstream files that are no longer present.
 - `src/acp/acp-client.ts`
 - `src/acp/acp-handler.ts`
 - `src/acp/terminal-handler.ts`
+- `src/acp/type-converter.ts`
 - `src/types/session.ts`
 - `src/utils/error-utils.ts`
 - `src/utils/paths.ts`
@@ -40,7 +41,7 @@ exist upstream; **removed** upstream files that are no longer present.
 - `tsconfig.json`
 - `vitest.config.mts`
 
-### Added (87)
+### Added (88)
 
 - `.env.example`
 - `.gitattributes`
@@ -115,6 +116,7 @@ exist upstream; **removed** upstream files that are no longer present.
 - `web/HeaderActionButton.tsx`
 - `web/NotebookNodeView.tsx`
 - `web/NotebookPanel.tsx`
+- `web/ToolOutputDisclosure.tsx`
 - `web/chat-scroll.ts`
 - `web/clipboard.ts`
 - `web/connection-status.ts`
@@ -267,7 +269,7 @@ exist upstream; **removed** upstream files that are no longer present.
 - `version-bump.mjs`
 - `versions.json`
 
-### Unmodified (11)
+### Unmodified (10)
 
 Listed as a count only; every tracked file not named above is identical to upstream.
 
@@ -322,9 +324,9 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 
 - Source: https://github.com/trustant/trustant-acp.git, gitlink before vendoring
 - Commit: `9786f796380aa9b2000d8cebd913fa41150c89ed`
-- Files: 84 unmodified, 31 modified, 4 added, 62 removed
+- Files: 76 unmodified, 39 modified, 5 added, 62 removed
 
-#### Modified (31)
+#### Modified (39)
 
 - `.gitignore`
 - `.vscode/extensions.json`
@@ -346,8 +348,14 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 - `server/claude-version.ts`
 - `server/config-store.ts`
 - `server/index.ts`
+- `server/session-host.ts`
 - `setup.md`
 - `setup.sh`
+- `src/acp/acp-client.ts`
+- `src/acp/acp-handler.ts`
+- `src/acp/type-converter.ts`
+- `src/types/session.ts`
+- `test/acp-handler-activity.test.ts`
 - `test/claude-install.test.ts`
 - `test/managed-runtime.test.ts`
 - `test/notebook-ui.test.ts`
@@ -355,15 +363,18 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 - `tsconfig.json`
 - `vitest.config.mts`
 - `web/ChatApp.tsx`
+- `web/NotebookNodeView.tsx`
 - `web/prompt-history.ts`
+- `web/styles.css`
 - `web/transport.ts`
 
-#### Added (4)
+#### Added (5)
 
 - `LICENSE-Apache-2.0-obsidian-agent-client`
 - `UPSTREAM.md`
 - `test/pi-ai-retry-patch.test.ts`
 - `test/provider-stream.integration.ts`
+- `web/ToolOutputDisclosure.tsx`
 
 #### Removed (62)
 
