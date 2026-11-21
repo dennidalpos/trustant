@@ -201,6 +201,15 @@ retried again. Setup validates the installed version and every source target
 before atomically replacing files, remains idempotent, and fails closed when the
 pinned package layout changes.
 
+Pi must not retry an exhausted Ollama Cloud session. Upstream Pi AI 0.82.0
+classifies every failed turn mentioning 429 as transient (`isRetryableAssistantError`,
+used by the coding agent's automatic turn retry), and Ollama Cloud reports an
+exhausted session quota as HTTP 429 with "session usage limit"
+(trustant/trustant#206). Setup therefore adds that wording to the non-retryable
+limit patterns of every installed `@earendil-works/pi-ai` at the pinned version.
+The error is shown once; other 429 responses keep the upstream retry. Live
+confirmation with an exhausted Ollama Cloud session is still pending.
+
 The optional `agentireact` server is generated only when `vite.config.js` or
 `vite.config.ts` contains executable configuration that both references the
 `@agentic-react/vite` package and invokes `AgenticReact()`. Detection ignores

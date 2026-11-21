@@ -87,6 +87,15 @@ once. Proxy calls, direct tools, and MCP UI proxy calls share this manager path.
 The transform is idempotent, validates every expected source before writing,
 and fails setup if the installed version or source layout differs.
 
+Upstream Pi AI 0.82.0 treats any failed turn mentioning 429 as transient, and
+Pi restarts it up to `settings.retry.maxRetries` times. Ollama Cloud uses HTTP
+429 with "session usage limit" when the session quota is exhausted
+(trustant/trustant#206), so `setup.sh` adds that wording to the non-retryable
+limit patterns in `dist/utils/retry.js` of every installed
+`@earendil-works/pi-ai` copy at the pinned version. Other 429 responses are
+still retried. The transform is idempotent, leaves other versions untouched, and
+fails setup unless its anchor appears exactly once.
+
 For Codex, `@zed-industries/codex-acp` is deprecated in favour of the
 `@agentclientprotocol` scope.
 
