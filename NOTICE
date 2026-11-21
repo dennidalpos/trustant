@@ -64,7 +64,7 @@ github.com/creack/pty 1.1.24 (MIT)
   | OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
   | SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Go standard library and runtime 1.25.5 (BSD-3-Clause)
+Go standard library and runtime 1.27.4 (BSD-3-Clause)
   Copyright 2009 The Go Authors.
 
   LICENSE FILE: LICENSE
@@ -16297,7 +16297,7 @@ yq 4.47.1 (MIT)
 12. CONTAINER IMAGE - GLOBAL NPM INSTALLS
 =========================================
 
-@agentclientprotocol/codex-acp 2.8.0 (Apache-2.0)
+@agentclientprotocol/codex-acp 2.9.0 (Apache-2.0)
   Copyright 2025 JetBrains s.r.o.
 
   LICENSE FILE: LICENSE
@@ -16622,7 +16622,7 @@ yq 4.47.1 (MIT)
   | OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   | SOFTWARE.
 
-@openai/codex 0.170.0 (Apache-2.0)
+@openai/codex 0.171.0 (Apache-2.0)
   Copyright 2025 OpenAI
 
   LICENSE FILE: LICENSE

@@ -32,6 +32,7 @@ pi.version
 pi.integrity
 pi-acp-package.tgz
 extensions/trustant-runtime.ts
+extensions/requirements.txt
 dist-bin/truacp.cjs
 ```
 
@@ -41,7 +42,7 @@ the agents. That is what makes it dropable into a Docker layer:
 
 ```dockerfile
 COPY setup.sh pi.version pi.integrity pi-acp-package.tgz ./
-COPY extensions/trustant-runtime.ts extensions/
+COPY extensions/trustant-runtime.ts extensions/requirements.txt extensions/
 COPY dist-bin/truacp.cjs dist-bin/
 RUN sh setup.sh
 ```
@@ -107,8 +108,8 @@ hardcoded in `setup.sh`.** Each line is a literal npm install spec,
 
 ```
 # Codex — CLI + ACP adapter
-@openai/codex@0.170.0
-@agentclientprotocol/codex-acp@2.8.0
+@openai/codex@0.171.0
+@agentclientprotocol/codex-acp@2.9.0
 ...
 @earendil-works/pi-ai@0.82.0
 @earendil-works/pi-tui@0.82.0
@@ -146,9 +147,9 @@ when `~/.local/bin` is not already on PATH. A single `npm install -g --force`
 covers CLI and ACP packages. Pi extensions are skipped when the exact pinned
 source is already present in `pi list`, keeping re-runs idempotent; the
 compatibility transform is still checked and applied so existing VMs receive
-the recovery fix. The separately pinned Trustant `pi-acp` fork is built from
-the nested source in development or installed from `pi-acp-package.tgz` in a
-portable image payload.
+the recovery fix. The installer runs `npm ci`, `npm run build`, and `npm pack`
+in the vendored `pi-acp/` source directory during a checkout install. In an
+image install it uses the staged `pi-acp-package.tgz`.
 
 The managed runtime extension owns Trustant-specific execution policy. Its
 `message_update` hook detects four repeated normalized 32-word windows inside
@@ -168,9 +169,9 @@ deployment above:
 | prebuilt `dist-bin/truacp.cjs` only | skipped | installs the prebuilt bundle |
 | neither | skipped | skipped — agents only, exit 0 |
 
-The build check is against the *current* directory, not the script's own — so
-`cd trustant-acp && ./setup.sh` builds, while `./trustant-acp/setup.sh` from
-the parent does not. The bundle lookup is the opposite way round: it prefers the
+The build check uses the *current* directory. From the Trustant root, run
+`(cd acp && ./setup.sh)` to build in the TruACP source directory.
+The bundle lookup prefers the
 *script's* directory (`<script dir>/dist-bin/truacp.cjs`, then
 `<script dir>/truacp.cjs`) before the current one, so a copied-out three-file set
 installs correctly no matter where it is invoked from. With neither sources nor a

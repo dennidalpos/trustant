@@ -431,12 +431,13 @@ The entry deliberately has no writable persistent-secret-store environment.
 Application env values remain owned by the Trustant configuration UI; the
 agent reports a missing variable instead of synthesizing or synchronizing it.
 
-Pi extensions (`pi-mcp-adapter`, `pi-web-access`) are pinned in
-[acp/pi.version](../acp/pi.version), one
-`<module>@<version>` npm install spec per line. The `pi` executable/core and
-`pi-acp` are built from separately pinned nested Trustant forks under
-`trustant-acp/pi` and `trustant-acp/pi-acp`; setup must never replace either
-with a public npm runtime. An unpinned manifest entry aborts the install.
+The upstream Pi packages and extensions (`pi-mcp-adapter`, `pi-web-access`) are
+pinned in [acp/pi.version](../acp/pi.version), one `<module>@<version>` npm
+install spec per line. Setup rejects unpinned entries and verifies the Pi
+runtime packages against [acp/pi.integrity](../acp/pi.integrity) before installing
+them from npm. The ACP adapter comes from the vendored `acp/pi-acp/` fork. Guest
+setup builds it from source, and the image installs the tarball built from that
+same source.
 
 The runtime image installs `openserverless-mcp` from the local `mcp` submodule,
 not from a direct `github:apache/openserverless-mcp` npm reference. The image
@@ -906,8 +907,8 @@ the removed `TRUSTANT_PI_EXTENSION` placeholder remains forbidden. See
 There is also no OpenCode agent-metadata normalization: `.opencode/agent/*.md`
 `color:` frontmatter is neither read nor rewritten.
 
-Launch `truacp` (see trustant-acp/SPEC.md §10a) with the variables from the
-workbench `.env` appended to the process environment. truacp is the standalone
+Launch `truacp` (see [the TruACP specification](../acp/SPEC.md) §10a) with the
+variables from the workbench `.env` appended to the process environment. TruACP is the standalone
 ACP server that serves its own React UI on `:4096`; it spawns `pi-acp` over
 stdio, which spawns the `pi` binary. Trustant never execs the agent directly,
 and there is no launch-time session bootstrap (truacp creates the ACP session, in

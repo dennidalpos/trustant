@@ -23,13 +23,13 @@ is no base/current split: buildkit cannot resolve `FROM` against an image that
 was just loaded into containerd, and the builder's layer cache already avoids
 rebuilding unchanged base stages.
 
-Before splitting the Dockerfile, stage the pinned `mcp` and `trustant-acp`
-submodules into the Docker context. Do not
-download a floating agent runtime while building.
+The image build stages the pinned `mcp` submodule and builds runtime artifacts
+from the vendored `acp/` and `acp/pi-acp/` sources before invoking Docker.
 
 Log the content hashes of the pinned OpenServerless MCP and TruACP
 revisions/content for build provenance.
 
-The base image builds TruACP for the target architecture and installs the Pi
-toolchain pinned by `trustant-acp/pi.version` under the `trustant` user's
-`~/.local/bin`. It does not compile or install OpenCode.
+The base image installs the staged TruACP JavaScript bundle and the built
+`pi-acp` tarball. Its installer verifies the upstream Pi packages from
+[`acp/pi.version`](../acp/pi.version) against
+[`acp/pi.integrity`](../acp/pi.integrity) before installing them from npm.

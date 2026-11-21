@@ -12,22 +12,20 @@ session state. See [preflight routing](0-preflight.md).
 
 ## Source and version pinning
 
-TruACP is vendored in this repository under `acp/`, so the repository commit
-pins it. Pi extensions are pinned in `acp/pi.version`; every npm install entry must carry an explicit
-version. The customized ACP adapter is vendored as `acp/pi-acp/`; Pi core comes from
-the pinned upstream npm packages verified by `acp/pi.integrity`. `setup.sh` builds the five lockstep Pi packages
-(`pi-ai`, `pi-tui`, `pi-agent-core`, `pi-storage-sqlite-node`, and
-`pi-coding-agent`) from the owned fork in source/VM mode or consumes the same
-prebuilt tarballs in the image. It never installs the public coding-agent
-package as a fallback. Dependency hydration for this nested source uses
-`npm ci --ignore-scripts`; the explicit local-release command owns package
-generation, while repository-only lifecycle hooks must not require the host
-worktree's Git administration path from inside Lima, WSL, or an image builder.
+The Trustant commit pins the vendored TruACP and ACP adapter sources in
+`acp/` and `acp/pi-acp/`. [acp/pi.version](../acp/pi.version) pins each
+npm package to an explicit version, including the Pi extensions and the five
+upstream Pi packages for AI, TUI, agent core, SQLite storage, and the coding
+agent. The installer verifies the upstream runtime packages against
+[acp/pi.integrity](../acp/pi.integrity) before installing them from npm.
+In source and VM installs, [acp/setup.sh](../acp/setup.sh) runs `npm ci`,
+`npm run build`, and `npm pack` in `acp/pi-acp/`. The image installer uses
+the adapter tarball prepared by [image/image.sh](../image/image.sh).
 
 In the repository-root Lima/WSL flow, root `setup.sh` is the sole owner of the
 persistent npm global-prefix policy. It selects a compatible user-owned prefix
 (default `~/.npm-global`), exports it before invoking this installer, and places
-its bin directory on the current and Bash-login PATH. `trustant-acp/setup.sh`
+its bin directory on the current and Bash-login PATH. `acp/setup.sh`
 consumes npm's selected writable prefix and must not introduce a competing
 `~/.npm-global` default. Its standalone/image fallback remains scoped to those
 entrypoints, where the caller's writable build prefix is authoritative.
@@ -57,7 +55,7 @@ launches TruACP with `TRUSTANT_MANAGED_RUNTIME=1`; a failed probe then directs
 the user back to Trustant's main Configure screen instead of opening TruACP's
 standalone credential form. The managed process also receives
 `PI_SKIP_VERSION_CHECK=1`: Trustant owns the pinned Pi version through
-`trustant-acp/pi.version`, so Pi must not advertise or initiate an independent
+`acp/pi.version`, so Pi must not advertise or initiate an independent
 global npm upgrade from inside an application session. The nested Trustant
 `pi-acp` fork honors both `PI_SKIP_VERSION_CHECK` and `PI_OFFLINE` natively, so
 setup does not patch installed JavaScript and does not fall back to the public
@@ -317,15 +315,8 @@ specified in [trustant-pi-runtime.md](trustant-pi-runtime.md).
 
 ## Upstream runtime ownership (#71)
 
-This section supersedes earlier fork-source packaging language. Trustant pins
-all five upstream Pi packages at `0.82.0` in `trustant-acp/pi.version` and pins
-their reviewed SHA-512 values in `trustant-acp/pi.integrity`. Setup and image
-builds must fail on any version or integrity mismatch and must not require a Pi
-source submodule or cached `pi-packages` tarballs. The Trustant `pi-acp` fork
-remains a separate pinned component.
-
 The managed repeated-stream invariant is implemented by
-`trustant-acp/extensions/trustant-runtime.ts` through upstream Pi's
+`acp/extensions/trustant-runtime.ts` through upstream Pi's
 `message_update`, `message_end`, and `ctx.abort()` extension API. Detection is
 scoped to one assistant response and does not impose a turn or step budget.
 

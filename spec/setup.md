@@ -166,7 +166,7 @@ After npm is available and before any global npm installation, repository-root
 
 An explicitly configured prefix that is relative, owned by another user, or
 not writable without privilege is incompatible and falls back with a warning to
-`$HOME/.npm-global`. `trustant-acp/setup.sh` consumes this exported/configured
+`$HOME/.npm-global`. `acp/setup.sh` consumes this exported/configured
 prefix; it does not own another persistent default in the repository-root flow.
 The image build remains reproducible: it invokes the same nested installer as
 the image build user and uses that build context's writable npm prefix.
@@ -254,7 +254,7 @@ an account and never reads a developer machine's normal `~/.config/gh`.
 
 11. Install the pinned Pi coding-agent toolchain.
 
-- Read literal npm install specifications from `trustant-acp/pi.version`,
+- Read literal npm install specifications from `acp/pi.version`,
   ignoring comments and blank lines.
 - Reject any entry without an explicit version separator; setup must never
   resolve a floating Pi CLI or extension.
@@ -377,9 +377,10 @@ on the guest's PATH.
 
 13. Build and install TruACP/Pi from the vendored `acp/` directory.
 
-Every Pi package must be pinned in `trustant-acp/pi.version`. Run
-`trustant-acp/setup.sh` from inside that directory so it builds the bundled UI,
-installs the pinned agents/adapters, and creates `~/.local/bin/truacp`. Verify
+From the repository root, run `(cd acp && ./setup.sh)`. The installer verifies
+and installs the pinned Pi runtime packages from npm, builds the vendored
+`acp/pi-acp/` adapter, builds the TruACP bundle, and creates
+`~/.local/bin/truacp`. Verify
 that `pi`, `pi-acp`, and `truacp` resolve from the guest PATH. Do not install an
 OpenCode runtime or `@opencode-ai/plugin`: issue #51 is a hard Pi cutover.
 After registering the pinned `pi-mcp-adapter@2.11.0`, the same installer applies
@@ -418,9 +419,5 @@ setup does nothing for these, but they are covered when an app is launched.
 
 ## Upstream Pi setup contract (#71)
 
-This section supersedes earlier nested-Pi-build instructions. Clean `trudev`
-setup installs the exact upstream Pi `0.82.0` package set from
-`trustant-acp/pi.version` only after matching every entry in
-`trustant-acp/pi.integrity`. It must not initialize or build a Pi source fork,
-consume locally staged Pi tarballs, or rely on host npm caches. The nested
-`trustant-acp/pi-acp` fork remains required and is built by the ACP installer.
+Clean `trudev` setup uses the upstream Pi package pins from `acp/pi.version`
+and verifies their registry integrity against `acp/pi.integrity`.

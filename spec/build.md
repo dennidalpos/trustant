@@ -103,10 +103,10 @@ being rebuilt, so the split bought nothing that cache does not.
 It stages `openserverless-mcp` from the pinned
 `mcp` submodule, the local deterministic React MCP source, and the
 TruACP runtime artifacts:
-`setup.sh`, `pi.version`, `dist-bin/truacp.cjs`,
-`pi-acp-package.tgz`, and `extensions/trustant-runtime.ts`. Before staging, it
-recursively initializes TruACP's pinned
-`pi-acp` fork, runs its tests/build/package step, and builds the TruACP bundle.
+`setup.sh`, `pi.version`, `pi.integrity`, `dist-bin/truacp.cjs`,
+`pi-acp-package.tgz`, `extensions/trustant-runtime.ts`, and
+`extensions/requirements.txt`. The host builds the TruACP bundle and installs
+dependencies, tests, builds, and packs the adapter from `acp/pi-acp/`.
 The complete sources and `node_modules` must never enter the Docker build context
 or an image layer. The staged runtime identities and content hashes are logged
 for provenance; because they are part of the build context, any runtime or
@@ -123,8 +123,9 @@ TruACP lives in this repository under `acp/` (with its pi-acp adapter under
 `acp/pi-acp/`); it is no longer a Git submodule, so the repository commit pins
 it. Trustant builds must consume that checked-out revision and must not download a floating TruACP source archive or
 depend on another developer worktree. The host build produces the portable
-JavaScript bundle; the Docker build runs the staged `setup.sh` to install that
-bundle and the Pi packages pinned by `trustant-acp/pi.version`. OpenCode is not
+JavaScript bundle. The Docker build runs the staged `setup.sh` to install that
+bundle and the upstream npm Pi packages pinned by
+`acp/pi.version` after verifying them against `acp/pi.integrity`. OpenCode is not
 built or installed.
 
 The Lima `setup.sh` development path mirrors the image: it builds the checked-out
@@ -169,17 +170,13 @@ Managed account state is runtime data under
 durable workspace mount in the pod and in `trudev`, so authentication survives
 supported restarts while remaining isolated from the normal host account.
 
-For the macOS Lima flow, `start.sh` initializes `mcp`, `trustant-acp`, and its
-nested `pi-acp` fork recursively on the host before starting the guest. It checks
-the nested leaf even when the outer submodule was already populated. A
+For the macOS Lima flow, `start.sh` initializes the `mcp` submodule on the host.
+The TruACP and `pi-acp` source trees are already part of the Trustant checkout. A
 worktree's `.git` file may point outside the single mounted directory, so
 `setup.sh` consumes ordinary mounted files and must never require guest access
 to nested submodule Git metadata. The same `setup.sh` supports Ubuntu under
 Lima and WSL with local k3s without requiring guest access to Git metadata or
-changing guest system services. Nested Pi dependency hydration therefore uses
-`npm ci --ignore-scripts`: its explicit local-release command owns the package
-build, while repository-only lifecycle hooks such as Husky are neither needed
-nor allowed to follow host-only worktree administration paths.
+changing guest system services.
 
 New `trudev` instances use a 60 GiB virtual disk. The local k3s service stack,
 containerd snapshots, and repeated Trustant image imports exceed the safe
@@ -298,8 +295,8 @@ That set covers a Go change, a container entrypoint fix, a flag flip in `.env`
 (e.g. adding the hidden `ENABLE_LICENSE` / `ENABLE_REGOLO` overrides) and a base-config change — none of which
 need the MCP/TruACP stages rebuilt. Everything `image/image.sh` does before its
 first `docker build` line (submodule init, `npm install`/`build` for
-trustant-acp, `npm ci`/`test`/`build`/`pack` for the nested pi-acp fork, three
-staged MCP context dirs, ~20 minutes) is skipped.
+TruACP in `acp/`, `npm ci` / `npm test` / `npm run build` / `npm pack` for the
+adapter in `acp/pi-acp/`, three staged MCP context dirs, ~20 minutes) is skipped.
 
 The ownership split mirrors `image/Dockerfile` and is not cosmetic: root-owned
 files in `/home/trustant` break the running app, which writes there.
@@ -428,11 +425,9 @@ machine produce the image the same way.
 
 ## Upstream Pi image payload (#71)
 
-This section supersedes earlier Pi-tarball staging requirements. `image.sh`
-stages `setup.sh`, `pi.version`, `pi.integrity`, the managed runtime extension,
-the built TruACP bundle, and the pinned `pi-acp` package. It must not build a Pi
-monorepo or create a `pi-packages` directory. The Docker layer consumes this
-same payload and verifies upstream package integrity through the ACP installer.
+The Docker layer uses the staged ACP installer to verify the integrity of the
+upstream Pi packages before installing them from npm. The only Pi-related
+tarball staged by `image/image.sh` is the built `pi-acp` adapter.
 
 Notebook support adds no runtime package or image secret. Its React UI, parser,
 server GitHub client, and session sidecar code are imported by the existing

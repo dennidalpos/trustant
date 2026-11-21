@@ -1641,10 +1641,16 @@
         }
 
         function hideDeleteModal() {
-            document.getElementById('deleteModal').classList.add('hidden');
-            document.getElementById('deleteModal').classList.remove('flex');
+            const modal = document.getElementById('deleteModal');
+            const deleteAttempted = !modal.classList.contains('hidden') &&
+                document.getElementById('deleteConfirmButtons').classList.contains('hidden');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
             appToDelete = null;
-            loadApps();
+            if (deleteAttempted) {
+                document.getElementById('appCount').focus();
+                loadApps();
+            }
         }
 
         // Git Pull functions
@@ -2371,8 +2377,8 @@
 
         function renderAppTable(apps) {
             return `
-                <div class="overflow-hidden nu-card nu-app-table">
-                    <div class="hidden xl:grid grid-cols-[minmax(220px,1.2fr)_minmax(170px,1fr)_110px_760px] gap-3 px-4 py-3 bg-[color:var(--nu-accent)] border-b border-[color:var(--nu-rule)] nu-mono text-xs font-medium uppercase text-[color:var(--nu-muted)]">
+                <div class="nu-card nu-app-table">
+                    <div class="nu-app-table-line hidden xl:grid rounded-t gap-3 px-4 py-3 bg-[color:var(--nu-accent)] border-b border-[color:var(--nu-rule)] nu-mono text-xs font-medium uppercase text-[color:var(--nu-muted)]">
                         <div>Application</div>
                         <div>Repository</div>
                         <div class="text-center">Status</div>
@@ -2384,13 +2390,15 @@
 
         function renderAppRow(app) {
             const links = appLinks(app);
+            const name = escapeHtml(JSON.stringify(app.name)).replaceAll('"', '&quot;');
+            const label = escapeHtml(app.name).replaceAll('"', '&quot;');
             return `
-                <div class="grid xl:grid-cols-[minmax(220px,1.2fr)_minmax(170px,1fr)_110px_760px] gap-3 px-4 py-3 border-b border-[color:var(--nu-rule)] last:border-b-0 items-center hover:bg-[color:var(--nu-accent)] transition-colors">
+                <div class="nu-app-table-line grid gap-3 px-4 py-3 border-b border-[color:var(--nu-rule)] last:border-b-0 items-center hover:bg-[color:var(--nu-accent)] transition-colors">
                     <div class="flex items-center gap-3 min-w-0">
                         <div class="${avatarClass(app.name)}">${initials(app.name)}</div>
                         <div class="min-w-0">
                             <div class="font-semibold text-[color:var(--nu-ink)] truncate">${escapeHtml(app.name)}</div>
-                            <div class="flex gap-3 text-sm mt-1">
+                            <div class="flex flex-wrap gap-x-3 gap-y-1 text-sm mt-1">
                                 <a href="${links.local}" target="_blank" class="nu-link inline-flex items-center gap-1">${weblinkIcon('w-3.5 h-3.5')} Development</a>
                                 ${links.production ? `<a href="${links.production}" target="_blank" class="nu-link inline-flex items-center gap-1">${weblinkIcon('w-3.5 h-3.5')} Production</a>` : ''}
                             </div>
@@ -2400,18 +2408,47 @@
                         ${links.repo ? `<a href="${links.repo}" target="_blank" class="nu-link truncate block">${escapeHtml(links.repoLabel)}</a>` : '<span class="text-[color:var(--nu-muted)]">No repository</span>'}
                     </div>
                     <div class="text-center">${statusBadge(hasProduction(app))}</div>
-                    <div class="flex flex-wrap gap-2 xl:flex-nowrap xl:justify-start">
-                        <button onclick="launchApp('${escapeAttr(app.name)}')" title="Open this application in the editor" class="nu-btn nu-btn-primary">${editIcon('w-3.5 h-3.5')} Edit</button>
-                        ${actionButton('Env', `configureApp('${escapeAttr(app.name)}')`, gearIcon(), 'purple')}
-                        ${actionButton('Share', `openSharedPicker('${escapeAttr(app.name)}')`, shareIcon(), 'purple')}
-                        ${actionButton('Git Pull', `handleGitPull('${escapeAttr(app.name)}')`, downloadIcon(), 'neutral')}
-                        ${actionButton('Git Push', `handleGitPush('${escapeAttr(app.name)}')`, uploadIcon(), 'indigo', `data-tour-push="${escapeAttr(app.name)}"`)}
-                        ${actionButton('Publish', `handlePublishRemote('${escapeAttr(app.name)}')`, globeIcon(), 'teal')}
-                        ${actionButton('Undeploy', `showUndeployModal('${escapeAttr(app.name)}')`, undeployIcon(), 'orange')}
-                        <button onclick="showDeleteModal('${escapeAttr(app.name)}')" title="Permanently delete this application and its repository" class="nu-btn nu-btn-danger">${trashIcon()} Delete</button>
+                    <div class="nu-app-actions flex flex-wrap gap-2">
+                        <button onclick="launchApp(${name})" title="Open this application in the editor" class="nu-btn nu-btn-primary">${editIcon('w-3.5 h-3.5')} Edit</button>
+                        ${actionButton('Publish', `handlePublishRemote(${name})`, globeIcon(), 'teal')}
+                        <details class="nu-app-actions-menu" name="inventory-app-actions">
+                            <summary class="nu-btn nu-btn-secondary" aria-label="More actions for ${label}">
+                                More actions
+                                <svg aria-hidden="true" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/></svg>
+                            </summary>
+                            <div class="nu-app-actions-panel">
+                                ${actionButton('Env', `configureApp(${name})`, gearIcon(), 'purple')}
+                                ${actionButton('Share', `openSharedPicker(${name})`, shareIcon(), 'purple')}
+                                ${actionButton('Git Pull', `handleGitPull(${name})`, downloadIcon(), 'neutral')}
+                                ${actionButton('Git Push', `handleGitPush(${name})`, uploadIcon(), 'indigo', `data-tour-push="${label}"`)}
+                                ${actionButton('Undeploy', `showUndeployModal(${name})`, undeployIcon(), 'orange')}
+                                <button onclick="showDeleteModal(${name})" title="Permanently delete this application and its repository" class="nu-btn nu-btn-danger">${trashIcon()} Delete</button>
+                            </div>
+                        </details>
                     </div>
                 </div>`;
         }
+
+        function closeAppActionsMenu(menu) {
+            menu.open = false;
+            menu.querySelector('summary').focus();
+        }
+
+        document.addEventListener('click', event => {
+            const menu = document.querySelector('.nu-app-actions-menu[open]');
+            if (!menu) return;
+            if (!menu.contains(event.target)) {
+                menu.open = false;
+            } else if (event.target.closest('.nu-app-actions-panel button')) {
+                // Dialogs remember the focused trigger when they open.
+                closeAppActionsMenu(menu);
+            }
+        }, true);
+
+        document.addEventListener('focusin', event => {
+            const menu = document.querySelector('.nu-app-actions-menu[open]');
+            if (menu && !menu.contains(event.target)) menu.open = false;
+        });
 
         function setAppFilter(filter) {
             appFilter = filter;
@@ -3233,6 +3270,12 @@
         // Close modals on escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
+                const menu = e.target.closest('.nu-app-actions-menu[open]');
+                if (menu) {
+                    e.preventDefault();
+                    closeAppActionsMenu(menu);
+                    return;
+                }
                 hideAddModal();
                 if (typeof hideSSHKeyModal === 'function') hideSSHKeyModal();
                 hideDeleteModal();

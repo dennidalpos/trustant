@@ -26,7 +26,7 @@ NAME                             VERSION  LICENSE       HOMEPAGE
 ----                             -------  -------       --------
 github.com/coder/websocket       1.8.15   ISC           https://github.com/coder/websocket
 github.com/creack/pty            1.1.24   MIT           https://github.com/creack/pty
-Go standard library and runtime  1.25.5   BSD-3-Clause  https://go.dev
+Go standard library and runtime  1.27.4   BSD-3-Clause  https://go.dev
 
 
 2. FRONTEND ASSETS VENDORED IN web/
@@ -514,13 +514,13 @@ tree, with its license files, is installed under the global node_modules.
 
 NAME                                    VERSION  LICENSE     HOMEPAGE
 ----                                    -------  -------     --------
-@agentclientprotocol/codex-acp          2.8.0    Apache-2.0  https://github.com/agentclientprotocol/codex-acp
+@agentclientprotocol/codex-acp          2.9.0    Apache-2.0  https://github.com/agentclientprotocol/codex-acp
 @earendil-works/pi-agent-core           0.82.0   MIT         https://github.com/earendil-works/pi
 @earendil-works/pi-ai                   0.82.0   MIT         https://github.com/earendil-works/pi
 @earendil-works/pi-coding-agent         0.82.0   MIT         https://github.com/earendil-works/pi
 @earendil-works/pi-storage-sqlite-node  0.82.0   MIT         https://github.com/earendil-works/pi
 @earendil-works/pi-tui                  0.82.0   MIT         https://github.com/earendil-works/pi
-@openai/codex                           0.170.0  Apache-2.0  https://github.com/openai/codex
+@openai/codex                           0.171.0  Apache-2.0  https://github.com/openai/codex
 mongodb-mcp-server                      1.9.0    Apache-2.0  https://github.com/mongodb-js/mongodb-mcp-server
 pi-mcp-adapter                          2.11.0   MIT         https://www.npmjs.com/package/pi-mcp-adapter
 pi-web-access                           0.13.0   MIT         https://www.npmjs.com/package/pi-web-access

@@ -582,6 +582,59 @@ textarea {
     font-weight: 500;
 }
 
+@media (min-width: 1280px) {
+    .nu-app-table-line {
+        grid-template-columns: minmax(220px, 1.2fr) minmax(170px, 1fr) 110px 20rem;
+    }
+}
+
+.nu-app-actions {
+    position: relative;
+    justify-self: start;
+    max-width: 100%;
+}
+
+.nu-app-actions-menu > summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.nu-app-actions-menu > summary::-webkit-details-marker {
+    display: none;
+}
+
+.nu-app-actions-menu[open] > summary svg {
+    transform: rotate(180deg);
+}
+
+.nu-app-actions-panel {
+    position: absolute;
+    z-index: 10;
+    inset-block-start: calc(100% + 0.25rem);
+    inset-inline-end: 0;
+    display: grid;
+    gap: 0.25rem;
+    min-width: 11rem;
+    padding: 0.375rem;
+    border: 1px solid var(--nu-rule);
+    border-radius: 4px;
+    background: white;
+}
+
+.nu-app-actions-panel .nu-btn {
+    justify-content: flex-start;
+}
+
+.nu-app-actions-panel .nu-btn-danger {
+    color: color-mix(in oklab, var(--nu-danger) 90%, var(--nu-ink));
+}
+
+@media (max-width: 415px) {
+    .nu-app-actions-panel {
+        inset-inline: 0 auto;
+    }
+}
+
 .nu-banner {
     border: 1px solid color-mix(in oklab, var(--nu-signal) 30%, white);
     border-radius: 4px;

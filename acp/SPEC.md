@@ -337,11 +337,10 @@ generation is an installation concern.
 `./setup.sh` (or `npm run setup:agents`) is the one-shot bootstrap. It runs three
 ordered phases:
 
-1. **Install components** — the supported CLIs and upstream ACP adapters
-   globally via npm, register Pi extensions through `pi install`, and build or
-   install the pinned nested Trustant `pi` and `pi-acp` forks. npm extension
-   pins live in `pi.version`; fork revisions are pinned by nested Git
-   submodules.
+1. **Install components** — install the pinned CLIs and upstream ACP adapters
+   globally via npm, verify the upstream Pi packages against `pi.integrity`,
+   and register Pi extensions through `pi install`. Build the vendored
+   Trustant `pi-acp` adapter from source or install the staged adapter tarball.
 2. **Build** — *only if a `package.json` exists in the current directory*:
    `dist-web/` (web UI) and `dist-bin/truacp.cjs` (server bundle).
 3. **Install** — the bundle into `~/.local/lib/truacp` plus the launcher scripts
@@ -354,13 +353,13 @@ so any failing step aborts it.
 **Self-contained.** `setup.sh` depends on no other file in the repo. Given only
 
 ```
-setup.sh + pi.version + dist-bin/truacp.cjs + pi-acp-package.tgz
-pi-packages/*.tgz + extensions/trustant-runtime.ts
+setup.sh + pi.version + pi.integrity + dist-bin/truacp.cjs + pi-acp-package.tgz
+extensions/trustant-runtime.ts + extensions/requirements.txt
 ```
 
 it installs a complete, working truacp into `~/.local/bin` — no `package.json`,
 no `node_modules`, no secondary installer, and no network beyond npm for the
-remaining agents. Source mode builds the nested fork; image mode supplies the
+remaining agents. Source mode builds the vendored adapter, and image mode supplies the
 tarball produced from that same source revision. Phase 3 is the only launcher
 implementation, so source, VM, and image runtimes cannot drift.
 
@@ -388,7 +387,7 @@ The agents and their adapters:
 |---|---|---|
 | Claude Code | `@anthropic-ai/claude-code` (`claude`) | `@agentclientprotocol/claude-agent-acp` — **not installed by setup.sh**, see §10d |
 | Codex | `@openai/codex` (`codex`) | `@agentclientprotocol/codex-acp` |
-| Pi | nested `trustable-ai/pi` fork (`pi`) | nested `pi-acp` fork |
+| Pi | pinned upstream `@earendil-works/pi-coding-agent` (`pi`) | vendored `pi-acp/` fork |
 
 - The adapters are what `config.json` spawns via `npx -y <adapter>`; a global install
   makes launches instant/offline. The CLIs are the binaries the adapters exec.
@@ -422,26 +421,16 @@ The agents and their adapters:
 - The script installs into npm's global prefix when writable, else falls back to a
   user prefix at `~/.local` (bin → `~/.local/bin`, conventionally on PATH), so no
   sudo is needed. `--force` keeps re-runs idempotent (overwrites stale bin links).
-- `pi-acp` comes from the nested Trustant fork, based on upstream v0.0.31. The
+- `pi-acp` comes from the vendored Trustant fork, based on upstream v0.0.31. The
   fork natively honors `PI_SKIP_VERSION_CHECK` and `PI_OFFLINE`, exposes
   versioned launch/activity metadata, includes extension commands, and bounds
   abort requests. `setup.sh` never falls back to the public npm adapter because
   that would silently remove those capabilities.
-- The Pi CLI, agent core, AI, TUI, and SQLite session-storage packages come from the nested
-  `trustable-ai/pi` fork at the pinned upstream-compatible version. Source/VM
-  mode builds all five tarballs; image mode consumes those exact artifacts.
-  Installing the public coding-agent package is forbidden because stream-loop
-  protection lives below ACP in the owned core.
-- The Trustant local-release build compiles the checked-in Pi model catalogs.
-  It does not refresh them from models.dev, OpenRouter, NVIDIA, or other live
-  catalogs while packaging an unchanged commit. Catalog refresh remains an
-  explicit upstream/release-maintenance action, so VM and image builds are
-  deterministic and cannot acquire an incompatible provider schema mid-build.
-- Source/VM and image packaging hydrate the nested Pi fork with `npm ci
-  --ignore-scripts`. The explicit local-release command owns its build; repository
-  lifecycle hooks such as Husky are not runtime prerequisites and may otherwise
-  follow a worktree `.git` pointer into host-only Git administration paths that
-  are deliberately unavailable inside Lima, WSL, or an image builder.
+- The Pi CLI, agent core, AI, TUI, and SQLite session-storage packages come from
+  npm at the exact versions in [pi.version](pi.version). The installer compares
+  the registry's integrity values against [pi.integrity](pi.integrity) before
+  installation. The managed runtime extension detects repeated output within a
+  streamed provider response.
 - API keys are not handled here — set them in `.env` (`ANTHROPIC_API_KEY`,
   `OPENAI_API_KEY`, `PI_API_KEY`; see `.env.example`).
 - After running it, **restart the server** so the newly-installed binaries are on
@@ -459,8 +448,8 @@ Each line is a **literal npm install spec**, `<module>@<version>`. `#` comments
 and blank lines are ignored:
 
 ```
-@openai/codex@0.170.0
-@agentclientprotocol/codex-acp@2.8.0
+@openai/codex@0.171.0
+@agentclientprotocol/codex-acp@2.9.0
 pi-mcp-adapter@2.11.0
 pi-web-access@0.13.0
 ```
@@ -486,8 +475,8 @@ deployment above work:
 | a prebuilt `truacp.cjs` only | skipped | installs the prebuilt bundle |
 | neither | skipped | skipped — agents only, exit **0** |
 
-The build gate tests the **current** directory, so `cd trustant-acp &&
-./setup.sh` builds while `./trustant-acp/setup.sh` from the parent does not. The
+The build gate tests the **current** directory. Run `(cd acp && ./setup.sh)`
+from the Trustant root to build in the TruACP source directory. The
 bundle lookup is the reverse: it prefers the **script's** directory
 (`<script dir>/dist-bin/truacp.cjs`, then `<script dir>/truacp.cjs`) before the
 current one, so a copied-out five-file set installs correctly regardless of the
@@ -630,7 +619,7 @@ read-only service discovery and verification. Schema, migration, seed, and app
 writes must therefore remain reproducible in setup or public OpenServerless
 actions instead of repairing only the live service state.
 
-The nested Pi fork detects repeated normalized prose inside one streamed
+The managed runtime extension detects repeated normalized prose inside one streamed
 provider response. It aborts that pathological response below ACP. It does not
 impose a provider-step or turn budget; healthy runs exceeding 300 turns remain
 valid.
@@ -1121,13 +1110,10 @@ The complete product contract is [spec/notebook.md](../spec/notebook.md).
 
 ## Upstream Pi runtime ownership (issue #71)
 
-This section supersedes earlier fork-specific Pi packaging language. Trustant
-uses the exact upstream `@earendil-works/pi-*` `0.82.0` package set recorded in
-`pi.version`; `setup.sh` must verify each reviewed SHA-512 value from
-`pi.integrity` before installation. The ACP repository must not contain a `pi`
-gitlink, build the Pi source tree, accept prebuilt `pi-packages`, or fall back to
-an unpinned registry release. The separately owned `pi-acp` fork remains pinned
-because it supplies Trustant's ACP launch and lifecycle behavior.
+Trustant installs the exact upstream `@earendil-works/pi-*` package set recorded
+in `pi.version`. `setup.sh` must verify each reviewed SHA-512 value from
+`pi.integrity` before installation. The Trustant commit pins the vendored
+`pi-acp` fork, which supplies Trustant's ACP launch and lifecycle behavior.
 
 Trustant-specific repeated-stream protection belongs to
 `extensions/trustant-runtime.ts`, using upstream Pi's `message_update`,
@@ -1139,7 +1125,9 @@ turn, tool-call, or provider-step budget; healthy runs beyond 300 turns remain
 valid.
 
 Both clean `trudev` setup and production image setup consume the same
-`pi.version`, `pi.integrity`, managed extension, and pinned `pi-acp` artifact.
+`pi.version`, `pi.integrity`, and managed extension. Clean setup builds
+`pi-acp` in the guest, and image setup installs the tarball built from the same
+vendored source.
 No build may depend on a local Pi checkout, unpublished object, cached tarball,
 or developer-machine path.
 ## Header connection state

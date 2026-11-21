@@ -136,19 +136,22 @@ header/action layouts flexible enough that a later auth stream can add its own
 hook without reworking the page structure.
 
 For each application lists a <name>, a <repo> , a link "Development" to access the local application, and optionally a "Production" link and a "Repository" link. Development and Production links show an external-link icon so they are recognizable as links.
-Application action buttons use restrained, light styling and fixed inline labels:
-Edit, Env, Git Pull, Git Push, Publish, Undeploy, and Delete must not wrap inside the
-list view. Undeploy sits between Publish and Delete in both the card and the list view.
-In the list view the action buttons are left-aligned, so the row starts directly under
-the "Actions" column header rather than being pushed to the right edge. The
-Development/Production status badge is centered in its column, and the "Status" column
-header is centered to match.
-Delete keeps a distinct pale red treatment.
+The list view keeps **Edit** and **Publish** visible in each row. **More actions**
+contains **Env**, **Share**, **Git Pull**, **Git Push**, **Undeploy**, and **Delete**.
+Enter or Space toggles the disclosure. Tab reaches its buttons in order.
+Escape closes it and returns focus to its trigger. Selecting **Undeploy** or
+**Delete** opens the existing confirmation for that application. The card view
+continues to show the full set of actions directly. Delete keeps its pale red
+treatment.
+
+List actions align with the **Actions** heading on desktop and wrap as a group
+on narrow screens. The Development/Production badge aligns with the centered
+**Status** heading.
 
 The application list uses the roomiest page shell (`nu-shell-full`, capped at 1760px)
-with reduced horizontal page padding for both the top bar and the main content, so the
-list view has enough width for the full action row without squeezing the Application
-and Repository columns. Other pages keep the default `nu-shell`.
+with reduced horizontal page padding for both the top bar and the main content,
+giving the Application and Repository columns room for longer names and links.
+Other pages keep the default `nu-shell`.
 
 The Development link points to `<protocol>://<name>.<domain>` by replacing the
 first label of the current Trustant host. For example, from

@@ -106,17 +106,16 @@ Standalone TruACP remains unchanged. Once `TRUSTANT_MANAGED_RUNTIME=1` is set,
 missing, malformed, stale, or mismatched inputs are fatal: managed mode must not
 fall back to plain Pi.
 
-The extension is installed by `trustant-acp/setup.sh` at:
+The extension is installed by `acp/setup.sh` at:
 
 ```
 ~/.local/lib/truacp/extensions/trustant-runtime.ts
 ```
 
-The same artifact is staged into the container image beside the pinned TruACP
-bundle, `pi-acp` package, and five packages built from the nested
-`trustable-ai/pi` fork: AI, TUI, agent core, SQLite session storage, and coding
-agent. The managed executable must never fall back to the public coding-agent
-package.
+The image stages the same extension beside the TruACP bundle, the tarball built
+from the vendored `acp/pi-acp/` adapter, and the version and integrity manifests.
+The staged installer checks the five upstream Pi package pins before installing
+them from npm.
 
 ## Initial enforced policy
 

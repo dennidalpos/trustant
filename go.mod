@@ -1,6 +1,6 @@
-module github.com/trustable-ai/trustable-app
+module github.com/trustant/trustant
 
-go 1.25.5
+go 1.27.4
 
 require (
 	github.com/coder/websocket v1.8.15
