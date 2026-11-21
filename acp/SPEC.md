@@ -409,6 +409,13 @@ The agents and their adapters:
   original tool call exactly once. Proxy, direct-tool, and MCP UI paths use the
   same manager recovery. Setup validates the exact version and every source
   target before writing, remains idempotent, and fails closed on source drift.
+- Every installed `@earendil-works/pi-ai` copy at the pinned version (top-level
+  and nested) is patched after the global install: `"session usage limit"` joins
+  the non-retryable limit patterns in `dist/utils/retry.js`, so an Ollama Cloud
+  HTTP 429 for an exhausted session quota (trustant/trustant#206) ends the turn
+  once instead of triggering Pi's automatic turn retries. Other 429 responses
+  keep the upstream transient retry. Copies at other versions are untouched; the
+  transform is idempotent and fails closed unless its anchor appears exactly once.
 - `@zed-industries/codex-acp` is deprecated; config and this script use the
   maintained `@agentclientprotocol/codex-acp` (same `codex-acp` bin, drop-in).
 - The script installs into npm's global prefix when writable, else falls back to a

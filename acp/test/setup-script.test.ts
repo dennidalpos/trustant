@@ -91,6 +91,13 @@ describe("setup.sh Pi runtime sources", () => {
 		expect(setup).toContain(
 			"this is the single allowed retry",
 		);
+		expect(setup).toContain(
+			'node - "$INSTALL_PREFIX/lib/node_modules" "${PI_AI_SPEC##*@}" <<\'PI_AI_RETRY_PATCH\'',
+		);
+		expect(setup).toContain('const marker = \'"session usage limit",\';');
+		expect(setup).toContain(
+			'const anchor = \'    "Monthly usage limit reached",\\n\';',
+		);
 		expect(versions).not.toMatch(/^pi-acp@/m);
 		for (const name of [
 			"pi-ai",

@@ -14,7 +14,7 @@ exist upstream; **removed** upstream files that are no longer present.
 - Upstream: https://github.com/RAIT-09/obsidian-agent-client
 - Baseline revision: `0.11.0`
 - License: Apache-2.0, Copyright 2025-2026 RAIT-09
-- Files: 11 unmodified, 21 modified, 86 added, 134 removed upstream files
+- Files: 11 unmodified, 21 modified, 87 added, 134 removed upstream files
 
 ### Modified (21)
 
@@ -40,7 +40,7 @@ exist upstream; **removed** upstream files that are no longer present.
 - `tsconfig.json`
 - `vitest.config.mts`
 
-### Added (86)
+### Added (87)
 
 - `.env.example`
 - `.gitattributes`
@@ -96,6 +96,7 @@ exist upstream; **removed** upstream files that are no longer present.
 - `test/notebook-session-store.test.ts`
 - `test/notebook-ui.test.ts`
 - `test/notebook.test.ts`
+- `test/pi-ai-retry-patch.test.ts`
 - `test/pi-config.test.ts`
 - `test/pi-thinking.test.ts`
 - `test/prompt-history.test.ts`
@@ -321,9 +322,9 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 
 - Source: https://github.com/trustant/trustant-acp.git, gitlink before vendoring
 - Commit: `9786f796380aa9b2000d8cebd913fa41150c89ed`
-- Files: 87 unmodified, 28 modified, 3 added, 62 removed
+- Files: 85 unmodified, 30 modified, 4 added, 62 removed
 
-#### Modified (28)
+#### Modified (30)
 
 - `.gitignore`
 - `.vscode/extensions.json`
@@ -346,18 +347,21 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 - `server/config-store.ts`
 - `server/index.ts`
 - `setup.md`
+- `setup.sh`
 - `test/claude-install.test.ts`
 - `test/notebook-ui.test.ts`
+- `test/setup-script.test.ts`
 - `tsconfig.json`
 - `vitest.config.mts`
 - `web/ChatApp.tsx`
 - `web/prompt-history.ts`
 - `web/transport.ts`
 
-#### Added (3)
+#### Added (4)
 
 - `LICENSE-Apache-2.0-obsidian-agent-client`
 - `UPSTREAM.md`
+- `test/pi-ai-retry-patch.test.ts`
 - `test/provider-stream.integration.ts`
 
 #### Removed (62)
