@@ -6,7 +6,7 @@
 		"dev": "bash run.sh",
 		"setup:agents": "bash setup.sh",
 		"serve": "tsx server/index.ts",
-		"serve:trureact": "tsx server/index.ts --dir /home/msciab.guest/workbench/trureact/ --port 4097",
+		"serve:trureact": "tsx server/index.ts --port 4097",
 		"acp": "tsx server/index.ts --cli",
 		"build:web": "node esbuild.web.mjs production",
 		"dev:web": "node esbuild.web.mjs",

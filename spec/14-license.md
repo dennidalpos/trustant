@@ -113,7 +113,7 @@ Registered in [main.go](../main.go).
   edits the provisioning settings from Configure. `license_host` must be a valid
   apihost (`normalizeAPIHost`) and, when a valid license is installed and the
   gate is on, covered by it (local hosts exempt); `license_email` must be an
-  ASCII `local@domain.tld` address. An empty `provisioning_token` keeps the
+  ASCII `user@example.com` address. An empty `provisioning_token` keeps the
   stored token; `clear_token: true` removes it. 400 `{"error"}` on invalid
   input, otherwise the GET shape.
 

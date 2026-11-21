@@ -80,7 +80,7 @@ Content-Type: application/json
 `user`, `email`, and `password` must be non-empty strings without control
 characters. Names follow the existing Admin API validator: 5–61 lowercase ASCII
 letters/digits, without rewriting, with infrastructure names reserved. Email
-must be an ASCII dot-atom `local@domain.tld` address (no quoted local parts or
+must be an ASCII dot-atom `user@example.com` address (no quoted local parts or
 backslash escapes), at most 254 characters, with a local part at most 64
 characters. This also avoids unsafe interpolation in the existing operator
 metadata template.

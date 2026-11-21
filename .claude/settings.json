@@ -1,7 +1,6 @@
 {
   "permissions": {
     "allow": [
-      "Bash(grep -n \"handleSSHKey\" /Users/msciab/Projects/Workspace/trustant/trustable-app/*.go)",
       "Bash(gh auth:*)"
     ]
   }

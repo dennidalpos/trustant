@@ -184,9 +184,10 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the directory map.
 
 ## 10a. Server runtime (`server/index.ts`)
 
-The standalone server is run via `tsx` (`npm run serve`, or `npm run serve:trureact`
-for the trureact workbench). For development use `npm run dev` (§10a-dev), which adds
-hot reload. Behaviour beyond the transport contract:
+The standalone server is run via `tsx` (`npm run serve`). To serve a trureact
+workbench on port 4097, run `npm run serve:trureact -- --dir /path/to/trureact`.
+For development use `npm run dev` (§10a-dev), which adds hot reload. Behaviour
+beyond the transport contract:
 
 - **`--dir <path>`** — the server `process.chdir()`s into this directory. Relative
   paths (`config.json`, a relative `server.projectDir`) then resolve against it.
