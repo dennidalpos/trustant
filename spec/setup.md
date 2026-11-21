@@ -275,7 +275,7 @@ pointing the tool bin dir to ~/.local/bin:
 ```
 for tool in \
     postgres-mcp==0.3.0 --with 'mcp<2' --overrides <(echo pglast==7.21) \
-    redis-mcp-server==0.5.0 --with 'mcp<2' \
+    redis-mcp-server==0.5.1 --with 'mcp<2' \
     git+https://github.com/trustable-ai/mcp-server-milvus.git@a7e624f3057a0d739528bca3ed92504943224ceb --with 'mcp<2' ;
 do
     env UV_TOOL_BIN_DIR="$HOME/.local/bin" uv tool install --python 3.12 $tool
@@ -334,7 +334,7 @@ the mongodb server using npm (global, under the selected user-owned npm prefix):
 ```
 pack_dir=$(mktemp -d)
 (cd mcp && npm pack --pack-destination "$pack_dir")
-npm install -g tsx "$pack_dir"/openserverless-mcp-*.tgz mongodb-mcp-server@1.9.0
+npm install -g tsx@4.23.15 "$pack_dir"/openserverless-mcp-*.tgz mongodb-mcp-server@1.9.0
 ```
 
 Do not install OpenServerless MCP directly from GitHub in development: that
@@ -346,6 +346,8 @@ Pin MongoDB MCP to `1.9.0`: it is the last upstream release whose direct Zod
 dependency (`^3.25.76`) satisfies the `@mongosh/arg-parser` peer contract.
 Newer `1.10.0` through `1.13.0` releases require Zod 4 while the parser still
 declares Zod 3 and therefore produce an invalid npm peer tree.
+MongoDB MCP 3.3.0 starts on Node 24 but requires a `connectionId` for database
+tool calls that used the configured connection implicitly in 1.9.0.
 
 The VM development packages also include `python3-pytest` and
 `python3-dotenv`, matching generated application tests without requiring the

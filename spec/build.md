@@ -160,7 +160,7 @@ when it loads a model.
 
 Both environments install the same Trustant-owned Redis MCP stdio wrapper:
 `image/redis-mcp` becomes `trustant-redis-mcp`, while the pinned upstream
-`redis-mcp-server==0.5.0` remains its child process. The wrapper is part of the
+`redis-mcp-server==0.5.1` remains its child process. The wrapper is part of the
 image source context and clean VM setup payload; no build may substitute a
 cached developer copy or bypass its fail-closed per-application namespace
 policy.

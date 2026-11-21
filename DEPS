@@ -226,18 +226,19 @@ image.
 
 NAME                       VERSION  LICENSE       HOMEPAGE
 ----                       -------  -------       --------
-@hono/node-server          1.19.17  MIT           https://www.npmjs.com/package/@hono/node-server
-@modelcontextprotocol/sdk  1.29.0   MIT           https://www.npmjs.com/package/@modelcontextprotocol/sdk
+@hono/node-server          2.1.9    MIT           https://www.npmjs.com/package/@hono/node-server
+@modelcontextprotocol/sdk  1.32.2   MIT           https://www.npmjs.com/package/@modelcontextprotocol/sdk
 accepts                    2.0.0    MIT           https://www.npmjs.com/package/accepts
 ajv                        8.20.0   MIT           https://www.npmjs.com/package/ajv
 ajv-formats                3.0.1    MIT           https://www.npmjs.com/package/ajv-formats
-body-parser                2.3.0    MIT           https://www.npmjs.com/package/body-parser
+body-parser                2.4.0    MIT           https://www.npmjs.com/package/body-parser
 bytes                      3.1.2    MIT           https://www.npmjs.com/package/bytes
 call-bind-apply-helpers    1.0.2    MIT           https://www.npmjs.com/package/call-bind-apply-helpers
 call-bound                 1.0.4    MIT           https://www.npmjs.com/package/call-bound
 content-disposition        1.1.0    MIT           https://www.npmjs.com/package/content-disposition
 content-type               1.0.5    MIT           https://www.npmjs.com/package/content-type
 content-type               2.0.0    MIT           https://www.npmjs.com/package/content-type
+content-type               2.1.0    MIT           https://www.npmjs.com/package/content-type
 cookie                     0.7.2    MIT           https://www.npmjs.com/package/cookie
 cookie-signature           1.2.2    MIT           https://www.npmjs.com/package/cookie-signature
 cors                       2.8.6    MIT           https://www.npmjs.com/package/cors
@@ -257,7 +258,7 @@ eventsource-parser         3.1.0    MIT           https://www.npmjs.com/package/
 express                    5.2.1    MIT           https://www.npmjs.com/package/express
 express-rate-limit         8.5.2    MIT           https://www.npmjs.com/package/express-rate-limit
 fast-deep-equal            3.1.3    MIT           https://www.npmjs.com/package/fast-deep-equal
-fast-uri                   3.1.5    BSD-3-Clause  https://www.npmjs.com/package/fast-uri
+fast-uri                   3.1.9    BSD-3-Clause  https://www.npmjs.com/package/fast-uri
 finalhandler               2.1.1    MIT           https://www.npmjs.com/package/finalhandler
 forwarded                  0.2.0    MIT           https://www.npmjs.com/package/forwarded
 fresh                      2.0.0    MIT           https://www.npmjs.com/package/fresh
@@ -267,11 +268,11 @@ get-proto                  1.0.1    MIT           https://www.npmjs.com/package/
 gopd                       1.2.0    MIT           https://www.npmjs.com/package/gopd
 has-symbols                1.1.0    MIT           https://www.npmjs.com/package/has-symbols
 hasown                     2.0.4    MIT           https://www.npmjs.com/package/hasown
-hono                       4.13.1   MIT           https://www.npmjs.com/package/hono
+hono                       4.13.19  MIT           https://www.npmjs.com/package/hono
 http-errors                2.0.1    MIT           https://www.npmjs.com/package/http-errors
-iconv-lite                 0.7.2    MIT           https://www.npmjs.com/package/iconv-lite
+iconv-lite                 0.7.3    MIT           https://www.npmjs.com/package/iconv-lite
 inherits                   2.0.4    ISC           https://www.npmjs.com/package/inherits
-ip-address                 10.4.0   MIT           https://www.npmjs.com/package/ip-address
+ip-address                 10.7.6   MIT           https://www.npmjs.com/package/ip-address
 ipaddr.js                  1.9.1    MIT           https://www.npmjs.com/package/ipaddr.js
 is-promise                 4.0.0    MIT           https://www.npmjs.com/package/is-promise
 isexe                      2.0.0    ISC           https://www.npmjs.com/package/isexe
@@ -293,8 +294,8 @@ parseurl                   1.3.3    MIT           https://www.npmjs.com/package/
 path-key                   3.1.1    MIT           https://www.npmjs.com/package/path-key
 path-to-regexp             8.4.2    MIT           https://www.npmjs.com/package/path-to-regexp
 pkce-challenge             5.0.1    MIT           https://www.npmjs.com/package/pkce-challenge
-proxy-addr                 2.0.7    MIT           https://www.npmjs.com/package/proxy-addr
-qs                         6.15.2   BSD-3-Clause  https://www.npmjs.com/package/qs
+proxy-addr                 2.0.8    MIT           https://www.npmjs.com/package/proxy-addr
+qs                         6.17.1   BSD-3-Clause  https://www.npmjs.com/package/qs
 range-parser               1.2.1    MIT           https://www.npmjs.com/package/range-parser
 raw-body                   3.0.2    MIT           https://www.npmjs.com/package/raw-body
 require-from-string        2.0.2    MIT           https://www.npmjs.com/package/require-from-string
@@ -512,21 +513,21 @@ Coding agents pinned in acp/pi.version plus the tools installed by
 image/Dockerfile. Listed at top level; each package's own dependency
 tree, with its license files, is installed under the global node_modules.
 
-NAME                                    VERSION  LICENSE     HOMEPAGE
-----                                    -------  -------     --------
-@agentclientprotocol/codex-acp          2.9.0    Apache-2.0  https://github.com/agentclientprotocol/codex-acp
-@earendil-works/pi-agent-core           0.82.0   MIT         https://github.com/earendil-works/pi
-@earendil-works/pi-ai                   0.82.0   MIT         https://github.com/earendil-works/pi
-@earendil-works/pi-coding-agent         0.82.0   MIT         https://github.com/earendil-works/pi
-@earendil-works/pi-storage-sqlite-node  0.82.0   MIT         https://github.com/earendil-works/pi
-@earendil-works/pi-tui                  0.82.0   MIT         https://github.com/earendil-works/pi
-@openai/codex                           0.171.0  Apache-2.0  https://github.com/openai/codex
-mongodb-mcp-server                      1.9.0    Apache-2.0  https://github.com/mongodb-js/mongodb-mcp-server
-pi-mcp-adapter                          2.11.0   MIT         https://www.npmjs.com/package/pi-mcp-adapter
-pi-web-access                           0.13.0   MIT         https://www.npmjs.com/package/pi-web-access
-tsx                                     latest   MIT         https://github.com/privatenumber/tsx
-typescript                              latest   Apache-2.0  https://github.com/microsoft/TypeScript
-typescript-language-server              latest   Apache-2.0  https://github.com/typescript-language-server/typescript-language-server
+NAME                                    VERSION  LICENSE             HOMEPAGE
+----                                    -------  -------             --------
+@agentclientprotocol/codex-acp          2.9.0    Apache-2.0          https://github.com/agentclientprotocol/codex-acp
+@earendil-works/pi-agent-core           0.82.0   MIT                 https://github.com/earendil-works/pi
+@earendil-works/pi-ai                   0.82.0   MIT                 https://github.com/earendil-works/pi
+@earendil-works/pi-coding-agent         0.82.0   MIT                 https://github.com/earendil-works/pi
+@earendil-works/pi-storage-sqlite-node  0.82.0   MIT                 https://github.com/earendil-works/pi
+@earendil-works/pi-tui                  0.82.0   MIT                 https://github.com/earendil-works/pi
+@openai/codex                           0.171.0  Apache-2.0          https://github.com/openai/codex
+mongodb-mcp-server                      1.9.0    Apache-2.0          https://github.com/mongodb-js/mongodb-mcp-server
+pi-mcp-adapter                          2.11.0   MIT                 https://www.npmjs.com/package/pi-mcp-adapter
+pi-web-access                           0.13.0   MIT                 https://www.npmjs.com/package/pi-web-access
+tsx                                     4.23.15  MIT                 https://github.com/privatenumber/tsx
+typescript                              6.0.3    Apache-2.0          https://github.com/microsoft/TypeScript
+typescript-language-server              6.1.0    Apache-2.0 AND MIT  https://github.com/typescript-language-server/typescript-language-server
 
 
 15. CONTAINER IMAGE - PYTHON TOOLS (uv tool install)
@@ -542,7 +543,7 @@ milvus-cli                                             1.2.1    Apache-2.0      
 pglast (postgres-mcp dependency, bundles libpg_query)  7.21     GPL-3.0-or-later AND BSD-3-Clause AND PostgreSQL  https://github.com/lelit/pglast
 postgres-mcp                                           0.3.0    MIT                                               https://github.com/crystaldba/postgres-mcp
 python-lsp-server                                      latest   MIT                                               https://github.com/python-lsp/python-lsp-server
-redis-mcp-server                                       0.5.0    MIT                                               https://github.com/redis/mcp-redis
+redis-mcp-server                                       0.5.1    MIT                                               https://github.com/redis/mcp-redis
 yapf                                                   latest   Apache-2.0                                        https://github.com/google/yapf
 
 

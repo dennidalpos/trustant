@@ -583,7 +583,7 @@ preserved; unqualified or foreign-looking values are nested under the current
 application prefix and therefore cannot address another workspace.
 
 The wrapper is fail-closed for tool names not reviewed against
-`redis-mcp-server==0.5.0`. It does not advertise or execute the global
+`redis-mcp-server==0.5.1`. It does not advertise or execute the global
 `dbsize`, `info`, `client_list`, or `get_indexes` tools because their results
 cannot be isolated per application. A rejected call returns an MCP
 protocol-level tool failure. This boundary applies equally to Pi, Codex, and
@@ -765,7 +765,7 @@ This prevents agent sessions from failing on S3 MCP schema validation while
 keeping non-bucket-listing S3 diagnostics available.
 
 The image also installs `/usr/local/bin/trustant-redis-mcp`, with the upstream
-`redis-mcp-server==0.5.0` left as the private child executable. Repository-root
+`redis-mcp-server==0.5.1` left as the private child executable. Repository-root
 `setup.sh` installs the same checked-in wrapper under `~/.local/bin`, so the VM
 and pod enforce an identical Redis namespace boundary.
 

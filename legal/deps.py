@@ -317,7 +317,7 @@ def fetch(comp):
     return d
 
 
-LEGAL_FILE = re.compile(r"^(LICEN[CS]E|COPYING|NOTICE|UNLICENSE|COPYRIGHT|OFL|LICENSE-[A-Z0-9]+)"
+LEGAL_FILE = re.compile(r"^(LICEN[CS]E|COPYING|NOTICE|THIRDPARTYNOTICETEXT|UNLICENSE|COPYRIGHT|OFL|LICENSE-[A-Z0-9]+)"
                         r"([._-].*)?$", re.I)
 
 
@@ -346,7 +346,7 @@ def legal_files(d):
         base = fn.split("__")[-1]
         if not os.path.isfile(p) or not LEGAL_FILE.match(base):
             continue
-        (notice if base.upper().startswith("NOTICE") else lic).append(p)
+        (notice if base.upper().startswith(("NOTICE", "THIRDPARTYNOTICETEXT")) else lic).append(p)
     return lic, notice
 
 

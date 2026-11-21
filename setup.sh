@@ -587,7 +587,7 @@ PGLAST_OVERRIDE="$(mktemp)"
 echo 'pglast==7.21' >"$PGLAST_OVERRIDE"
 declare -a MCP_TOOL_SPECS=(
   "postgres-mcp==0.3.0|--with|mcp<2|--overrides|$PGLAST_OVERRIDE"
-  "redis-mcp-server==0.5.0|--with|mcp<2"
+  "redis-mcp-server==0.5.1|--with|mcp<2"
   "$MILVUS_MCP_SPEC|--with|mcp<2"
 )
 for spec in "${MCP_TOOL_SPECS[@]}"; do
@@ -630,7 +630,7 @@ OPENSERVERLESS_MCP_PACK_DIR=$(mktemp -d)
   || fail "packing local openserverless-mcp failed"
 OPENSERVERLESS_MCP_PACKAGE=$(find "$OPENSERVERLESS_MCP_PACK_DIR" -maxdepth 1 -name 'openserverless-mcp-*.tgz' -print -quit)
 [[ -n "$OPENSERVERLESS_MCP_PACKAGE" ]] || fail "local openserverless-mcp package was not created"
-( cd "$HOME" && npm install -g --prefix "$NPM_GLOBAL_PREFIX" tsx "$OPENSERVERLESS_MCP_PACKAGE" mongodb-mcp-server@1.9.0 ) \
+( cd "$HOME" && npm install -g --prefix "$NPM_GLOBAL_PREFIX" tsx@4.23.15 "$OPENSERVERLESS_MCP_PACKAGE" mongodb-mcp-server@1.9.0 ) \
   || fail "npm install of openserverless-mcp/mongodb-mcp-server failed"
 rm -rf "$OPENSERVERLESS_MCP_PACK_DIR"
 grep -qF 'secret-unbind' "$NPM_GLOBAL_PREFIX/lib/node_modules/openserverless-mcp/src/index.ts" \
@@ -645,7 +645,7 @@ REACT_MCP_PACK_DIR=$(mktemp -d)
   || fail "packing trustant-react-mcp failed"
 REACT_MCP_PACKAGE=$(find "$REACT_MCP_PACK_DIR" -maxdepth 1 -name 'trustant-react-mcp-*.tgz' -print -quit)
 [[ -n "$REACT_MCP_PACKAGE" ]] || fail "trustant-react-mcp package was not created"
-( cd "$HOME" && npm install -g --prefix "$NPM_GLOBAL_PREFIX" tsx "$REACT_MCP_PACKAGE" ) \
+( cd "$HOME" && npm install -g --prefix "$NPM_GLOBAL_PREFIX" tsx@4.23.15 "$REACT_MCP_PACKAGE" ) \
   || fail "installing trustant-react-mcp failed"
 rm -rf "$REACT_MCP_PACK_DIR"
 command -v trustant-react-mcp &>/dev/null || fail "trustant-react-mcp is not in PATH"

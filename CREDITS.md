@@ -62,6 +62,12 @@ kubectl and Helm (Apache-2.0), bun, yq, k3sup and uutils coreutils (MIT), and
 Ubuntu packages under their distribution licenses. Python application packages
 and npm production trees are listed in full in [DEPS](DEPS).
 
+The setup and image use [Redis MCP](https://github.com/redis/mcp-redis) and
+[tsx](https://github.com/privatenumber/tsx) under MIT. The image also includes
+[TypeScript](https://github.com/microsoft/TypeScript) under Apache-2.0 and the
+[TypeScript language server](https://github.com/typescript-language-server/typescript-language-server)
+under Apache-2.0 with MIT-licensed portions from VS Code.
+
 Browser end-to-end tests use [Playwright](https://github.com/microsoft/playwright)
 (Apache-2.0).
 

@@ -100,7 +100,7 @@ RUN set -eu ;\
         milvus-cli==1.2.1 \
         'python-lsp-server[yapf]' \
         'postgres-mcp==0.3.0|--with|mcp<2|--overrides|/tmp/uv-overrides.txt' \
-        'redis-mcp-server==0.5.0|--with|mcp<2' \
+        'redis-mcp-server==0.5.1|--with|mcp<2' \
         "git+${MILVUS_MCP_REPO}@${MILVUS_MCP_REF}|--with|mcp<2" ;\
     do \
         spec="${tool%%|*}" ;\
@@ -129,10 +129,11 @@ RUN set -eu ;\
 
 COPY openserverless-mcp /tmp/openserverless-mcp
 COPY trustant-react-mcp /tmp/trustant-react-mcp
-RUN \
-    npm install -g typescript-language-server typescript tsx mongodb-mcp-server@1.9.0 ;\
+# The language server needs the JavaScript tsserver shipped with TypeScript 6.
+RUN set -eu ;\
+    npm install -g typescript-language-server@6.1.0 typescript@6.0.3 tsx@4.23.15 mongodb-mcp-server@1.9.0 ;\
     cd /tmp/openserverless-mcp && npm pack --pack-destination /tmp ;\
-    npm install -g tsx /tmp/openserverless-mcp-*.tgz ;\
+    npm install -g /tmp/openserverless-mcp-*.tgz ;\
     cd /tmp/trustant-react-mcp && npm pack --pack-destination /tmp ;\
     npm install -g /tmp/trustant-react-mcp-*.tgz ;\
     cd / ;\

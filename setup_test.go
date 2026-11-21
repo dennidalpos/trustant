@@ -483,7 +483,7 @@ func TestPythonMCPServersPinTheMCPSDK(t *testing.T) {
 		for _, required := range []string{
 			"postgres-mcp==0.3.0|--with|mcp<2|--overrides|",
 			"pglast==7.21",
-			"redis-mcp-server==0.5.0|--with|mcp<2",
+			"redis-mcp-server==0.5.1|--with|mcp<2",
 			"|--with|mcp<2\"",
 			"postgres-mcp:postgres_mcp",
 			"redis-mcp-server:src.main",
