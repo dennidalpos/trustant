@@ -322,9 +322,9 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 
 - Source: https://github.com/trustant/trustant-acp.git, gitlink before vendoring
 - Commit: `9786f796380aa9b2000d8cebd913fa41150c89ed`
-- Files: 85 unmodified, 30 modified, 4 added, 62 removed
+- Files: 84 unmodified, 31 modified, 4 added, 62 removed
 
-#### Modified (30)
+#### Modified (31)
 
 - `.gitignore`
 - `.vscode/extensions.json`
@@ -349,6 +349,7 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 - `setup.md`
 - `setup.sh`
 - `test/claude-install.test.ts`
+- `test/managed-runtime.test.ts`
 - `test/notebook-ui.test.ts`
 - `test/setup-script.test.ts`
 - `tsconfig.json`

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { mkdir, writeFile } from "fs/promises";
+import { mkdir, realpath, writeFile } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
 import { describe, expect, it } from "vitest";
@@ -106,14 +106,14 @@ describe("Trustant managed Pi runtime", () => {
 
 		expect(result?.workbench).toMatchObject({
 			app: "example",
-			workspace: fixture.workbench,
+			workspace: await realpath(fixture.workbench),
 			developmentUrl: "http://localhost:5173",
 			browserUrl: "http://vite.example.test:8910",
 			requiredMcpServers: ["browser", "openserverless"],
-			mcpConfig: fixture.mcpConfig,
-			watcherLog: fixture.watcherLog,
+			mcpConfig: await realpath(fixture.mcpConfig),
+			watcherLog: await realpath(fixture.watcherLog),
 		});
-		expect(result?.extensionPath).toBe(fixture.extensionPath);
+		expect(result?.extensionPath).toBe(await realpath(fixture.extensionPath));
 		expect(result?.mcpServers.map((server) => server.name)).toEqual([
 			"browser",
 			"openserverless",
