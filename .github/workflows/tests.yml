@@ -1,0 +1,72 @@
+name: Tests
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  go:
+    name: Go (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Test Go packages
+        run: |
+          umask 022
+          printf 'Version: %s\n' "$(cat version.txt)" > _build.txt
+          go test ./...
+
+  node:
+    name: Node (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, macos-15]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - name: Test tutorial and provider fixtures
+        run: |
+          npm run test:tutorial
+          npm run test:e2e-providers
+      - name: Test and build TruACP
+        working-directory: acp
+        run: |
+          npm ci
+          package_dir="$(mktemp -d)"
+          pi_ai="$(grep '^@earendil-works/pi-ai@' pi.version)"
+          archive="$(npm pack "$pi_ai" --ignore-scripts --pack-destination "$package_dir" --silent)"
+          tar -xzf "$package_dir/$archive" -C "$package_dir"
+          TRUSTANT_PI_AI_PACKAGE="$package_dir/package" npm test
+          npm run build
+      - name: Test Pi ACP
+        working-directory: acp/pi-acp
+        run: |
+          npm ci
+          npm test
+      - name: Check React MCP
+        working-directory: react-mcp
+        run: |
+          npm ci
+          npm run typecheck
+          npm test
