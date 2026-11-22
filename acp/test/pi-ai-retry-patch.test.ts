@@ -31,7 +31,7 @@ const SESSION_LIMIT =
 	'429 "you (synthetic) have reached your session usage limit, please wait or upgrade to continue"';
 const TRANSIENT = ["429 Too Many Requests", "429 rate limit exceeded"];
 
-// Minimal synthetic stand-in for pi-ai 0.82.0 dist/utils/retry.js: same
+// Minimal synthetic stand-in for pi-ai 1.6.0 dist/utils/retry.js: same
 // classifier shape and the reviewed patch anchor, no upstream code.
 const FIXTURE_RETRY = `const NON_RETRYABLE = new RegExp([
     "GoUsageLimitError",
@@ -77,7 +77,7 @@ describe("setup.sh pi-ai session usage limit patch", () => {
 	let nodeModules: string;
 
 	const runPatch = () =>
-		spawnSync(process.execPath, [script, nodeModules, "0.82.0"], {
+		spawnSync(process.execPath, [script, nodeModules, "1.6.0"], {
 			encoding: "utf8",
 		});
 
@@ -109,10 +109,10 @@ describe("setup.sh pi-ai session usage limit patch", () => {
 	});
 
 	it("stops retrying the session limit and keeps transient 429 retryable", async () => {
-		const topLevel = await installFixture(nodeModules, "0.82.0");
+		const topLevel = await installFixture(nodeModules, "1.6.0");
 		const nested = await installFixture(
 			join(nodeModules, "@earendil-works", "pi-coding-agent", "node_modules"),
-			"0.82.0",
+			"1.6.0",
 		);
 		const other = await installFixture(
 			join(nodeModules, "pi-mcp-adapter", "node_modules"),
@@ -125,7 +125,7 @@ describe("setup.sh pi-ai session usage limit patch", () => {
 
 		const first = runPatch();
 		expect(first.status, first.stderr).toBe(0);
-		expect(first.stdout.match(/Applied pi-ai 0\.82\.0/g)).toHaveLength(2);
+		expect(first.stdout.match(/Applied pi-ai 1.6.0/g)).toHaveLength(2);
 		for (const retryJs of [topLevel, nested]) {
 			expect(classify(retryJs, cases)).toEqual([false, true, true]);
 		}
@@ -142,7 +142,7 @@ describe("setup.sh pi-ai session usage limit patch", () => {
 	it("fails closed when the reviewed anchor is missing", async () => {
 		await installFixture(
 			nodeModules,
-			"0.82.0",
+			"1.6.0",
 			FIXTURE_RETRY.replace('"Monthly usage limit reached",', ""),
 		);
 		const run = runPatch();
@@ -154,7 +154,7 @@ describe("setup.sh pi-ai session usage limit patch", () => {
 		await installFixture(nodeModules, "0.81.0");
 		const run = runPatch();
 		expect(run.status).not.toBe(0);
-		expect(run.stderr).toContain("no @earendil-works/pi-ai 0.82.0 found");
+		expect(run.stderr).toContain("no @earendil-works/pi-ai 1.6.0 found");
 	});
 
 	// Optional check against the integrity-verified upstream package, extracted

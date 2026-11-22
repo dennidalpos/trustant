@@ -118,7 +118,6 @@ npmglobal | mongodb-mcp-server | 1.9.0 | Apache-2.0 | https://github.com/mongodb
 npmglobal | @earendil-works/pi-ai | * | MIT | https://github.com/earendil-works/pi | url:https://raw.githubusercontent.com/earendil-works/pi/v{v}/LICENSE
 npmglobal | @earendil-works/pi-tui | * | MIT | https://github.com/earendil-works/pi | url:https://raw.githubusercontent.com/earendil-works/pi/v{v}/LICENSE
 npmglobal | @earendil-works/pi-agent-core | * | MIT | https://github.com/earendil-works/pi | url:https://raw.githubusercontent.com/earendil-works/pi/v{v}/LICENSE
-npmglobal | @earendil-works/pi-storage-sqlite-node | * | MIT | https://github.com/earendil-works/pi | url:https://raw.githubusercontent.com/earendil-works/pi/v{v}/LICENSE
 npmglobal | @earendil-works/pi-coding-agent | * | MIT | https://github.com/earendil-works/pi | url:https://raw.githubusercontent.com/earendil-works/pi/v{v}/LICENSE
 npmglobal | @openai/codex | * | Apache-2.0 | https://github.com/openai/codex | url:https://raw.githubusercontent.com/openai/codex/rust-v{v}/LICENSE,https://raw.githubusercontent.com/openai/codex/rust-v{v}/NOTICE
 npmglobal | @agentclientprotocol/codex-acp | * | Apache-2.0 | https://github.com/agentclientprotocol/codex-acp | npm:@agentclientprotocol/codex-acp@{v}

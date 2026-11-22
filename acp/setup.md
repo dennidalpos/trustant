@@ -5,7 +5,7 @@ ordered phases:
 
 1. **Install components** — coding agents and ACP adapters globally via npm,
    then Pi extensions through `pi install` so Pi actually registers them. The
-   package list and pins live in [pi.version](pi.version); the five upstream Pi
+   package list and pins live in [pi.version](pi.version); the four upstream Pi
    artifacts are additionally locked by [pi.integrity](pi.integrity).
 2. **Build** — *only if there is a `package.json` in the current directory*:
    builds `dist-web/` (the web UI) and `dist-bin/truacp.cjs` (the server bundle).
@@ -65,7 +65,7 @@ offline. Each adapter drives an underlying CLI that must also be on PATH.
 | Agent | Package(s) | CLI on PATH |
 |---|---|---|
 | Codex | `@openai/codex` + `@agentclientprotocol/codex-acp` | `codex` |
-| Pi | five lockstep `@earendil-works/pi-*` packages + Trustant `pi-acp` fork | `pi` |
+| Pi | four lockstep `@earendil-works/pi-*` packages + Trustant `pi-acp` fork | `pi` |
 
 Claude Code is **not** installed by `setup.sh`: it is proprietary and this script
 also builds the published image. TruACP installs it on demand into
@@ -79,16 +79,13 @@ fetching, repo cloning, and PDF/video extraction. `pi-web-access` needs a search
 provider key (OpenAI, Brave, Tavily, Exa, …) configured in Pi before its tools
 work — this script installs the package but sets no credentials.
 
-The pinned `pi-mcp-adapter@2.11.0` receives one reviewed, version-guarded
-compatibility transform after registration. When a co-located Streamable HTTP
-MCP server such as Agentic React restarts, the adapter closes the connection
-holding the rejected session ID, creates a replacement connection (which
-refreshes tools and resources), and retries the original tool call exactly
-once. Proxy calls, direct tools, and MCP UI proxy calls share this manager path.
-The transform is idempotent, validates every expected source before writing,
-and fails setup if the installed version or source layout differs.
+The pinned `pi-mcp-adapter@7.0.1` needs no source transform: it recovers from
+an expired Streamable HTTP session natively (checked in #65 with a synthetic
+MCP server restarted between two calls). The gateway tool `mcp` also accepts
+`action` (for example installing a server by URL); the managed Trustant
+extension blocks those inputs because MCP servers are host-managed.
 
-Upstream Pi AI 0.82.0 treats any failed turn mentioning 429 as transient, and
+Upstream Pi AI 1.6.0 treats any failed turn mentioning 429 as transient, and
 Pi restarts it up to `settings.retry.maxRetries` times. Ollama Cloud uses HTTP
 429 with "session usage limit" when the session quota is exhausted
 (trustant/trustant#206), so `setup.sh` adds that wording to the non-retryable
@@ -111,11 +108,10 @@ hardcoded in `setup.sh`.** Each line is a literal npm install spec,
 @openai/codex@0.171.0
 @agentclientprotocol/codex-acp@2.9.0
 ...
-@earendil-works/pi-ai@0.82.0
-@earendil-works/pi-tui@0.82.0
-@earendil-works/pi-agent-core@0.82.0
-@earendil-works/pi-storage-sqlite-node@0.82.0
-@earendil-works/pi-coding-agent@0.82.0
+@earendil-works/pi-ai@1.6.0
+@earendil-works/pi-tui@1.6.0
+@earendil-works/pi-agent-core@1.6.0
+@earendil-works/pi-coding-agent@1.6.0
 ```
 
 `setup.sh` reads the file, passes CLI/ACP specs to `npm install -g`, and registers

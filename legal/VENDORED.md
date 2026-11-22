@@ -324,9 +324,9 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 
 - Source: https://github.com/trustant/trustant-acp.git, gitlink before vendoring
 - Commit: `9786f796380aa9b2000d8cebd913fa41150c89ed`
-- Files: 76 unmodified, 39 modified, 5 added, 62 removed
+- Files: 74 unmodified, 41 modified, 5 added, 62 removed
 
-#### Modified (39)
+#### Modified (41)
 
 - `.gitignore`
 - `.vscode/extensions.json`
@@ -339,6 +339,7 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 - `SPEC.md`
 - `esbuild.web.mjs`
 - `extensions/requirements.txt`
+- `extensions/trustant-runtime.ts`
 - `package-lock.json`
 - `package.json`
 - `pi.integrity`
@@ -360,6 +361,7 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 - `test/managed-runtime.test.ts`
 - `test/notebook-ui.test.ts`
 - `test/setup-script.test.ts`
+- `test/trustant-runtime-extension.test.ts`
 - `tsconfig.json`
 - `vitest.config.mts`
 - `web/ChatApp.tsx`

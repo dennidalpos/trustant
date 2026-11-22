@@ -2311,7 +2311,7 @@ func TestPiGlobalConfigBootstrapsSnapshotForExistingWorkspace(t *testing.T) {
 	freshHome := filepath.Join(root, "fresh-image", ".pi", "agent")
 	t.Setenv("PI_CODING_AGENT_DIR", freshHome)
 	if err := writePiJSONFile(filepath.Join(freshHome, "settings.json"), map[string]interface{}{
-		"packages": []string{"npm:pi-mcp-adapter@2.11.0"},
+		"packages": []string{"npm:pi-mcp-adapter@7.0.1"},
 	}, 0644); err != nil {
 		t.Fatalf("seed fresh image settings: %s", err)
 	}

@@ -18,17 +18,16 @@
 @openai/codex@0.171.0
 @agentclientprotocol/codex-acp@2.9.0
 
-# Pi CLI and core — exact upstream release. setup.sh verifies the five package
+# Pi CLI and core — exact upstream release. setup.sh verifies the four package
 # integrities recorded in pi.integrity before installing them as one lockstep
 # runtime. Trustant-specific stream protection lives in the managed extension.
-@earendil-works/pi-ai@0.82.0
-@earendil-works/pi-tui@0.82.0
-@earendil-works/pi-agent-core@0.82.0
-@earendil-works/pi-storage-sqlite-node@0.82.0
-@earendil-works/pi-coding-agent@0.82.0
+@earendil-works/pi-ai@1.6.0
+@earendil-works/pi-tui@1.6.0
+@earendil-works/pi-agent-core@1.6.0
+@earendil-works/pi-coding-agent@1.6.0
 
 # Pi extensions — setup.sh registers these with `pi install`; a plain global
 # npm installation would put their files on disk without activating them.
 # pi-web-access additionally needs a search-provider key configured in Pi.
-pi-mcp-adapter@2.11.0
-pi-web-access@0.13.0
+pi-mcp-adapter@7.0.1
+pi-web-access@0.48.0

@@ -72,25 +72,8 @@ describe("setup.sh Pi runtime sources", () => {
 		expect(setup).toContain(
 			'actual_integrity=$(npm view "$spec" dist.integrity)',
 		);
-		expect(setup).toContain(
-			'PI_MCP_ADAPTER_DIR="${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}/npm/node_modules/pi-mcp-adapter"',
-		);
-		expect(setup).toContain(
-			"/Session not found for MCP Streamable HTTP transport/i",
-		);
-		expect(setup).toContain("async callToolWithSessionRecovery(");
-		expect(setup).toContain(
-			"state.manager.callToolWithSessionRecovery(serverName, {",
-		);
-		expect(setup).toContain(
-			"state.manager.callToolWithSessionRecovery(spec.serverName, {",
-		);
-		expect(setup).toContain(
-			"options.manager.callToolWithSessionRecovery(options.serverName, {",
-		);
-		expect(setup).toContain(
-			"this is the single allowed retry",
-		);
+		expect(setup).not.toContain("callToolWithSessionRecovery");
+		expect(setup).not.toContain("PI_MCP_ADAPTER_DIR");
 		expect(setup).toContain(
 			'node - "$INSTALL_PREFIX/lib/node_modules" "${PI_AI_SPEC##*@}" <<\'PI_AI_RETRY_PATCH\'',
 		);
@@ -103,12 +86,11 @@ describe("setup.sh Pi runtime sources", () => {
 			"pi-ai",
 			"pi-tui",
 			"pi-agent-core",
-			"pi-storage-sqlite-node",
 			"pi-coding-agent",
 		]) {
-			expect(versions).toContain(`@earendil-works/${name}@0.82.0`);
+			expect(versions).toContain(`@earendil-works/${name}@1.6.0`);
 			expect(integrities).toContain(
-				`@earendil-works/${name}@0.82.0 sha512-`,
+				`@earendil-works/${name}@1.6.0 sha512-`,
 			);
 		}
 		expect(setup).not.toContain("PI_SOURCE_DIR");

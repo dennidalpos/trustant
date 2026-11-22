@@ -45,7 +45,7 @@ and `acp/NOTICE`, and per-file changes are tracked in
 ## Coding agents and protocol
 
 - [Pi](https://github.com/earendil-works/pi) packages (`pi-ai`, `pi-tui`,
-  `pi-agent-core`, `pi-storage-sqlite-node`, `pi-coding-agent`), MIT.
+  `pi-agent-core`, `pi-coding-agent`), MIT.
 - [Agent Client Protocol](https://agentclientprotocol.com) SDK and the Codex ACP
   adapter, Apache-2.0.
 - [Zod](https://zod.dev/) schema validation for the ACP and React MCP SDKs, MIT.

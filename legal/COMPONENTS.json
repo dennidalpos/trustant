@@ -5687,10 +5687,10 @@
     {
       "section": "npmglobal",
       "name": "@earendil-works/pi-agent-core",
-      "version": "0.82.0",
+      "version": "1.6.0",
       "license": "MIT",
       "homepage": "https://github.com/earendil-works/pi",
-      "source": "url:https://raw.githubusercontent.com/earendil-works/pi/v0.82.0/LICENSE",
+      "source": "url:https://raw.githubusercontent.com/earendil-works/pi/v1.6.0/LICENSE",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -5703,10 +5703,10 @@
     {
       "section": "npmglobal",
       "name": "@earendil-works/pi-ai",
-      "version": "0.82.0",
+      "version": "1.6.0",
       "license": "MIT",
       "homepage": "https://github.com/earendil-works/pi",
-      "source": "url:https://raw.githubusercontent.com/earendil-works/pi/v0.82.0/LICENSE",
+      "source": "url:https://raw.githubusercontent.com/earendil-works/pi/v1.6.0/LICENSE",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -5719,26 +5719,10 @@
     {
       "section": "npmglobal",
       "name": "@earendil-works/pi-coding-agent",
-      "version": "0.82.0",
+      "version": "1.6.0",
       "license": "MIT",
       "homepage": "https://github.com/earendil-works/pi",
-      "source": "url:https://raw.githubusercontent.com/earendil-works/pi/v0.82.0/LICENSE",
-      "status": "license-files-collected",
-      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
-      "evidence": [
-        {
-          "file": "LICENSE",
-          "sha256": "0457f5bcec3b3b211605dfb5d1a49042fd638f3686a410fe099c24a25af13c48"
-        }
-      ]
-    },
-    {
-      "section": "npmglobal",
-      "name": "@earendil-works/pi-storage-sqlite-node",
-      "version": "0.82.0",
-      "license": "MIT",
-      "homepage": "https://github.com/earendil-works/pi",
-      "source": "url:https://raw.githubusercontent.com/earendil-works/pi/v0.82.0/LICENSE",
+      "source": "url:https://raw.githubusercontent.com/earendil-works/pi/v1.6.0/LICENSE",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -5751,10 +5735,10 @@
     {
       "section": "npmglobal",
       "name": "@earendil-works/pi-tui",
-      "version": "0.82.0",
+      "version": "1.6.0",
       "license": "MIT",
       "homepage": "https://github.com/earendil-works/pi",
-      "source": "url:https://raw.githubusercontent.com/earendil-works/pi/v0.82.0/LICENSE",
+      "source": "url:https://raw.githubusercontent.com/earendil-works/pi/v1.6.0/LICENSE",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -5803,10 +5787,10 @@
     {
       "section": "npmglobal",
       "name": "pi-mcp-adapter",
-      "version": "2.11.0",
+      "version": "7.0.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/pi-mcp-adapter",
-      "source": "npm:pi-mcp-adapter@2.11.0",
+      "source": "npm:pi-mcp-adapter@7.0.1",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -5819,10 +5803,10 @@
     {
       "section": "npmglobal",
       "name": "pi-web-access",
-      "version": "0.13.0",
+      "version": "0.48.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/pi-web-access",
-      "source": "npm:pi-web-access@0.13.0",
+      "source": "npm:pi-web-access@0.48.0",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [

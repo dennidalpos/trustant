@@ -466,6 +466,34 @@ describe("Trustant Pi runtime extension", () => {
 		).toBe(true);
 	});
 
+	it("blocks pi-mcp-adapter gateway actions that change the server set", () => {
+		const workspace = "/work/app";
+		for (const input of [
+			{ action: "install", url: "https://example.test/mcp" },
+			{ url: "https://example.test/mcp", server: "extra" },
+			{ action: "install", target: "project" },
+		]) {
+			expect(
+				managedSecretAccessBlockReason("mcp", input, workspace, [
+					"openserverless",
+				]),
+			).toContain("MCP gateway action");
+		}
+		for (const input of [
+			{},
+			{ connect: "openserverless" },
+			{ server: "openserverless" },
+			{ describe: "openserverless_action_new" },
+			{ tool: "openserverless_action_new", args: "{}" },
+		]) {
+			expect(
+				managedSecretAccessBlockReason("mcp", input, workspace, [
+					"openserverless",
+				]),
+			).toBeUndefined();
+		}
+	});
+
 	it("normalizes the real pi-mcp-adapter proxy shape", () => {
 		expect(
 			managedMcpInvocation("mcp", {}, ["openserverless"]),

@@ -405,12 +405,10 @@ The agents and their adapters:
     (OpenAI, Brave, Parallel, Tavily, Exa, Perplexity, or Gemini), so it needs that
     provider's key configured in Pi before the web tools work — `setup.sh` installs
     the package but configures no credentials (see the API-keys bullet below).
-- The pinned `pi-mcp-adapter@2.11.0` is patched deterministically after
-  registration. A Streamable HTTP `Session not found` response closes only the
-  stale connection, reconnects to refresh tools/resources, and retries the
-  original tool call exactly once. Proxy, direct-tool, and MCP UI paths use the
-  same manager recovery. Setup validates the exact version and every source
-  target before writing, remains idempotent, and fails closed on source drift.
+- The pinned `pi-mcp-adapter@7.0.1` is installed unpatched: it recovers from a
+  Streamable HTTP `Session not found` response natively (checked in #65). The
+  managed extension blocks its gateway `action` and `url` inputs, so an agent
+  cannot install an MCP server outside the host-managed set.
 - Every installed `@earendil-works/pi-ai` copy at the pinned version (top-level
   and nested) is patched after the global install: `"session usage limit"` joins
   the non-retryable limit patterns in `dist/utils/retry.js`, so an Ollama Cloud
@@ -452,8 +450,8 @@ and blank lines are ignored:
 ```
 @openai/codex@0.171.0
 @agentclientprotocol/codex-acp@2.9.0
-pi-mcp-adapter@2.11.0
-pi-web-access@0.13.0
+pi-mcp-adapter@7.0.1
+pi-web-access@0.48.0
 ```
 
 **Every entry must be pinned.** An unpinned spec would silently resolve to latest

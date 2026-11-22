@@ -639,6 +639,19 @@ export function managedSecretAccessBlockReason(
 	) {
 		return "Trustant blocked direct startup of a managed MCP server. Use the host-selected MCP tools so lifecycle, ordering, reconnection, and credential injection remain managed.";
 	}
+	// WHY: pi-mcp-adapter 7 adds gateway actions to the `mcp` proxy tool, such as
+	// installing a server from a URL. Trustant owns the MCP server set, so any
+	// action, endpoint URL, or install target is refused instead of being read as
+	// harmless status.
+	if (
+		toolName === "mcp" &&
+		["action", "url", "target"].some(
+			(key) =>
+				typeof input[key] === "string" && input[key].trim().length > 0,
+		)
+	) {
+		return "Trustant blocked an MCP gateway action. MCP servers are host-managed; use mcp({connect:\"<name>\"}) and the exact tools it returns.";
+	}
 	const invocation = managedMcpInvocation(toolName, input, knownServers);
 	if (
 		invocation?.mode === "call" &&
