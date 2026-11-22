@@ -731,9 +731,10 @@ This is Trustant's own license; its full text is at the top of this file.
 ===============================================================================
 License: Apache-2.0
 ===============================================================================
-Used by 48 components (see DEPS), including: @agentclientprotocol/codex-acp,
+Used by 53 components (see DEPS), including: @agentclientprotocol/codex-acp,
 @agentclientprotocol/sdk, @openai/codex, @playwright/test (e2e tests), bcrypt,
-Biome, boto3, botocore, distro, grpcio, helm, k3s, ...
+Biome, boto3, botocore, distro, go-billy (ops dependency), go-git (ops
+dependency), groupcache (ops dependency), ...
 -------------------------------------------------------------------------------
 
 Apache License
@@ -832,9 +833,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 ===============================================================================
 License: BSD-3-Clause
 ===============================================================================
-Used by 30 components (see DEPS), including: 7zz (7-Zip), click, cloudpickle,
-diff, fast-uri, Go standard library and runtime, httpcore, httpcore2, httpx,
-httpx2, idna, iputils-ping, ...
+Used by 39 components (see DEPS), including: 7zz (7-Zip), CIRCL (ops
+dependency), click, cloudpickle, diff, fast-uri, filepath-securejoin (ops
+dependency), Go standard library and runtime, golang.org/x/crypto (ops
+dependency), golang.org/x/exp (ops dependency), golang.org/x/net (ops
+dependency), golang.org/x/sync (ops dependency), ...
 -------------------------------------------------------------------------------
 
 Copyright (c) <year> <owner>. 
@@ -2606,7 +2609,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ===============================================================================
 License: MPL-2.0
 ===============================================================================
-Used by: ca-certificates, certifi, orjson, tqdm
+Used by: ca-certificates, certifi, filepath-securejoin (ops dependency),
+orjson, tqdm
 -------------------------------------------------------------------------------
 
 Mozilla Public License Version 2.0

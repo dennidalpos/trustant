@@ -465,14 +465,28 @@ zstd (build stage only)     distro   BSD-3-Clause OR GPL-2.0-only             ht
 
 Downloaded by image/Dockerfile (and by start.sh/setup.sh in the dev VM).
 
-NAME                      VERSION  LICENSE            HOMEPAGE
-----                      -------  -------            --------
-gh (GitHub CLI)           2.105.0  MIT                https://github.com/cli/cli
-mcp-s3                    1.3.0    Apache-2.0         https://github.com/txn2/mcp-s3
-Node.js (NodeSource)      24.x     MIT                https://nodejs.org
-ollama                    0.40.16  MIT                https://github.com/ollama/ollama
-ops (OpenServerless CLI)  latest   Apache-2.0         https://github.com/apache/openserverless-cli
-uv (/usr/bin/uv)          latest   Apache-2.0 OR MIT  https://github.com/astral-sh/uv
+NAME                                     VERSION                             LICENSE                   HOMEPAGE
+----                                     -------                             -------                   --------
+CIRCL (ops dependency)                   1.6.3                               BSD-3-Clause              https://github.com/cloudflare/circl
+filepath-securejoin (ops dependency)     0.6.1                               BSD-3-Clause AND MPL-2.0  https://github.com/cyphar/filepath-securejoin
+gh (GitHub CLI)                          2.105.0                             MIT                       https://github.com/cli/cli
+go-billy (ops dependency)                5.9.2                               Apache-2.0                https://github.com/go-git/go-billy
+go-git (ops dependency)                  5.19.3                              Apache-2.0                https://github.com/go-git/go-git
+golang.org/x/crypto (ops dependency)     0.56.0                              BSD-3-Clause              https://github.com/golang/crypto
+golang.org/x/exp (ops dependency)        0.0.0-20260410095643-746e56fc9e2f   BSD-3-Clause              https://github.com/golang/exp
+golang.org/x/net (ops dependency)        0.57.0                              BSD-3-Clause              https://github.com/golang/net
+golang.org/x/sync (ops dependency)       0.20.0                              BSD-3-Clause              https://github.com/golang/sync
+golang.org/x/sys (ops dependency)        0.47.0                              BSD-3-Clause              https://github.com/golang/sys
+golang.org/x/term (ops dependency)       0.45.0                              BSD-3-Clause              https://github.com/golang/term
+groupcache (ops dependency)              0.0.0-20241129210726-2c02b8208cf8   Apache-2.0                https://github.com/golang/groupcache
+knownhosts (ops dependency)              1.3.1                               Apache-2.0                https://github.com/skeema/knownhosts
+mcp-s3                                   1.3.0                               Apache-2.0                https://github.com/txn2/mcp-s3
+Node.js (NodeSource)                     24.x                                MIT                       https://nodejs.org
+ollama                                   0.40.16                             MIT                       https://github.com/ollama/ollama
+ops (Trustant OpenServerless CLI build)  0.9.0-incubating+26i15n55-snapshot  Apache-2.0                https://github.com/trustable-ai/openserverless-cli
+ProtonMail go-crypto (ops dependency)    1.1.6                               BSD-3-Clause              https://github.com/ProtonMail/go-crypto
+sha1cd (ops dependency)                  0.7.0                               Apache-2.0                https://github.com/pjbgf/sha1cd
+uv (/usr/bin/uv)                         latest                              Apache-2.0 OR MIT         https://github.com/astral-sh/uv
 
 
 12. OPS PREREQUISITES (oplugins/prereq.yml)
@@ -486,13 +500,13 @@ NAME                VERSION  LICENSE                                            
 7zz (7-Zip)         2407     LGPL-2.1-or-later AND BSD-3-Clause AND BSD-2-Clause AND LicenseRef-unRAR  https://www.7-zip.org
 bun                 1.3.14   MIT                                                           https://github.com/oven-sh/bun
 coreutils (uutils)  0.0.27   MIT                                                           https://github.com/uutils/coreutils
-helm                3.18.0   Apache-2.0                                                    https://github.com/helm/helm
+helm                3.22.1   Apache-2.0                                                    https://github.com/helm/helm
 k3sup               0.13.13  MIT                                                           https://github.com/alexellis/k3sup
-kind                0.30.0   Apache-2.0                                                    https://github.com/kubernetes-sigs/kind
-kubectl             1.33.1   Apache-2.0                                                    https://github.com/kubernetes/kubernetes
+kind                0.33.0   Apache-2.0                                                    https://github.com/kubernetes-sigs/kind
+kubectl             1.33.13  Apache-2.0                                                    https://github.com/kubernetes/kubernetes
 rg (ripgrep)        14.1.0   MIT OR Unlicense                                              https://github.com/BurntSushi/ripgrep
 uv                  0.7.19   Apache-2.0 OR MIT                                             https://github.com/astral-sh/uv
-yq                  4.47.1   MIT                                                           https://github.com/mikefarah/yq
+yq                  4.54.3   MIT                                                           https://github.com/mikefarah/yq
 
 
 13. HOST-SPECIFIC OPS PREREQUISITES

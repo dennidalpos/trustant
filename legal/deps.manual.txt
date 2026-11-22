@@ -76,7 +76,21 @@ binary | Node.js (NodeSource) | 24.x | MIT | https://nodejs.org | url:https://ra
 binary | ollama | 0.40.16 | MIT | https://github.com/ollama/ollama | url:https://raw.githubusercontent.com/ollama/ollama/v{v}/LICENSE
 binary | gh (GitHub CLI) | 2.105.0 | MIT | https://github.com/cli/cli | url:https://raw.githubusercontent.com/cli/cli/v{v}/LICENSE
 binary | uv (/usr/bin/uv) | latest | Apache-2.0 OR MIT | https://github.com/astral-sh/uv | url:https://raw.githubusercontent.com/astral-sh/uv/main/LICENSE-MIT,https://raw.githubusercontent.com/astral-sh/uv/main/LICENSE-APACHE
-binary | ops (OpenServerless CLI) | latest | Apache-2.0 | https://github.com/apache/openserverless-cli | url:https://raw.githubusercontent.com/apache/openserverless-cli/main/LICENSE,https://raw.githubusercontent.com/apache/openserverless-cli/main/NOTICE
+binary | ops (Trustant OpenServerless CLI build) | 0.9.0-incubating+26i15n55-snapshot | Apache-2.0 | https://github.com/trustable-ai/openserverless-cli | url:https://raw.githubusercontent.com/trustable-ai/openserverless-cli/bcb9d40abe909747c2c39531f1fbc59923745192/LICENSE,https://raw.githubusercontent.com/trustable-ai/openserverless-cli/bcb9d40abe909747c2c39531f1fbc59923745192/NOTICE
+binary | go-git (ops dependency) | 5.19.3 | Apache-2.0 | https://github.com/go-git/go-git | url:https://raw.githubusercontent.com/go-git/go-git/v{v}/LICENSE
+binary | CIRCL (ops dependency) | 1.6.3 | BSD-3-Clause | https://github.com/cloudflare/circl | url:https://raw.githubusercontent.com/cloudflare/circl/v{v}/LICENSE
+binary | filepath-securejoin (ops dependency) | 0.6.1 | BSD-3-Clause AND MPL-2.0 | https://github.com/cyphar/filepath-securejoin | url:https://raw.githubusercontent.com/cyphar/filepath-securejoin/v{v}/LICENSE.BSD,https://raw.githubusercontent.com/cyphar/filepath-securejoin/v{v}/LICENSE.MPL-2.0
+binary | go-billy (ops dependency) | 5.9.2 | Apache-2.0 | https://github.com/go-git/go-billy | url:https://raw.githubusercontent.com/go-git/go-billy/v{v}/LICENSE
+binary | groupcache (ops dependency) | 0.0.0-20241129210726-2c02b8208cf8 | Apache-2.0 | https://github.com/golang/groupcache | url:https://raw.githubusercontent.com/golang/groupcache/2c02b8208cf8/LICENSE
+binary | sha1cd (ops dependency) | 0.7.0 | Apache-2.0 | https://github.com/pjbgf/sha1cd | url:https://raw.githubusercontent.com/pjbgf/sha1cd/v{v}/LICENSE
+binary | ProtonMail go-crypto (ops dependency) | 1.1.6 | BSD-3-Clause | https://github.com/ProtonMail/go-crypto | url:https://raw.githubusercontent.com/ProtonMail/go-crypto/v{v}/LICENSE
+binary | knownhosts (ops dependency) | 1.3.1 | Apache-2.0 | https://github.com/skeema/knownhosts | url:https://raw.githubusercontent.com/skeema/knownhosts/v{v}/LICENSE,https://raw.githubusercontent.com/skeema/knownhosts/v{v}/NOTICE
+binary | golang.org/x/crypto (ops dependency) | 0.56.0 | BSD-3-Clause | https://github.com/golang/crypto | url:https://raw.githubusercontent.com/golang/crypto/v{v}/LICENSE
+binary | golang.org/x/exp (ops dependency) | 0.0.0-20260410095643-746e56fc9e2f | BSD-3-Clause | https://github.com/golang/exp | url:https://raw.githubusercontent.com/golang/exp/746e56fc9e2f/LICENSE
+binary | golang.org/x/net (ops dependency) | 0.57.0 | BSD-3-Clause | https://github.com/golang/net | url:https://raw.githubusercontent.com/golang/net/v{v}/LICENSE
+binary | golang.org/x/sync (ops dependency) | 0.20.0 | BSD-3-Clause | https://github.com/golang/sync | url:https://raw.githubusercontent.com/golang/sync/v{v}/LICENSE
+binary | golang.org/x/sys (ops dependency) | 0.47.0 | BSD-3-Clause | https://github.com/golang/sys | url:https://raw.githubusercontent.com/golang/sys/v{v}/LICENSE
+binary | golang.org/x/term (ops dependency) | 0.45.0 | BSD-3-Clause | https://github.com/golang/term | url:https://raw.githubusercontent.com/golang/term/v{v}/LICENSE
 binary | mcp-s3 | 1.3.0 | Apache-2.0 | https://github.com/txn2/mcp-s3 | url:https://raw.githubusercontent.com/txn2/mcp-s3/v{v}/LICENSE
 
 # --- 7. ops prerequisites (oplugins/prereq.yml, downloaded by `ops`) --------

@@ -232,7 +232,11 @@ def npm_tree(section, proj):
 # ---------------------------------------------------------------- fetching
 
 def cache_dir(key):
-    return os.path.join(CACHE, re.sub(r"[^A-Za-z0-9_.@=-]+", "_", key))
+    name = re.sub(r"[^A-Za-z0-9_.@=-]+", "_", key)
+    if len(name) > 160:
+        # Lists of exact LICENSE and NOTICE URLs can exceed Windows path limits.
+        name = hashlib.sha256(key.encode("utf-8")).hexdigest()
+    return os.path.join(CACHE, name)
 
 
 def http_get(url):

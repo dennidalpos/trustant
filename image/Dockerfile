@@ -1,7 +1,7 @@
 ARG OLLAMA_VERSION=0.40.16
 # NOTE: there is deliberately no OPS_REPO/OPS_BRANCH here. `ops` resolves its
-# task source from the binary (installed via n7s.co/get-ops-tru, which pins
-# trustable-ai/openserverless-task); both variables still OVERRIDE that default,
+# task source from the binary (the Trustant fork embeds
+# trustable-ai/openserverless-task). Both variables still override that default,
 # so declaring them is how an image ends up on the wrong fork. See spec/start.md.
 # WHY: VM setup reads these exact values too, so image and development installs
 # cannot drift back to the upstream Milvus MCP or a floating branch.
@@ -10,6 +10,29 @@ ARG MILVUS_MCP_REF=a7e624f3057a0d739528bca3ed92504943224ceb
 ARG GH_VERSION=2.105.0
 ARG GH_SHA_AMD64=79e7ab5db738c48777b696e374f8b428f0647debfb424f44d2f426370407fe2f
 ARG GH_SHA_ARM64=b1278c75107423d818f1937fd92cafc9e5e9b606631568f68d7fb816f5885a02
+
+########################################################## ops-build
+FROM --platform=$BUILDPLATFORM golang:1.27.4@sha256:205c7636d74e0ffbe3d007162df7d74f859f5a8c8322dfb9f907977686c126cf AS ops-build
+ARG TARGETARCH
+WORKDIR /src/ops
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+COPY ops-prereq-error.patch /tmp/ops-prereq-error.patch
+# Rebuild the fork's release snapshot with the corrected go-git dependency.
+# The source hash covers the embedded task source, branch and release version.
+RUN set -eu ;\
+    curl -fsSL -o /tmp/ops.tar.gz \
+        https://codeload.github.com/trustable-ai/openserverless-cli/tar.gz/bcb9d40abe909747c2c39531f1fbc59923745192 ;\
+    echo 'df51b6b240b1f2684252988b6c5bd95d691c7c1bee2e37e8226b275391ae1644  /tmp/ops.tar.gz' | sha256sum -c - ;\
+    tar -xzf /tmp/ops.tar.gz --strip-components=1 ;\
+    git apply /tmp/ops-prereq-error.patch ;\
+    GOTOOLCHAIN=local go get github.com/go-git/go-git/v5@v5.19.3 ;\
+    printf '%s\n' \
+        '31bc7cba6a248f9ce01fd682f8091a6bfb0c3730f31639e6245ab3385ac1cfba  go.mod' \
+        'bd055ef89df24a25610edcb65fcf4d8868650a288cd9c7e648e044d01f914889  go.sum' | sha256sum -c - ;\
+    GOTOOLCHAIN=local go mod verify ;\
+    GOTOOLCHAIN=local go test -mod=readonly -vet=off -run '^TestFailedPrerequisiteKeepsInstalledVersion$' . ;\
+    GOTOOLCHAIN=local CGO_ENABLED=0 GOOS=linux GOARCH="${TARGETARCH}" \
+        go build -trimpath -buildvcs=false -mod=readonly -o /out/ops ./cmd/ops/
 
 ########################################################## loader
 FROM ubuntu:24.04 AS loader
@@ -162,10 +185,11 @@ ENV HOME=/home/trustant
 WORKDIR /home/trustant
 USER trustant
 
+COPY --from=ops-build --chown=trustant:trustant /out/ops /home/trustant/.local/bin/ops
+
 RUN \
     sed -e 's/^\(.*\)=\(.*\)/export \1="\2"/'  -e 's/""/"/g' >>$HOME/.bashrc /etc/environment  ;\
-    echo "export PATH=\"/home/trustant/.local/bin:/home/trustant/.ops/linux-${TARGETARCH}/bin:/usr/local/bin:/usr/bin:/bin\"" >>$HOME/.bashrc ;\
-    curl -fsSL n7s.co/get-ops-tru | bash
+    echo "export PATH=\"/home/trustant/.local/bin:/home/trustant/.ops/linux-${TARGETARCH}/bin:/usr/local/bin:/usr/bin:/bin\"" >>$HOME/.bashrc
 
 RUN bash -ic "source $HOME/.bashrc ;  ops -t ; ops -info"
 

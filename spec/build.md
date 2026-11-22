@@ -154,6 +154,15 @@ for amd64 and arm64; both the image and repository-root setup verify the
 matching checksum before installing `/usr/local/bin/gh`. Builds never resolve a
 floating GitHub CLI release or copy a host developer's GitHub configuration.
 
+The image builds its `ops` binary for Linux AMD64 and ARM64 from the Trustant
+OpenServerless CLI fork. The Dockerfile pins the Go builder, verifies the fork
+source archive, and verifies the module files after the go-git update. The
+image also patches `ops` to leave the installed version marker intact when a
+prerequisite installer fails. The binary embeds the Trustant task repository
+and branch. Its task definitions
+verify the Linux downloads of kubectl, kind, yq and Helm with architecture-specific
+SHA-256 checksums before installing them.
+
 The Ollama loader supplies the `ollama` binary, its CPU libraries, and the
 `llama-server` executable to the runtime stage. Ollama starts that executable
 when it loads a model.

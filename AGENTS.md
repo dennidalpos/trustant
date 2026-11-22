@@ -1,19 +1,20 @@
 # AGENTS.md
 
 <!-- secondbrain:repository:begin -->
-Common directives applied: revision **1.6** — 2026-11-20. <!-- secondbrain:source global=0A70848B8CBBE1939BDB240F37280AB3594914B41E4152F8543A554F04FEF0FF workstation=2B4198D3D9F66B2EC4AD159DC7889F6C21AD64C5E025B99005D26122D6E5AEDB -->
+Common directives applied: revision **1.6** — 2026-11-20. <!-- secondbrain:source global=0A70848B8CBBE1939BDB240F37280AB3594914B41E4152F8543A554F04FEF0FF workstation=FE4E7619B750B3784AA2F282061DDD82BBD00B3871E7D35739DD217E297D7A4F -->
 ## SecondBrain
 
 Repository knowledge lives in the SecondBrain dossier; code, guides, and publishable assets stay here. This block is generated: write project rules outside it, because a sync replaces everything inside.
 
 - Load the slim startup with MCP get_startup_context or the startup mode of the SecondBrain knowledge tool, and follow its references for detail. If the checkout is unreachable, report the dossier as unavailable and continue from the repository files.
 - Write only to this repository's dossier `repos/<repo>/`, only through SecondBrain scripts or MCP write tools. Work folders come from the work tool's init mode; sessions, retention, and cleanup rules load from `sb prompt`.
+- MCP writes: call `preview_dossier_write`, then `submit_dossier_write` with the same `requestId` and `planHash`, and pass the whole previewed object as `plan` (a grant covers task status, update, evidence, new non-autonomous tasks, memory, activity and history of this dossier; evidence correction, `execution` and `requires` changes need the owner's per-plan approval). A refusal that names a missing grant on a repository that has one means `plan` was left out. Never ask the owner for a grant or approval without first retrying with `plan`; the owner's approval is never given in chat.
 - Commits, pushes, deletions, and publication require specific authorization.
 - Every task you create or update must run unattended. For an autonomous task, ask the user for what `needsInfo` or the readiness result reports missing (files in scope, checks to run, acceptance, inputs, decisions) with the client's structured question tool; skip it only when the user says otherwise, then set `execution` to `user_required`.
 
 ## Toolchain and local lint
 
-- Use the Go version declared in `go.mod` (currently 1.25.5). Development setup and the image use Ubuntu 24.04 and Node.js 24.
+- Use the Go version declared in `go.mod`. Development setup and the image use Ubuntu 24.04 and Node.js 24.
 - Run `npm ci` and `npm run lint` from the root for cross-language lint. The Go vet step targets Linux and supplies a temporary `_build.txt` overlay when needed. For a UI-only lint pass, run `npm run lint:web -- web`.
 
 ## Component checks

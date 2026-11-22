@@ -989,8 +989,9 @@ func TestOpsInstallsFromTrustantSourceWithoutObsoleteEnvVars(t *testing.T) {
 	if !strings.Contains(files["setup.sh"], `OPS_INSTALL_URL="https://n7s.co/get-ops-tru"`) {
 		t.Fatal("setup.sh must use the Trustant ops installer over HTTPS")
 	}
-	if dockerfile := files[filepath.Join("image", "Dockerfile")]; !strings.Contains(dockerfile, "n7s.co/get-ops-tru | bash") || strings.Contains(dockerfile, "n7s.co/get-ops | bash") {
-		t.Fatal("image/Dockerfile must install ops with n7s.co/get-ops-tru")
+	if dockerfile := files[filepath.Join("image", "Dockerfile")]; !strings.Contains(dockerfile, "codeload.github.com/trustable-ai/openserverless-cli/tar.gz/") ||
+		!strings.Contains(dockerfile, "/out/ops /home/trustant/.local/bin/ops") {
+		t.Fatal("image/Dockerfile must build and install ops from the Trustant CLI fork")
 	}
 
 	// No file may declare or export either variable. Comments explaining why they

@@ -58,9 +58,16 @@ and `acp/NOTICE`, and per-file changes are tracked in
 Trustant runs on [OpenServerless](https://openserverless.apache.org)
 (Apache-2.0) over k3s, and its image and setup use, among others: Node.js (MIT),
 Go (BSD-3-Clause), Ollama (MIT), GitHub CLI (MIT), uv (Apache-2.0 or MIT),
-kubectl and Helm (Apache-2.0), bun, yq, k3sup and uutils coreutils (MIT), and
+kubectl, kind and Helm (Apache-2.0), bun, yq, k3sup and uutils coreutils (MIT), and
 Ubuntu packages under their distribution licenses. Python application packages
 and npm production trees are listed in full in [DEPS](DEPS).
+
+The image builds `ops` from the [Trustant OpenServerless CLI fork](https://github.com/trustable-ai/openserverless-cli)
+with [go-git](https://github.com/go-git/go-git) (both Apache-2.0).
+The updated Go modules are listed in [DEPS](DEPS). The unchanged
+filepath-securejoin source is available from the
+[v0.6.1 release](https://github.com/cyphar/filepath-securejoin/tree/v0.6.1)
+under BSD-3-Clause and MPL-2.0.
 
 The setup and image use [Redis MCP](https://github.com/redis/mcp-redis) and
 [tsx](https://github.com/privatenumber/tsx) under MIT. The image also includes

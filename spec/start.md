@@ -346,10 +346,10 @@ that check runs rather than being discovered missing by it. Idempotent: skip whe
 
 ## Removing the obsolete OPS_BRANCH / OPS_REPO exports
 
-`ops` now resolves its task source from the binary itself: the installer
-`n7s.co/get-ops-tru` pins `trustable-ai/openserverless-task`, and a clean `ops
--info` reports that repo with an empty `OPS_BRANCH`. Nothing needs to declare
-the source in the environment any more.
+`ops` resolves its task source from the binary itself. Host setup uses the
+`n7s.co/get-ops-tru` installer. The image builds from the Trustant CLI fork.
+A clean `ops -info` reports `trustable-ai/openserverless-task` and branch
+`0.9.0` without environment overrides.
 
 `OPS_BRANCH` and `OPS_REPO` are therefore **obsolete, and actively harmful**:
 the binary still lets both variables override its wired-in default, so any

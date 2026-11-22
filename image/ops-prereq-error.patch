@@ -1,0 +1,84 @@
+Trustant change to the Apache OpenServerless CLI fork: report a failed
+prerequisite installation before inspecting the executable or updating its
+version marker.
+
+diff --git a/prereq.go b/prereq.go
+--- a/prereq.go
++++ b/prereq.go
+@@ -218,13 +218,14 @@ func downloadPrereq(name string, version string) error {
+ 		return fmt.Errorf("WARNING: %s prerequisite found twice with different versions!\nPrevious version: %s, ignoring %s", name, oldver, version)
+ 	}
+-	PrereqSeenMap[name] = version
+ 
+ 	if taskDryRun {
+ 		fmt.Printf("downloading %s %s\n", name, version)
+ 		touch(bindir, name)
+ 	} else {
+ 		fmt.Fprintf(os.Stderr, "ensuring prerequisite %s %s\n", name, version)
+-		execPrereqTask(bindir, name)
++		if err := execPrereqTask(bindir, name); err != nil {
++			return fmt.Errorf("install prerequisite %s %s: %w", name, version, err)
++		}
+ 		// check if file and version exists
+ 
+ 		if !exists(bindir, xname) {
+@@ -243,7 +244,11 @@ func downloadPrereq(name string, version string) error {
+ 			}
+ 		}
+ 	}
+-	return touchAndClean(bindir, xname, version)
++	if err := touchAndClean(bindir, xname, version); err != nil {
++		return err
++	}
++	PrereqSeenMap[name] = version
++	return nil
+ }
+ 
+ // ensure prereq are satified looking at the prereq.yml
+diff --git a/prereq_test.go b/prereq_test.go
+--- a/prereq_test.go
++++ b/prereq_test.go
+@@ -20,5 +20,43 @@ import (
+ 	"fmt"
+ 	"os"
++	"path/filepath"
++	"testing"
+ )
+ 
++// Trustant regression for a failed upgrade with a cached executable.
++func TestFailedPrerequisiteKeepsInstalledVersion(t *testing.T) {
++	bindir := t.TempDir()
++	t.Setenv("OPS_BIN", bindir)
++
++	dryRun, oldSeen := taskDryRun, PrereqSeenMap
++	taskDryRun, PrereqSeenMap = false, map[string]string{}
++	t.Cleanup(func() {
++		taskDryRun, PrereqSeenMap = dryRun, oldSeen
++	})
++
++	executable := filepath.Join(bindir, addExeExt("sample"))
++	oldMarker := executable + "-1"
++	if err := os.WriteFile(executable, []byte("old executable"), 0755); err != nil {
++		t.Fatal(err)
++	}
++	if err := os.WriteFile(oldMarker, nil, 0644); err != nil {
++		t.Fatal(err)
++	}
++	// The test executable rejects the installer subprocess's -task flag.
++	for range 2 {
++		if err := downloadPrereq("sample", "2"); err == nil {
++			t.Fatal("failed installer succeeded")
++		}
++	}
++	if _, err := os.Stat(oldMarker); err != nil {
++		t.Fatalf("old version marker: %v", err)
++	}
++	if _, err := os.Stat(executable + "-2"); !os.IsNotExist(err) {
++		t.Fatalf("unexpected new version marker: %v", err)
++	}
++	if contents, err := os.ReadFile(executable); err != nil || string(contents) != "old executable" {
++		t.Fatalf("old executable changed: %q, %v", contents, err)
++	}
++}
++
+ func Example_execPrereqTask() {
