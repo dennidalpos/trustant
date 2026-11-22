@@ -528,10 +528,10 @@
     {
       "section": "binary",
       "name": "ollama",
-      "version": "0.40.16",
+      "version": "0.40.17",
       "license": "MIT",
       "homepage": "https://github.com/ollama/ollama",
-      "source": "url:https://raw.githubusercontent.com/ollama/ollama/v0.40.16/LICENSE",
+      "source": "url:https://raw.githubusercontent.com/ollama/ollama/v0.40.17/LICENSE",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [

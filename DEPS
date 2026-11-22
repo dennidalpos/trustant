@@ -482,7 +482,7 @@ groupcache (ops dependency)              0.0.0-20241129210726-2c02b8208cf8   Apa
 knownhosts (ops dependency)              1.3.1                               Apache-2.0                https://github.com/skeema/knownhosts
 mcp-s3                                   1.3.0                               Apache-2.0                https://github.com/txn2/mcp-s3
 Node.js (NodeSource)                     24.x                                MIT                       https://nodejs.org
-ollama                                   0.40.16                             MIT                       https://github.com/ollama/ollama
+ollama                                   0.40.17                             MIT                       https://github.com/ollama/ollama
 ops (Trustant OpenServerless CLI build)  0.9.0-incubating+26i15n55-snapshot  Apache-2.0                https://github.com/trustable-ai/openserverless-cli
 ProtonMail go-crypto (ops dependency)    1.1.6                               BSD-3-Clause              https://github.com/ProtonMail/go-crypto
 sha1cd (ops dependency)                  0.7.0                               Apache-2.0                https://github.com/pjbgf/sha1cd
