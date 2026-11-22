@@ -35,12 +35,24 @@ func TestNoStoreHTMLPreventsStaleConfigurationFlow(t *testing.T) {
 		}
 	}
 
-	// Assets can still use their normal HTTP caching semantics; only documents
-	// carry inline boot logic capable of redirecting between configuration pages.
-	request := httptest.NewRequest(http.MethodGet, "/trustant-ui.css", nil)
+	// Only documents carry inline boot logic capable of redirecting between
+	// configuration pages, so they are never stored. Stylesheets and scripts may
+	// be cached but must be revalidated, otherwise a stale CSS or JS file is
+	// paired with an upgraded page.
+	for _, path := range []string{"/trustant-ui.css", "/tailwind.js", "/js/shared.js"} {
+		request := httptest.NewRequest(http.MethodGet, path, nil)
+		response := httptest.NewRecorder()
+		handler.ServeHTTP(response, request)
+		if got := response.Header().Get("Cache-Control"); got != "no-cache" {
+			t.Fatalf("%s Cache-Control = %q, want no-cache", path, got)
+		}
+	}
+
+	// Other assets keep the file server default.
+	request := httptest.NewRequest(http.MethodGet, "/trustant-logo.svg", nil)
 	response := httptest.NewRecorder()
 	handler.ServeHTTP(response, request)
 	if got := response.Header().Get("Cache-Control"); got != "" {
-		t.Fatalf("CSS Cache-Control = %q, want the file server default", got)
+		t.Fatalf("SVG Cache-Control = %q, want the file server default", got)
 	}
 }

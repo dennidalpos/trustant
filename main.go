@@ -59,10 +59,18 @@ var milvusCliTemplate string
 // configuration logic from browser history. This is especially important for
 // hard schema cutovers such as OpenCode -> Pi, where old JavaScript can create
 // a redirect loop even though the server-side configuration is already valid.
+//
+// Stylesheets and scripts are served with no-cache: the browser may keep them
+// but must revalidate (a cheap 304 via Last-Modified) on every load. Without a
+// Cache-Control header the browser applies heuristic freshness and can pair a
+// new HTML page with a stale CSS or JS file for days after an upgrade.
 func noStoreHTML(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/" || strings.HasSuffix(r.URL.Path, ".html") {
+		switch {
+		case r.URL.Path == "/" || strings.HasSuffix(r.URL.Path, ".html"):
 			w.Header().Set("Cache-Control", "no-store")
+		case strings.HasSuffix(r.URL.Path, ".css") || strings.HasSuffix(r.URL.Path, ".js"):
+			w.Header().Set("Cache-Control", "no-cache")
 		}
 		next.ServeHTTP(w, r)
 	})
