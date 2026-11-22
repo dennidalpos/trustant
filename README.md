@@ -4,6 +4,8 @@ Trustant is a development environment for creating, editing, running, and publis
 
 This README is for developers running Trustant from source and contributors navigating the repository.
 
+Trustant runs as a server and is used from a web browser. The repository has no desktop application.
+
 [![Watch the Trustant demo](splash.png)](https://trustant.ai/#video?v=demo)
 
 ## How it fits together
@@ -101,6 +103,8 @@ Startup creates `.env` when it is absent; existing values are validated by setup
 | Prepare without starting the loop | `./start.sh -n` | `.\start.ps1 -n` | `./start.sh -n` |
 | Open VS Code in the environment | `./start.sh -v` | `.\start.ps1 -v` | Open the local checkout |
 | Stop the VM or distribution | `./start.sh -s` | `.\start.ps1 -s` | Not applicable |
+
+On Windows, `.\start.ps1 -NoStart` only provisions the distribution without running `./start.sh`, and `-Distro <name>` selects another WSL instance name (default `trudev`).
 
 Run `./run.sh` from the checkout **inside Ubuntu** to restart only the development loop. On macOS, `./ssh.sh ./run.sh` runs it in the VM. Press Ctrl+C to stop the loop. `run.sh` rejects unsupported hosts and frees ports 8910, 5173, and 4096 before starting services.
 
@@ -219,7 +223,7 @@ The `web/` UI uses HTML and JavaScript with Tailwind. During development the ser
 
 ### Local checks
 
-Run Go checks in the prepared Ubuntu environment. `go.mod` declares the required Go version. A clean checkout lacks `_build.txt`, which `main.go` embeds. `run.sh` generates it before starting Air; to run tests without starting services, create local test metadata first:
+Run Go checks in the prepared Ubuntu environment; the root package does not compile on Windows (it uses `syscall.Kill` and `Setpgid`). `go.mod` declares the required Go version. A clean checkout lacks `_build.txt`, which `main.go` embeds. `run.sh` generates it before starting Air; to run tests without starting services, create local test metadata first:
 
 ```bash
 if [ ! -f _build.txt ]; then
