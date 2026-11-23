@@ -714,7 +714,7 @@ export class PiAcpAgent implements ACPAgent {
           return { stopReason: 'end_turn' }
         }
 
-        let text = ''
+        let text: string
         try {
           text = readFileSync(changelogPath, 'utf-8')
         } catch (e: any) {
@@ -798,7 +798,7 @@ export class PiAcpAgent implements ACPAgent {
         const safeSessionId = session.sessionId.replace(/[^a-zA-Z0-9_-]/g, '_')
         const outputPath = join(session.cwd, `pi-session-${safeSessionId}.html`)
 
-        let resultPath = ''
+        let resultPath: string
         try {
           const result = await session.proc.exportHtml(outputPath)
           resultPath = result.path
@@ -1395,7 +1395,6 @@ async function getModelState(
   currentModelId: string
 } | null> {
   // Ask pi for available models.
-  let availableModels: AdvertisedModel[] = []
 
   const data =
     pre?.availableModels ??
@@ -1408,7 +1407,7 @@ async function getModelState(
     })())
 
   const models: any[] = Array.isArray(data?.models) ? data.models : []
-  availableModels = models
+  const availableModels: AdvertisedModel[] = models
     .map(m => {
       const provider = String(m?.provider ?? '').trim()
       const id = String(m?.id ?? '').trim()
