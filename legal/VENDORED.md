@@ -14,7 +14,7 @@ exist upstream; **removed** upstream files that are no longer present.
 - Upstream: https://github.com/RAIT-09/obsidian-agent-client
 - Baseline revision: `0.11.0`
 - License: Apache-2.0, Copyright 2025-2026 RAIT-09
-- Files: 9 unmodified, 23 modified, 88 added, 134 removed upstream files
+- Files: 9 unmodified, 23 modified, 90 added, 134 removed upstream files
 
 ### Modified (23)
 
@@ -42,7 +42,7 @@ exist upstream; **removed** upstream files that are no longer present.
 - `tsconfig.json`
 - `vitest.config.mts`
 
-### Added (88)
+### Added (90)
 
 - `.env.example`
 - `.gitattributes`
@@ -90,6 +90,7 @@ exist upstream; **removed** upstream files that are no longer present.
 - `test/header-action-button.test.tsx`
 - `test/managed-runtime.test.ts`
 - `test/min-width-bridge.test.ts`
+- `test/modal.test.ts`
 - `test/model-options.test.ts`
 - `test/notebook-github.test.ts`
 - `test/notebook-local.test.ts`
@@ -115,6 +116,7 @@ exist upstream; **removed** upstream files that are no longer present.
 - `test/trustant-runtime-extension.test.ts`
 - `web/ChatApp.tsx`
 - `web/HeaderActionButton.tsx`
+- `web/Modal.tsx`
 - `web/NotebookNodeView.tsx`
 - `web/NotebookPanel.tsx`
 - `web/ToolOutputDisclosure.tsx`
@@ -328,7 +330,7 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 
 - Source: https://github.com/trustant/trustant-acp.git, gitlink before vendoring
 - Commit: `9786f796380aa9b2000d8cebd913fa41150c89ed`
-- Files: 72 unmodified, 43 modified, 5 added, 62 removed
+- Files: 72 unmodified, 43 modified, 7 added, 62 removed
 
 #### Modified (43)
 
@@ -376,12 +378,14 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 - `web/styles.css`
 - `web/transport.ts`
 
-#### Added (5)
+#### Added (7)
 
 - `LICENSE-Apache-2.0-obsidian-agent-client`
 - `UPSTREAM.md`
+- `test/modal.test.ts`
 - `test/pi-ai-retry-patch.test.ts`
 - `test/provider-stream.integration.ts`
+- `web/Modal.tsx`
 - `web/ToolOutputDisclosure.tsx`
 
 #### Removed (62)
