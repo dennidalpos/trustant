@@ -279,7 +279,7 @@ Listed as a count only; every tracked file not named above is identical to upstr
 - Upstream: https://github.com/svkozak/pi-acp
 - Baseline revision: `9e857dcc05a057404eb1537e5f31e5aef88a5863`
 - License: MIT, Copyright (c) 2025 Sergii Kozak
-- Files: 54 unmodified, 15 modified, 6 added, 2 removed upstream files
+- Files: 54 unmodified, 15 modified, 7 added, 2 removed upstream files
 
 ### Modified (15)
 
@@ -299,10 +299,11 @@ Listed as a count only; every tracked file not named above is identical to upstr
 - `test/unit/session-config-options.test.ts`
 - `test/unit/startup-info-env.test.ts`
 
-### Added (6)
+### Added (7)
 
 - `.gitattributes`
 - `TRUSTANT_FORK.md`
+- `src/acp/sdk-compat.ts`
 - `src/acp/translate/bash.ts`
 - `src/pi-rpc/launch-config.ts`
 - `test/component/session-delete.test.ts`
@@ -452,7 +453,7 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 
 - Source: https://github.com/trustant/pi-acp, nested gitlink before vendoring
 - Commit: `4e526e5f64eaec647d78c919ba9dc071197c2517`
-- Files: 67 unmodified, 8 modified, 0 added, 3 removed
+- Files: 67 unmodified, 8 modified, 1 added, 3 removed
 
 #### Modified (8)
 
@@ -464,6 +465,10 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 - `src/pi-rpc/launch-config.ts`
 - `test/helpers/fakes.ts`
 - `test/unit/launch-config.test.ts`
+
+#### Added (1)
+
+- `src/acp/sdk-compat.ts`
 
 #### Removed (3)
 

@@ -96,6 +96,7 @@ import {
 import { headerConnectionState } from "./connection-status";
 import { isChatNearBottom } from "./chat-scroll";
 import { HeaderActionButton } from "./HeaderActionButton";
+import { Modal } from "./Modal";
 import { toolStatusPresentation } from "./tool-status";
 
 // ---- view model -----------------------------------------------------------
@@ -2314,364 +2315,337 @@ export function ChatApp(): React.ReactElement {
 			)}
 
 			{endpointCfg && (
-				<div
-					className="modal-backdrop"
-					onClick={() => setEndpointCfg(null)}
-				>
-					<div className="modal" onClick={(e) => e.stopPropagation()}>
-						<div className="modal-title">Configure Pi</div>
-						<p className="modal-desc">
-							Couldn't connect. Enter an OpenAI-compatible
-							endpoint: server base URL and API key.
-						</p>
-						<label className="modal-field">
-							<span>Base URL</span>
-							<input
-								type="text"
-								placeholder="https://api.openai.com/v1"
-								value={endpointCfg.baseUrl}
-								onChange={(e) =>
-									setEndpointCfg({
-										...endpointCfg,
-										baseUrl: e.target.value,
-									})
-								}
-							/>
-						</label>
-						<label className="modal-field">
-							<span>API Key</span>
-							<input
-								type="password"
-								placeholder="sk-…"
-								value={endpointCfg.apiKey}
-								onChange={(e) =>
-									setEndpointCfg({
-										...endpointCfg,
-										apiKey: e.target.value,
-									})
-								}
-							/>
-						</label>
-						<div className="modal-actions">
-							<button
-								className="secondary"
-								onClick={() => setEndpointCfg(null)}
-							>
-								Cancel
-							</button>
-							<button
-								onClick={() => void saveEndpointConfig()}
-								disabled={
-									endpointCfg.saving ||
-									!endpointCfg.baseUrl.trim() ||
-									!endpointCfg.apiKey.trim()
-								}
-							>
-								{endpointCfg.saving
-									? "Testing…"
-									: endpointCfg.pendingConnect
-										? "Save & Connect"
-										: "Save"}
-							</button>
-						</div>
+				<Modal title="Configure Pi" onClose={() => setEndpointCfg(null)}>
+					<p className="modal-desc">
+						Couldn't connect. Enter an OpenAI-compatible
+						endpoint: server base URL and API key.
+					</p>
+					<label className="modal-field">
+						<span>Base URL</span>
+						<input
+							type="text"
+							placeholder="https://api.openai.com/v1"
+							value={endpointCfg.baseUrl}
+							onChange={(e) =>
+								setEndpointCfg({
+									...endpointCfg,
+									baseUrl: e.target.value,
+								})
+							}
+						/>
+					</label>
+					<label className="modal-field">
+						<span>API Key</span>
+						<input
+							type="password"
+							placeholder="sk-…"
+							value={endpointCfg.apiKey}
+							onChange={(e) =>
+								setEndpointCfg({
+									...endpointCfg,
+									apiKey: e.target.value,
+								})
+							}
+						/>
+					</label>
+					<div className="modal-actions">
+						<button
+							className="secondary"
+							onClick={() => setEndpointCfg(null)}
+						>
+							Cancel
+						</button>
+						<button
+							onClick={() => void saveEndpointConfig()}
+							disabled={
+								endpointCfg.saving ||
+								!endpointCfg.baseUrl.trim() ||
+								!endpointCfg.apiKey.trim()
+							}
+						>
+							{endpointCfg.saving
+								? "Testing…"
+								: endpointCfg.pendingConnect
+									? "Save & Connect"
+									: "Save"}
+						</button>
 					</div>
-				</div>
+				</Modal>
 			)}
 
 			{codexAuth && (
-				<div
-					className="modal-backdrop"
-					onClick={() => setCodexAuth(null)}
-				>
-					<div className="modal" onClick={(e) => e.stopPropagation()}>
-						<div className="modal-title">Sign in to Codex</div>
-						<p className="modal-desc">
-							Open this URL and enter the one-time code to
-							authenticate with ChatGPT:
-						</p>
-						<div className="modal-field">
-							<span>URL</span>
-							<a
-								href={codexAuth.url}
-								target="_blank"
-								rel="noreferrer"
-							>
-								{codexAuth.url}
-							</a>
-						</div>
-						<div className="modal-field">
-							<span>Code</span>
-							<code className="auth-code">{codexAuth.code}</code>
-						</div>
-						<div className="modal-actions">
-							<button
-								className="secondary"
-								onClick={() => setCodexAuth(null)}
-							>
-								Cancel
-							</button>
-							<button
-								onClick={() => void confirmCodexLogin()}
-								disabled={codexAuth.checking}
-							>
-								{codexAuth.checking
-									? "Checking…"
-									: "Ho completato"}
-							</button>
-						</div>
+				<Modal title="Sign in to Codex" onClose={() => setCodexAuth(null)}>
+					<p className="modal-desc">
+						Open this URL and enter the one-time code to
+						authenticate with ChatGPT:
+					</p>
+					<div className="modal-field">
+						<span>URL</span>
+						<a
+							href={codexAuth.url}
+							target="_blank"
+							rel="noreferrer"
+						>
+							{codexAuth.url}
+						</a>
 					</div>
-				</div>
+					<div className="modal-field">
+						<span>Code</span>
+						<code className="auth-code">{codexAuth.code}</code>
+					</div>
+					<div className="modal-actions">
+						<button
+							className="secondary"
+							onClick={() => setCodexAuth(null)}
+						>
+							Cancel
+						</button>
+						<button
+							onClick={() => void confirmCodexLogin()}
+							disabled={codexAuth.checking}
+						>
+							{codexAuth.checking
+								? "Checking…"
+								: "Ho completato"}
+						</button>
+					</div>
+				</Modal>
 			)}
 
 			{claudeLicense && (
-				<div className="modal-backdrop" onClick={cancelClaudeLicense}>
-					<div className="modal" onClick={(e) => e.stopPropagation()}>
-						<div className="modal-title">Install Claude Code</div>
-						<p className="modal-desc">
-							Claude Code is Anthropic software and is not
-							included in Trustant. To use it, review and accept
-							Anthropic&apos;s Commercial Terms; Trustant then
-							installs it from npm on this machine.
-						</p>
-						{/* Not an iframe: anthropic.com forbids framing
-						    (X-Frame-Options: SAMEORIGIN), so it would render
-						    blank. The terms open in a new tab instead. */}
-						<div className="modal-field">
-							<span>Terms</span>
-							<a
-								href={claudeLicense.termsUrl}
-								target="_blank"
-								rel="noreferrer"
-							>
-								Anthropic Commercial Terms of Service
-							</a>
-						</div>
-						<div className="modal-field">
-							<span>Packages</span>
-							<code>{claudeLicense.specs.join(", ")}</code>
-						</div>
-						<label className="modal-field">
-							<input
-								type="checkbox"
-								checked={claudeLicense.accepted}
-								disabled={claudeLicense.installing}
-								onChange={(e) =>
-									setClaudeLicense({
-										...claudeLicense,
-										accepted: e.target.checked,
-									})
-								}
-							/>
-							<span>
-								I have read and accept Anthropic&apos;s
-								Commercial Terms
-							</span>
-						</label>
-						<div className="modal-actions">
-							<button
-								className="secondary"
-								onClick={cancelClaudeLicense}
-								disabled={claudeLicense.installing}
-							>
-								Cancel
-							</button>
-							<button
-								onClick={() => void installClaude()}
-								disabled={
-									!claudeLicense.accepted ||
-									claudeLicense.installing
-								}
-							>
-								{claudeLicense.installing
-									? "Installing…"
-									: "Accept and install"}
-							</button>
-						</div>
+				<Modal title="Install Claude Code" onClose={cancelClaudeLicense}>
+					<p className="modal-desc">
+						Claude Code is Anthropic software and is not
+						included in Trustant. To use it, review and accept
+						Anthropic&apos;s Commercial Terms; Trustant then
+						installs it from npm on this machine.
+					</p>
+					{/* Not an iframe: anthropic.com forbids framing
+					    (X-Frame-Options: SAMEORIGIN), so it would render
+					    blank. The terms open in a new tab instead. */}
+					<div className="modal-field">
+						<span>Terms</span>
+						<a
+							href={claudeLicense.termsUrl}
+							target="_blank"
+							rel="noreferrer"
+						>
+							Anthropic Commercial Terms of Service
+						</a>
 					</div>
-				</div>
+					<div className="modal-field">
+						<span>Packages</span>
+						<code>{claudeLicense.specs.join(", ")}</code>
+					</div>
+					<label className="modal-field">
+						<input
+							type="checkbox"
+							checked={claudeLicense.accepted}
+							disabled={claudeLicense.installing}
+							onChange={(e) =>
+								setClaudeLicense({
+									...claudeLicense,
+									accepted: e.target.checked,
+								})
+							}
+						/>
+						<span>
+							I have read and accept Anthropic&apos;s
+							Commercial Terms
+						</span>
+					</label>
+					<div className="modal-actions">
+						<button
+							className="secondary"
+							onClick={cancelClaudeLicense}
+							disabled={claudeLicense.installing}
+						>
+							Cancel
+						</button>
+						<button
+							onClick={() => void installClaude()}
+							disabled={
+								!claudeLicense.accepted ||
+								claudeLicense.installing
+							}
+						>
+							{claudeLicense.installing
+								? "Installing…"
+								: "Accept and install"}
+						</button>
+					</div>
+				</Modal>
 			)}
 
 			{claudeAuth && (
-				<div
-					className="modal-backdrop"
-					onClick={() => setClaudeAuth(null)}
-				>
-					<div className="modal" onClick={(e) => e.stopPropagation()}>
-						<div className="modal-title">Sign in to Claude</div>
-						<p className="modal-desc">
-							Open this URL, sign in, then paste the code shown by
-							the browser:
-						</p>
-						<div className="modal-field">
-							<span>URL</span>
-							<a
-								href={claudeAuth.url}
-								target="_blank"
-								rel="noreferrer"
-							>
-								{claudeAuth.url}
-							</a>
-						</div>
-						<label className="modal-field">
-							<span>Code</span>
-							<input
-								type="text"
-								placeholder="Paste code here"
-								value={claudeAuth.code}
-								autoFocus
-								onChange={(e) =>
-									setClaudeAuth({
-										...claudeAuth,
-										code: e.target.value,
-									})
-								}
-								onKeyDown={(e) => {
-									if (e.key === "Enter")
-										void submitClaudeCode();
-								}}
-							/>
-						</label>
-						<div className="modal-actions">
-							<button
-								className="secondary"
-								onClick={() => setClaudeAuth(null)}
-							>
-								Cancel
-							</button>
-							<button
-								onClick={() => void submitClaudeCode()}
-								disabled={
-									claudeAuth.submitting ||
-									!claudeAuth.code.trim()
-								}
-							>
-								{claudeAuth.submitting
-									? "Signing in…"
-									: "Complete"}
-							</button>
-						</div>
+				<Modal title="Sign in to Claude" onClose={() => setClaudeAuth(null)}>
+					<p className="modal-desc">
+						Open this URL, sign in, then paste the code shown by
+						the browser:
+					</p>
+					<div className="modal-field">
+						<span>URL</span>
+						<a
+							href={claudeAuth.url}
+							target="_blank"
+							rel="noreferrer"
+						>
+							{claudeAuth.url}
+						</a>
 					</div>
-				</div>
+					<label className="modal-field">
+						<span>Code</span>
+						<input
+							type="text"
+							placeholder="Paste code here"
+							value={claudeAuth.code}
+							autoFocus
+							onChange={(e) =>
+								setClaudeAuth({
+									...claudeAuth,
+									code: e.target.value,
+								})
+							}
+							onKeyDown={(e) => {
+								if (e.key === "Enter")
+									void submitClaudeCode();
+							}}
+						/>
+					</label>
+					<div className="modal-actions">
+						<button
+							className="secondary"
+							onClick={() => setClaudeAuth(null)}
+						>
+							Cancel
+						</button>
+						<button
+							onClick={() => void submitClaudeCode()}
+							disabled={
+								claudeAuth.submitting ||
+								!claudeAuth.code.trim()
+							}
+						>
+							{claudeAuth.submitting
+								? "Signing in…"
+								: "Complete"}
+						</button>
+					</div>
+				</Modal>
 			)}
 
 			{historyOpen && (
-				<div className="modal-backdrop" onClick={closeHistory}>
-					<div
-						className="modal history-modal"
-						onClick={(e) => e.stopPropagation()}
-					>
-						<div className="modal-title">Pi sessions</div>
-						<p className="modal-desc">
-							Resume a session stored by Pi for this workbench.
-						</p>
-						{historyError && (
-							<div className="session-error" role="alert">
-								{historyError}
-							</div>
-						)}
-						<div className="session-list">
-							{historyLoading ? (
-								<div className="empty">Loading sessions…</div>
-							) : sessions.length === 0 ? (
-								<div className="empty">
-									No resumable sessions found.
-								</div>
-							) : (
-								sessions.map((session) => (
-									<div
-										key={session.sessionId}
-										className="session-row"
-									>
-										<button
-											className="session-resume"
-											disabled={Boolean(
-												deletingSessionId,
-											)}
-											onClick={() =>
-												void loadHistorySession(session)
-											}
-										>
-											<span>
-												{session.title ||
-													"Untitled session"}
-											</span>
-											<small>
-												{session.updatedAt
-													? new Date(
-															session.updatedAt,
-														).toLocaleString()
-													: session.sessionId}
-											</small>
-										</button>
-										<button
-											className="session-delete"
-											aria-label={`Delete session ${
-												session.title ||
-												"Untitled session"
-											}`}
-											title={
-												session.sessionId ===
-												sessionRef.current
-													? "Start a new session before deleting the active session"
-													: "Delete session"
-											}
-											disabled={
-												Boolean(deletingSessionId) ||
-												session.sessionId ===
-													sessionRef.current
-											}
-											onClick={() => {
-												setDeleteCandidate(session);
-												setHistoryError(null);
-											}}
-										>
-											×
-										</button>
-									</div>
-								))
-							)}
+				<Modal title="Pi sessions" onClose={closeHistory} className="history-modal">
+					<p className="modal-desc">
+						Resume a session stored by Pi for this workbench.
+					</p>
+					{historyError && (
+						<div className="session-error" role="alert">
+							{historyError}
 						</div>
-						{deleteCandidate && (
-							<div className="session-delete-confirm">
-								<span>
-									Delete “
-									{deleteCandidate.title ||
-										"Untitled session"}
-									” permanently?
-								</span>
-								<div>
+					)}
+					<div className="session-list">
+						{historyLoading ? (
+							<div className="empty">Loading sessions…</div>
+						) : sessions.length === 0 ? (
+							<div className="empty">
+								No resumable sessions found.
+							</div>
+						) : (
+							sessions.map((session) => (
+								<div
+									key={session.sessionId}
+									className="session-row"
+								>
 									<button
-										className="secondary"
-										disabled={Boolean(deletingSessionId)}
-										onClick={() => setDeleteCandidate(null)}
-									>
-										Cancel
-									</button>
-									<button
-										className="danger"
-										disabled={Boolean(deletingSessionId)}
+										className="session-resume"
+										disabled={Boolean(
+											deletingSessionId,
+										)}
 										onClick={() =>
-											void deleteHistorySession()
+											void loadHistorySession(session)
 										}
 									>
-										{deletingSessionId
-											? "Deleting…"
-											: "Delete"}
+										<span>
+											{session.title ||
+												"Untitled session"}
+										</span>
+										<small>
+											{session.updatedAt
+												? new Date(
+														session.updatedAt,
+													).toLocaleString()
+												: session.sessionId}
+										</small>
+									</button>
+									<button
+										className="session-delete"
+										aria-label={`Delete session ${
+											session.title ||
+											"Untitled session"
+										}`}
+										title={
+											session.sessionId ===
+											sessionRef.current
+												? "Start a new session before deleting the active session"
+												: "Delete session"
+										}
+										disabled={
+											Boolean(deletingSessionId) ||
+											session.sessionId ===
+												sessionRef.current
+										}
+										onClick={() => {
+											setDeleteCandidate(session);
+											setHistoryError(null);
+										}}
+									>
+										×
 									</button>
 								</div>
-							</div>
+							))
 						)}
-						<div className="modal-actions">
-							<button
-								className="secondary"
-								disabled={Boolean(deletingSessionId)}
-								onClick={closeHistory}
-							>
-								Close
-							</button>
-						</div>
 					</div>
-				</div>
+					{deleteCandidate && (
+						<div className="session-delete-confirm">
+							<span>
+								Delete “
+								{deleteCandidate.title ||
+									"Untitled session"}
+								” permanently?
+							</span>
+							<div>
+								<button
+									className="secondary"
+									disabled={Boolean(deletingSessionId)}
+									onClick={() => setDeleteCandidate(null)}
+								>
+									Cancel
+								</button>
+								<button
+									className="danger"
+									disabled={Boolean(deletingSessionId)}
+									onClick={() =>
+										void deleteHistorySession()
+									}
+								>
+									{deletingSessionId
+										? "Deleting…"
+										: "Delete"}
+								</button>
+							</div>
+						</div>
+					)}
+					<div className="modal-actions">
+						<button
+							className="secondary"
+							disabled={Boolean(deletingSessionId)}
+							onClick={closeHistory}
+						>
+							Close
+						</button>
+					</div>
+				</Modal>
 			)}
 
 			<div
