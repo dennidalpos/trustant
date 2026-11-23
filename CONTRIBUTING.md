@@ -82,6 +82,25 @@ Submodules keep their own tooling. Generated bundles and third-party
 browser assets are excluded. Higher-severity diagnostics are the gate
 for ShellCheck, Hadolint and PSScriptAnalyzer.
 
+## Go vulnerability check
+
+Run this separately from lint, in the Ubuntu environment with the Go version
+from `go.mod`. It needs network access to fetch the tool and the vulnerability
+database from `vuln.go.dev`:
+
+```bash
+go install golang.org/x/vuln/cmd/govulncheck@latest
+go build -o /tmp/trustant-vuln .
+govulncheck -mode=binary /tmp/trustant-vuln
+```
+
+Use binary mode: with govulncheck v1.10.0, `govulncheck ./...` cannot load the
+Go 1.27.4 standard library ("requires go1.27 or later") and scans nothing.
+Retry the source scan when a newer govulncheck supports Go 1.27.
+`_build.txt` must exist because `main.go` embeds it (`run.sh` creates it).
+Findings in toolchain or module code reachable from Trustant are fixed or
+tracked as tasks; do not bump unrelated dependencies to silence a report.
+
 Lint does not build images, start the application, or rewrite sources.
 The Go step supplies temporary embed metadata outside the checkout when
 `_build.txt` is missing. Run `npm run lint:web -- web` to check just the
