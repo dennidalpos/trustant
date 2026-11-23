@@ -171,6 +171,7 @@ describe("Trustant managed Pi runtime", () => {
 				version: 1 as const,
 				workbench: "/workbench/example",
 				extensionPaths: ["/runtime/trustant-runtime.ts"],
+					mcpProjectServers: "allow" as const,
 			},
 		};
 
@@ -186,6 +187,7 @@ describe("Trustant managed Pi runtime", () => {
 							paths: ["/runtime/trustant-runtime.ts"],
 						},
 						skills: { discover: true },
+							mcpProjectServers: "allow",
 					},
 				},
 			},

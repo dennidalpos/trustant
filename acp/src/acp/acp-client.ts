@@ -88,6 +88,7 @@ export interface AgentConfig {
 		version: 1;
 		workbench: string;
 		extensionPaths: string[];
+		mcpProjectServers?: "allow";
 	};
 	/** Host-selected MCP servers passed over ACP to non-Pi agents. */
 	mcpServers?: acp.McpServer[];
@@ -130,6 +131,9 @@ export function buildPiSessionRequestMeta(
 						paths: config.piLaunch?.extensionPaths ?? [],
 					},
 					skills: { discover: true },
+						...(config.piLaunch?.mcpProjectServers
+							? { mcpProjectServers: config.piLaunch.mcpProjectServers }
+							: {}),
 				},
 			},
 		},

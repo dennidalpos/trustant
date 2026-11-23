@@ -134,6 +134,7 @@ export function buildAgentConfig(
 				version: 1,
 				workbench: managed.workbench.workspace,
 				extensionPaths: [managed.extensionPath],
+				mcpProjectServers: "allow",
 			};
 			// Pi's adapter consumes the credential-free .mcp.json. It receives
 			// only the safe manifest path so trustant-mcp-launch can resolve

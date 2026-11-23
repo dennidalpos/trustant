@@ -43,6 +43,15 @@ test('Trustant Pi launch config produces discrete validated argv entries', () =>
   ])
 })
 
+test('Trustant Pi launch config forwards the MCP project server policy only as "allow"', () => {
+  const parsed = parseTrustantPiLaunch({ trustant: { piLaunch: { version: 1, mcpProjectServers: 'allow' } } }, '/workspace/app')
+  assert.deepEqual(piLaunchArgs(parsed), ['--mcp-project-servers', 'allow'])
+  assert.throws(
+    () => parseTrustantPiLaunch({ trustant: { piLaunch: { version: 1, mcpProjectServers: 'ask' } } }, '/workspace/app'),
+    /mcpProjectServers must be "allow"/
+  )
+})
+
 test('Trustant Pi launch config rejects unknown versions', () => {
   assert.throws(
     () => parseTrustantPiLaunch({ trustant: { piLaunch: { version: 2 } } }, '/workspace/app'),

@@ -8,6 +8,7 @@ export type EffectivePiLaunchConfig = {
   skills: { discover: boolean; paths: string[] }
   promptTemplates: { paths: string[] }
   sessionDir?: string
+  mcpProjectServers?: 'allow'
 }
 
 function record(value: unknown): Record<string, unknown> | null {
@@ -64,8 +65,13 @@ export function parseTrustantPiLaunch(meta: unknown, cwd: string): EffectivePiLa
     throw new Error('trustant.piLaunch.sessionDir must be a non-empty path')
   }
 
+  if (raw.mcpProjectServers !== undefined && raw.mcpProjectServers !== 'allow') {
+    throw new Error('trustant.piLaunch.mcpProjectServers must be "allow"')
+  }
+
   return {
     version: TRUSTANT_PI_LAUNCH_VERSION,
+    ...(raw.mcpProjectServers === 'allow' ? { mcpProjectServers: 'allow' as const } : {}),
     extensions: {
       discover: optionalBoolean(extensions?.discover, 'trustant.piLaunch.extensions.discover', true),
       paths: paths(extensions?.paths, cwd, 'trustant.piLaunch.extensions.paths')
@@ -97,5 +103,8 @@ export function piLaunchArgs(config: EffectivePiLaunchConfig): string[] {
   for (const path of config.skills.paths) args.push('--skill', path)
   for (const path of config.promptTemplates.paths) args.push('--prompt-template', path)
   if (config.sessionDir) args.push('--session-dir', config.sessionDir)
+  // WHY: pi-mcp-adapter 7 skips unapproved project servers in RPC mode, and the
+  // managed workbench declares its host-owned servers in the project .mcp.json.
+  if (config.mcpProjectServers === 'allow') args.push('--mcp-project-servers', 'allow')
   return args
 }

@@ -447,12 +447,14 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 
 - Source: https://github.com/trustant/pi-acp, nested gitlink before vendoring
 - Commit: `4e526e5f64eaec647d78c919ba9dc071197c2517`
-- Files: 73 unmodified, 2 modified, 0 added, 3 removed
+- Files: 71 unmodified, 4 modified, 0 added, 3 removed
 
-#### Modified (2)
+#### Modified (4)
 
 - `package-lock.json`
 - `package.json`
+- `src/pi-rpc/launch-config.ts`
+- `test/unit/launch-config.test.ts`
 
 #### Removed (3)
 

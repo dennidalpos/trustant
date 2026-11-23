@@ -84,6 +84,11 @@ an expired Streamable HTTP session natively (checked in #65 with a synthetic
 MCP server restarted between two calls). The gateway tool `mcp` also accepts
 `action` (for example installing a server by URL); the managed Trustant
 extension blocks those inputs because MCP servers are host-managed.
+Version 7 also skips unapproved project servers in RPC sessions, and the managed
+workbench declares its servers in the project `.mcp.json`; the host therefore
+sets `mcpProjectServers: "allow"` in the typed `piLaunch` metadata and pi-acp
+passes `--mcp-project-servers allow` to Pi (checked in #65 with a synthetic MCP
+server in a TruACP session).
 
 Upstream Pi AI 1.6.0 treats any failed turn mentioning 429 as transient, and
 Pi restarts it up to `settings.retry.maxRetries` times. Ollama Cloud uses HTTP
