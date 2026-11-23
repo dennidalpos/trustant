@@ -3,7 +3,7 @@
 ## Overview
 `trustant-acp` is a standalone ACP client (local Node server + browser React UI) for AI agent interaction (Pi, Claude Code, Codex, custom agents) via the Agent Client Protocol. See [SPEC.md](SPEC.md) for the full specification — it is the source of truth.
 
-**Tech**: React 18, TypeScript, Node server, Agent Client Protocol (ACP)
+**Tech**: React 19, TypeScript, Node server, Agent Client Protocol (ACP)
 
 **Repository**: this directory is vendored in the Trustant repository (including `pi-acp/`); it is not a submodule and has no separate remote. Upstream is not tracked or merged; do not assume upstream updates or propose syncing from it unless asked. Commits and pushes follow the root [AGENTS.md](../AGENTS.md).
 
