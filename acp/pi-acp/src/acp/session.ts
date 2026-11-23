@@ -1,5 +1,4 @@
 import type {
-  AgentSideConnection,
   ContentBlock,
   McpServer,
   PermissionOption,
@@ -9,6 +8,7 @@ import type {
   ToolKind
 } from '@agentclientprotocol/sdk'
 import { RequestError } from '@agentclientprotocol/sdk'
+import type { AgentSideConnection } from './sdk-compat.js'
 import { readFileSync } from 'node:fs'
 import { isAbsolute, resolve as resolvePath } from 'node:path'
 import { PiRpcProcess, PiRpcSpawnError, type PiRpcEvent } from '../pi-rpc/process.js'

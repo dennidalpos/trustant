@@ -17,7 +17,7 @@
  * Derived from obsidian-agent-client (Apache-2.0), Copyright 2025-2026 RAIT-09; unmodified apart from this header.
  */
 
-import * as acp from "@agentclientprotocol/sdk";
+import * as acp from "@agentclientprotocol/sdk/unstable";
 import type { PermissionOption } from "../types/chat";
 import type { SessionUpdate } from "../types/session";
 import { AcpTypeConverter } from "./type-converter";

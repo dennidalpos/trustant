@@ -1,4 +1,4 @@
-import type { AgentSideConnection } from '@agentclientprotocol/sdk'
+import type { AgentSideConnection } from '../../src/acp/sdk-compat.js'
 import type { PiRpcEvent } from '../../src/pi-rpc/process.js'
 
 type SessionUpdateMsg = Parameters<AgentSideConnection['sessionUpdate']>[0]

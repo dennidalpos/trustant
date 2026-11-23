@@ -1,7 +1,5 @@
 import {
   RequestError,
-  type Agent as ACPAgent,
-  type AgentSideConnection,
   type AuthenticateRequest,
   type CancelNotification,
   type DeleteSessionRequest,
@@ -22,6 +20,7 @@ import {
   type SetSessionModeResponse,
   type StopReason
 } from '@agentclientprotocol/sdk'
+import type { Agent as ACPAgent, AgentSideConnection } from './sdk-compat.js'
 import { getAuthMethods } from './auth.js'
 import { SessionManager, type PiAcpSession } from './session.js'
 import { SessionStore } from './session-store.js'

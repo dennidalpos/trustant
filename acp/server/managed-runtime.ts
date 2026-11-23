@@ -25,7 +25,7 @@
  */
 import { readFileSync, realpathSync, statSync } from "fs";
 import { isAbsolute, join, relative, resolve } from "path";
-import type { McpServer } from "@agentclientprotocol/sdk";
+import type { McpServer } from "@agentclientprotocol/sdk/unstable";
 
 export const TRUSTANT_PI_RUNTIME_VERSION = 2 as const;
 

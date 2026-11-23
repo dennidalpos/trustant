@@ -14,9 +14,9 @@ exist upstream; **removed** upstream files that are no longer present.
 - Upstream: https://github.com/RAIT-09/obsidian-agent-client
 - Baseline revision: `0.11.0`
 - License: Apache-2.0, Copyright 2025-2026 RAIT-09
-- Files: 10 unmodified, 22 modified, 88 added, 134 removed upstream files
+- Files: 9 unmodified, 23 modified, 88 added, 134 removed upstream files
 
-### Modified (22)
+### Modified (23)
 
 - `.gitignore`
 - `.vscode/extensions.json`
@@ -31,6 +31,7 @@ exist upstream; **removed** upstream files that are no longer present.
 - `package.json`
 - `src/acp/acp-client.ts`
 - `src/acp/acp-handler.ts`
+- `src/acp/permission-handler.ts`
 - `src/acp/terminal-handler.ts`
 - `src/acp/type-converter.ts`
 - `src/types/session.ts`
@@ -269,7 +270,7 @@ exist upstream; **removed** upstream files that are no longer present.
 - `version-bump.mjs`
 - `versions.json`
 
-### Unmodified (10)
+### Unmodified (9)
 
 Listed as a count only; every tracked file not named above is identical to upstream.
 
@@ -278,9 +279,9 @@ Listed as a count only; every tracked file not named above is identical to upstr
 - Upstream: https://github.com/svkozak/pi-acp
 - Baseline revision: `9e857dcc05a057404eb1537e5f31e5aef88a5863`
 - License: MIT, Copyright (c) 2025 Sergii Kozak
-- Files: 56 unmodified, 13 modified, 6 added, 2 removed upstream files
+- Files: 54 unmodified, 15 modified, 6 added, 2 removed upstream files
 
-### Modified (13)
+### Modified (15)
 
 - `README.md`
 - `package-lock.json`
@@ -289,9 +290,11 @@ Listed as a count only; every tracked file not named above is identical to upstr
 - `src/acp/pi-commands.ts`
 - `src/acp/pi-sessions.ts`
 - `src/acp/session.ts`
+- `src/index.ts`
 - `src/pi-rpc/process.ts`
 - `test/component/session-events.test.ts`
 - `test/component/session-load-toolresult.test.ts`
+- `test/helpers/fakes.ts`
 - `test/unit/pi-commands.test.ts`
 - `test/unit/session-config-options.test.ts`
 - `test/unit/startup-info-env.test.ts`
@@ -310,7 +313,7 @@ Listed as a count only; every tracked file not named above is identical to upstr
 - `.github/workflows/github-release.yml`
 - `.github/workflows/npm-publish.yml`
 
-### Unmodified (56)
+### Unmodified (54)
 
 Listed as a count only; every tracked file not named above is identical to upstream.
 
@@ -324,9 +327,9 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 
 - Source: https://github.com/trustant/trustant-acp.git, gitlink before vendoring
 - Commit: `9786f796380aa9b2000d8cebd913fa41150c89ed`
-- Files: 74 unmodified, 41 modified, 5 added, 62 removed
+- Files: 72 unmodified, 43 modified, 5 added, 62 removed
 
-#### Modified (41)
+#### Modified (43)
 
 - `.gitignore`
 - `.vscode/extensions.json`
@@ -349,11 +352,13 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 - `server/claude-version.ts`
 - `server/config-store.ts`
 - `server/index.ts`
+- `server/managed-runtime.ts`
 - `server/session-host.ts`
 - `setup.md`
 - `setup.sh`
 - `src/acp/acp-client.ts`
 - `src/acp/acp-handler.ts`
+- `src/acp/permission-handler.ts`
 - `src/acp/type-converter.ts`
 - `src/types/session.ts`
 - `test/acp-handler-activity.test.ts`
@@ -447,13 +452,17 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 
 - Source: https://github.com/trustant/pi-acp, nested gitlink before vendoring
 - Commit: `4e526e5f64eaec647d78c919ba9dc071197c2517`
-- Files: 71 unmodified, 4 modified, 0 added, 3 removed
+- Files: 67 unmodified, 8 modified, 0 added, 3 removed
 
-#### Modified (4)
+#### Modified (8)
 
 - `package-lock.json`
 - `package.json`
+- `src/acp/agent.ts`
+- `src/acp/session.ts`
+- `src/index.ts`
 - `src/pi-rpc/launch-config.ts`
+- `test/helpers/fakes.ts`
 - `test/unit/launch-config.test.ts`
 
 #### Removed (3)

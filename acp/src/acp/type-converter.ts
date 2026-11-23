@@ -17,7 +17,7 @@
  * Derived from obsidian-agent-client (Apache-2.0), Copyright 2025-2026 RAIT-09; modified by Nuvolaris Inc. (see legal/VENDORED.md).
  */
 
-import * as acp from "@agentclientprotocol/sdk";
+import * as acp from "@agentclientprotocol/sdk/unstable";
 import type { ToolCallContent, PromptContent } from "../types/chat";
 import type {
 	InitializeResult,

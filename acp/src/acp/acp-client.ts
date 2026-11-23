@@ -18,7 +18,7 @@
  */
 
 import { spawn, ChildProcess } from "child_process";
-import * as acp from "@agentclientprotocol/sdk";
+import * as acp from "@agentclientprotocol/sdk/unstable";
 import { isAbsolute, relative, resolve } from "path";
 import { Platform } from "../utils/platform-shim";
 
