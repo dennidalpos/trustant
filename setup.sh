@@ -228,7 +228,14 @@ fi
 # g's toolchain is prepended below, so it takes precedence.
 if ! command -v g &>/dev/null; then
   warn "g not found, installing g (Go version manager)..."
-  curl -sSL https://raw.githubusercontent.com/voidint/g/master/install.sh | bash || fail "g install failed"
+  # WHY pinned: the v1.8.0 installer downloads the g 1.8.0 release; master moves.
+  G_INSTALLER_URL="https://raw.githubusercontent.com/voidint/g/v1.8.0/install.sh"
+  G_INSTALLER_SHA256="64ea76acb557bbf77bbd2b0a14aacebe24a45a9c5d2a3f11c5d3aa42299d6cdf"
+  g_installer=$(curl -fsSL --proto '=https' --proto-redir '=https' "$G_INSTALLER_URL") \
+    || fail "could not download the g installer from $G_INSTALLER_URL"
+  [[ "$(printf '%s\n' "$g_installer" | sha256sum | cut -d' ' -f1)" == "$G_INSTALLER_SHA256" ]] \
+    || fail "g installer checksum mismatch (expected $G_INSTALLER_SHA256)"
+  bash <<< "$g_installer" || fail "g install failed"
   add_to_path "$HOME/.g/bin"
   export GOROOT="$HOME/.g/go"
   add_to_path "$GOROOT/bin"
@@ -284,7 +291,24 @@ ok "license-eye ${LICENSE_EYE_VERSION} is available"
 echo "--- Checking npm ---"
 if ! command -v npm &>/dev/null; then
   warn "npm not found, installing Node 24 via NodeSource..."
-  curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash - || fail "NodeSource setup failed"
+  # WHY no setup_24.x script: configure the signed apt repository directly and
+  # accept only the NodeSource key with the pinned fingerprint.
+  NODESOURCE_KEY_FPR="6F71F525282841EEDAF851B42F59B5F99B1BE0B4"
+  if ! command -v gpg &>/dev/null; then
+    sudo env "${APT_QUIET[@]}" apt-get install -y gnupg || fail "apt-get install gnupg failed"
+  fi
+  ns_key=$(mktemp)
+  curl -fsSL --proto '=https' --proto-redir '=https' -o "$ns_key" \
+    https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
+    || fail "could not download the NodeSource key"
+  gpg --show-keys --with-colons "$ns_key" | grep -q "^fpr:::::::::${NODESOURCE_KEY_FPR}:" \
+    || fail "NodeSource key fingerprint mismatch (expected $NODESOURCE_KEY_FPR)"
+  sudo install -d -m 0755 /etc/apt/keyrings
+  sudo gpg --dearmor --yes -o /etc/apt/keyrings/nodesource.gpg "$ns_key" || fail "NodeSource key import failed"
+  rm -f "$ns_key"
+  echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_24.x nodistro main" \
+    | sudo tee /etc/apt/sources.list.d/nodesource.list >/dev/null
+  sudo env "${APT_QUIET[@]}" apt-get update || fail "apt-get update failed"
   sudo env "${APT_QUIET[@]}" apt-get install -y nodejs || fail "apt-get install nodejs failed"
 fi
 command -v npm &>/dev/null || fail "npm not in PATH after install"

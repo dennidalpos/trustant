@@ -124,7 +124,11 @@ curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR="$HOME/.local/bi
 4. if g is not in the path, install it — even when another `go` (apt,
 /usr/local/go) is already on the path; g's toolchain is prepended so it wins:
 
-curl -sSL https://raw.githubusercontent.com/voidint/g/master/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/voidint/g/v1.8.0/install.sh
+
+The script is downloaded in full and run only if its SHA-256 is
+`64ea76acb557bbf77bbd2b0a14aacebe24a45a9c5d2a3f11c5d3aa42299d6cdf` (tag v1.8.0,
+which installs g 1.8.0); update tag and hash together.
 
 Source `~/.g/env` first when it already exists, restoring both `~/.g/bin` and
 the active Go toolchain to `PATH`, then activate the Go version in `go.mod`.
@@ -146,8 +150,13 @@ releases, which would rewrite files that already carry a valid header.
 5. if npm is not on the path, install Node 24 via NodeSource (matching the
 Dockerfile; node may already be present from the VM package):
 
-curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
-sudo apt-get install -y nodejs
+Setup does not run the NodeSource `setup_24.x` script. It downloads
+`https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key`, accepts it only if
+its fingerprint is `6F71F525282841EEDAF851B42F59B5F99B1BE0B4`, stores it in
+`/etc/apt/keyrings/nodesource.gpg`, writes
+`deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_24.x nodistro main`
+to `/etc/apt/sources.list.d/nodesource.list`, then runs `apt-get update` and
+`apt-get install -y nodejs`. `gnupg` is installed first when `gpg` is missing.
 
 After npm is available and before any global npm installation, repository-root
 `setup.sh` owns one npm-prefix policy:

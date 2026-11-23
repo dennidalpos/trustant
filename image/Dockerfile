@@ -71,12 +71,18 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN \
     apt update && \
     apt install -y --no-install-recommends \
-        locales ca-certificates git sudo curl jq less vim lsof libatomic1 \
+        locales ca-certificates gnupg git sudo curl jq less vim lsof libatomic1 \
         tini openssh-server supervisor iputils-ping inetutils-telnet ripgrep \
         python-is-python3 python3-pip python3-pytest python3-dotenv \
         postgresql-client-16 redis-tools rclone  && \
-    curl -fsSL https://deb.nodesource.com/setup_24.x | bash ;\
-    apt update && apt -y install nodejs ;\
+    curl -fsSL -o /tmp/nodesource.key https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key && \
+    gpg --show-keys --with-colons /tmp/nodesource.key | grep -q '^fpr:::::::::6F71F525282841EEDAF851B42F59B5F99B1BE0B4:' && \
+    install -d -m 0755 /etc/apt/keyrings && \
+    gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg /tmp/nodesource.key && \
+    rm -f /tmp/nodesource.key && \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_24.x nodistro main" \
+        > /etc/apt/sources.list.d/nodesource.list && \
+    apt update && apt -y install nodejs && \
     rm -rf /var/lib/apt/lists/*
 
 RUN \
