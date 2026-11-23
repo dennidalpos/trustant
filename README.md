@@ -241,6 +241,8 @@ npm run test:tutorial
 node --test tests/issue98-session-tree.test.mjs
 ```
 
+The TruACP suites (`npm test` in `acp/` and `acp/pi-acp/`) assume POSIX paths and processes. On a Windows host, 11 tests fail (8 in `acp/`, 3 in `acp/pi-acp/`); run them in the Ubuntu environment. `npm run build` in `acp/` and `npm run typecheck` plus `npm test` in `react-mcp/` pass on Windows.
+
 [package.json](package.json) also defines `test:e2e-providers` and the `e2e:*` scenarios. Cluster E2E tests launch applications and can invoke model providers; review their requirements and side effects before running them. See [E2E guide](spec/8-e2e.md) and [issue 98 scenario](tests/issue98-e2e.md).
 
 ### Submodules and releases

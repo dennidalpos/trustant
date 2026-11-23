@@ -50,7 +50,7 @@ Recent OpenCode releases include changes that look relevant to Trustant:
 These are strong reasons to test the upgrade. They do not remove the need for:
 
 - `.openserverless-contract.md`;
-- `scripts/check_openserverless_actions.sh`;
+- `check_openserverless_actions.sh`;
 - post-compaction recovery rules;
 - environment recognition before runtime checks;
 - local `localhost:5173` verification discipline;
