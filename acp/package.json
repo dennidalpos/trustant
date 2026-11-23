@@ -24,7 +24,7 @@
 	"author": "",
 	"license": "AGPL-3.0-or-later",
 	"devDependencies": {
-		"@types/node": "^24.19.2",
+		"@types/node": "^26.6.6",
 		"@types/react": "^19.0.0",
 		"@types/react-dom": "^19.0.0",
 		"@types/semver": "^7.7.1",
@@ -39,7 +39,6 @@
 	},
 	"dependencies": {
 		"@agentclientprotocol/sdk": "^2.9.1",
-		"@tanstack/react-virtual": "^3.13.23",
 		"diff": "^9.0.0",
 		"react": "^19.3.1",
 		"react-dom": "^19.3.1",

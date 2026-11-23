@@ -175,7 +175,7 @@ Live ACP tool calls in chat and notebook activity can show plain text in a colla
   is bound, the server prints the browser URL using the listening port and a
   reachable address, preferring the Lima interface for wildcard binds.
 - Markdown uses `react-markdown` and `remark-gfm`. The server uses Node HTTP and `ws`.
-- Core deps: `@agentclientprotocol/sdk`, `react`/`react-dom`, `@tanstack/react-virtual`, `diff`, `zod`, `semver`.
+- Core deps: `@agentclientprotocol/sdk`, `react`/`react-dom`, `diff`, `zod`, `semver`.
 - `npm run serve` runs the server directly via `tsx`; the installed `truacp` binary
   runs the bundled build. Both serve the embedded web bundle at `localhost:<port>`
   (default 4096).
