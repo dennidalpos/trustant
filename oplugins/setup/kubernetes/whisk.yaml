@@ -1,0 +1,249 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+apiVersion: openserverless.org/v1
+kind: Whisk
+metadata:
+  name: controller
+  namespace: openserverless
+spec:
+  openserverless:
+      password: $SECRET_OPENSERVERLESS_METADATA
+      kube: ${OPERATOR_CONFIG_KUBE:-auto}
+      apihost: ${OPERATOR_CONFIG_APIHOST}
+      storageclass: ${OPERATOR_CONFIG_STORAGECLASS:-auto}
+      provisioner: ${OPERATOR_CONFIG_STORAGEPROVISIONER:-auto}
+      protocol: ${OPERATOR_CONFIG_HOSTPROTOCOL:-auto}
+      slim: ${OPERATOR_CONFIG_SLIM:-false}
+      affinity: ${OPERATOR_CONFIG_AFFINITY:-false}
+      tolerations: ${OPERATOR_CONFIG_TOLERATIONS:-false}
+      ingressclass: ${OPERATOR_CONFIG_INGRESSCLASS:-auto}
+  components:
+    # start openwhisk controller
+    openwhisk: true
+    # start openwhisk invoker
+    invoker: ${OPERATOR_COMPONENT_INVOKER:-true}        
+    # start couchdb
+    couchdb: true
+    # start zookeeper
+    zookeeper: ${OPERATOR_COMPONENT_ZOOKEEPER:-true}    
+    # start kafka
+    kafka: ${OPERATOR_COMPONENT_KAFKA:-true}
+    # prometheus monitoring enabled or not
+    monitoring: ${OPERATOR_COMPONENT_PROMETHEUS:-false}        
+    # start mongodb
+    mongodb: ${OPERATOR_COMPONENT_MONGODB:-false}
+    # start redis
+    redis: ${OPERATOR_COMPONENT_REDIS:-false}
+    # start cron based action parser
+    cron: ${OPERATOR_COMPONENT_CRON:-false}
+    # enable TLS
+    tls: ${OPERATOR_COMPONENT_TLS:-false}
+    # static web content serving enabled or not
+    static: ${OPERATOR_COMPONENT_STATIC:-false}
+    # postgres enabled or not
+    postgres: ${OPERATOR_COMPONENT_POSTGRES:-false}
+    # quota enabled or not
+    quota: ${OPERATOR_COMPONENT_QUOTA:-false}
+    # etcd enabled or not
+    etcd: ${OPERATOR_COMPONENT_ETCD:-false}
+    # MILVUS enabled or not
+    milvus: ${OPERATOR_COMPONENT_MILVUS:-false}
+    # REGISTRY enabled or not
+    registry: ${OPERATOR_COMPONENT_REGISTRY:-false}
+    # REGISTRY enabled or not
+    seaweedfs: ${OPERATOR_COMPONENT_SEAWEEDFS:-false}    
+  tls:
+    acme-registered-email: ${OPERATOR_CONFIG_TLSEMAIL:-no-reply@email.com}
+    acme-server-url: https://acme-v02.api.letsencrypt.org/directory
+  openwhisk:
+    namespaces:
+      whisk-system: $SECRET_OPENWHISK_SYSTEM
+      openserverless: $SECRET_OPENWHISK_OPENSERVERLESS
+  couchdb:
+    host: couchdb
+    volume-size: ${STORAGE_SIZE_COUCHDB:-30}
+    admin:
+      user: whisk_admin
+      password: $SECRET_COUCHDB_ADMIN
+    controller:
+      user: controller_admin
+      password: $SECRET_COUCHDB_INVOKER
+    invoker:
+      user: invoker_admin
+      password: $SECRET_COUCHDB_CONTROLLER
+  kafka:
+    host: kafka
+    volume-size: ${STORAGE_SIZE_KAFKA:-30}
+  zookeeper:
+    host: zookeeper
+    data-volume-size:  ${STORAGE_SIZE_ZOOKEEPER:-5}
+    log-volume-size: ${STORAGE_SIZE_ZOOKEEPER:-5}
+  controller:
+    protocol: "http"
+    host : "controller"
+    port: "3233"
+    image: "$IMAGES_CONTROLLER"
+  invoker:
+    protocol: "http"
+    host : "invoker"
+    port: "8080"
+    image: "$IMAGES_INVOKER"
+  scheduler:
+    schedule: "* * * * *"
+  quota:
+    schedule: "*/10 * * * *"  
+  configs:
+    limits:
+      activations:
+        max_allowed_payload: ${OPENWHISK_ACTIVATION_MAX_ALLOWED_PAYLOAD:-1048576}    
+      actions:
+        sequence-maxLength: ${OPENWHISK_ACTION_SEQUENCE_MAX_LENGTH:-50}
+        invokes-perMinute: ${OPENWHISK_ACTION_INVOKE_PER_MINUTE:-999}
+        invokes-concurrent: ${OPENWHISK_ACTION_INVOKE_CONCURRENT:-250}
+      triggers: 
+        fires-perMinute: ${OPENWHISK_TRIGGER_PER_MINUTE:-999}
+      time:
+        limit-min: "${OPENWHISK_TIME_LIMIT_MIN:-100ms}"
+        limit-std: "${OPENWHISK_TIME_LIMIT_STD:-1min}"
+        limit-max: "${OPENWHISK_TIME_LIMIT_MAX:-5min}"
+      memory:
+        limit-min: "${OPENWHISK_ACTION_MEMORY_LIMIT_MIN:-128m}"
+        limit-std: "${OPENWHISK_ACTION_MEMORY_LIMIT_STD:-256m}"
+        limit-max: "${OPENWHISK_ACTION_MEMORY_LIMIT_MAX:-2048m}"
+      loadbalancer:
+        blackbox-fraction : "${OPENWHISK_LB_BLACKBOX_FRACTION:100%}"
+        timeout-factor: 2                
+    controller:
+      javaOpts: "$OPENWHISK_CONTROLLER_JAVA_OPTS"
+      loggingLevel: "${OPENWHISK_CONTROLLER_LOGGINGLEVEL:-INFO}"
+      replicas: ${OPENWHISK_CONTROLLER_REPLICAS:-1}
+      resources:
+        cpu-req: "500m"
+        cpu-lim: "1"
+        mem-req: "$OPENWHISK_CONTROLLER_RES_MIN_MEM"
+        mem-lim: "$OPENWHISK_CONTROLLER_RES_MAX_MEM"
+    invoker:
+      javaOpts: "$OPENWHISK_INVOKER_JAVA_OPTS"
+      loggingLevel: "${OPENWHISK_INVOKER_LOGGINGLEVEL:-INFO}"
+      replicas: ${OPENWHISK_INVOKER_REPLICAS:-1}
+      containerPool:
+        userMemory: "$OPENWHISK_INVOKER_CONTAINER_POOL_MEMORY"
+      kubernetes:
+        user_pod_affinity_enabled: ${OPENSERVERLESS_AFFINITY:-false}
+        user_pod_affinity_key : "openserverless-role"
+        user_pod_affinity_value : "invoker"
+        timeouts_run: ${OPENWHISK_INVOKER_KUBERNETES_TIMEOUT_RUN:-1}
+        timeouts_logs: ${OPENWHISK_INVOKER_KUBERNETES_TIMEOUT_LOGS:-1}
+      resources:
+        cpu-req: "500m"
+        cpu-lim: "1"
+        mem-req: "$OPENWHISK_INVOKER_RES_MIN_MEM"
+        mem-lim: "$OPENWHISK_INVOKER_RES_MAX_MEM"       
+  redis:
+    persistence-enabled: ${REDIS_PERSISTENCE_ENABLED:-true}
+    volume-size: ${STORAGE_SIZE_REDIS:-25}
+    default:
+      password: $SECRET_REDIS_DEFAULT
+    openserverless:
+      prefix: openserverless
+      password: $SECRET_REDIS_OPENSERVERLESS
+  mongodb:
+    host: mongodb
+    volume-size: ${STORAGE_SIZE_MONGODB:-50}
+    admin: 
+      user: whisk_admin
+      password: $SECRET_MONGODB_ADMIN
+    openserverless:
+      user: openserverless
+      password: $SECRET_MONGODB_OPENSERVERLESS
+    exposedExternally: False
+    useOperator: False
+  postgres:
+    volume-size: ${STORAGE_SIZE_POSTGRES:-50}
+    replicas: ${POSTGRES_CONFIG_REPLICAS:-2}
+    admin:      
+      password: $SECRET_POSTGRES_ADMIN
+      replica-password: $SECRET_POSTGRES_REPLICA
+    openserverless:
+      password: $SECRET_POSTGRES_OPENSERVERLESS
+    failover: ${POSTGRES_CONFIG_FAILOVER:-false}
+    backup:
+      enabled: ${POSTGRES_CONFIG_BACKUP_ENABLED:-false}
+      schedule: "${POSTGRES_CONFIG_BACKUP_SCHEDULE:-0 */1 * * *}"
+  monitoring:
+    prometheus:
+      volume-size: ${STORAGE_SIZE_MONITORING:-30}
+    alert-manager:
+      enabled: ${OPERATOR_COMPONENT_AM:-false}
+      volume-size: ${STORAGE_SIZE_MONITORING:-30}
+      slack:        
+        enabled: ${OPERATOR_CONFIG_ALERTSLACK:-false}
+        default: true 
+        slack_channel_name: "$OPERATOR_CONFIG_SLACK_CHANNELNAME"
+        slack_api_url: "$OPERATOR_CONFIG_SLACK_APIURL"
+      gmail:       
+        enabled: ${OPERATOR_CONFIG_ALERTGMAIL:-false}
+        default: false
+        from: $OPERATOR_CONFIG_EMAIL_FROM
+        to: $OPERATOR_CONFIG_EMAIL_TO
+        username: $OPERATOR_CONFIG_GMAIL_USERNAME
+        password: $OPERATOR_CONFIG_GMAIL_PASSWORD
+  etcd:
+    volume-size: ${STORAGE_SIZE_ETCD:-25}                         
+    replicas: ${ETCD_CONFIG_REPLICAS:-3}
+    auto-compaction-retention: "${ETCD_AUTO_COMPACTION_RETENTION:-1}"
+    quota-backend-bytes: ${ETCD_QUOTA_BACKEND_BYTES:-2147483648}
+    root:
+      password: $SECRET_ETCD_ROOT
+  milvus:
+    volume-size:
+      cluster: ${STORAGE_SIZE_MILVUS_CLUSTER:-20}
+      zookeeper: ${STORAGE_SIZE_MILVUS_ZOOKEEPER:-10}
+      journal: ${STORAGE_SIZE_MILVUS_PULSAR_JOURNAL:-25}
+      ledgers: ${STORAGE_SIZE_MILVUS_PULSAR_LEDGERS:-50}
+    replicas: ${MILVUS_CONFIG_REPLICAS:-1}
+    proxy:
+      max-role-num: ${PROXY_MILVUS_MAX_ROLE_NUM:-100}
+      max-user-num: ${PROXY_MILVUS_MAX_USER_NUM:-100}
+    root-coord:
+      max-database-num: ${ROOTCOORD_MILVUS_DATABASE_NUM:-64}
+    password:
+      root: $SECRET_MILVUS_ROOT     
+      s3: $SECRET_MILVUS_S3
+      etcd: $SECRET_ETCD_ROOT
+    openserverless:
+      password: $SECRET_MILVUS_OPENSERVERLESS
+  registry:
+    mode: ${REGISTRY_CONFIG_MODE:-internal}
+    volume-size: ${REGISTRY_CONFIG_VOLUME_SIZE:-50}
+    auth:
+      username: ${REGISTRY_CONFIG_USERNAME:-opsuser}
+      password: ${REGISTRY_CONFIG_SECRET_PUSH_PULL:-changeme-registry}
+    hostname: ${REGISTRY_CONFIG_HOSTNAME:-auto}
+    ingress:
+      enabled: ${REGISTRY_CONFIG_INGRESS_ENABLED:-false}
+  seaweedfs:
+    volume-size:  ${STORAGE_SIZE_SEAWEEDFS:-60}
+    openserverless:
+      user: openserverless
+      password: ${SECRET_SEAWEEDFS_OPENSERVERLESS:-changeme-seaweedfs}
+    ingress:
+      s3-enabled: ${SEAWEEDFS_CONFIG_INGRESS_S3_ENABLED:-true}
+      s3-hostname: ${SEAWEEDFS_CONFIG_INGRESS_S3_HOSTNAME:-auto}
+      console-enabled: ${SEAWEEDFS_CONFIG_INGRESS_CONSOLE_ENABLED:-false}
+      console-hostname: ${SEAWEEDFS_CONFIG_INGRESS_CONSOLE_HOSTNAME:-auto}              

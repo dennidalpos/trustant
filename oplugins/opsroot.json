@@ -1,0 +1,37 @@
+{
+  "license": "Apache-2.0",
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
+  "version": "0.9.0-incubating+26i15n55-snapshot",
+  "config": {
+    "ops": {
+      "coreutils": "arch b2sum b3sum base32 basename basenc cat chgrp chmod chown chroot cksum comm cp csplit cut date dd df dir dircolors dirname du env expand expr factor fmt fold groups hashsum head hostid hostname id install join kill link ln logname ls md5sum mkdir mkfifo mknod mktemp more mv nice nl nohup nproc numfmt od paste pathchk pinky pr printenv printf ptx pwd readlink realpath rm rmdir seq sha1sum sha224sum sha256sum sha3-224sum sha3-256sum sha3-384sum sha3-512sum sha384sum sha3sum sha512sum shake128sum shake256sum shred shuf sleep sort split stat stdbuf stty sum sync tac tail tee timeout touch tr truncate tsort tty uname unexpand uniq unlink uptime users vdir wc who whoami yes"
+    },
+    "images": {
+      "operator": "ghcr.io/trustable-ai/openserverless-operator:0.9.0-incubating.26k08o47-snapshot",
+      "controller": "ghcr.io/trustable-ai/openserverless-wsk-controller:0.9.0-incubating.26k04n04-snapshot",
+      "invoker": "ghcr.io/trustable-ai/openserverless-wsk-invoker:0.9.0-incubating.26k04n04-snapshot",
+      "streamer": "ghcr.io/trustable-ai/openserverless-streamer:0.9.0-incubating.26i22r18-snapshot",
+      "systemapi": "ghcr.io/trustable-ai/openserverless-admin-api:0.9.0-incubating.26k05r46-snapshot",
+      "devcontainer": "ghcr.io/trustable-ai/openserverless-devcontainer:0.9.0-incubating.26i22r17-snapshot",
+      "ingress": "registry.k8s.io/ingress-nginx/controller:v1.7.0",
+      "couchdb": "docker.io/apache/couchdb:2.3",
+      "etcd": "docker.io/bitnamilegacy/etcd:3.5.17-debian-12-r0",
+      "redis": "docker.io/bitnamilegacy/redis:8.2.1",
+      "seaweedfs": "docker.io/chrislusf/seaweedfs:3.97",
+      "busybox": "docker.io/library/busybox:1.36.0",
+      "registry": "docker.io/library/registry:3.0.0",
+      "milvus": "docker.io/milvusdb/milvus:v2.5.27",
+      "nginx": "docker.io/nginxinc/nginx-unprivileged:1.24",
+      "pgvector": "docker.io/pgvector/pgvector:pg16",
+      "kubegres": "docker.io/reactivetechio/kubegres:1.18",
+      "ferretdb": "ghcr.io/nuvolaris/ferretdb:1.6.0",
+      "rbacproxy": "registry.k8s.io/kubebuilder/kube-rbac-proxy:v0.14.1",
+      "tika": "docker.io/apache/tika:3.2.3.0-full"
+    }
+  }
+}

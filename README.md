@@ -2,7 +2,7 @@
 
 Trustant is a development environment for creating, editing, running, and publishing web applications backed by OpenServerless. It combines a browser UI, the TruACP/Pi coding assistant, Git repositories for application source, and local development services on k3s.
 
-This README is for developers running Trustant from source and contributors navigating the repository.
+This guide helps new users run Trustant from source and create or import an application. Contributors can also use it to find the development and testing guides.
 
 Trustant runs as a server and is used from a web browser. The repository has no desktop application.
 
@@ -83,9 +83,13 @@ flowchart TD
 
 ### Open the UI
 
-Open the URL printed by the development loop. Choose a provider and model, then create or import an application from the app list. Provider credentials are configured in the UI. The app workbench provides the assistant, preview, file viewer, terminal, and application configuration.
+1. Open the URL printed by the development loop in your browser.
+2. Configure a provider and its credentials in the UI, then choose a model.
+3. Create or import an application from the app list and open it.
 
-`start.sh` initializes the `mcp` runtime source submodule; TruACP (`acp/`, including `acp/pi-acp/`) is part of this repository. To populate every submodule for repository work:
+The app workbench provides the assistant, preview, file viewer, terminal, and application configuration.
+
+`mcp/`, `oplugins/`, `skills/` and TruACP (`acp/`, including `acp/pi-acp/`) are part of this repository; only `oplugins-truinst` is a submodule. To populate it for repository work:
 
 ```bash
 git submodule update --init --recursive
@@ -241,13 +245,13 @@ npm run test:tutorial
 node --test tests/issue98-session-tree.test.mjs
 ```
 
-The TruACP suites (`npm test` in `acp/` and `acp/pi-acp/`) assume POSIX paths and processes. On a Windows host, 11 tests fail (8 in `acp/`, 3 in `acp/pi-acp/`); run them in the Ubuntu environment. `npm run build` in `acp/` and `npm run typecheck` plus `npm test` in `react-mcp/` pass on Windows.
+The TruACP suites (`npm test` in `acp/` and `acp/pi-acp/`) assume POSIX paths and processes. Run these suites in the Ubuntu environment; they are not reliable on a native Windows host.
 
 [package.json](package.json) also defines `test:e2e-providers` and the `e2e:*` scenarios. Cluster E2E tests launch applications and can invoke model providers; review their requirements and side effects before running them. See [E2E guide](spec/8-e2e.md) and [issue 98 scenario](tests/issue98-e2e.md).
 
 ### Submodules and releases
 
-[.gitmodules](.gitmodules) declares four direct submodules: `mcp`, `oplugins`, `oplugins-truinst`, and `skills`. The TruACP runtime lives in [acp/](acp/), with its Pi ACP adapter in `acp/pi-acp/`; follow [acp/AGENTS.md](acp/AGENTS.md) there. Follow each submodule's own instructions for the others.
+[.gitmodules](.gitmodules) declares one submodule, `oplugins-truinst`; `mcp`, `oplugins` and `skills` are vendored (see [legal/VENDORED.md](legal/VENDORED.md)). The TruACP runtime lives in [acp/](acp/), with its Pi ACP adapter in `acp/pi-acp/`; follow [acp/AGENTS.md](acp/AGENTS.md) there. Follow the submodule's own instructions for `oplugins-truinst`.
 
 Release tooling is documented in [spec/build.md](spec/build.md). `build.sh --tag` and `--build` can replace local tags, update `oplugins-truinst/opsroot.json`, and attempt a commit, including with `--no-deploy`. `hotfix.sh` can replace tags and patch the live StatefulSet; a regular redeploy restores the image from `opsroot.json`. Buildx modes push images, and `publish.sh` pushes Git refs. Review the script before using a release command.
 

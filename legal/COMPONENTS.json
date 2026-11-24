@@ -851,7 +851,7 @@
     {
       "section": "npm-acp",
       "name": "@agentclientprotocol/sdk",
-      "version": "0.28.1",
+      "version": "2.9.1",
       "license": "Apache-2.0",
       "homepage": "https://www.npmjs.com/package/@agentclientprotocol/sdk",
       "source": "path:acp/node_modules/@agentclientprotocol/sdk",
@@ -861,38 +861,6 @@
         {
           "file": "LICENSE",
           "sha256": "6ed4f049cce59e05197d585bdf8a39980b45d546d6ea718ee344555f3a867c3a"
-        }
-      ]
-    },
-    {
-      "section": "npm-acp",
-      "name": "@tanstack/react-virtual",
-      "version": "3.14.28",
-      "license": "MIT",
-      "homepage": "https://www.npmjs.com/package/@tanstack/react-virtual",
-      "source": "path:acp/node_modules/@tanstack/react-virtual",
-      "status": "license-files-collected",
-      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
-      "evidence": [
-        {
-          "file": "LICENSE",
-          "sha256": "a405ee70c632bb938acb7ac5f210e814409b3760ea9d2329d8ed8ffcfd11a0e7"
-        }
-      ]
-    },
-    {
-      "section": "npm-acp",
-      "name": "@tanstack/virtual-core",
-      "version": "3.19.13",
-      "license": "MIT",
-      "homepage": "https://www.npmjs.com/package/@tanstack/virtual-core",
-      "source": "path:acp/node_modules/@tanstack/virtual-core",
-      "status": "license-files-collected",
-      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
-      "evidence": [
-        {
-          "file": "LICENSE",
-          "sha256": "a405ee70c632bb938acb7ac5f210e814409b3760ea9d2329d8ed8ffcfd11a0e7"
         }
       ]
     },
@@ -1219,7 +1187,7 @@
     {
       "section": "npm-acp",
       "name": "diff",
-      "version": "8.0.4",
+      "version": "9.0.0",
       "license": "BSD-3-Clause",
       "homepage": "https://www.npmjs.com/package/diff",
       "source": "path:acp/node_modules/diff",
@@ -1426,22 +1394,6 @@
     },
     {
       "section": "npm-acp",
-      "name": "js-tokens",
-      "version": "4.0.0",
-      "license": "MIT",
-      "homepage": "https://www.npmjs.com/package/js-tokens",
-      "source": "path:acp/node_modules/js-tokens",
-      "status": "license-files-collected",
-      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
-      "evidence": [
-        {
-          "file": "LICENSE",
-          "sha256": "2213d91c606205c71eb051a199478cdc2adde945893404d7f1421436dd6d5cc1"
-        }
-      ]
-    },
-    {
-      "section": "npm-acp",
       "name": "longest-streak",
       "version": "3.1.0",
       "license": "MIT",
@@ -1453,22 +1405,6 @@
         {
           "file": "license",
           "sha256": "9f084fac69d8cf1e6ce983ba5a3499c7695ed74a26ec625c38f0fd19fddd5e10"
-        }
-      ]
-    },
-    {
-      "section": "npm-acp",
-      "name": "loose-envify",
-      "version": "1.4.0",
-      "license": "MIT",
-      "homepage": "https://www.npmjs.com/package/loose-envify",
-      "source": "path:acp/node_modules/loose-envify",
-      "status": "license-files-collected",
-      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
-      "evidence": [
-        {
-          "file": "LICENSE",
-          "sha256": "4eb7543b08d955a6d23fcc224601d43ff566e775be918805e26210d7f6eb4893"
         }
       ]
     },
@@ -1548,7 +1484,7 @@
       "evidence": [
         {
           "file": "license",
-          "sha256": "536804b3adbff17dbbb9ed0d2bf9655b78f07640278581e37e3d7475282d5e61"
+          "sha256": "dd1081884a92952802f4803110a6bb543acea9a814c786d58605b4c1219b5ebb"
         }
       ]
     },
@@ -1580,7 +1516,7 @@
       "evidence": [
         {
           "file": "license",
-          "sha256": "536804b3adbff17dbbb9ed0d2bf9655b78f07640278581e37e3d7475282d5e61"
+          "sha256": "dd1081884a92952802f4803110a6bb543acea9a814c786d58605b4c1219b5ebb"
         }
       ]
     },
@@ -1596,7 +1532,7 @@
       "evidence": [
         {
           "file": "license",
-          "sha256": "536804b3adbff17dbbb9ed0d2bf9655b78f07640278581e37e3d7475282d5e61"
+          "sha256": "dd1081884a92952802f4803110a6bb543acea9a814c786d58605b4c1219b5ebb"
         }
       ]
     },
@@ -1612,7 +1548,7 @@
       "evidence": [
         {
           "file": "license",
-          "sha256": "536804b3adbff17dbbb9ed0d2bf9655b78f07640278581e37e3d7475282d5e61"
+          "sha256": "dd1081884a92952802f4803110a6bb543acea9a814c786d58605b4c1219b5ebb"
         }
       ]
     },
@@ -1644,7 +1580,7 @@
       "evidence": [
         {
           "file": "license",
-          "sha256": "536804b3adbff17dbbb9ed0d2bf9655b78f07640278581e37e3d7475282d5e61"
+          "sha256": "dd1081884a92952802f4803110a6bb543acea9a814c786d58605b4c1219b5ebb"
         }
       ]
     },
@@ -1692,7 +1628,7 @@
       "evidence": [
         {
           "file": "license",
-          "sha256": "ca4662cb5d1b738fbe5350c0d5485ba11773b4b7208974082ae6e129a52d631d"
+          "sha256": "dd1081884a92952802f4803110a6bb543acea9a814c786d58605b4c1219b5ebb"
         }
       ]
     },
@@ -2054,7 +1990,7 @@
       "version": "1.0.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/micromark-util-edit-map",
-      "source": "npm:micromark-util-edit-map@1.0.0",
+      "source": "path:acp/node_modules/micromark-util-edit-map",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2243,7 +2179,7 @@
     {
       "section": "npm-acp",
       "name": "react",
-      "version": "18.3.1",
+      "version": "19.3.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/react",
       "source": "path:acp/node_modules/react",
@@ -2252,14 +2188,14 @@
       "evidence": [
         {
           "file": "LICENSE",
-          "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85"
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
         }
       ]
     },
     {
       "section": "npm-acp",
       "name": "react-dom",
-      "version": "18.3.1",
+      "version": "19.3.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/react-dom",
       "source": "path:acp/node_modules/react-dom",
@@ -2268,7 +2204,7 @@
       "evidence": [
         {
           "file": "LICENSE",
-          "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85"
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
         }
       ]
     },
@@ -2355,7 +2291,7 @@
     {
       "section": "npm-acp",
       "name": "scheduler",
-      "version": "0.23.2",
+      "version": "0.28.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/scheduler",
       "source": "path:acp/node_modules/scheduler",
@@ -2364,7 +2300,7 @@
       "evidence": [
         {
           "file": "LICENSE",
-          "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85"
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
         }
       ]
     },
@@ -2412,7 +2348,7 @@
       "evidence": [
         {
           "file": "license",
-          "sha256": "9f084fac69d8cf1e6ce983ba5a3499c7695ed74a26ec625c38f0fd19fddd5e10"
+          "sha256": "5d0698266086f217bb11ea0499d33453e401fe479fb9126ad04e625e63d3557b"
         }
       ]
     },
@@ -2540,7 +2476,7 @@
       "evidence": [
         {
           "file": "license",
-          "sha256": "63cb98b3f6abfb3c3592c16f88253c1bdc834087bf52671e8ce5609e4eb693cf"
+          "sha256": "dd1081884a92952802f4803110a6bb543acea9a814c786d58605b4c1219b5ebb"
         }
       ]
     },
@@ -2556,7 +2492,7 @@
       "evidence": [
         {
           "file": "license",
-          "sha256": "ca4662cb5d1b738fbe5350c0d5485ba11773b4b7208974082ae6e129a52d631d"
+          "sha256": "dd1081884a92952802f4803110a6bb543acea9a814c786d58605b4c1219b5ebb"
         }
       ]
     },
@@ -4131,7 +4067,7 @@
     {
       "section": "npm-piacp",
       "name": "@agentclientprotocol/sdk",
-      "version": "0.26.0",
+      "version": "2.9.1",
       "license": "Apache-2.0",
       "homepage": "https://www.npmjs.com/package/@agentclientprotocol/sdk",
       "source": "path:acp/pi-acp/node_modules/@agentclientprotocol/sdk",
@@ -7554,48 +7490,6 @@
     },
     {
       "section": "submodule",
-      "name": "mcp (openserverless-mcp)",
-      "version": "main@baf14007f910",
-      "license": "Apache-2.0",
-      "homepage": "https://github.com/trustant/openserverless-mcp",
-      "revision": "baf14007f9106cfd63b1396fd5d374f7dd9b7537",
-      "source": "path:mcp",
-      "status": "license-files-collected",
-      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
-      "evidence": [
-        {
-          "file": "LICENSE",
-          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
-        },
-        {
-          "file": "NOTICE",
-          "sha256": "6f03b820b116b570cf4030217c584f8dc83385d756e39bd8c1c64082ba99c7a8"
-        }
-      ]
-    },
-    {
-      "section": "submodule",
-      "name": "oplugins (openserverless-task)",
-      "version": "0.9.0@27b281eb7615",
-      "license": "Apache-2.0",
-      "homepage": "https://github.com/trustable-ai/openserverless-task",
-      "revision": "27b281eb7615c9094f1c6edab10a2b4fe2fd621c",
-      "source": "path:oplugins",
-      "status": "license-files-collected",
-      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
-      "evidence": [
-        {
-          "file": "LICENSE",
-          "sha256": "a5453de770163251cf6a5515eee3a600d9018303b0f3b51f61579ba7c248e398"
-        },
-        {
-          "file": "NOTICE",
-          "sha256": "ebd0d018a0e5b843c9b7cd6d24eee3228d8bb84c7651d08a8174b74320e1242f"
-        }
-      ]
-    },
-    {
-      "section": "submodule",
       "name": "oplugins-truinst",
       "version": "main@b65d58d49a3a",
       "license": "AGPL-3.0-or-later",
@@ -7612,23 +7506,6 @@
         {
           "file": "NOTICE",
           "sha256": "719d7eb171cea2836eb3b9fbf8da1d8070ab753ff3e764a56330cb3d692a9fc8"
-        }
-      ]
-    },
-    {
-      "section": "submodule",
-      "name": "skills",
-      "version": "main@56d349b6174e",
-      "license": "Apache-2.0",
-      "homepage": "https://github.com/trustable-ai/skills",
-      "revision": "56d349b6174e53707723ed839c252995122dc46d",
-      "source": "path:skills",
-      "status": "license-files-collected",
-      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
-      "evidence": [
-        {
-          "file": "LICENSE",
-          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
         }
       ]
     },
@@ -7658,6 +7535,26 @@
     },
     {
       "section": "vendored",
+      "name": "mcp (openserverless-mcp)",
+      "version": "main",
+      "license": "Apache-2.0",
+      "homepage": "https://github.com/trustant/openserverless-mcp",
+      "source": "path:mcp",
+      "status": "license-files-collected",
+      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
+      "evidence": [
+        {
+          "file": "LICENSE",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        {
+          "file": "NOTICE",
+          "sha256": "6f03b820b116b570cf4030217c584f8dc83385d756e39bd8c1c64082ba99c7a8"
+        }
+      ]
+    },
+    {
+      "section": "vendored",
       "name": "obsidian-agent-client (origin of acp, upstream 0.11.0)",
       "version": "0.11.0",
       "license": "Apache-2.0",
@@ -7673,6 +7570,26 @@
         {
           "file": "NOTICE",
           "sha256": "af7c8271543f44658f58072aad8cef8b1a1d360137783f65438a1c0058040a7e"
+        }
+      ]
+    },
+    {
+      "section": "vendored",
+      "name": "oplugins (openserverless-task)",
+      "version": "0.9.0",
+      "license": "Apache-2.0",
+      "homepage": "https://github.com/trustable-ai/openserverless-task",
+      "source": "path:oplugins",
+      "status": "license-files-collected",
+      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
+      "evidence": [
+        {
+          "file": "LICENSE",
+          "sha256": "a5453de770163251cf6a5515eee3a600d9018303b0f3b51f61579ba7c248e398"
+        },
+        {
+          "file": "NOTICE",
+          "sha256": "ebd0d018a0e5b843c9b7cd6d24eee3228d8bb84c7651d08a8174b74320e1242f"
         }
       ]
     },
@@ -7705,6 +7622,22 @@
         {
           "file": "LICENSE",
           "sha256": "b9e63459a8c046806ee709828fe8cf04a08062c5a99847c9ae2a2be18009fa03"
+        }
+      ]
+    },
+    {
+      "section": "vendored",
+      "name": "skills",
+      "version": "main",
+      "license": "Apache-2.0",
+      "homepage": "https://github.com/trustable-ai/skills",
+      "source": "path:skills",
+      "status": "license-files-collected",
+      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
+      "evidence": [
+        {
+          "file": "LICENSE",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
         }
       ]
     },

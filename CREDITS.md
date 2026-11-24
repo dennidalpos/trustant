@@ -28,14 +28,14 @@ bundled.
 
 ## Submodules
 
-| Submodule | License | Source |
+| Component | License | Source |
 |---|---|---|
 | `mcp` (OpenServerless MCP) | Apache-2.0 | https://github.com/trustant/openserverless-mcp |
 | `oplugins` (OpenServerless tasks) | Apache-2.0 | https://github.com/trustable-ai/openserverless-task |
 | `oplugins-truinst` | AGPL-3.0-or-later | https://github.com/trustant/oplugins-truinst |
 | `skills` | Apache-2.0 | https://github.com/trustable-ai/skills |
 
-The Apache-2.0 submodules (`mcp`, `oplugins`, `skills`) keep their own LICENSE and
+The Apache-2.0 components (`mcp`, `oplugins`, `skills`) are vendored in this repository (formerly gitlinks; per-file changes in [legal/VENDORED.md](legal/VENDORED.md)) and keep their own LICENSE and
 NOTICE files and carry no AGPL headers.
 
 For vendored sources, upstream attribution is in [acp/UPSTREAM.md](acp/UPSTREAM.md)

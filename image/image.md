@@ -23,7 +23,7 @@ is no base/current split: buildkit cannot resolve `FROM` against an image that
 was just loaded into containerd, and the builder's layer cache already avoids
 rebuilding unchanged base stages.
 
-The image build stages the pinned `mcp` submodule and builds runtime artifacts
+The image build stages the vendored `mcp/` sources and builds runtime artifacts
 from the vendored `acp/` and `acp/pi-acp/` sources before invoking Docker.
 
 Log the content hashes of the pinned OpenServerless MCP and TruACP

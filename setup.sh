@@ -648,7 +648,7 @@ grep -Fq "$MILVUS_MCP_REPO" "$MILVUS_MCP_RECEIPT" &&
 # out sources so Lima/WSL runs exactly what the image build consumes; no guest
 # Git metadata is needed, which also supports host-mounted worktrees.
 command -v npm &>/dev/null || fail "npm is required to install the npm MCP servers"
-[[ -f mcp/package.json ]] || fail "mcp submodule is not initialized (run ./start.sh on the host or: git submodule update --init mcp)"
+[[ -f mcp/package.json ]] || fail "mcp source is missing (it is vendored in this repository; check the checkout)"
 OPENSERVERLESS_MCP_PACK_DIR=$(mktemp -d)
 ( cd mcp && npm pack --pack-destination "$OPENSERVERLESS_MCP_PACK_DIR" >/dev/null ) \
   || fail "packing local openserverless-mcp failed"

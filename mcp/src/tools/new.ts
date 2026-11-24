@@ -1,0 +1,103 @@
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs"
+import { join } from "node:path"
+import { z } from "zod"
+import { parseEndpoint, error, text, defineTool, endpointArg } from "../lib.ts"
+
+export default defineTool({
+  name: "action_new",
+  config: {
+    description: "Create a new API endpoint. Creates the action folder with __main__.py and module file.",
+    inputSchema: {
+      endpoint: endpointArg,
+      public: z
+        .boolean()
+        .optional()
+        .describe("Whether the action is public (API endpoint). Defaults to true. Set false for private actions (e.g. init package)."),
+    },
+  },
+  handler({ endpoint, public: isPublicArg }) {
+    let ep
+    try {
+      ep = parseEndpoint(endpoint)
+    } catch (e) {
+      return error(`Error: ${(e as Error).message}`)
+    }
+    const { pkg, name, dir } = ep
+
+    const isPublic = isPublicArg !== false
+    const moduleName = name.replace(/-/g, "_")
+    const modulePath = join(dir, `${moduleName}.py`)
+
+    if (existsSync(dir)) {
+      if (!existsSync(ep.mainPath)) {
+        return error(`Error: path already exists at ${dir}, but it is not a valid endpoint (__main__.py is missing)`)
+      }
+      if (!existsSync(modulePath)) {
+        return error(`Error: path already exists at ${dir}, but it is not a valid endpoint (module file ${moduleName}.py is missing)`)
+      }
+
+      const existingMain = readFileSync(ep.mainPath, "utf-8")
+      const existingPublic = existingMain.match(/^#--web\s+(true|false)\s*$/m)?.[1]
+      if (existingPublic !== undefined && existingPublic !== String(isPublic)) {
+        return error(
+          `Error: endpoint already exists at ${dir} with public=${existingPublic}; requested public=${isPublic}`,
+        )
+      }
+
+      return text(`Check passed: endpoint already exists at ${dir}; no changes made.`)
+    }
+
+    mkdirSync(dir, { recursive: true })
+
+    const mainPy = `#--kind python:default
+#--web ${isPublic}
+# Note: this timeout is 5 minutes - 10 minutes is max allowed
+#--timeout 300000
+import types, os, ${moduleName}
+
+builder = []
+## build-context ##
+
+def main(args):
+  try:
+    ctx = types.SimpleNamespace()
+    for fn in builder: fn(args, ctx)
+    return { "body": ${moduleName}.main(args, ctx=ctx) }
+  except Exception as e:
+    import traceback
+    traceback.print_exc()
+    return {
+      "body": {"error": str(e) },
+      "statusCode": 500
+    }
+`
+
+    const modulePy = `def main(args, ctx=None):
+  inp = args.get("input", "${moduleName}")
+  out = inp
+  return out
+`
+
+    writeFileSync(join(dir, "__main__.py"), mainPy)
+    writeFileSync(modulePath, modulePy)
+
+    return text(`Created endpoint at /api/my/${pkg}/${name}\nFiles:\n  ${dir}/__main__.py\n  ${dir}/${moduleName}.py`)
+  },
+})

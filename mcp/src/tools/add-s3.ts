@@ -1,0 +1,68 @@
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+import { parseEndpoint, injectConnector, error, status, defineTool, endpointArg } from "../lib.ts"
+
+export default defineTool({
+  name: "action_add_s3",
+  config: {
+    description:
+      "Add a bucket-scoped S3 connection to an endpoint's context. Provides ctx.S3_CLIENT, ctx.S3_DATA, ctx.S3_WEB, ctx.S3_PUBLIC. Never call list_buckets; verify read/write with put_object, get_object plus content comparison, and delete_object in ctx.S3_DATA.",
+    inputSchema: { endpoint: endpointArg },
+  },
+  handler({ endpoint }) {
+    let ep
+    try {
+      ep = parseEndpoint(endpoint)
+    } catch (e) {
+      return error(`Error: ${(e as Error).message}`)
+    }
+    const injection = `
+#--param S3_HOST "$S3_HOST"
+#--param S3_PORT "$S3_PORT"
+#--param S3_ACCESS_KEY "$S3_ACCESS_KEY"
+#--param S3_SECRET_KEY "$S3_SECRET_KEY"
+#--param S3_BUCKET_DATA "$S3_BUCKET_DATA"
+#--param S3_BUCKET_STATIC "$S3_BUCKET_STATIC"
+#--param S3_PUBLIC "$OPSDEV_S3"
+import boto3
+from botocore.client import Config
+def init_s3(args, ctx):
+  host = args.get("S3_HOST", os.getenv("S3_HOST"))
+  port = args.get("S3_PORT", os.getenv("S3_PORT"))
+  url = f"http://{host}:{port}"
+  key = args.get("S3_ACCESS_KEY", os.getenv("S3_ACCESS_KEY"))
+  sec = args.get("S3_SECRET_KEY", os.getenv("S3_SECRET_KEY"))
+  cfg = Config(signature_version='s3v4')
+  ctx.S3_CLIENT = boto3.client('s3', region_name='us-east-1', endpoint_url=url, aws_access_key_id=key, aws_secret_access_key=sec, config=cfg)
+  ctx.S3_DATA = args.get("S3_BUCKET_DATA", os.getenv("S3_BUCKET_DATA"))
+  ctx.S3_WEB = args.get("S3_BUCKET_STATIC", os.getenv("S3_BUCKET_STATIC"))
+  ctx.S3_PUBLIC = args.get("S3_PUBLIC", os.getenv("OPSDEV_S3"))
+builder.append(init_s3)`
+
+    return status(
+      injectConnector({
+        endpoint: ep,
+        label: "S3",
+        guard: "init_s3",
+        injection,
+        available:
+          "  ctx.S3_CLIENT — the bucket-scoped S3 client; never call list_buckets()\n  ctx.S3_DATA — the S3 data bucket (private)\n  ctx.S3_WEB — the S3 web bucket (public)\n  ctx.S3_PUBLIC — the public URL to access S3\n\nVerification contract:\n  Use ctx.S3_DATA with a unique temporary key. Call put_object, then get_object and compare the returned Body bytes, then delete_object in a finally block. Only report read/write success after the byte comparison succeeds. head_bucket or object/bucket listing proves neither read nor write access.",
+      }),
+    )
+  },
+})

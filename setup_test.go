@@ -255,7 +255,7 @@ func TestSetupInstallsCheckedOutOpenServerlessMCP(t *testing.T) {
 		t.Fatal("setup.sh must not overwrite the local OpenServerless MCP with a direct GitHub install")
 	}
 	if !strings.Contains(setup, `cd mcp && npm pack`) {
-		t.Fatal("setup.sh must package the checked-out mcp submodule")
+		t.Fatal("setup.sh must package the vendored mcp directory")
 	}
 	if !strings.Contains(setup, `secret-unbind`) {
 		t.Fatal("setup.sh must verify a Trustant-only MCP registration")
@@ -607,8 +607,7 @@ func TestStartInitializesRuntimeSourcesOnHost(t *testing.T) {
 		// Not the whole command line: start.sh threads `-c core.autocrlf=false
 		// -c core.eol=lf` between `git -C "$MOUNT_DIR"` and the subcommand so a
 		// fresh Windows checkout lands as LF. What must hold is that both
-		// the mcp submodule is initialised recursively; acp is vendored.
-		`submodule update --init --recursive mcp`,
+		// mcp and acp are vendored; both leaves must be verified.
 		`[[ -f "$MOUNT_DIR/mcp/package.json" ]]`,
 		`[[ -f "$MOUNT_DIR/acp/package.json" ]]`,
 		`ensure_source_submodules`,
@@ -617,9 +616,9 @@ func TestStartInitializesRuntimeSourcesOnHost(t *testing.T) {
 			t.Fatalf("start.sh is missing portable TruACP source setup fragment %q", required)
 		}
 	}
-	// The submodule update must still be scoped to the mounted worktree.
-	if !strings.Contains(start, `git -C "$MOUNT_DIR"`) {
-		t.Fatal(`start.sh must run the submodule update with git -C "$MOUNT_DIR"`)
+	// No runtime source may need a submodule update any more.
+	if strings.Contains(start, `submodule update --init --recursive mcp`) {
+		t.Fatal("start.sh must not initialise mcp as a submodule: it is vendored")
 	}
 }
 

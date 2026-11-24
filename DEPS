@@ -65,9 +65,12 @@ the repository commit pins them. Image inclusion depends on the build path.
 NAME                                                    VERSION            LICENSE            HOMEPAGE
 ----                                                    -------            -------            --------
 acp (TruACP)                                            vendored           AGPL-3.0-or-later  https://github.com/dennidalpos/trustant
+mcp (openserverless-mcp)                                main               Apache-2.0         https://github.com/trustant/openserverless-mcp
 obsidian-agent-client (origin of acp, upstream 0.11.0)  0.11.0             Apache-2.0         https://github.com/RAIT-09/obsidian-agent-client
+oplugins (openserverless-task)                          0.9.0              Apache-2.0         https://github.com/trustable-ai/openserverless-task
 pi-acp (fork, vendored in acp/pi-acp)                   0.0.31-trustant.1  MIT                https://github.com/trustable-ai/pi-acp
 pi-acp (upstream svkozak/pi-acp, base of the fork)      0.0.31             MIT                https://github.com/svkozak/pi-acp
+skills                                                  main               Apache-2.0         https://github.com/trustable-ai/skills
 
 
 5. GIT SUBMODULES
@@ -77,12 +80,9 @@ Sources tracked by this repository. Image inclusion depends on the
 build or runtime path; these entries do not assert that every submodule
 is copied into the image.
 
-NAME                            VERSION             LICENSE            HOMEPAGE
-----                            -------             -------            --------
-mcp (openserverless-mcp)        main@baf14007f910   Apache-2.0         https://github.com/trustant/openserverless-mcp
-oplugins (openserverless-task)  0.9.0@27b281eb7615  Apache-2.0         https://github.com/trustable-ai/openserverless-task
-oplugins-truinst                main@b65d58d49a3a   AGPL-3.0-or-later  https://github.com/trustant/oplugins-truinst
-skills                          main@56d349b6174e   Apache-2.0         https://github.com/trustable-ai/skills
+NAME              VERSION            LICENSE            HOMEPAGE
+----              -------            -------            --------
+oplugins-truinst  main@b65d58d49a3a  AGPL-3.0-or-later  https://github.com/trustant/oplugins-truinst
 
 
 6. TRUACP (acp) - NPM PRODUCTION DEPENDENCIES
@@ -93,9 +93,7 @@ and the TruACP web UI.
 
 NAME                                               VERSION  LICENSE       HOMEPAGE
 ----                                               -------  -------       --------
-@agentclientprotocol/sdk                           0.28.1   Apache-2.0    https://www.npmjs.com/package/@agentclientprotocol/sdk
-@tanstack/react-virtual                            3.14.28  MIT           https://www.npmjs.com/package/@tanstack/react-virtual
-@tanstack/virtual-core                             3.19.13  MIT           https://www.npmjs.com/package/@tanstack/virtual-core
+@agentclientprotocol/sdk                           2.9.1    Apache-2.0    https://www.npmjs.com/package/@agentclientprotocol/sdk
 @types/debug                                       4.1.13   MIT           https://www.npmjs.com/package/@types/debug
 @types/estree                                      1.0.10   MIT           https://www.npmjs.com/package/@types/estree
 @types/estree-jsx                                  1.0.5    MIT           https://www.npmjs.com/package/@types/estree-jsx
@@ -116,7 +114,7 @@ debug                                              4.4.3    MIT           https:
 decode-named-character-reference                   1.3.0    MIT           https://www.npmjs.com/package/decode-named-character-reference
 dequal                                             2.0.3    MIT           https://www.npmjs.com/package/dequal
 devlop                                             1.1.0    MIT           https://www.npmjs.com/package/devlop
-diff                                               8.0.4    BSD-3-Clause  https://www.npmjs.com/package/diff
+diff                                               9.0.0    BSD-3-Clause  https://www.npmjs.com/package/diff
 escape-string-regexp                               5.0.0    MIT           https://www.npmjs.com/package/escape-string-regexp
 estree-util-is-identifier-name                     3.0.0    MIT           https://www.npmjs.com/package/estree-util-is-identifier-name
 extend                                             3.0.2    MIT           https://www.npmjs.com/package/extend
@@ -129,9 +127,7 @@ is-alphanumerical                                  2.0.1    MIT           https:
 is-decimal                                         2.0.1    MIT           https://www.npmjs.com/package/is-decimal
 is-hexadecimal                                     2.0.1    MIT           https://www.npmjs.com/package/is-hexadecimal
 is-plain-obj                                       4.1.0    MIT           https://www.npmjs.com/package/is-plain-obj
-js-tokens                                          4.0.0    MIT           https://www.npmjs.com/package/js-tokens
 longest-streak                                     3.1.0    MIT           https://www.npmjs.com/package/longest-streak
-loose-envify                                       1.4.0    MIT           https://www.npmjs.com/package/loose-envify
 markdown-table                                     3.1.0    MIT           https://www.npmjs.com/package/markdown-table
 mdast-util-find-and-replace                        3.0.5    MIT           https://www.npmjs.com/package/mdast-util-find-and-replace
 mdast-util-from-markdown                           2.1.0    MIT           https://www.npmjs.com/package/mdast-util-from-markdown
@@ -180,14 +176,14 @@ micromark-util-types                               2.0.3    MIT           https:
 ms                                                 2.1.3    MIT           https://www.npmjs.com/package/ms
 parse-entities                                     4.0.2    MIT           https://www.npmjs.com/package/parse-entities
 property-information                               7.2.0    MIT           https://www.npmjs.com/package/property-information
-react                                              18.3.1   MIT           https://www.npmjs.com/package/react
-react-dom                                          18.3.1   MIT           https://www.npmjs.com/package/react-dom
+react                                              19.3.1   MIT           https://www.npmjs.com/package/react
+react-dom                                          19.3.1   MIT           https://www.npmjs.com/package/react-dom
 react-markdown                                     10.1.0   MIT           https://www.npmjs.com/package/react-markdown
 remark-gfm                                         4.0.1    MIT           https://www.npmjs.com/package/remark-gfm
 remark-parse                                       11.0.0   MIT           https://www.npmjs.com/package/remark-parse
 remark-rehype                                      11.1.2   MIT           https://www.npmjs.com/package/remark-rehype
 remark-stringify                                   11.0.0   MIT           https://www.npmjs.com/package/remark-stringify
-scheduler                                          0.23.2   MIT           https://www.npmjs.com/package/scheduler
+scheduler                                          0.28.0   MIT           https://www.npmjs.com/package/scheduler
 semver                                             7.8.6    ISC           https://www.npmjs.com/package/semver
 space-separated-tokens                             2.0.2    MIT           https://www.npmjs.com/package/space-separated-tokens
 stringify-entities                                 4.0.5    MIT           https://www.npmjs.com/package/stringify-entities
@@ -214,7 +210,7 @@ Full production tree of acp/pi-acp/package-lock.json.
 
 NAME                      VERSION  LICENSE     HOMEPAGE
 ----                      -------  -------     --------
-@agentclientprotocol/sdk  0.26.0   Apache-2.0  https://www.npmjs.com/package/@agentclientprotocol/sdk
+@agentclientprotocol/sdk  2.9.1    Apache-2.0  https://www.npmjs.com/package/@agentclientprotocol/sdk
 zod                       4.6.7    MIT         https://www.npmjs.com/package/zod
 
 

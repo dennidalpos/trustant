@@ -1,0 +1,74 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+version: 3
+tasks:
+
+  all:
+    desc: All tests
+    silent: true
+    cmds:
+    - task: 7zz
+    - task: coreutils
+    - task: bun
+    - task: kubectl
+    - task: kind
+    - task: k3sup
+    - task: rg
+
+  7zz:
+    silent: true
+    desc: 7zz test
+    cmds:
+    - 7zz | rg 24.07
+
+  coreutils:
+    silent: true
+    desc: Coreutils test
+    cmds:
+    - coreutils | rg '0.0.27'
+
+  bun:
+    silent: true
+    desc: Bun test
+    cmds:
+    - bun | rg '1.1.27'
+
+  kubectl:
+    silent: true
+    desc: Kubectl test
+    cmds:
+    - kubectl version --client=true | rg 1.30.3
+
+  kind:
+    silent: true
+    desc: Kind test
+    cmds:
+    - kind --version | rg 0.17.0
+
+  k3sup:
+    silent: true
+    desc: k3sup test
+    cmds:
+    - k3sup version | rg 0.13.13
+
+  rg:
+    silent: true
+    desc: ripgrep test
+    cmds:
+    - rg --version | rg 14.1.0
+

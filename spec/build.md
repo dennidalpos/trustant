@@ -100,8 +100,8 @@ registry only, so it could not see a base image that had just been loaded into
 containerd. The builder's layer cache already keeps unchanged base stages from
 being rebuilt, so the split bought nothing that cache does not.
 
-It stages `openserverless-mcp` from the pinned
-`mcp` submodule, the local deterministic React MCP source, and the
+It stages `openserverless-mcp` from the vendored
+`mcp/` directory, the local deterministic React MCP source, and the
 TruACP runtime artifacts:
 `setup.sh`, `pi.version`, `pi.integrity`, `dist-bin/truacp.cjs`,
 `pi-acp-package.tgz`, `extensions/trustant-runtime.ts`, and
@@ -179,7 +179,7 @@ Managed account state is runtime data under
 durable workspace mount in the pod and in `trudev`, so authentication survives
 supported restarts while remaining isolated from the normal host account.
 
-For the macOS Lima flow, `start.sh` initializes the `mcp` submodule on the host.
+For the macOS Lima flow, `start.sh` only verifies the vendored `mcp/` sources on the host.
 The TruACP and `pi-acp` source trees are already part of the Trustant checkout. A
 worktree's `.git` file may point outside the single mounted directory, so
 `setup.sh` consumes ordinary mounted files and must never require guest access

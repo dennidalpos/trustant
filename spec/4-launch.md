@@ -416,7 +416,7 @@ as follows:
 This server exposes the OpenServerless action tools (`action_new`, `action_invoke`,
 `action_requirements`, and the `action_add_*` connectors) over MCP, replacing the
 old embedded `tools/` plugins. It is installed globally in the image as
-`openserverless-mcp` from the repository's `mcp` submodule and is added
+`openserverless-mcp` from the repository's vendored `mcp/` directory and is added
 unconditionally, independent of `~/.ops/config.json`:
 
 ```
@@ -439,10 +439,10 @@ them from npm. The ACP adapter comes from the vendored `acp/pi-acp/` fork. Guest
 setup builds it from source, and the image installs the tarball built from that
 same source.
 
-The runtime image installs `openserverless-mcp` from the local `mcp` submodule,
+The runtime image installs `openserverless-mcp` from the vendored local `mcp/` directory,
 not from a direct `github:apache/openserverless-mcp` npm reference. The image
-build stages that submodule into the Docker build context and includes the
-submodule commit in the base-image hash, so changing the MCP pointer forces the
+build stages that directory into the Docker build context and includes its Git
+tree hash in the base-image hash, so changing the MCP sources forces the
 base image to rebuild.
 
 # always add the deterministic React MCP server:

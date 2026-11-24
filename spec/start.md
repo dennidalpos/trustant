@@ -435,7 +435,7 @@ from `image/Dockerfile`.
 
 This applies to provisioning flows that execute `setup.sh` (fresh VM creation).
 
-All sources (this repo and every submodule) are public: `start.sh` needs no
+All sources (this repo and its `oplugins-truinst` submodule) are public: `start.sh` needs no
 GitHub token and performs no `gh` login or git credential-helper setup. The
 default final step is `./run.sh`
 inside the VM (foreground, `limactl shell` in the mounted repo dir, as the
@@ -514,7 +514,7 @@ Abort with an actionable message unless all of the following hold:
 - systemd is running (`/run/systemd/system` exists and `systemctl
   is-system-running` is not `offline`). k3s is a systemd service.
 
-Then initialize the runtime source submodules, exactly as the macOS path does —
+Then verify the vendored runtime sources, exactly as the macOS path does —
 this step is host-agnostic.
 
 `limactl` is NOT required, and neither is `code`.

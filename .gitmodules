@@ -1,16 +1,4 @@
-[submodule "oplugins"]
-	path = oplugins
-	url = https://github.com/trustable-ai/openserverless-task
-	branch = 0.9.0
 [submodule "oplugins-truinst"]
 	path = oplugins-truinst
 	url = https://github.com/trustant/oplugins-truinst
-        branch = main
-[submodule "skills"]
-	path = skills
-	url = https://github.com/trustable-ai/skills
-        branch = main
-[submodule "openserverless-mcp"]
-	path = mcp
-	url = https://github.com/trustant/openserverless-mcp
         branch = main

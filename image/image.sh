@@ -98,20 +98,19 @@ case "$NERDCTL_ARCH" in
     x86_64)        NERDCTL_ARCH="amd64" ;;
     aarch64|arm64) NERDCTL_ARCH="arm64" ;;
 esac
-git submodule update --init ../mcp
-# WHY: acp and its pi-acp are vendored in this repository (no submodule
+# WHY: mcp, acp and its pi-acp are vendored in this repository (no submodule
 # step), so image builds cannot silently fall back to npm runtimes.
 
 if [ ! -f ../mcp/package.json ]; then
-    echo "Error: ../mcp is not initialized. Run: git submodule update --init mcp" >&2
+    echo "Error: ../mcp is missing; it is vendored in this repository" >&2
     exit 1
 fi
 
-MCP_REF="$(git -C ../mcp rev-parse HEAD)"
-echo "Using openserverless-mcp submodule: $MCP_REF"
 rm -rf "$MCP_CONTEXT_DIR"
 mkdir -p "$MCP_CONTEXT_DIR"
-git -C ../mcp archive HEAD | tar -x -C "$MCP_CONTEXT_DIR"
+tar -C ../mcp --exclude=node_modules --exclude='*.log' -cf - . | tar -x -C "$MCP_CONTEXT_DIR"
+MCP_HASH="$(find "$MCP_CONTEXT_DIR" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -c1-12)"
+echo "Using vendored openserverless-mcp source hash: $MCP_HASH"
 
 if [ ! -f ../acp/package.json ]; then
     echo "Error: ../acp is missing; it is vendored in this repository" >&2

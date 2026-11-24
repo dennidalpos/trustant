@@ -40,9 +40,9 @@ vendored | obsidian-agent-client (origin of acp, upstream 0.11.0) | 0.11.0 | Apa
 vendored | pi-acp (upstream svkozak/pi-acp, base of the fork) | 0.0.31 | MIT | https://github.com/svkozak/pi-acp | url:https://raw.githubusercontent.com/svkozak/pi-acp/9e857dcc05a057404eb1537e5f31e5aef88a5863/LICENSE
 vendored | pi-acp (fork, vendored in acp/pi-acp) | 0.0.31-trustant.1 | MIT | https://github.com/trustable-ai/pi-acp | path:acp/pi-acp
 submodule | oplugins-truinst | main | AGPL-3.0-or-later | https://github.com/trustant/oplugins-truinst | path:oplugins-truinst
-submodule | oplugins (openserverless-task) | 0.9.0 | Apache-2.0 | https://github.com/trustable-ai/openserverless-task | path:oplugins
-submodule | mcp (openserverless-mcp) | main | Apache-2.0 | https://github.com/trustant/openserverless-mcp | path:mcp
-submodule | skills | main | Apache-2.0 | https://github.com/trustable-ai/skills | path:skills
+vendored | oplugins (openserverless-task) | 0.9.0 | Apache-2.0 | https://github.com/trustable-ai/openserverless-task | path:oplugins
+vendored | mcp (openserverless-mcp) | main | Apache-2.0 | https://github.com/trustant/openserverless-mcp | path:mcp
+vendored | skills | main | Apache-2.0 | https://github.com/trustable-ai/skills | path:skills
 
 # --- 5. Container image: Ubuntu 24.04 packages ------------------------------
 apt | ubuntu:24.04 base image | 24.04 | LicenseRef-Debian-Copyright | https://ubuntu.com | -

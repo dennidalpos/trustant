@@ -1,0 +1,43 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+
+# check pod status
+ops debug kube pod
+
+# delete a kuberenetes cluster
+ops setup kubernetes delete
+
+
+# create the entire cluster in the default kubernetes
+# kubeconfig shold be in ~/.ops/tmp/kubeconfig or in ~/.kube/config
+ops setup kubernetes create
+
+# watch what is happening in another terminal
+ops debug watch
+
+# step by step operator launch with standby
+ops setup kubernetes permission
+ops setup kubernetes pre-deploy
+ops setup kubernetes operator COMMAND="tail -f /dev/null"
+
+ops debug kube pod
+
+# enter
+ops util kubeconfig
+kubectl exec -ti -n openserverless openserverless-operator-0 -- bash
+

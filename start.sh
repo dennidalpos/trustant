@@ -151,20 +151,10 @@ ENV_DIST_FILE="$MOUNT_DIR/.env.dist"
 # the macOS host before the guest starts; setup.sh then consumes plain files and
 # never follows host-only Git metadata.
 ensure_source_submodules() {
-  # WHY: acp and its pi-acp are vendored in this repository, so only mcp is a
-  # submodule. Still test the acp leaves explicitly so an incomplete checkout
-  # cannot reach the VM setup with a partial runtime source tree.
-  if [[ ! -f "$MOUNT_DIR/mcp/package.json" ||
-        ! -f "$MOUNT_DIR/acp/package.json" ||
-        ! -f "$MOUNT_DIR/acp/pi-acp/package.json" ]]; then
-    echo "--- Initializing runtime source submodules on the host ---"
-    # -c ... is inherited by the clone/checkout git runs per submodule, so a
-    # fresh Windows checkout lands as LF instead of needing the repair below.
-    git -C "$MOUNT_DIR" -c core.autocrlf=false -c core.eol=lf \
-      submodule update --init --recursive mcp \
-      || fail "failed to initialize the mcp submodule"
-  fi
-  [[ -f "$MOUNT_DIR/mcp/package.json" ]] || fail "mcp submodule source is unavailable"
+  # WHY: mcp, acp and its pi-acp are vendored in this repository, so no runtime
+  # source needs a submodule. Test the leaves explicitly so an incomplete
+  # checkout cannot reach the VM setup with a partial runtime source tree.
+  [[ -f "$MOUNT_DIR/mcp/package.json" ]] || fail "mcp source is unavailable (vendored in this repository)"
   [[ -f "$MOUNT_DIR/acp/package.json" ]] || fail "acp source is unavailable (vendored in this repository)"
   [[ -f "$MOUNT_DIR/acp/pi-acp/package.json" ]] || fail "vendored pi-acp source is unavailable"
   ok "runtime sources are available"

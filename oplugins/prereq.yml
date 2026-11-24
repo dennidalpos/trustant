@@ -1,0 +1,392 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+# Trustant fork: pin and verify the Linux Kubernetes provisioning tools.
+
+version: 3
+
+vars:
+  OS: "{{or .__OS OS}}"
+  ARCH: "{{or .__ARCH ARCH}}"
+  ARC: '{{if eq .OS "windows"}}.zip{{else}}.tar.gz{{end}}'
+  EXE: '{{if eq .OS "windows"}}.exe{{else}}{{end}}'
+  DRY: ""
+
+tasks:
+
+  download-and-extract:
+     requires:
+       vars:
+       - FILE
+       - URL
+       - OUT
+     cmds:
+     - echo "{{.OUT}} {{.FILE}} {{.URL}} {{.FILETAR}}"
+     - curl -sL "{{.URL}}" -o {{.FILE}}
+     - extract "{{.FILE}}" "{{.OUT}}{{.EXE}}"
+     - remove "{{.FILE}}"
+
+  download:
+    requires:
+      vars:
+        - URL
+        - OUT
+    cmds:
+      - curl -sL -o"{{.OUT}}" "{{.URL}}"
+      - executable "{{.OUT}}"
+
+  download-verified:
+    cmds:
+      - |
+        if [ "{{.OS}}" = linux ]; then
+          curl -fsSL "{{.URL}}" -o "{{.OUT}}.download" || exit $?
+          /usr/bin/env sha256sum -c - <<'CHECKSUM' || exit $?
+        {{.SHA256}}  {{.OUT}}.download
+        CHECKSUM
+          /usr/bin/env chmod 0755 "{{.OUT}}.download" &&
+            /usr/bin/env mv -f "{{.OUT}}.download" "{{.OUT}}"
+        else
+          curl -fsSL "{{.URL}}" -o "{{.OUT}}" && executable "{{.OUT}}"
+        fi
+
+  7zz:
+    desc: download 7zz
+    vars:
+      VERSION: "2407"
+      VER: "24.07"
+      SUFFIX:
+        sh: |
+            case "{{.OS}}-{{.ARCH}}" in
+              linux-amd64) echo "7z{{.VERSION}}-linux-x64.tar.xz" ;;
+              linux-arm64) echo "7z{{.VERSION}}-linux-arm64.tar.xz" ;;
+              darwin-*) echo "7z{{.VERSION}}-mac.tar.xz" ;;
+              windows-*) echo "7zr.exe" ;;
+              *) echo "unknown" ;;
+            esac
+      URL: "https://github.com/ip7z/7zip/releases/download/{{.VER}}/{{.SUFFIX}}"
+      FILE: "{{base .URL}}"
+    cmds:
+    - curl -sL "{{.URL}}"  -o "{{.FILE}}"
+    - |
+      if test "{{.OS}}" == "windows"
+      then rename 7zr.exe 7zz.exe
+      else extract "{{.FILE}}" 7zz
+      fi
+    - if test -e "{{.FILE}}" ; then remove "{{.FILE}}" ; fi
+
+  coreutils:
+    desc: download coreutils
+    vars:
+      # when changing this add the list of utilites to nuvroot.json in config.ops.coreutils
+      # do NOT include [ test false true echo base64
+      VERSION: "0.0.27"
+      SUFFIX:
+        sh: |
+            case "{{.OS}}-{{.ARCH}}" in
+            linux-amd64) echo "x86_64-unknown-linux-gnu" ;;
+            linux-arm64) echo "aarch64-unknown-linux-gnu" ;;
+            darwin-amd64) echo "x86_64-apple-darwin" ;;
+            darwin-arm64) echo "aarch64-apple-darwin" ;;
+            windows-*) echo "x86_64-pc-windows-gnu" ;;
+            *) echo "unknown" ;;
+            esac
+      URL: "https://github.com/uutils/coreutils/releases/download/{{.VERSION}}/coreutils-{{.VERSION}}-{{.SUFFIX}}{{.ARC}}"
+      FILE: "{{base .URL}}"
+      OUT: coreutils
+    cmds:
+    - task: download-and-extract
+      vars:
+        URL: "{{.URL}}"
+        FILE: "{{.FILE}}"
+        OUT: coreutils
+
+  bun:
+    desc: download bun
+    vars:
+      VERSION: "1.3.14"
+      ARCH2: '{{if eq .ARCH "amd64"}}x64{{else}}aarch64{{end}}'
+      URL: 'https://github.com/oven-sh/bun/releases/download/bun-v{{.VERSION}}/bun-{{.OS}}-{{.ARCH2}}.zip'
+      FILE: '{{base .URL}}'
+    cmds:
+    - echo "{{.URL}}"
+    - curl -fsSL "{{.URL}}" -o "{{.FILE}}"
+    - extract "{{.FILE}}" bun{{.EXE}}
+    - executable bun{{.EXE}}
+    - remove "{{.FILE}}"
+
+  kubectl:
+    desc: download kubectl
+    vars:
+      VERSION: 1.33.13
+      SHA256:
+        sh: |
+          case "{{.ARCH}}" in
+            amd64) echo 316d712726d857c20744c57cb36aa47cfc79bc0af7e82cebf3780244b654c073 ;;
+            arm64) echo 9fe8aadd5aab9421978c7ac95de6fad304a3c4c0ce9dbf4127579779e0699080 ;;
+          esac
+    cmds:
+      - task: download-verified
+        vars:
+          URL: "https://dl.k8s.io/release/v{{.VERSION}}/bin/{{.OS}}/{{.ARCH}}/kubectl{{.EXE}}"
+          OUT: kubectl
+          SHA256: "{{.SHA256}}"
+
+  kind:
+    desc: download kind
+    vars:
+      VERSION: 0.33.0
+      SHA256:
+        sh: |
+          case "{{.ARCH}}" in
+            amd64) echo aee6151561422756b764a4ae28e7f44cda5af5a9eead3cc9985112b1de8d8e0d ;;
+            arm64) echo 20022bee6cfcd5086cb7234d218e3454e6090022f2a8f55d1fa7fcf42c3867a2 ;;
+          esac
+    cmds:
+      - task: download-verified
+        vars:
+          URL: "https://github.com/kubernetes-sigs/kind/releases/download/v{{.VERSION}}/kind-{{.OS}}-{{.ARCH}}"
+          OUT: kind
+          SHA256: "{{.SHA256}}"
+
+  k3sup:
+    desc: download k3sup
+    vars:
+      VERSION: 0.13.13
+      BASE: "https://github.com/alexellis/k3sup/releases/download/{{.VERSION}}"
+      FILE:
+        sh: |
+            case {{.OS}}-{{.ARCH}} in
+            (linux-amd64)   echo k3sup ;;
+            (linux-arm64)   echo k3sup-arm64 ;;
+            (darwin-amd64)  echo k3sup-darwin ;;
+            (darwin-arm64)  echo k3sup-darwin-arm64 ;;
+            (windows-amd64) echo k3sup.exe ;;
+            esac
+    cmds:
+      - task: download
+        vars:
+          URL: "{{.BASE}}/{{.FILE}}"
+          OUT: k3sup
+
+  rg:
+    desc: download ripgrep
+    vars:
+      # when changing this add the list of utilites to nuvroot.json in config.ops.coreutils
+      # do NOT include [ test false true echo
+      VERSION: "14.1.0"
+      SUFFIX:
+        sh: |
+            case "{{.OS}}-{{.ARCH}}" in
+            linux-amd64) echo "x86_64-unknown-linux-musl" ;;
+            linux-arm64) echo "aarch64-unknown-linux-gnu" ;;
+            darwin-amd64) echo "x86_64-apple-darwin" ;;
+            darwin-arm64) echo "aarch64-apple-darwin" ;;
+            windows-*) echo "x86_64-pc-windows-msvc" ;;
+            *) echo "unknown" ;;
+            esac
+      URL: "https://github.com/BurntSushi/ripgrep/releases/download/{{.VERSION}}/ripgrep-{{.VERSION}}-{{.SUFFIX}}{{.ARC}}"
+      FILE: "{{base .URL}}"
+      OUT: rg
+    cmds:
+    - task: download-and-extract
+      vars:
+        URL: "{{.URL}}"
+        FILE: "{{.FILE}}"
+        OUT: "{{.OUT}}"
+
+  uv:
+    desc: install uv
+    vars:
+      VERSION: "0.7.19"
+      FILE:
+        sh: |
+              case "{{.OS}}-{{.ARCH}}" in
+              linux-amd64) echo uv-x86_64-unknown-linux-gnu.tar.gz ;;
+              linux-arm64) echo uv-aarch64-unknown-linux-gnu.tar.gz ;;
+              darwin-arm64) echo uv-aarch64-apple-darwin.tar.gz ;;
+              darwin-amd64) echo uv-x86_64-apple-darwin.tar.gz ;;
+              windows-*) echo uv-x86_64-pc-windows-msvc.zip ;;
+              *) echo "unknown" ;;
+              esac
+      URL: "https://github.com/astral-sh/uv/releases/download/{{.VERSION}}/{{.FILE}}"
+      OUT: uv
+    cmds:
+    - curl -sL "{{.URL}}" -o "{{.FILE}}"
+    - extract "{{.FILE}}" "{{.OUT}}{{.EXE}}"
+    - remove "{{.FILE}}"
+
+  yq:
+    desc: install yq
+    vars:
+      VERSION: "4.54.3"
+      SHA256:
+        sh: |
+          case "{{.ARCH}}" in
+            amd64) echo 129534601871538efe0ba4c5e62a34fb1d5f469bcb975c4fddeb467d82974973 ;;
+            arm64) echo 89f69310b61b68d1245065a1241d1fc843f7a36cd6103ffd77ad987613bd1b67 ;;
+          esac
+      FILE:  "yq_{{.OS}}_{{.ARCH}}{{.EXE}}"
+      URL: "https://github.com/mikefarah/yq/releases/download/v{{.VERSION}}/{{.FILE}}"
+      OUT: yq
+    cmds:
+      - task: download-verified
+        vars:
+          URL: "{{.URL}}"
+          OUT: "{{.OUT}}"
+          SHA256: "{{.SHA256}}"
+
+  helm:
+    desc: download helm
+    vars:
+      VERSION: "3.22.1"
+      SHA256:
+        sh: |
+          case "{{.ARCH}}" in
+            amd64) echo 896cf63684a42a723d61c980369d6e588330927deb13676ca0d85006dd6da0ea ;;
+            arm64) echo 4c29e286b279d170fa048ddfc3e4e83dcd069ca9c52102766ba672d7149e694d ;;
+          esac
+      SUFFIX:
+        sh: |
+          case "{{.OS}}-{{.ARCH}}" in
+            linux-amd64) echo "linux-amd64" ;;
+            linux-arm64) echo "linux-arm64" ;;
+            darwin-amd64) echo "darwin-amd64" ;;
+            darwin-arm64) echo "darwin-arm64" ;;
+            windows-amd64) echo "windows-amd64" ;;
+            *) echo "unknown" ;;
+          esac
+      URL: "https://get.helm.sh/helm-v{{.VERSION}}-{{.SUFFIX}}{{.ARC}}"
+      FILE: "{{base .URL}}"
+      OUT: helm
+    cmds:
+      - curl -fsSL "{{.URL}}" -o "{{.FILE}}"
+      - |
+        if [ "{{.OS}}" = linux ]; then
+          /usr/bin/env sha256sum -c - <<'CHECKSUM' || exit $?
+        {{.SHA256}}  {{.FILE}}
+        CHECKSUM
+          /usr/bin/env tar -xOzf "{{.FILE}}" "{{.SUFFIX}}/{{.OUT}}" > "{{.OUT}}.download" &&
+            /usr/bin/env chmod 0755 "{{.OUT}}.download" &&
+            /usr/bin/env mv -f "{{.OUT}}.download" "{{.OUT}}" &&
+            /usr/bin/env rm -f "{{.FILE}}"
+        else
+          extract "{{.FILE}}" "{{.OUT}}{{.EXE}}" && remove "{{.FILE}}"
+        fi
+
+  #k3d:
+  #  desc: download k3d
+  #  vars:
+  #    VERSION: "5.6.3"
+  #    SUFFIX:
+  #      sh: |
+  #        case "{{.OS}}-{{.ARCH}}" in
+  #          linux-amd64) echo "k3d-linux-amd64" ;;
+  #          linux-arm64) echo "k3d-linux-arm64" ;;
+  #          darwin-amd64) echo "k3d-darwin-amd64" ;;
+  #          darwin-arm64) echo "k3d-darwin-arm64" ;;
+  #         windows-amd64) echo "k3d-windows-amd64.exe" ;;
+  #          *) echo "unknown" ;;
+  #        esac
+  #    URL: "https://github.com/k3d-io/k3d/releases/download/v{{.VERSION}}/{{.SUFFIX}}"
+  #    OUT: k3d
+  #  cmds:
+  #    - task: download
+  #      vars:
+  #        URL: "{{.URL}}"
+  #        OUT: "{{.OUT}}{{.EXE}}"
+
+
+  zip:
+    desc: ensure zip is available
+    vars:
+       VERSION: 3.0-1
+       ZIP_EXE: "https://github.com/nuvolaris/zip/raw/refs/heads/master/zip.exe"
+    cmds:
+    - |
+      case "{{.OS}}-{{.ARCH}}" in
+      darwin-* | linux-*)
+        cat >zip <<EOF
+      #!/bin/sh
+      for ZIP in /bin/zip /usr/bin/zip /usr/local/bin/zip
+      do
+        if test -x "\$ZIP"
+        then exec "\$ZIP" "\$@"
+        fi
+      done
+      echo "Please install zip in your system."
+      exit 1
+      EOF
+        executable zip
+      ;;
+      windows-*)
+        curl -sL "{{.ZIP_EXE}}" -o zip.exe
+        executable zip.exe
+      ;;
+      esac
+
+  all:
+    - task: 7zz
+    - task: coreutils
+    - task: bun
+    - task: kind
+    - task: k3sup
+    - task: kubectl
+    - task: rg
+    - task: uv
+    - task: helm
+    - task: yq
+    # do not test zip as it is a special case
+    #- task: zip
+    # commented out for now
+    #- task: k3d
+
+  test:
+    vars:
+      DIR: "{{.OPS_PWD}}/bin/{{.OS}}-{{.ARCH}}"
+    cmds:
+    - |
+      {{.DRY}} rm -Rvf "{{.DIR}}"
+      mkdir -p "{{.DIR}}"
+      cd "{{.DIR}}"
+      {{.DRY}} ops -task -t ../../prereq.yml -d "{{.DIR}}" all
+    - task: check
+
+  check:
+    vars:
+      DIR: "{{.OPS_PWD}}/bin/{{.OS}}-{{.ARCH}}"
+      FILETYPE:
+        sh: |
+          case "{{.OS}}" in
+          (windows) echo application/vnd.microsoft.portable-executable ;;
+          (darwin)  echo application/x-mach-binary ;;
+          (linux)   echo application/x-executable ;;
+          (*) unknown ;;
+          esac
+    sources:
+      - '{{.DIR}}/*'
+    status:
+      - false
+    cmds:
+    - for: sources
+      cmd: filetype -m "{{.ITEM}}" | rg {{.FILETYPE}}
+
+  tests:
+   - __OS=linux   __ARCH=amd64 ops -task -t prereq.yml test
+   - __OS=linux   __ARCH=arm64 ops -task -t prereq.yml test
+   - __OS=darwin  __ARCH=amd64 ops -task -t prereq.yml test
+   - __OS=darwin  __ARCH=arm64 ops -task -t prereq.yml test
+   - __OS=windows __ARCH=amd64 ops -task -t prereq.yml test

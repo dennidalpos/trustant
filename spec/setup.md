@@ -337,7 +337,7 @@ force-reinstall the pinned specification and verify the resulting receipt.
 Package-name-only “already installed” output is not sufficient evidence because
 it can leave an executable created from the previous upstream source.
 
-Package the repository `mcp` submodule and install that tarball together with
+Package the vendored repository `mcp/` directory and install that tarball together with
 the mongodb server using npm (global, under the selected user-owned npm prefix):
 
 ```
