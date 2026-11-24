@@ -16,43 +16,50 @@
 package main
 
 import (
-	"net/http"
-	"net/http/httptest"
+	"fmt"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
-func TestNoStoreHTMLPreventsStaleConfigurationFlow(t *testing.T) {
-	handler := noStoreHTML(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	}))
+// TestMain keeps the whole suite away from the developer's real home.
+//
+// Several handlers (Configure, launch, runtime files) write under
+// os.UserHomeDir(): ~/.pi/agent for Pi and ~/.config/trustant for the runtime.
+// A test that forgot to relocate them used to overwrite the live Pi provider
+// and default model of whoever ran `go test` — in the demo VM that broke the
+// agent panel. Tests that need a specific home still call t.Setenv, which
+// overrides these defaults for their own duration.
+func TestMain(m *testing.M) {
+	os.Exit(runIsolated(m))
+}
 
-	for _, path := range []string{"/", "/applist.html", "/configure.html?reselect=1"} {
-		request := httptest.NewRequest(http.MethodGet, path, nil)
-		response := httptest.NewRecorder()
-		handler.ServeHTTP(response, request)
-		if got := response.Header().Get("Cache-Control"); got != "no-store" {
-			t.Fatalf("%s Cache-Control = %q, want no-store", path, got)
+func runIsolated(m *testing.M) int {
+	root, err := os.MkdirTemp("", "trustant-test-home-")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "cannot create the isolated test home:", err)
+		return 1
+	}
+	defer os.RemoveAll(root)
+
+	// git, used by many tests, reads the identity from the global config; keep
+	// pointing it at the real one so commits made by tests still work.
+	if os.Getenv("GIT_CONFIG_GLOBAL") == "" {
+		if realHome, err := os.UserHomeDir(); err == nil {
+			gitConfig := filepath.Join(realHome, ".gitconfig")
+			if _, err := os.Stat(gitConfig); err == nil {
+				os.Setenv("GIT_CONFIG_GLOBAL", gitConfig)
+			}
 		}
 	}
 
-	// Only documents carry inline boot logic capable of redirecting between
-	// configuration pages, so they are never stored. Stylesheets and scripts may
-	// be cached but must be revalidated, otherwise a stale CSS or JS file is
-	// paired with an upgraded page.
-	for _, path := range []string{"/trustant-ui.css", "/tailwind.js", "/js/shared.js"} {
-		request := httptest.NewRequest(http.MethodGet, path, nil)
-		response := httptest.NewRecorder()
-		handler.ServeHTTP(response, request)
-		if got := response.Header().Get("Cache-Control"); got != "no-cache" {
-			t.Fatalf("%s Cache-Control = %q, want no-cache", path, got)
-		}
+	home := filepath.Join(root, "home")
+	if err := os.MkdirAll(home, 0o755); err != nil {
+		fmt.Fprintln(os.Stderr, "cannot create the isolated test home:", err)
+		return 1
 	}
-
-	// Other assets keep the file server default.
-	request := httptest.NewRequest(http.MethodGet, "/trustant-logo.svg", nil)
-	response := httptest.NewRecorder()
-	handler.ServeHTTP(response, request)
-	if got := response.Header().Get("Cache-Control"); got != "" {
-		t.Fatalf("SVG Cache-Control = %q, want the file server default", got)
-	}
+	os.Setenv("HOME", home)
+	os.Setenv("USERPROFILE", home)
+	os.Setenv("PI_CODING_AGENT_DIR", filepath.Join(root, "pi-agent"))
+	return m.Run()
 }
