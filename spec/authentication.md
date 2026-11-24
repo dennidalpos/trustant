@@ -21,6 +21,37 @@ host-specific sessions and host-only cookies.
 
 See [trustant-auth-flow.svg](trustant-auth-flow.svg).
 
+## Request routing
+
+Every request on port `8910` passes `hostnameMiddleware` first, then (for the
+`trustant` host only) the authentication middleware.
+
+```mermaid
+flowchart TD
+    R["Request on :8910<br/>main.go ListenAndServe"] --> H{"hostnameMiddleware<br/>middleware.go:107"}
+    H -->|"localhost or IPv4 host"| N1["307 to trustant.IP.nip.io<br/>middleware.go:112-126"]
+    H -->|"host without a dot"| N2["307 to trustant.LOCALIP.nip.io<br/>middleware.go:129-143"]
+    H -->|"first label trustant"| A{"auth.middleware<br/>auth.go:222"}
+    H -->|"first label truacp"| T["truacpProxy 127.0.0.1:4096<br/>middleware.go:45"]
+    H -->|"first label vite"| V["viteProxy 127.0.0.1:5173<br/>middleware.go:46"]
+    H -->|"other label"| D{"registered application?<br/>proxyDevelopmentApplication<br/>middleware.go:58"}
+    D -->|yes| P["proxy to developmentApplicationURL<br/>repo.go:223"]
+    D -->|no| E["Invalid Hostname page<br/>middleware.go:164-199"]
+    A -->|"auth disabled, public path or valid session"| M["DefaultServeMux<br/>main.go:115-176"]
+    A -->|"no session: 401 for /api/, else redirect to /login.html"| X["rejected<br/>auth.go:300"]
+    M --> API["/api/* handlers and /api/auth/*"]
+    M --> S["static web/ or embedded files"]
+```
+
+Text alternative: `hostnameMiddleware` redirects localhost, IP and dotless
+hosts to `trustant.<ip>.nip.io`, then routes on the first hostname label.
+`trustant` goes through the session check (skipped when authentication is
+disabled or the path is public) to the API handlers and static UI. `truacp` and
+`vite` go straight to local reverse proxies on ports `4096` and `5173` and do
+not pass the session check. Any other label is proxied to that application when
+it is a registered repository (`getAppRepo`); otherwise the server shows an
+"Invalid Hostname" page.
+
 ## Configuration
 
 Local mode requires three explicit values. Each value may be supplied directly

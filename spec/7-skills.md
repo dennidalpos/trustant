@@ -57,3 +57,27 @@ In `app.html` toolbar, show a "Skills" button. On click, show a modal with:
   - Body as rendered markdown in a scrollable div
 
 Clicking "Update Skills to Latest" shows a confirmation: "Warning: I will remove current skills and replace with the latest." On accept, calls POST `/api/skills/<name>/update` and reloads the skills list.
+
+# Memory API (AGENTS.md editor)
+
+The toolbar "Memory" modal edits the application's `AGENTS.md`. The backend is
+`memory.go`; the route is `/api/memory/<name>`, where `<name>` is the
+application name (`^[a-zA-Z][a-zA-Z0-9]{5,19}$`). It requires the normal Trustant
+session (see [authentication.md](authentication.md)). The file is
+`$WORKBENCH_DIR/<name>/AGENTS.md`.
+
+| Method | Request | Success | Errors |
+| --- | --- | --- | --- |
+| `GET` | none | `200` `{"content": "<text>"}`; `content` is `""` when the file does not exist | `400` invalid name, `404` workbench not found, `500` read failure |
+| `POST` | JSON `{"content": "<text>"}` | `200` `{"status": "ok"}` | `400` invalid name or body, `404` workbench not found, `500` write or `git add` failure |
+| other | | | `405` |
+
+`POST` overwrites the whole file (mode `0644`), is idempotent for identical
+content, and runs `git add AGENTS.md` in the checkout only when it created the
+file. It does not commit. The body has no size limit beyond the server's.
+
+```bash
+curl -s -b cookies.txt https://trustant.example.test/api/memory/demoapp1
+curl -s -b cookies.txt -X POST -H 'Content-Type: application/json' \
+  -d '{"content":"# Notes\n"}' https://trustant.example.test/api/memory/demoapp1
+```

@@ -527,8 +527,8 @@ On this path the host *is* the target, so `gh` is installed up front. The order 
 2. `.env` seeding — host-agnostic, first on both hosts after that.
 3. **preflight** (the checks above).
 4. **`gh` via apt.**
-5. the rest of the native flow, starting with the submodule initialization
-   (all submodules are public, cloned anonymously over https).
+5. the rest of the native flow, starting with the check that the vendored
+   runtime sources (`mcp/`, `acp/`, `acp/pi-acp/`) exist.
 
 Preflight moves ahead of the `gh` install because that install goes through the
 privileged runner, whose `sudo -n` the sudo check has already verified. Preflight
@@ -764,20 +764,19 @@ image types). `start.ps1` re-checks `start.sh` for CR bytes before provisioning
 anything and aborts with the renormalization commands if any are found.
 
 That covers this repository and nothing else: **`.gitattributes` does not cross a
-submodule boundary.** Each submodule is its own repository with its own working
-tree and its own attributes, so Git for Windows' system-config
-`core.autocrlf=true` still checks them out as CRLF. The symptom is not the usual
+submodule boundary.** The only remaining submodule, `oplugins-truinst`, is its
+own repository with its own working tree and attributes, so Git for Windows'
+system-config `core.autocrlf=true` still checks it out as CRLF. The symptom is not the usual
 `syntax error near unexpected token` — a CRLF *shebang* makes bash report the
 interpreter as missing:
 
     ./setup.sh: line 686: ./setup.sh: cannot execute: required file not found
 
-`ensure_source_submodules` therefore closes the gap on both hosts:
+`ensure_source_submodules` first verifies that the vendored runtime sources
+exist (it no longer initializes any submodule), then calls
+`normalize_submodule_eol` to close the gap:
 
-- the `git submodule update --init` runs under `-c core.autocrlf=false -c
-  core.eol=lf`, which git propagates to the per-submodule clone and checkout, so
-  a fresh checkout is LF from the start;
-- afterwards `normalize_submodule_eol` walks every initialized submodule
+- `normalize_submodule_eol` walks every initialized submodule
   recursively, persists `core.autocrlf=false` / `core.eol=lf` in that
   submodule's own config, and repairs a working tree that is still CRLF
   (`git rm --cached -r .` + `git reset --hard`).

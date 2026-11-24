@@ -22,7 +22,7 @@ flowchart LR
     Go -->|deploy, provision| OS[OpenServerless on k3s]
 ```
 
-The Go server owns configuration, repositories, launch, publishing, and the license checks. The assistant runs as a separate process reached through its own hostname; it works on the same application checkout the preview serves.
+The Go server owns configuration, repositories, launch, publishing, and the license checks. The assistant runs as a separate process reached through its own hostname; it works on the same application checkout the preview serves. The hostname routing and its authentication boundary are diagrammed in [request routing](spec/authentication.md#request-routing).
 
 ## Quick start
 

@@ -303,7 +303,7 @@ Both `--build` and `--buildx` also stage `LICENSE`, `NOTICE` and `DEPS` with
 That set covers a Go change, a container entrypoint fix, a flag flip in `.env`
 (e.g. adding the hidden `ENABLE_LICENSE` / `ENABLE_REGOLO` overrides) and a base-config change — none of which
 need the MCP/TruACP stages rebuilt. Everything `image/image.sh` does before its
-first `docker build` line (submodule init, `npm install`/`build` for
+first `docker build` line (vendored source checks, `npm install`/`build` for
 TruACP in `acp/`, `npm ci` / `npm test` / `npm run build` / `npm pack` for the
 adapter in `acp/pi-acp/`, three staged MCP context dirs, ~20 minutes) is skipped.
 
@@ -423,7 +423,7 @@ The checkout must set `submodules: recursive`: `opsroot.json` lives in the
 `oplugins-truinst` submodule, and without it the hotfix path cannot resolve its
 base image. That submodule is private, but it is in the same org as this repo
 (`trustant`), so the job's own `GITHUB_TOKEN` reaches it and **no PAT is
-involved**. Every other submodule is public.
+involved**. It is the only submodule; `mcp/`, `oplugins/` and `skills/` are vendored.
 
 The GHCR login uses that same `GITHUB_TOKEN`: the image publishes to
 `ghcr.io/trustant/trustant`, the org that owns this repo, so the `packages:
