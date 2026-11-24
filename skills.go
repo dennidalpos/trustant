@@ -30,9 +30,9 @@ import (
 
 // SkillInfo represents a single skill parsed from SKILL.md
 type SkillInfo struct {
-	Name       string            `json:"name"`
+	Name        string            `json:"name"`
 	FrontMatter map[string]string `json:"front_matter"`
-	Body       string            `json:"body"`
+	Body        string            `json:"body"`
 }
 
 // SkillsResponse is the response for GET /api/skills/<name>

@@ -26,7 +26,10 @@ function resultText(result: { content: { text: string }[] }): string {
   return result.content.map((part) => part.text).join("\n")
 }
 
-test("action_invoke returns the action result instead of an activation id", async () => {
+// The stub is a shebang script: Windows cannot execute it and execFile("ops") does not resolve it.
+test("action_invoke returns the action result instead of an activation id", {
+  skip: process.platform === "win32" ? "requires a POSIX shebang stub for ops (not executable on Windows)" : false,
+}, async () => {
   const directory = mkdtempSync(join(tmpdir(), "openserverless-mcp-invoke-test-"))
   const bin = join(directory, "bin")
   const ops = join(bin, "ops")
