@@ -1656,7 +1656,7 @@ func writeManagedInstructionFile(projectDir, filename string) error {
 		return fmt.Errorf("failed to read %s: %w", path, err)
 	}
 	content := mergeManagedAppAgents(string(existingBytes))
-	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+	if err := writeFileNoFollow(path, []byte(content), 0644); err != nil {
 		return fmt.Errorf("failed to write %s: %w", path, err)
 	}
 	return nil
@@ -1731,7 +1731,7 @@ func generateProjectAssetsInDir(projectDir string, mcp map[string]interface{}) e
 	log.Printf("  - Written to %s", filepath.Join(projectDir, "AGENTS.md"))
 
 	contractPath := filepath.Join(canonicalProjectDir, ".openserverless-contract.md")
-	if err := os.WriteFile(contractPath, []byte(openserverlessContractMd), 0644); err != nil {
+	if err := writeFileNoFollow(contractPath, []byte(openserverlessContractMd), 0644); err != nil {
 		return fmt.Errorf("failed to write %s: %w", contractPath, err)
 	}
 	log.Printf("  - Written to %s", contractPath)
@@ -2841,7 +2841,7 @@ func writeEnvFile(path string, vars map[string]string, order []string) error {
 			lines = append(lines, fmt.Sprintf("%s=%s", k, v))
 		}
 	}
-	return os.WriteFile(path, []byte(strings.Join(lines, "\n")+"\n"), 0600)
+	return writeFileNoFollow(path, []byte(strings.Join(lines, "\n")+"\n"), 0600)
 }
 
 func isServiceRuntimeEnvKey(name string) bool {

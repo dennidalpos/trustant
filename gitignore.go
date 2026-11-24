@@ -111,7 +111,7 @@ func ensureManagedGitignore(workbenchPath string) (bool, error) {
 	if updated == existing {
 		return false, nil
 	}
-	if err := os.WriteFile(path, []byte(updated), 0644); err != nil {
+	if err := writeFileNoFollow(path, []byte(updated), 0644); err != nil {
 		return false, fmt.Errorf("failed to write %s: %w", path, err)
 	}
 	return true, nil

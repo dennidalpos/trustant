@@ -99,7 +99,7 @@ func saveSharedEnv(app string, vars map[string]string) error {
 		b.WriteString(vars[name])
 		b.WriteString("\n")
 	}
-	return os.WriteFile(path, []byte(b.String()), 0644)
+	return writeFileNoFollow(path, []byte(b.String()), 0644)
 }
 
 // sharedVarPrefix is the prefix every variable an app shares must carry once

@@ -1052,7 +1052,7 @@ func ensureRequiredWorkbenchFolders(workbenchPath string) {
 					log.Printf("ensureRequiredWorkbenchFolders: failed to read embedded %s: %s", src, err)
 					continue
 				}
-				if err := os.WriteFile(filepath.Join(webDir, dest), data, 0644); err != nil {
+				if err := writeWorkbenchFile(workbenchPath, "web/"+dest, data, 0644); err != nil {
 					log.Printf("ensureRequiredWorkbenchFolders: failed to write web/%s: %s", dest, err)
 					continue
 				}

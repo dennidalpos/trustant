@@ -196,7 +196,7 @@ func writeEnvDistBindings(path string, bindings []EnvBinding) (bool, error) {
 	if existing, err := os.ReadFile(path); err == nil && string(existing) == content {
 		return false, nil
 	}
-	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+	if err := writeFileNoFollow(path, []byte(content), 0644); err != nil {
 		return false, err
 	}
 	return true, nil

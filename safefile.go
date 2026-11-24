@@ -70,3 +70,10 @@ func writeWorkbenchFile(root, rel string, data []byte, perm os.FileMode) error {
 	}
 	return file.Close()
 }
+
+// writeFileNoFollow is writeWorkbenchFile for a file that sits directly in its
+// workbench directory (.env, AGENTS.md, .gitignore, ...): the containing
+// directory is the root, so only the final component can be a planted link.
+func writeFileNoFollow(path string, data []byte, perm os.FileMode) error {
+	return writeWorkbenchFile(filepath.Dir(path), filepath.Base(path), data, perm)
+}
