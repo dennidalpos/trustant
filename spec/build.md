@@ -154,6 +154,15 @@ for amd64 and arm64; both the image and repository-root setup verify the
 matching checksum before installing `/usr/local/bin/gh`. Builds never resolve a
 floating GitHub CLI release or copy a host developer's GitHub configuration.
 
+## Go directive and toolchain
+
+`go.mod` declares `go 1.27` (language minimum) and `toolchain go1.27.4` (exact
+release). CI reads both through `go-version-file`, which prefers the `toolchain`
+line, and `setup.sh` installs the `toolchain` release. The `ops` builder in
+`image/Dockerfile` pins `golang:1.27.4` with `GOTOOLCHAIN=local`; it builds the
+OpenServerless CLI fork, not this module, so move it together with the
+`toolchain` line. Native ARM64 execution is not verified by this decision.
+
 The image builds its `ops` binary for Linux AMD64 and ARM64 from the Trustant
 OpenServerless CLI fork. The Dockerfile pins the Go builder, verifies the fork
 source archive, and verifies the module files after the go-git update. The

@@ -212,7 +212,10 @@ ok "uv is available"
 
 # --- 4. Check Go (install via g if missing), activate version from go.mod, air ---
 echo "--- Checking Go ---"
-GO_VERSION=$(grep '^go ' go.mod | awk '{print $2}')
+# The `toolchain` directive pins the exact release; the `go` directive is only
+# the language minimum (for example 1.27) and cannot be installed by `g`.
+GO_VERSION=$(awk '$1=="toolchain"{sub(/^go/,"",$2); print $2; exit}' go.mod)
+[[ -n "$GO_VERSION" ]] || GO_VERSION=$(awk '$1=="go"{print $2; exit}' go.mod)
 
 # `g` persists both its own bin directory and the active Go toolchain in this
 # file. Non-interactive Lima/WSL shells do not source it automatically, so load

@@ -131,7 +131,8 @@ The script is downloaded in full and run only if its SHA-256 is
 which installs g 1.8.0); update tag and hash together.
 
 Source `~/.g/env` first when it already exists, restoring both `~/.g/bin` and
-the active Go toolchain to `PATH`, then activate the Go version in `go.mod`.
+the active Go toolchain to `PATH`, then activate the Go release named by the `toolchain` directive in `go.mod`
+(falling back to the `go` directive when there is no `toolchain` line).
 Repeated setup runs must not reinstall `g` or report it missing merely because
 a non-interactive Lima/WSL shell did not inherit its environment.
 
