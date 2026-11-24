@@ -64,6 +64,34 @@ var milvusCliTemplate string
 // but must revalidate (a cheap 304 via Last-Modified) on every load. Without a
 // Cache-Control header the browser applies heuristic freshness and can pair a
 // new HTML page with a stale CSS or JS file for days after an upgrade.
+// Request body limits. Ordinary API calls carry small JSON; /api/upload takes
+// user files and gets a larger, still bounded, allowance.
+const (
+	maxRequestBody int64 = 8 << 20
+	maxUploadBody  int64 = 512 << 20
+)
+
+// limitBody caps every request body so no handler can be made to buffer or
+// spool an unbounded amount. A declared Content-Length over the limit is
+// rejected up front with 413; undeclared (chunked) bodies are cut off by
+// http.MaxBytesReader and surface as a read error in the handler.
+func limitBody(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		limit := maxRequestBody
+		if r.URL.Path == "/api/upload" {
+			limit = maxUploadBody
+		}
+		if r.ContentLength > limit {
+			http.Error(w, "Request body too large", http.StatusRequestEntityTooLarge)
+			return
+		}
+		if r.Body != nil {
+			r.Body = http.MaxBytesReader(w, r.Body, limit)
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func noStoreHTML(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch {
@@ -177,7 +205,7 @@ func main() {
 
 	log.Println("Starting server on :8910")
 	// Wrap with hostname verification middleware (implements spec points 7 & 8)
-	handler := hostnameMiddleware(auth.middleware(http.DefaultServeMux))
+	handler := hostnameMiddleware(auth.middleware(limitBody(http.DefaultServeMux)))
 	if err := http.ListenAndServe(":8910", handler); err != nil {
 		log.Fatal(err)
 	}

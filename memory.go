@@ -17,6 +17,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"os"
 	"os/exec"
@@ -73,7 +74,11 @@ func handleMemory(w http.ResponseWriter, r *http.Request) {
 			isNew = true
 		}
 
-		if err := os.WriteFile(agentsPath, []byte(req.Content), 0644); err != nil {
+		if err := writeWorkbenchFile(workbenchPath, "AGENTS.md", []byte(req.Content), 0644); err != nil {
+			if errors.Is(err, errUnsafeWrite) {
+				http.Error(w, "Invalid path", http.StatusBadRequest)
+				return
+			}
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

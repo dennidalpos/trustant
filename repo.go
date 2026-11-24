@@ -811,8 +811,12 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 
 	// Create the destination file
 	destPath := filepath.Join(uploadDir, filename)
-	destFile, err := os.Create(destPath)
+	destFile, err := openWorkbenchFile(workbenchPath, "upload/"+filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
+		if errors.Is(err, errUnsafeWrite) {
+			http.Error(w, "Invalid destination", http.StatusBadRequest)
+			return
+		}
 		http.Error(w, "Failed to create destination file", http.StatusInternalServerError)
 		return
 	}

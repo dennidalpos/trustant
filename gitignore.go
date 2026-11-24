@@ -266,7 +266,7 @@ func rescueClaudeAppLocalNotes(workbenchPath string) {
 		merged += "\n## App-local notes\n"
 	}
 	merged += "\n" + notes + "\n"
-	if err := os.WriteFile(agentsPath, []byte(merged), 0644); err != nil {
+	if err := writeWorkbenchFile(workbenchPath, "AGENTS.md", []byte(merged), 0644); err != nil {
 		log.Printf("rescueClaudeAppLocalNotes: failed to write AGENTS.md: %s", err)
 		return
 	}
