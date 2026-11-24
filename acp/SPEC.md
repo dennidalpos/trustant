@@ -158,6 +158,10 @@ The browser transport in `web/transport.ts` sends HTTP requests and subscribes t
 
 `web/ChatApp.tsx` renders the conversation, permissions, composer and notebook controls. The Node server supplies the project directory and handles directory changes (see §10e).
 
+The activity status announces when a turn is waiting for permission. A new request focuses its labelled group unless a modal is already open. Tab reaches the response buttons. Once the request closes, focus returns through the conversation to the composer when it becomes usable, provided the user has not moved focus elsewhere. A failed response keeps the request available for retry.
+
+The standalone toolbar wraps when its controls cannot fit on one line. At short viewport heights, the document scrolls so the toolbar, conversation, and composer stay reachable. The activity spinner stays still under reduced motion.
+
 Live ACP tool calls in chat and notebook activity can show plain text in a collapsed **Tool output** disclosure. Each supplied content snapshot replaces the previous text. Status-only updates leave it in place. The server applies its existing redaction before limiting the text to 8 KiB of UTF-8. TruACP excludes the text from saved messages and notebook state and suppresses it during ACP history replay. An agent may retain its own native history separately. Structured diff and terminal references keep their existing behavior.
 
 ## 8. Styling

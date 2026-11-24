@@ -25,7 +25,9 @@
 	--text: #1f2328;
 	--muted: #6b7280;
 	--border: #e4e4e7;
+	--field-border: #76767f;
 	--accent: #2563eb;
+	--status-text: #2563eb;
 	--accent-text: #ffffff;
 	--error-bg: #fee2e2;
 	--error-text: #991b1b;
@@ -45,7 +47,10 @@
 		--text: #e4e4e7;
 		--muted: #9ca3af;
 		--border: #3f3f46;
+		--field-border: #858591;
 		--accent: #3b82f6;
+		--accent-text: #101827;
+		--status-text: #93c5fd;
 		--error-bg: #451a1a;
 		--error-text: #fca5a5;
 		--warning-text: #facc15;
@@ -75,13 +80,26 @@ body {
 	height: 100vh;
 }
 
+/* High zoom can leave too little height for a nested conversation scroller.
+   Use the document scrollbar so a focused permission and its actions fit. */
+@media (max-height: 18rem) {
+	.app {
+		height: auto;
+		min-height: 100vh;
+	}
+
+	.app .messages {
+		overflow: visible;
+	}
+}
+
 /* top bar */
-/* The header never wraps: when the chat panel narrows the dropdowns shrink
-   down to --topbar-select-min, and the host stops the divider there (#211). */
+/* The embedding host prefers a single row when there is room. A narrow
+   standalone viewport can wrap the controls instead of clipping them. */
 .topbar {
 	--topbar-select-min: 5rem;
 	display: flex;
-	flex-wrap: nowrap;
+	flex-wrap: wrap;
 	min-width: 0;
 	align-items: center;
 	gap: 0.6rem;
@@ -118,8 +136,9 @@ body {
 }
 .topbar .status {
 	flex: 0 0 auto;
-	white-space: nowrap;
-	color: var(--accent);
+	max-width: 100%;
+	overflow-wrap: anywhere;
+	color: var(--status-text);
 	font-weight: 500;
 }
 .topbar button.icon-action {
@@ -369,6 +388,7 @@ body {
 }
 .composer textarea {
 	flex: 1;
+	min-width: 0;
 	resize: none;
 	box-sizing: border-box;
 	/* One row by default, auto-grown by ChatApp up to five, then scrolls. */
@@ -379,7 +399,7 @@ body {
 	/* After `font`, whose shorthand resets line-height. */
 	line-height: var(--composer-line);
 	padding: 0.5rem 0.7rem;
-	border: 1px solid var(--border);
+	border: 1px solid var(--field-border);
 	border-radius: 8px;
 	background: var(--bg);
 	color: var(--text);
@@ -400,6 +420,7 @@ body {
 }
 .composer button.stop {
 	background: #dc2626;
+	color: #fff;
 	min-width: 6.5rem;
 }
 
@@ -416,6 +437,17 @@ body {
 	background: var(--bg);
 	font-size: 0.85rem;
 }
+.activity:empty {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	min-height: 0;
+	padding: 0;
+	border: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+}
+
 .activity-spinner {
 	width: 0.8rem;
 	height: 0.8rem;
@@ -943,8 +975,9 @@ body {
 		opacity: 0.45;
 	}
 }
-/* A pulsing badge is decoration, not information; the label already says it. */
+/* State labels remain visible when their decorative motion stops. */
 @media (prefers-reduced-motion: reduce) {
+	.activity-spinner,
 	.notebook-run-state.running {
 		animation: none;
 	}

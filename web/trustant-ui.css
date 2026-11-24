@@ -145,6 +145,27 @@ textarea {
     overflow-y: auto;
 }
 
+.nu-application-card {
+    position: relative;
+}
+
+.nu-application-copy::after {
+    position: absolute;
+    inset: 0;
+    content: "";
+}
+
+.nu-application-card .nu-link {
+    position: relative;
+    z-index: 1;
+}
+
+#applicationNameError:empty {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
 #addAppModes .nu-btn {
     white-space: normal;
     overflow-wrap: anywhere;
@@ -421,9 +442,9 @@ textarea {
 }
 
 .nu-input:focus {
-    outline: 2px solid color-mix(in oklab, var(--nu-brand) 28%, transparent);
+    outline: 2px solid var(--nu-control-text);
     outline-offset: 1px;
-    border-color: var(--nu-brand);
+    border-color: var(--nu-control-text);
 }
 
 .nu-output {
@@ -580,6 +601,18 @@ textarea {
 .nu-app-table .nu-btn,
 .nu-app-table .nu-chip {
     font-weight: 500;
+}
+
+/* Keep column headings available to assistive technology in the stacked view. */
+@media (width < 1280px) {
+    .nu-app-table-head {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
 }
 
 @media (min-width: 1280px) {

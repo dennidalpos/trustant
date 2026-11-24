@@ -19,9 +19,9 @@
  * Reports the narrowest width the chat header fits in to the embedding host
  * (Trustant's app.html), which stops its divider there (#211).
  *
- * The header never wraps: its dropdowns shrink to their CSS min-width instead.
- * Past that point the icons would overflow, and the frame cannot clamp its own
- * width — only the host owns the divider — so the floor is posted upward.
+ * The host keeps a single row when resizing the embedded chat. The standalone
+ * header may wrap at narrow widths, so this measurement sums the one-row floor
+ * independently of the current row arrangement.
  */
 
 export const MIN_WIDTH_MESSAGE = "trustant-chat-min-width";

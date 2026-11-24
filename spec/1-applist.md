@@ -60,7 +60,8 @@ matching applications. Searching filters by app name, repository, production
 host, and production user without calling the backend again.
 The sort control has a stable accessible name. Filter and view buttons expose
 their pressed state, and the results count updates in a polite live region
-while focus stays on the current control.
+while focus stays on the current control. List view exposes its column headers
+and cells as a table, including when the rows stack on narrow screens.
 The 24 px summary values have a contrast ratio of at least 3:1 against their
 cards. The search placeholder has a contrast ratio of at least 4.5:1 against
 the input background.
@@ -273,6 +274,9 @@ the name panel is up. A **"<n> of <total>"** counter sits under the carousel,
 and is omitted for a group of one.
 
 Switching groups restarts at the first application of the group now showing.
+The selected mode and group expose their pressed state, and the group button
+keeps focus. A polite status announces the template title and position when
+the slide changes.
 
 The application on show is a card filling the height the modal gives it, holding,
 top to bottom:
@@ -291,8 +295,9 @@ The icon is the element that absorbs the spare height, so the title stays pinned
 to the top and the description to the bottom whatever the card's size and
 however long the prose is.
 
-The card — anywhere but the link — is clickable and keyboard-activatable (Enter
-or Space) and opens the name panel.
+A **Use template** button opens the name panel with Enter, Space, or a click
+anywhere on the card outside the GitHub link. The link and button are separate
+keyboard stops.
 
 ### Name panel
 
@@ -300,8 +305,9 @@ Clicking the card replaces the carousel and its counter, in place, with a small
 panel: a line reading "Creating a copy of <title> from <repo>" and the repository it will be
 created from, an **Application Name** field, and **Cancel** / **Confirm**.
 
-**Cancel returns to the carousel** rather than closing the modal — the user is
-picking, not aborting. The modal's own Cancel and a scrim click still close it.
+**Cancel returns to the carousel** and restores focus to **Use template** on
+that card. The modal's own Cancel and a scrim click still close it. A rejected
+name is marked invalid and its error is announced and associated with the field.
 
 The name is prefilled with the entry's `name`, which the generator already
 guarantees is a legal slug, so it is used as published. When an application of

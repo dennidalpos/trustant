@@ -98,7 +98,7 @@
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-5">
                 <div>
                     <p class="nu-mono text-xs uppercase text-[color:var(--nu-muted)]">Workbench inventory</p>
-                    <h2 class="text-2xl font-light text-[color:var(--nu-ink)] mt-1">Applications</h2>
+                    <h2 id="applicationsHeading" class="text-2xl font-light text-[color:var(--nu-ink)] mt-1">Applications</h2>
                     <p id="appCount" tabindex="-1" role="status" aria-live="polite" aria-atomic="true" class="text-sm text-[color:var(--nu-muted)] mt-1">Loading...</p>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
@@ -106,7 +106,7 @@
                         <svg class="absolute left-3 top-2.5 h-4 w-4 text-[color:var(--nu-muted)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z"/>
                         </svg>
-                        <input id="appSearch" type="search" placeholder="Search apps or repositories"
+                        <input id="appSearch" type="search" aria-label="Search apps or repositories" placeholder="Search apps or repositories"
                             class="nu-input w-full pl-9 pr-3 py-2 text-sm placeholder:text-[color:var(--nu-muted)] placeholder:opacity-100">
                     </div>
                     <select id="appSort" aria-label="Sort applications by"
@@ -187,8 +187,9 @@
                 </div>
                 <p id="addAppModeHint" class="text-sm text-[color:var(--nu-muted)] mt-3"></p>
             </div>
-            <!-- One tab per catalog group, shown only in template mode. Built by renderAddAppTabs(). -->
-            <div id="addAppTabs" class="flex gap-1 mb-4 overflow-x-auto hidden"></div>
+            <!-- One button per catalog group, shown only in template mode. -->
+            <div id="addAppTabs" class="flex gap-1 mb-4 overflow-x-auto hidden" role="group" aria-label="Template groups"></div>
+            <p id="applicationCatalogStatus" class="sr-only" role="status"></p>
             <!-- Application pane: the tile row, replaced in place by the name panel. -->
             <div id="addAppApplicationPane" class="hidden">
                 <!-- One application at a time: arrows step through the group. -->
@@ -207,15 +208,15 @@
                     </p>
                     <div>
                         <label for="applicationName" class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">Application Name</label>
-                        <input type="text" id="applicationName" required
+                        <input type="text" id="applicationName" required aria-describedby="applicationNameHint applicationNameError"
                             pattern="[a-zA-Z][a-zA-Z0-9]{5,19}"
                             title="Must start with a letter, contain only alphanumeric characters, and be 6-20 characters long"
                             class="nu-input w-full px-3 py-2">
-                        <p class="text-xs text-[color:var(--nu-muted)] mt-1">6-20 alphanumeric characters, starting with a letter</p>
-                        <p id="applicationNameError" class="text-xs mt-1 hidden"></p>
+                        <p id="applicationNameHint" class="text-xs text-[color:var(--nu-muted)] mt-1">6-20 alphanumeric characters, starting with a letter</p>
+                        <p id="applicationNameError" class="nu-feedback nu-feedback-error text-xs mt-1" role="alert"></p>
                     </div>
                     <div class="flex gap-3">
-                        <button type="button" onclick="showApplicationRow()"
+                        <button type="button" onclick="cancelApplicationConfig()"
                             class="nu-btn nu-btn-secondary flex-1">
                             Cancel
                         </button>
@@ -1104,6 +1105,7 @@
             document.getElementById('addAppModes').classList.toggle('hidden', groups.length === 0);
             document.querySelectorAll('[data-add-app-mode]').forEach(btn => {
                 const active = btn.dataset.addAppMode === addAppMode;
+                btn.setAttribute('aria-pressed', String(active));
                 btn.classList.toggle('nu-btn-primary', active);
                 btn.classList.toggle('nu-btn-secondary', !active);
             });
@@ -1115,21 +1117,29 @@
         function renderAddAppTabs() {
             const strip = document.getElementById('addAppTabs');
             const groups = applicationGroupNames();
-            strip.innerHTML = '';
             if (addAppMode !== 'template' || groups.length === 0) {
                 strip.classList.add('hidden');
+                document.getElementById('applicationCatalogStatus').textContent = '';
                 return;
             }
             if (!groups.includes(activeAddAppGroup)) activeAddAppGroup = groups[0];
             strip.classList.remove('hidden');
-            for (const group of groups) {
-                const button = document.createElement('button');
-                button.type = 'button';
+            const buttons = Array.from(strip.children);
+            // Keep the focused group button mounted when only its pressed state changes.
+            if (buttons.length !== groups.length || buttons.some((button, i) => button.textContent !== groups[i])) {
+                strip.replaceChildren(...groups.map(group => {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.textContent = group;
+                    button.addEventListener('click', () => selectAddAppGroup(group));
+                    return button;
+                }));
+            }
+            for (const button of strip.children) {
+                const active = button.textContent === activeAddAppGroup;
                 button.className = 'nu-btn nu-btn-compact whitespace-nowrap ' +
-                    (group === activeAddAppGroup ? 'nu-btn-primary' : 'nu-btn-secondary');
-                button.textContent = group;
-                button.addEventListener('click', () => selectAddAppGroup(group));
-                strip.appendChild(button);
+                    (active ? 'nu-btn-primary' : 'nu-btn-secondary');
+                button.setAttribute('aria-pressed', String(active));
             }
         }
 
@@ -1178,11 +1188,15 @@
         function renderApplicationRow() {
             const slide = document.getElementById('applicationSlide');
             const position = document.getElementById('applicationPosition');
+            const status = document.getElementById('applicationCatalogStatus');
             const entries = activeApplications();
-            slide.innerHTML = '';
+            // Arrow keys can change a slide while its link or copy button has focus.
+            const focusedTag = slide.contains(document.activeElement) ? document.activeElement.tagName : '';
+            slide.replaceChildren();
 
             if (entries.length === 0) {
                 position.textContent = '';
+                status.textContent = '';
                 document.getElementById('applicationPrev').classList.add('hidden');
                 document.getElementById('applicationNext').classList.add('hidden');
                 return;
@@ -1198,33 +1212,23 @@
             position.textContent = single
                 ? '' : (applicationSlideIndex + 1) + ' of ' + entries.length;
 
+            const title = entry.title || entry.name;
+            status.textContent = single ? title : title + ', ' + position.textContent;
+
             const card = document.createElement('div');
-            // Title at the top, description at the bottom, the icon taking
-            // whatever height is left between them.
-            card.className = 'nu-card p-4 h-full w-full cursor-pointer flex flex-col gap-3 text-center items-center';
-            card.setAttribute('role', 'button');
-            card.setAttribute('tabindex', '0');
-            card.addEventListener('click', () => showApplicationConfig(entry));
-            card.addEventListener('keydown', e => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    showApplicationConfig(entry);
-                }
-            });
+            card.className = 'nu-application-card nu-card p-4 h-full w-full flex flex-col gap-3 text-center items-center';
 
             const link = document.createElement('a');
             link.href = 'https://github.com/' + entry.repo;
             link.target = '_blank';
             link.rel = 'noopener';
             link.className = 'nu-link font-medium text-lg shrink-0';
-            link.textContent = entry.title || entry.name;
-            // Following the link must not also open the name panel.
-            link.addEventListener('click', e => e.stopPropagation());
+            link.textContent = title;
             card.appendChild(link);
 
             const icon = document.createElement('img');
             icon.src = entry.icon || APPLICATION_ICON_PLACEHOLDER;
-            icon.alt = entry.title || entry.name;
+            icon.alt = '';
             icon.loading = 'lazy';
             // min-h-0 lets the icon shrink inside the flex column instead of
             // pushing the description off the bottom of the card.
@@ -1238,7 +1242,16 @@
                 description.textContent = entry.description;
                 card.appendChild(description);
             }
+            const copy = document.createElement('button');
+            copy.type = 'button';
+            copy.className = 'nu-application-copy nu-btn nu-btn-primary shrink-0';
+            copy.textContent = 'Use template';
+            copy.setAttribute('aria-label', 'Use template: ' + title);
+            copy.addEventListener('click', () => showApplicationConfig(entry));
+            card.appendChild(copy);
             slide.appendChild(card);
+            if (focusedTag === 'A') link.focus();
+            if (focusedTag === 'BUTTON') copy.focus();
         }
 
         // An application "name" is already a legal slug, so it is the prefill as
@@ -1265,6 +1278,11 @@
             hideApplicationNameError();
         }
 
+        function cancelApplicationConfig() {
+            showApplicationRow();
+            document.querySelector('#applicationSlide .nu-application-copy')?.focus();
+        }
+
         function showApplicationConfig(entry) {
             selectedApplication = entry;
             document.getElementById('applicationRow').classList.add('hidden');
@@ -1279,14 +1297,13 @@
         }
 
         function showApplicationNameError(message) {
-            const el = document.getElementById('applicationNameError');
-            el.className = feedbackClass('error') + ' text-xs mt-1';
-            el.textContent = message;
-            el.classList.remove('hidden');
+            document.getElementById('applicationName').setAttribute('aria-invalid', 'true');
+            document.getElementById('applicationNameError').textContent = message;
         }
 
         function hideApplicationNameError() {
-            document.getElementById('applicationNameError').classList.add('hidden');
+            document.getElementById('applicationName').removeAttribute('aria-invalid');
+            document.getElementById('applicationNameError').textContent = '';
         }
 
         async function loadStarters() {
@@ -2377,12 +2394,12 @@
 
         function renderAppTable(apps) {
             return `
-                <div class="nu-card nu-app-table">
-                    <div class="nu-app-table-line hidden xl:grid rounded-t gap-3 px-4 py-3 bg-[color:var(--nu-accent)] border-b border-[color:var(--nu-rule)] nu-mono text-xs font-medium uppercase text-[color:var(--nu-muted)]">
-                        <div>Application</div>
-                        <div>Repository</div>
-                        <div class="text-center">Status</div>
-                        <div>Actions</div>
+                <div class="nu-card nu-app-table" role="table" aria-labelledby="applicationsHeading">
+                    <div role="row" class="nu-app-table-head nu-app-table-line grid rounded-t gap-3 px-4 py-3 bg-[color:var(--nu-accent)] border-b border-[color:var(--nu-rule)] nu-mono text-xs font-medium uppercase text-[color:var(--nu-muted)]">
+                        <div role="columnheader">Application</div>
+                        <div role="columnheader">Repository</div>
+                        <div role="columnheader" class="text-center">Status</div>
+                        <div role="columnheader">Actions</div>
                     </div>
                     ${apps.map(renderAppRow).join('')}
                 </div>`;
@@ -2393,9 +2410,9 @@
             const name = escapeHtml(JSON.stringify(app.name)).replaceAll('"', '&quot;');
             const label = escapeHtml(app.name).replaceAll('"', '&quot;');
             return `
-                <div class="nu-app-table-line grid gap-3 px-4 py-3 border-b border-[color:var(--nu-rule)] last:border-b-0 items-center hover:bg-[color:var(--nu-accent)] transition-colors">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <div class="${avatarClass(app.name)}">${initials(app.name)}</div>
+                <div role="row" class="nu-app-table-line grid gap-3 px-4 py-3 border-b border-[color:var(--nu-rule)] last:border-b-0 items-center hover:bg-[color:var(--nu-accent)] transition-colors">
+                    <div role="cell" class="flex items-center gap-3 min-w-0">
+                        <div class="${avatarClass(app.name)}" aria-hidden="true">${initials(app.name)}</div>
                         <div class="min-w-0">
                             <div class="font-semibold text-[color:var(--nu-ink)] truncate">${escapeHtml(app.name)}</div>
                             <div class="flex flex-wrap gap-x-3 gap-y-1 text-sm mt-1">
@@ -2404,11 +2421,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="text-sm min-w-0">
+                    <div role="cell" class="text-sm min-w-0">
                         ${links.repo ? `<a href="${links.repo}" target="_blank" class="nu-link truncate block">${escapeHtml(links.repoLabel)}</a>` : '<span class="text-[color:var(--nu-muted)]">No repository</span>'}
                     </div>
-                    <div class="text-center">${statusBadge(hasProduction(app))}</div>
-                    <div class="nu-app-actions flex flex-wrap gap-2">
+                    <div role="cell" class="text-center">${statusBadge(hasProduction(app))}</div>
+                    <div role="cell" class="nu-app-actions flex flex-wrap gap-2">
                         <button onclick="launchApp(${name})" title="Open this application in the editor" class="nu-btn nu-btn-primary">${editIcon('w-3.5 h-3.5')} Edit</button>
                         ${actionButton('Publish', `handlePublishRemote(${name})`, globeIcon(), 'teal')}
                         <details class="nu-app-actions-menu" name="inventory-app-actions">

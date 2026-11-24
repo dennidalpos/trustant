@@ -320,6 +320,10 @@ export function ChatApp(): React.ReactElement {
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const followOutputRef = useRef(true);
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
+	const stopButtonRef = useRef<HTMLButtonElement>(null);
+	const permissionRef = useRef<HTMLDivElement>(null);
+	const permissionResponseRef = useRef<string | null>(null);
+	const restoreComposerFocusRef = useRef(false);
 	const promptHistoryRef = useRef(createPromptHistoryCursor());
 	const connectionState = headerConnectionState(ready, busy);
 
@@ -426,6 +430,35 @@ export function ChatApp(): React.ReactElement {
 		if (el && followOutputRef.current) el.scrollTop = el.scrollHeight;
 	}, [turns, permission, notebook]);
 
+	const permissionRequestId = permission?.requestId;
+	useLayoutEffect(() => {
+		// A permission blocks the turn. Focus its label before the actions, while
+		// respecting any dialog the user already has open.
+		if (permissionRequestId && !document.activeElement?.closest('[aria-modal="true"]')) {
+			permissionRef.current?.focus();
+		}
+	}, [permissionRequestId]);
+
+	const returnToComposer = useCallback(() => {
+		restoreComposerFocusRef.current = true;
+		scrollRef.current?.focus({ preventScroll: true });
+	}, []);
+
+	const returnFromPermission = useCallback((requestId: string) => {
+		const panel = permissionRef.current;
+		if (panel?.dataset.requestId === requestId && panel.contains(document.activeElement)) {
+			returnToComposer();
+		}
+	}, [returnToComposer]);
+
+	useLayoutEffect(() => {
+		const composer = textareaRef.current;
+		if (permissionRequestId || !restoreComposerFocusRef.current || !composer || composer.disabled) return;
+		restoreComposerFocusRef.current = false;
+		// A long-running tool can outlast the user's stay in the conversation.
+		if (document.activeElement === scrollRef.current) composer.focus();
+	}, [permissionRequestId, ready, running, notebookBusy]);
+
 	// WHY: provider silence is normal during long reasoning. A local elapsed
 	// clock proves the request is still active without inventing a completion
 	// percentage or adding heartbeat text to the transcript.
@@ -529,7 +562,7 @@ export function ChatApp(): React.ReactElement {
 						},
 					]);
 				}
-				if (u.permissionRequest && !u.permissionRequest.isCancelled) {
+				if (u.sessionId === sessionRef.current && u.permissionRequest && !u.permissionRequest.isCancelled) {
 					setPermission({
 						requestId: u.permissionRequest.requestId,
 						title: toolDisplayText(
@@ -545,6 +578,11 @@ export function ChatApp(): React.ReactElement {
 				}
 				break;
 			case "tool_call_update":
+				if (u.sessionId === sessionRef.current && u.permissionRequest?.isCancelled) {
+					const { requestId } = u.permissionRequest;
+					returnFromPermission(requestId);
+					setPermission((current) => current?.requestId === requestId ? null : current);
+				}
 				setNotebook((state) =>
 					state
 						? {
@@ -623,7 +661,7 @@ export function ChatApp(): React.ReactElement {
 			default:
 				break;
 		}
-	}, []);
+	}, [returnFromPermission]);
 
 	function appendNotebookAssistant(
 		nodeId: string,
@@ -1222,6 +1260,7 @@ export function ChatApp(): React.ReactElement {
 		setRunAllActive(false);
 		cancelRequestedRef.current = true;
 
+		if (document.activeElement === stopButtonRef.current) returnToComposer();
 		setStopping(true);
 		setActivity({
 			state: "stopping",
@@ -1245,7 +1284,7 @@ export function ChatApp(): React.ReactElement {
 			setStopping(false);
 			setError(`Stop failed: ${String((e as Error).message ?? e)}`);
 		}
-	}, [running, stopping]);
+	}, [returnToComposer, running, stopping]);
 
 	const newChat = useCallback(async () => {
 		if (!agentId || busy || running) return;
@@ -1847,16 +1886,21 @@ export function ChatApp(): React.ReactElement {
 
 	const respond = useCallback(
 		async (optionId: string) => {
-			if (!permission) return;
+			if (!permission || permissionResponseRef.current === permission.requestId) return;
 			const { requestId } = permission;
-			setPermission(null);
+			permissionResponseRef.current = requestId;
+			setError(null);
 			try {
 				await transport.respondToPermission(requestId, optionId);
+				returnFromPermission(requestId);
+				setPermission((current) => current?.requestId === requestId ? null : current);
 			} catch (e) {
 				setError(String((e as Error).message ?? e));
+			} finally {
+				if (permissionResponseRef.current === requestId) permissionResponseRef.current = null;
 			}
 		},
-		[permission],
+		[permission, returnFromPermission],
 	);
 
 	/**
@@ -2128,6 +2172,7 @@ export function ChatApp(): React.ReactElement {
 				    would make Stop target the wrong ACP session. */}
 				<select
 					className="agent-select"
+					aria-label="Agent"
 					value={agentId}
 					disabled={busy || running || agentLoadState !== "loaded" || agents.length === 0}
 					onChange={(e) => void selectAgent(e.target.value)}
@@ -2705,8 +2750,15 @@ export function ChatApp(): React.ReactElement {
 					/>
 				))}
 				{permission && (
-					<div className="permission">
-						<div className="perm-title">🔐 {permission.title}</div>
+					<div
+						className="permission"
+						ref={permissionRef}
+						data-request-id={permission.requestId}
+						role="group"
+						aria-labelledby="permission-title"
+						tabIndex={-1}
+					>
+						<div className="perm-title" id="permission-title">Permission required: {permission.title}</div>
 						<div className="perm-options">
 							{permission.options.map((o) => (
 								<button
@@ -2745,26 +2797,31 @@ export function ChatApp(): React.ReactElement {
 				)}
 			</div>
 
-			{running && (
-				<div className="activity" role="status" aria-live="polite">
-					<span className="activity-spinner" aria-hidden="true" />
-					<span>
-						{!shellRunning && streamStatus === "reconnecting"
-							? "Reconnecting…"
-							: !shellRunning && streamStatus === "waiting"
-								? "Waiting for an update…"
-								: activity?.label || "Working"}
-					</span>
-					{/* Keep per-second timer updates out of the status announcement. */}
-					<span className="activity-elapsed" aria-hidden="true">
-						{formatElapsed(elapsedSeconds)}
-					</span>
-				</div>
-			)}
+			<div className="activity" role="status" aria-live="polite">
+				{(running || permission) && (
+					<>
+						{!permission && <span className="activity-spinner" aria-hidden="true" />}
+						<span>
+							{permission
+								? "Waiting for permission"
+								: !shellRunning && streamStatus === "reconnecting"
+									? "Reconnecting…"
+									: !shellRunning && streamStatus === "waiting"
+										? "Waiting for an update…"
+										: activity?.label || "Working"}
+						</span>
+						{/* Keep per-second timer updates out of the status announcement. */}
+						<span className="activity-elapsed" aria-hidden="true">
+							{formatElapsed(elapsedSeconds)}
+						</span>
+					</>
+				)}
+			</div>
 
 			<footer className="composer">
 				<textarea
 					ref={textareaRef}
+					aria-label="Message the agent"
 					rows={1}
 					value={input}
 					placeholder={
@@ -2788,6 +2845,7 @@ export function ChatApp(): React.ReactElement {
 					// in flight.
 					<button
 						className="stop"
+						ref={stopButtonRef}
 						onClick={() => void stop()}
 						disabled={stopping}
 					>
