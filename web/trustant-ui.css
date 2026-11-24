@@ -642,7 +642,7 @@ textarea {
 
 @media (min-width: 1280px) {
     .nu-app-table-line {
-        grid-template-columns: minmax(220px, 1.2fr) minmax(170px, 1fr) 110px 20rem;
+        grid-template-columns: minmax(220px, 1.2fr) minmax(170px, 1fr) 110px 23rem;
     }
 }
 
