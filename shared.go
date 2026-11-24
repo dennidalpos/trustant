@@ -88,7 +88,13 @@ func saveSharedEnv(app string, vars map[string]string) error {
 		return nil
 	}
 	names := make([]string, 0, len(vars))
-	for name := range vars {
+	for name, value := range vars {
+		if err := checkEnvField("shared variable name", name); err != nil {
+			return err
+		}
+		if err := checkEnvField("shared variable path", value); err != nil {
+			return err
+		}
 		names = append(names, name)
 	}
 	sort.Strings(names)
@@ -905,6 +911,10 @@ func handleSharedSave(w http.ResponseWriter, r *http.Request, app string) {
 		}
 		if !predefinedEnvNamePattern.MatchString(name) {
 			http.Error(w, "Invalid variable name: "+name, http.StatusBadRequest)
+			return
+		}
+		if err := checkEnvField("path of "+name, path); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 		// The refusal is TOTAL — nothing is written when one name is wrong. A

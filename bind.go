@@ -184,6 +184,14 @@ func writeEnvDistBindings(path string, bindings []EnvBinding) (bool, error) {
 		return true, nil
 	}
 
+	for _, b := range bindings {
+		if err := checkEnvField("import name", b.Name); err != nil {
+			return false, err
+		}
+		if err := checkEnvField("import pattern", b.Pattern); err != nil {
+			return false, err
+		}
+	}
 	var sb strings.Builder
 	for _, b := range bindings {
 		sb.WriteString(b.Name)
@@ -842,6 +850,9 @@ func saveImportBindings(app string, bindings []EnvBinding) error {
 		// editor; importing it too would give one variable two sources.
 		if appCfg != nil && strings.TrimSpace(appCfg.Development[name]) != "" {
 			return fmt.Errorf("%q already has a value in this app's environment — remove it there first", name)
+		}
+		if err := checkEnvField("import pattern of "+name, b.Pattern); err != nil {
+			return err
 		}
 		seen[name] = true
 		cleaned = append(cleaned, EnvBinding{Name: name, Pattern: strings.TrimSpace(b.Pattern)})

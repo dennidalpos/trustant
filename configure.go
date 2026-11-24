@@ -2828,6 +2828,14 @@ func parseEnvFile(path string) map[string]string {
 
 // writeEnvFile writes a map of key-value pairs to a .env file
 func writeEnvFile(path string, vars map[string]string, order []string) error {
+	for k, v := range vars {
+		if err := checkEnvField("variable name", k); err != nil {
+			return err
+		}
+		if err := checkEnvField("value of "+k, v); err != nil {
+			return err
+		}
+	}
 	var lines []string
 	written := make(map[string]bool)
 	for _, k := range order {
@@ -3245,6 +3253,16 @@ func handlePostAppConfig(w http.ResponseWriter, r *http.Request, name, workspace
 			}
 			if isServiceRuntimeEnvKey(v.Name) {
 				continue
+			}
+			if err := checkEnvName(v.Name); err != nil {
+				validationError = err.Error()
+				return err
+			}
+			for _, value := range []string{v.DevValue, v.ProdValue} {
+				if err := checkEnvField("value of "+v.Name, value); err != nil {
+					validationError = err.Error()
+					return err
+				}
 			}
 			// The env editor holds only variables that have a value. A blank one is
 			// not an under-specified variable to be carried along: it belongs in

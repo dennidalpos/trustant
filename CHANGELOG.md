@@ -51,6 +51,12 @@ All notable changes to Trustant are listed here. The latest release tag is
 - The server and `run.sh` warn at startup while authentication is disabled,
   because port 8910 listens on all interfaces over plain HTTP.
 
+- Line injection into the env-style files is closed. `writeEnvFile`,
+  `saveSharedEnv` and `writeEnvDistBindings` refuse names, values and patterns
+  containing a newline, carriage return or NUL, and `POST /api/appconfig`,
+  `POST /api/shared` and `POST /api/imports` answer 400. Variable names in
+  `POST /api/appconfig` must now match `[A-Za-z_][A-Za-z0-9_]*`.
+
 ### Tests
 
 - Added tests for session key parsing, the session and logout endpoints, host
