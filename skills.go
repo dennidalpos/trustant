@@ -17,12 +17,14 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -60,14 +62,54 @@ func getSkillsRepo(appName string) string {
 	return OpsSkills
 }
 
+// skillsRepoPattern is the owner/name form OPS_SKILLS must have. It is also
+// what keeps a value such as "--upload-pack=..." out of the git command line.
+var skillsRepoPattern = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._-]*/[A-Za-z0-9][A-Za-z0-9._-]*$`)
+
+// errSkillsSourceNotConfirmed means the app's OPS_SKILLS is outside the
+// allow-list and the caller did not confirm that exact source.
+var errSkillsSourceNotConfirmed = errors.New("skills source is not on the allow-list and was not confirmed")
+
+// skillsSourceAllowed reports whether repo is the global default or listed in
+// OPS_SKILLS_ALLOWED (comma-separated owner/name values set in the server
+// environment). The per-app .env files are writable by the agent, so they can
+// never extend the list.
+func skillsSourceAllowed(repo string) bool {
+	if strings.EqualFold(repo, OpsSkills) {
+		return true
+	}
+	for _, entry := range strings.Split(os.Getenv("OPS_SKILLS_ALLOWED"), ",") {
+		if entry = strings.TrimSpace(entry); entry != "" && strings.EqualFold(repo, entry) {
+			return true
+		}
+	}
+	return false
+}
+
+// checkSkillsSource validates repo and, when it is not allow-listed, requires
+// confirmed to equal it. confirmed is the source the user approved in the UI.
+func checkSkillsSource(repo, confirmed string) error {
+	if !skillsRepoPattern.MatchString(repo) {
+		return fmt.Errorf("invalid OPS_SKILLS value %q: expected owner/name", repo)
+	}
+	if skillsSourceAllowed(repo) || (confirmed != "" && strings.EqualFold(confirmed, repo)) {
+		return nil
+	}
+	return errSkillsSourceNotConfirmed
+}
+
 // setupSkills clones the skills repo into .agents/skills for an app.
-// Returns an error if the clone fails.
-func setupSkills(appName string) error {
+// confirmedSource is the non-default source the user explicitly approved, or
+// empty. Returns an error if the source is not permitted or the clone fails.
+func setupSkills(appName, confirmedSource string) error {
 	workbenchPath := filepath.Join(WorkbenchDir, appName)
 	agentsDir := filepath.Join(workbenchPath, ".agents")
 	skillsDir := filepath.Join(agentsDir, "skills")
 
 	repo := getSkillsRepo(appName)
+	if err := checkSkillsSource(repo, confirmedSource); err != nil {
+		return err
+	}
 
 	// Create .agents if it doesn't exist
 	if err := os.MkdirAll(agentsDir, 0755); err != nil {
@@ -150,7 +192,9 @@ func ensureSkills(appName string) bool {
 		return false
 	}
 
-	if err := setupSkills(appName); err != nil {
+	// Launch has no user in the loop: a non-allow-listed source is skipped and
+	// can be installed from the Skills dialog after explicit confirmation.
+	if err := setupSkills(appName, ""); err != nil {
 		log.Printf("Warning: failed to set up skills for %s: %s", appName, err)
 		return false
 	}
@@ -276,9 +320,36 @@ func handleSkills(w http.ResponseWriter, r *http.Request) {
 
 // handleSkillsUpdate handles POST /api/skills/<name>/update
 // Removes .agents/skills and re-clones
+// An optional JSON body {"confirm_source": "<owner/name>"} approves a source
+// that is not on the allow-list; without it such a source gets 409.
 func handleSkillsUpdate(w http.ResponseWriter, r *http.Request, name string) {
 	workbenchPath := filepath.Join(WorkbenchDir, name)
 	skillsDir := filepath.Join(workbenchPath, ".agents", "skills")
+
+	var body struct {
+		ConfirmSource string `json:"confirm_source"`
+	}
+	if r.Body != nil {
+		// An empty or malformed body simply means "no confirmation".
+		_ = json.NewDecoder(http.MaxBytesReader(w, r.Body, 4096)).Decode(&body)
+	}
+
+	// Check before removing anything so a refusal leaves installed skills intact.
+	source := getSkillsRepo(name)
+	if err := checkSkillsSource(source, body.ConfirmSource); err != nil {
+		if errors.Is(err, errSkillsSourceNotConfirmed) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusConflict)
+			json.NewEncoder(w).Encode(map[string]any{
+				"error":                 err.Error(),
+				"source":                source,
+				"requires_confirmation": true,
+			})
+			return
+		}
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	// Remove existing skills
 	if err := os.RemoveAll(skillsDir); err != nil {
@@ -287,7 +358,7 @@ func handleSkillsUpdate(w http.ResponseWriter, r *http.Request, name string) {
 	}
 
 	// Re-clone
-	if err := setupSkills(name); err != nil {
+	if err := setupSkills(name, body.ConfirmSource); err != nil {
 		http.Error(w, "Failed to update skills: "+err.Error(), http.StatusInternalServerError)
 		return
 	}

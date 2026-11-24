@@ -19,6 +19,7 @@ Pi share one set.
 
 1. Determine the skills repo: read `OPS_SKILLS` from `.env.production` if available and not empty, otherwise from `.env`, otherwise fall back to the global `OpsSkills` default (`trustable-ai/skills`)
 2. `cd` into the `.agents` directory
+2a. Check the source. The per-app `.env` files are writable by the agent, so a changed `OPS_SKILLS` would otherwise make Trustant clone arbitrary repositories whose content becomes agent instructions. The value must match `owner/name`. It is accepted without confirmation only when it equals the global `OpsSkills` default or is listed in the server-side `OPS_SKILLS_ALLOWED` environment variable (comma-separated `owner/name`; app `.env` files cannot extend it). Any other source needs explicit confirmation: the launch-time setup skips it (logged), and `POST /api/skills/<name>/update` refuses with `409` until the request carries `{"confirm_source": "<owner/name>"}` matching the configured source. The check runs before `.agents/skills` is removed.
 3. `git clone <repo> skills` — try SSH first (`git@github.com:<repo>.git` with `GIT_SSH_COMMAND` using the ed25519 key and `StrictHostKeyChecking=accept-new` with a dedicated known-hosts file, see `gitSSHCommand`). If SSH fails, clean up and fall back to HTTPS (`https://github.com/<repo>.git`). This is the same pattern used by repo cloning.
 4. Remove `skills/.git`
 5. `git add .agents/skills`
@@ -39,11 +40,12 @@ Returns the list of skills and the source repo.
 
 ## POST /api/skills/\<name\>/update
 
-Removes existing skills and re-clones.
+Removes existing skills and re-clones. Optional JSON body `{"confirm_source": "<owner/name>"}` approves a source that is not allow-listed; otherwise such a source returns `409` `{"error": "...", "source": "<owner/name>", "requires_confirmation": true}` and nothing is removed. An invalid `OPS_SKILLS` value returns `400`. The UI shows a confirmation naming the source and retries with `confirm_source` on accept.
 
-1. Remove `.agents/skills`
-2. Re-run the "adding the skills" process
-3. Return `{"status": "updated"}`
+1. Check the source (see 2a above)
+2. Remove `.agents/skills`
+3. Re-run the "adding the skills" process
+4. Return `{"status": "updated"}`
 
 # Skills UI
 

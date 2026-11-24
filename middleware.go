@@ -17,6 +17,7 @@ package main
 
 import (
 	"fmt"
+	"html"
 	"log"
 	"net"
 	"net/http"
@@ -195,7 +196,7 @@ func hostnameMiddleware(next http.Handler) http.Handler {
         <p><a href="%s">Click here to use the correct URL</a></p>
     </div>
 </body>
-</html>`, errorMsg, hostname, suggestedURL)
+</html>`, html.EscapeString(errorMsg), html.EscapeString(hostname), html.EscapeString(suggestedURL))
 			return
 		}
 	})

@@ -141,7 +141,12 @@ func TestParseHostnameProtocolAndPort(t *testing.T) {
 
 func TestHostnameMiddlewareRoutingAndRedirects(t *testing.T) {
 	originalTruacp, originalVite := truacpProxy, viteProxy
-	t.Cleanup(func() { truacpProxy, viteProxy = originalTruacp, originalVite })
+	originalWorkspace := WorkspaceDir
+	WorkspaceDir = t.TempDir() // unknown labels look up apps here, never in the real workspace
+	t.Cleanup(func() {
+		truacpProxy, viteProxy = originalTruacp, originalVite
+		WorkspaceDir = originalWorkspace
+	})
 	stub := func(label string) *httputil.ReverseProxy {
 		target, _ := url.Parse("http://" + label + ".invalid")
 		proxy := httputil.NewSingleHostReverseProxy(target)
@@ -185,5 +190,30 @@ func TestHostnameMiddlewareRoutingAndRedirects(t *testing.T) {
 	rec = serve("http://unknown.example.test:8910/")
 	if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), "http://trustant.example.test:8910") {
 		t.Fatalf("unknown host = %d %q, want 400 with suggested URL", rec.Code, rec.Body.String())
+	}
+}
+
+func TestHostnameMiddlewareEscapesHostInErrorPage(t *testing.T) {
+	originalWorkspace := WorkspaceDir
+	WorkspaceDir = t.TempDir()
+	t.Cleanup(func() { WorkspaceDir = originalWorkspace })
+
+	handler := hostnameMiddleware(http.NotFoundHandler())
+	req := httptest.NewRequest(http.MethodGet, "http://trustant.example.test/", nil)
+	req.Host = `x<script>alert(1)</script>"y.ex<b>ample.test`
+	rec := httptest.NewRecorder()
+	handler.ServeHTTP(rec, req)
+
+	body := rec.Body.String()
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want 400", rec.Code)
+	}
+	for _, raw := range []string{"<script>", "</script>", "<b>", `"y`} {
+		if strings.Contains(body, raw) {
+			t.Fatalf("error page contains unescaped %q: %s", raw, body)
+		}
+	}
+	if !strings.Contains(body, "&lt;b&gt;ample.test") {
+		t.Fatalf("error page missing escaped domain: %s", body)
 	}
 }

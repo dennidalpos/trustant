@@ -1508,10 +1508,23 @@
             document.getElementById('skillsUpdateConfirmButtons').classList.add('hidden');
 
             try {
-                const resp = await fetch(`/api/skills/${encodeURIComponent(appName)}/update`, {
-                    method: 'POST'
+                const updateSkills = (confirmSource) => fetch(`/api/skills/${encodeURIComponent(appName)}/update`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(confirmSource ? { confirm_source: confirmSource } : {})
                 });
-                const data = await resp.json();
+                let resp = await updateSkills();
+                let data = await resp.json();
+                // The source comes from the app's .env files, which the agent can edit:
+                // a source outside the server allow-list needs explicit approval.
+                if (resp.status === 409 && data.requires_confirmation) {
+                    if (window.confirm(`The skills source "${data.source}" is not on the allow-list.\n\nSkills become instructions for the agent. Install them from this repository?`)) {
+                        resp = await updateSkills(data.source);
+                        data = await resp.json();
+                    } else {
+                        data = { error: 'Skills update cancelled: source not confirmed.' };
+                    }
+                }
                 document.getElementById('skillsUpdateSpinner').classList.add('hidden');
 
                 const skillsBaseClasses = ' max-h-48 overflow-y-auto text-left text-sm nu-code nu-output p-3 whitespace-pre-wrap';
