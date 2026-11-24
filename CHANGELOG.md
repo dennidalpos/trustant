@@ -35,6 +35,9 @@ All notable changes to Trustant are listed here. The latest release tag is
   host is trusted on first use and a changed key is refused. To accept a
   legitimately rotated key, delete its line from that file.
 
+- The managed `ops ide devel` watcher starts without a shell: `opsDevelCommand`
+  sets the working directory instead of interpolating the path into `sh -c`.
+
 ### Tests
 
 - Added tests for session key parsing, the session and logout endpoints, host

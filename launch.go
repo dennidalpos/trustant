@@ -1632,7 +1632,7 @@ func handleLaunchGet(w http.ResponseWriter, r *http.Request, app string) {
 		return
 	}
 	fmt.Fprintf(develLog, "[trustant] starting managed watcher at %s\n", time.Now().Format(time.RFC3339))
-	develCmd := exec.Command("sh", "-c", fmt.Sprintf("cd %q && ops ide devel", workbenchPath))
+	develCmd := opsDevelCommand(workbenchPath, false)
 	develOutput := io.MultiWriter(os.Stdout, develLog)
 	develCmd.Stdout = develOutput
 	develCmd.Stderr = develOutput
@@ -1751,6 +1751,19 @@ func findDevelPids(pgid int) ([]int, error) {
 		}
 	}
 	return develPids, nil
+}
+
+// opsDevelCommand builds the managed `ops ide devel` watcher command. The
+// workbench is set as the working directory instead of being interpolated into
+// a `sh -c "cd ..."` string, so no path character can reach a shell.
+func opsDevelCommand(workbenchPath string, fast bool) *exec.Cmd {
+	args := []string{"ide", "devel"}
+	if fast {
+		args = append(args, "--fast")
+	}
+	cmd := exec.Command("ops", args...)
+	cmd.Dir = workbenchPath
+	return cmd
 }
 
 // waitForHTTP waits for an HTTP server to respond to HEAD requests
@@ -1948,7 +1961,7 @@ func serveRedeploy(w http.ResponseWriter, r *http.Request, previewPort int) {
 		return
 	}
 	fmt.Fprintf(develLog, "[trustant] restarting managed watcher with --fast at %s\n", time.Now().Format(time.RFC3339))
-	develCmd := exec.Command("sh", "-c", fmt.Sprintf("cd %q && ops ide devel --fast", workbenchPath))
+	develCmd := opsDevelCommand(workbenchPath, true)
 	develOutput := io.MultiWriter(os.Stdout, develLog)
 	develCmd.Stdout = develOutput
 	develCmd.Stderr = develOutput
