@@ -264,7 +264,7 @@ sync before logging in:
 - If the user does **not** exist: recreate it using the password from the
   workbench `.env` (`OPS_PASSWORD`, generated above), falling back to the stored
   config password (`apps.<name>.password`) only if `.env` has none, via
-  `ops admin adduser <name> <name>@n7s.co <password> --all`. If neither source
+  `ops admin adduser <name> <name>@n7s.co --all` with the password in `OPS_ADMIN_PASSWORD` (`addOpsUser`, with the legacy positional fallback). If neither source
   has a password, return `{ "error": ... }` (cannot recreate).
 - If the user **does** exist but the live password differs from the stored one,
   adopt the live password: persist it to the workspace config

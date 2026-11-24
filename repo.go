@@ -43,6 +43,22 @@ const appPasswordLength = 20
 
 // generateAppPassword returns a random password for a newly created
 // OpenServerless user. The browser no longer supplies one — see spec/2-repo.md.
+// addOpsUser creates an OpenServerless user with every service enabled. The
+// password travels in OPS_ADMIN_PASSWORD so it is not visible in the process
+// list. An ops whose adduser still requires the positional password rejects
+// that form with its usage text; only then is the legacy argv form tried, so
+// hosts that have not picked up the updated plugin keep working.
+func addOpsUser(name, email, password string) ([]byte, error) {
+	cmd := exec.Command("ops", "admin", "adduser", name, email, "--all")
+	cmd.Env = append(os.Environ(), "OPS_ADMIN_PASSWORD="+password)
+	output, err := cmd.CombinedOutput()
+	if err == nil || !strings.Contains(string(output), "Usage:") {
+		return output, err
+	}
+	log.Printf("ops admin adduser does not accept OPS_ADMIN_PASSWORD; retrying with the legacy positional password")
+	return exec.Command("ops", "admin", "adduser", name, email, password, "--all").CombinedOutput()
+}
+
 func generateAppPassword() (string, error) {
 	limit := big.NewInt(int64(len(appPasswordAlphabet)))
 	out := make([]byte, appPasswordLength)
@@ -483,8 +499,7 @@ func handlePostRepo(w http.ResponseWriter, r *http.Request) {
 		}
 		localPassword = generated
 		email := req.Name + "@n7s.co"
-		addUserCmd := exec.Command("ops", "admin", "adduser", req.Name, email, localPassword, "--all")
-		if output, err := addUserCmd.CombinedOutput(); err != nil {
+		if output, err := addOpsUser(req.Name, email, localPassword); err != nil {
 			log.Printf("Failed to add user: %s, output: %s", err, string(output))
 			http.Error(w, fmt.Sprintf("Failed to create user: %s", string(output)), http.StatusInternalServerError)
 			return

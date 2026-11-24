@@ -1336,8 +1336,7 @@ func handleLaunchGet(w http.ResponseWriter, r *http.Request, app string) {
 		}
 		log.Printf("User %s not found, creating with password from .env...", app)
 		email := app + "@n7s.co"
-		addUserCmd := exec.Command("ops", "admin", "adduser", app, email, recreatePassword, "--all")
-		if output, err := addUserCmd.CombinedOutput(); err != nil {
+		if output, err := addOpsUser(app, email, recreatePassword); err != nil {
 			json.NewEncoder(w).Encode(map[string]string{"error": fmt.Sprintf("Failed to create user: %s", string(output))})
 			return
 		}

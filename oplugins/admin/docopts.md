@@ -27,7 +27,7 @@ You can create namespaces and choose which services to enable.
 
 ```text
 Usage:
-  admin adduser <username> <email> <password> [--all] [--redis] [--mongodb] [--seaweedfs] [--postgres] [--milvus] [--storagequota=<quota>|auto]
+  admin adduser <username> <email> [<password>] [--all] [--redis] [--mongodb] [--seaweedfs] [--postgres] [--milvus] [--storagequota=<quota>|auto]
   admin deleteuser <username> [--confirm-namespace-delete]
   admin listuser [<username>]
   admin sso unbind <username>
@@ -37,7 +37,7 @@ Usage:
 
 ## Commands
 ```
-  admin adduser       create a new user in OpenServerless with the username, email and password provided
+  admin adduser       create a new user in OpenServerless with the username, email and password provided; the password may be given in the OPS_ADMIN_PASSWORD environment variable instead of the command line, which keeps it out of the process list
   admin deleteuser    delete a user from the OpenServerless installation via the username provided
   admin listuser      list all the secrets of an user (default list all the users)
   admin sso unbind    remove SSO binding while preserving the OpenServerless namespace

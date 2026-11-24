@@ -38,6 +38,12 @@ All notable changes to Trustant are listed here. The latest release tag is
 - The managed `ops ide devel` watcher starts without a shell: `opsDevelCommand`
   sets the working directory instead of interpolating the path into `sh -c`.
 
+- `ops admin adduser` receives the generated password in `OPS_ADMIN_PASSWORD`
+  instead of on the command line (`addOpsUser`), so it no longer shows in the
+  process list. The vendored `oplugins/admin` accepts it; an older installed
+  `ops` is detected by its usage error and retried with the positional form
+  until the updated plugin is published (#100).
+
 ### Tests
 
 - Added tests for session key parsing, the session and logout endpoints, host

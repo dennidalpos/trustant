@@ -64,7 +64,13 @@ tasks:
       - |
         export USERNAME={{._username_}}
         export EMAIL={{._email_}}
-        export PASSWORD={{._password_}}
+        # OPS_ADMIN_PASSWORD keeps the password out of the process list;
+        # the positional argument remains supported.
+        if [ -n "${OPS_ADMIN_PASSWORD:-}" ]
+        then export PASSWORD="$OPS_ADMIN_PASSWORD"
+        else export PASSWORD={{._password_}}
+        fi
+        unset OPS_ADMIN_PASSWORD
         export SECRET_USER_AUTH="$($OPS -random -u):$($OPS -random --str 64)"
 
         # check {{._username_}} is at least 5 chars long

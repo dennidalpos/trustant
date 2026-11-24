@@ -73,7 +73,7 @@ If it is an error:
   characters would only create quoting hazards.
 - create the user with
 
-`ops admin adduser <name> <name>@n7s.co <local-password> --all`
+`ops admin adduser <name> <name>@n7s.co --all` with the password in `OPS_ADMIN_PASSWORD` (`addOpsUser`; an older `ops` that still requires the positional password is retried once with `<local-password>` as an argument)
 
 Return error if fails, otherwise return a warning that a user with this name
 already existed and its existing local password was reused.
