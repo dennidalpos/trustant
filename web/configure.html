@@ -141,10 +141,11 @@
             <h2 class="text-lg font-medium mb-4">Pi Model</h2>
             <div class="space-y-3">
                 <div>
-                    <label class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">Default Model</label>
-                    <select id="piDefault"
+                    <label for="piDefault" class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">Default Model</label>
+                    <select id="piDefault" aria-describedby="privateModelDiscoveryStatus"
                         class="nu-input w-full px-3 py-2 text-sm bg-white">
                     </select>
+                    <p id="privateModelDiscoveryStatus" role="status" class="mt-2 empty:mt-0 break-words text-sm text-red-700"></p>
                 </div>
             </div>
         </div>
@@ -652,28 +653,32 @@
         // the literal "dummy"). Preserve any previously-saved per-model limits
         // so a returning user keeps the selected Pi model.
         async function loadPrivateModels() {
+            const status = document.getElementById('privateModelDiscoveryStatus');
+            status.textContent = '';
             try {
                 const resp = await fetch('/api/discover-models', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ base_url: config.base_url, api_key: config.api_key })
                 });
-                const data = await resp.json().catch(() => ({}));
-                if (!resp.ok || data.error) {
-                    setSaveStatus('Could not load Private AI models: ' + (data.error || ('HTTP ' + resp.status)), 'error');
-                    return;
+                const data = await resp.json().catch(() => null);
+                if (!resp.ok || data?.error) {
+                    throw new Error(data?.error || ('HTTP ' + resp.status));
                 }
-                const models = Array.isArray(data.models) ? data.models : [];
+                if (!Array.isArray(data?.models)) {
+                    throw new Error('The discovery service returned an invalid model list.');
+                }
                 const prev = config.models || {};
                 const next = {};
-                for (const name of models) {
+                for (const name of data.models) {
                     next[name] = prev[name] || { maxToken: DEFAULT_CONTEXT, maxOutput: DEFAULT_MAX_OUTPUT };
                 }
                 config.models = next;
                 renderModels();
                 renderPiSelect();
             } catch (e) {
-                setSaveStatus('Could not load Private AI models: ' + e.message, 'error');
+                status.textContent = 'The saved Private AI model list may be out of date. '
+                    + 'Check the endpoint and reload this page. ' + e.message;
             }
         }
 

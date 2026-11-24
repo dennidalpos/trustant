@@ -285,7 +285,9 @@ edited in place — keeping this issue's diff contained). `loadPrivateModels`
 calls `POST /api/discover-models` with the stored `base_url` and `api_key`,
 populating `config.models` with one entry per discovered model using default
 limits `{maxToken: 128000, maxOutput: 32768}` while preserving any
-previously-saved limits and Pi selection. The model table is **editable**
+previously-saved limits and Pi selection. If discovery fails, the page keeps
+the saved list and shows the reason beside the Pi model selector, with an
+instruction to check the endpoint and reload. The model table is **editable**
 (Add/Remove, like own-host Ollama); the `/api/status` **Refresh** button is
 hidden (there is no `status.private` catalog). `model_versions` and the
 `?reselect=1` redirect do not apply (discover-models-backed, like own-host
@@ -931,7 +933,11 @@ not proof the model is usable for coding. A non-confirming reply becomes
 `model did not confirm: <first 80 chars of the reply>`.
 
 The same probe is shared by `GET /api/configure` and `POST /api/configuration`,
-so all three entry points apply one consistent gate. Authentication failures
+so all three entry points apply one consistent gate. For Private AI, the
+180-second limit covers the request and response body. A timeout reports the
+limit and suggests retrying because the model may still be loading. A connection
+failure reports that the endpoint could not be reached, and an interrupted
+response reports that it could not be read. Authentication failures
 still take precedence over the content assertion: an Ollama sign-in error is
 classified `auth_required` so the splash opens the Ollama Cloud sign-in modal
 instead of showing a generic failure.

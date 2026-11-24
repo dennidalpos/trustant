@@ -16,6 +16,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -498,6 +499,21 @@ func TestRunTestModelRequiresTheModelToConfirm(t *testing.T) {
 				t.Fatalf("a non-confirming reply must carry a warning")
 			}
 		})
+	}
+}
+
+func TestPrivateModelProbeErrorDistinguishesTimeoutFromUnreachableEndpoint(t *testing.T) {
+	const unreachable = "Could not reach the Private AI endpoint"
+	const timeout = 180 * time.Second
+
+	timedOut := privateModelProbeError(fmt.Errorf("request failed: %w", context.DeadlineExceeded), timeout, unreachable)
+	if !strings.Contains(timedOut, "timed out (limit: 180 seconds)") || strings.Contains(timedOut, unreachable) {
+		t.Fatalf("unexpected timeout message: %q", timedOut)
+	}
+
+	failed := privateModelProbeError(errors.New("connection refused"), timeout, unreachable)
+	if failed != unreachable+": connection refused" {
+		t.Fatalf("unexpected connection failure message: %q", failed)
 	}
 }
 

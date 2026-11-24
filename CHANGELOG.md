@@ -21,6 +21,13 @@ All notable changes to Trustant are listed here. The latest release tag is
 - `DEPS`, `LICENSE` and `NOTICE` were regenerated: `@tanstack/react-virtual` is
   gone, and React 19.3.1, ACP SDK 2.9.1 and diff 9.0.0 are listed.
 
+### Fixed
+
+- The Private AI connection test allows up to 180 seconds for cold starts and
+  distinguishes timeouts from unreachable endpoints and incomplete responses.
+- Configure warns beside the Pi model menu when the saved Private AI model list
+  could not be refreshed.
+
 ### Security
 
 - `mcp/`: `zod` 4.6.7 (GHSA-mrhx-c7xc-m3w5) and the Python pins certifi

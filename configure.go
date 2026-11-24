@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -2327,7 +2328,11 @@ func runTestModel(cfg *trustantConfig) testModelResult {
 	}
 
 	log.Printf("Testing model %s at %s...", model, baseURL)
-	client := &http.Client{Timeout: 60 * time.Second}
+	timeout := 60 * time.Second
+	if cfg.Provider == "private" {
+		timeout = 180 * time.Second
+	}
+	client := &http.Client{Timeout: timeout}
 	reqBody, _ := json.Marshal(map[string]interface{}{
 		"model": model,
 		"messages": []map[string]string{
@@ -2346,11 +2351,18 @@ func runTestModel(cfg *trustantConfig) testModelResult {
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Printf("Test model %s error: %s", model, err)
+		if cfg.Provider == "private" {
+			return testModelResult{Error: privateModelProbeError(err, timeout, "Could not reach the Private AI endpoint")}
+		}
 		return testModelResult{Error: err.Error()}
 	}
 	defer resp.Body.Close()
 
-	body, _ := io.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil && cfg.Provider == "private" {
+		log.Printf("Test model %s response read error: %s", model, err)
+		return testModelResult{Error: privateModelProbeError(err, timeout, "Could not read the Private AI response")}
+	}
 	bodyStr := string(body)
 	log.Printf("Test model %s response: %s", model, bodyStr)
 
@@ -2381,6 +2393,15 @@ func runTestModel(cfg *trustantConfig) testModelResult {
 	}
 
 	return testModelResult{OK: true}
+}
+
+// privateModelProbeError classifies timeouts both before and after response headers.
+func privateModelProbeError(err error, timeout time.Duration, fallback string) string {
+	var timeoutErr net.Error
+	if errors.As(err, &timeoutErr) && timeoutErr.Timeout() {
+		return fmt.Sprintf("The Private AI connection test timed out (limit: %g seconds). The model may still be loading. Try again.", timeout.Seconds())
+	}
+	return fallback + ": " + err.Error()
 }
 
 // truncateForWarning keeps a failed probe's reply short enough to render in the

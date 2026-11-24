@@ -44,6 +44,51 @@ async function serveFixture(page, origin, assets, api) {
   });
 }
 
+const privateConfiguration = {
+  provider: "private",
+  base_url: "http://models.example.test/v1",
+  api_key: "dummy",
+  models: { "saved-model:27b": { maxToken: 64000, maxOutput: 8192 } },
+  pi: { default: "saved-model:27b" },
+};
+
+async function openPrivateConfiguration(page, discovery) {
+  const origin = "http://trustant.example.test";
+  await serveFixture(page, origin, new URL("../web/", import.meta.url), (route, path) => {
+    if (path === "/api/discover-models") return route.fulfill(discovery);
+    return route.fulfill({ json: path === "/api/configuration" ? privateConfiguration : {} });
+  });
+  await page.goto(`${origin}/configure.html`);
+}
+
+test("Private AI explains stale model choices when discovery fails", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openPrivateConfiguration(page, { status: 502, json: { error: "Endpoint unreachable" } });
+
+  const model = page.getByRole("combobox", { name: "Default Model" });
+  const status = page.locator("#privateModelDiscoveryStatus");
+  await expect(model).toHaveValue("saved-model:27b");
+  await expect(status).toBeVisible();
+  await expect(status).toContainText("The saved Private AI model list may be out of date.");
+  await expect(model).toHaveAccessibleDescription(/Endpoint unreachable/);
+});
+
+test("Private AI preserves saved models when discovery returns an invalid list", async ({ page }) => {
+  await openPrivateConfiguration(page, { json: {} });
+
+  await expect(page.getByRole("combobox", { name: "Default Model" })).toHaveValue("saved-model:27b");
+  await expect(page.locator("#privateModelDiscoveryStatus")).toContainText("invalid model list");
+});
+
+test("Private AI refreshes the Pi model menu when discovery succeeds", async ({ page }) => {
+  await openPrivateConfiguration(page, { json: { models: ["saved-model:27b", "added-model:32b"] } });
+
+  const model = page.getByRole("combobox", { name: "Default Model" });
+  await expect(model.getByRole("option", { name: "added-model:32b" })).toHaveCount(1);
+  await expect(model).toHaveValue("saved-model:27b");
+  await expect(page.locator("#privateModelDiscoveryStatus")).toBeEmpty();
+});
+
 test("Inventory and Template expose table semantics and preserve keyboard focus", async ({ page }) => {
   const origin = "http://trustant.example.test";
   const templates = {

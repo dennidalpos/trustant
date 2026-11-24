@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# Modified by the Trustant project to clarify payload handling.
 """Executable Python script for testing the action proxy.
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -122,7 +123,7 @@ def init(args):
 
     print(r.text)
 
-    if r.status_code == 200 and args.run != None:
+    if r.status_code == 200 and args.run is not None:
         runArgs = objectify({})
         runArgs.__dict__ = args.__dict__.copy()
         runArgs.payload = args.run
@@ -145,7 +146,7 @@ def processPayload(payload):
             return d
         else:
             raise
-    except:
+    except Exception:
         print('payload must be a JSON object.')
         sys.exit(-1)
 

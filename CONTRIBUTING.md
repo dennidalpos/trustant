@@ -84,20 +84,29 @@ for ShellCheck, Hadolint and PSScriptAnalyzer.
 
 ## Go vulnerability check
 
-Run this separately from lint, in the Ubuntu environment with the Go version
-from `go.mod`. It needs network access to fetch the tool and the vulnerability
-database from `vuln.go.dev`:
+Run this separately from lint, from the repository root in Ubuntu. Use the
+Go toolchain declared in `go.mod` for both the scanner build and package loading.
+The scan needs network access to fetch the scanner and the Go vulnerability
+database. The embedded `_build.txt` must exist before scanning (`run.sh` creates
+it in development).
 
 ```bash
-go install golang.org/x/vuln/cmd/govulncheck@latest
-go build -o /tmp/trustant-vuln .
-govulncheck -mode=binary /tmp/trustant-vuln
+(
+  go_root="$(go env GOROOT)"
+  export GOROOT="$go_root" PATH="$go_root/bin:$PATH" GOTOOLCHAIN=local
+  go version
+  go install golang.org/x/vuln/cmd/govulncheck@v1.10.0
+  scanner_bin="$(go env GOBIN)"
+  scanner_bin="${scanner_bin:-$(go env GOPATH)/bin}"
+  "$scanner_bin/govulncheck" -show=version ./...
+)
 ```
 
-Use binary mode: with govulncheck v1.10.0, `govulncheck ./...` cannot load the
-Go 1.27.4 standard library ("requires go1.27 or later") and scans nothing.
-Retry the source scan when a newer govulncheck supports Go 1.27.
-`_build.txt` must exist because `main.go` embeds it (`run.sh` creates it).
+Run `go env GOROOT` from the repository root so the Go command resolves the
+project toolchain. Putting that toolchain on `PATH` also makes it available to
+the scanner when it loads the packages. This procedure was verified with
+Go 1.27.4 and govulncheck v1.10.0.
+
 Findings in toolchain or module code reachable from Trustant are fixed or
 tracked as tasks; do not bump unrelated dependencies to silence a report.
 
