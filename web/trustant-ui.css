@@ -514,6 +514,31 @@ textarea {
     color: var(--nu-paper);
 }
 
+/* "?" mark: tells the user a tooltip is available on hover or focus. */
+.nu-help {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-left: .4rem;
+    border: 1px solid currentColor;
+    border-radius: 9999px;
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1;
+    text-transform: none;
+    color: inherit;
+    opacity: .6;
+    cursor: help;
+    vertical-align: middle;
+}
+
+.nu-help:hover,
+.nu-help:focus-visible {
+    opacity: 1;
+}
+
 .nu-segment-btn {
     padding: .45rem .7rem;
     color: var(--nu-control-text);

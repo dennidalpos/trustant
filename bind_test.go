@@ -211,6 +211,58 @@ func TestImportOllamaSuggestions(t *testing.T) {
 	}
 }
 
+func TestImportProviderSuggestions(t *testing.T) {
+	workbench := bindTestApp(t, nil, nil, "AI_BASE_URL=\nAI_CHAT_MODEL=\nAI_API_KEY=\n")
+	if err := os.Rename(workbench, filepath.Join(WorkbenchDir, "demoapp")); err != nil {
+		t.Fatal(err)
+	}
+	var auth atomic.Value
+	provider := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/v1/models" {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		auth.Store(r.Header.Get("Authorization"))
+		_, _ = io.WriteString(w, `{"data":[{"id":"m-b"},{"id":"m-a"},{"id":"saved"}]}`)
+	}))
+	t.Cleanup(provider.Close)
+
+	cfg, err := loadWorkspaceConfig()
+	if err != nil {
+		t.Fatal(err)
+	}
+	cfg.Provider, cfg.BaseURL, cfg.APIKey = "openai", provider.URL+"/v1/", "global-test-secret"
+	cfg.Models = map[string]*ModelLimits{"saved": {}}
+	cfg.Pi = &piConfig{Default: "pi-default"}
+	if err := saveWorkspaceConfig(cfg); err != nil {
+		t.Fatal(err)
+	}
+
+	get := func() *httptest.ResponseRecorder {
+		rec := httptest.NewRecorder()
+		handleImports(rec, httptest.NewRequest("GET", "/api/imports/demoapp?suggestions=1", nil))
+		return rec
+	}
+	rec := get()
+	var result map[string]importSuggestions
+	if rec.Code != http.StatusOK || json.Unmarshal(rec.Body.Bytes(), &result) != nil {
+		t.Fatalf("unexpected response %d: %s", rec.Code, rec.Body.String())
+	}
+	want := importSuggestions{BaseURL: provider.URL + "/v1", Models: []string{"m-a", "m-b", "pi-default", "saved"}}
+	if !reflect.DeepEqual(result["suggestions"], want) || auth.Load() != "Bearer global-test-secret" ||
+		strings.Contains(rec.Body.String(), "test-secret") {
+		t.Fatalf("unexpected suggestions %s (auth %v)", rec.Body.String(), auth.Load())
+	}
+
+	provider.Close()
+	rec = get()
+	_ = json.Unmarshal(rec.Body.Bytes(), &result)
+	want.Models = []string{"pi-default", "saved"}
+	if !reflect.DeepEqual(result["suggestions"], want) {
+		t.Fatalf("unreachable provider should keep saved models, got %s", rec.Body.String())
+	}
+}
+
 // An exact binding reads the pool entry of its own name; a wildcard with one
 // match suggests it; both stay pending until confirmed. Several matches pend
 // with no suggestion.

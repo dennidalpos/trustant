@@ -1038,8 +1038,8 @@ func ollamaModelNames(root string, client *http.Client) ([]string, error) {
 }
 
 const (
-	piLocalProviderName     = "local"
-	piOllamaProviderName    = "ollama"
+	piLocalProviderName    = "local"
+	piOllamaProviderName   = "ollama"
 	piTrustantProviderName = "trustant"
 	// Pi resolves this reference through auth.json, keeping the real secret out
 	// of the model catalog regardless of the selected provider origin.
@@ -2933,7 +2933,7 @@ func generateAppEnvFiles(appName string) error {
 	// Per-app development overrides (no global env section; predefined_env is a
 	// palette the user copies from by hand, never an input here). Service runtime
 	// credentials from ops ide login are intentionally not written here: they are
-	// injected only into the OpenCode/ops process environment at launch time.
+	// injected only into the TruACP/ops process environment at launch time.
 	for k, v := range appCfg.Development {
 		if isServiceRuntimeEnvKey(k) {
 			continue

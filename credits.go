@@ -27,7 +27,7 @@ import (
 // aipURLsFromConfig returns the bearer key needed to call the upstream AIP
 // JSON endpoints. The upstream base lives in AIPBaseURL (set at preflight
 // from the AIP_BASE_URL env var) and is independent of cfg.base_url, which
-// is the user-facing OpenAI-compatible base used by OpenCode.
+// is the user-facing OpenAI-compatible base used by Pi (TruACP).
 //
 // Returns errProviderNotTrustant so the caller can map that to HTTP 404.
 var errProviderNotTrustant = fmt.Errorf("provider is not trustant")

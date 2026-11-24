@@ -249,6 +249,31 @@
 
     // --- ImportResolver: the launch popup -----------------------------------
 
+    // Guidance for the well-known AI variables: a tooltip, a visible hint, and
+    // for the base URL a few common endpoints offered in the suggestion menu.
+    const VARIABLE_HELP = {
+        AI_BASE_URL: {
+            title: 'AI_BASE_URL',
+            tip: 'Address of the OpenAI-compatible API the app will call, usually ending in /v1.',
+            hint: 'OpenAI-compatible endpoint, usually ending in /v1.',
+            presets: [
+                { label: 'Ollama (local)', value: 'http://localhost:11434/v1' },
+                { label: 'OpenAI', value: 'https://api.openai.com/v1' },
+                { label: 'OpenRouter', value: 'https://openrouter.ai/api/v1' }
+            ]
+        },
+        AI_API_KEY: {
+            title: 'AI_API_KEY',
+            tip: 'Secret key issued by your AI provider. It is stored for this app only and never shown again. Local servers such as Ollama accept any non-empty text.',
+            hint: 'Your provider key. Local Ollama accepts any non-empty text, e.g. "ollama".'
+        },
+        AI_CHAT_MODEL: {
+            title: 'AI_CHAT_MODEL',
+            tip: 'Exact model id sent with every chat request, as your provider names it (for example gpt-4o-mini or llama3.1:8b).',
+            hint: 'Model id exactly as the provider names it. Installed models appear in the menu when detected.'
+        }
+    };
+
     function ImportResolver(options) {
         options = options || {};
         this.prefix = options.prefix || 'importResolver';
@@ -371,13 +396,58 @@
         };
         for (const [name, values] of Object.entries(options)) {
             const list = this.el('Suggestions-' + name);
-            if (!list) continue;
-            list.replaceChildren(...values.map((value) => {
-                const option = document.createElement('option');
-                option.value = value;
-                return option;
-            }));
+            if (list) {
+                list.replaceChildren(...values.map((value) => {
+                    const option = document.createElement('option');
+                    option.value = value;
+                    return option;
+                }));
+            }
+            this.renderPresets(name, values);
         }
+    };
+
+    // The preset menu: values detected on this system first, then well-known
+    // endpoints for the base URL. Picking one fills the text field, which stays
+    // editable, so a custom value is always one keystroke away.
+    ImportResolver.prototype.renderPresets = function (name, detected) {
+        const select = this.el('Preset-' + name);
+        if (!select) return;
+        const known = (VARIABLE_HELP[name] && VARIABLE_HELP[name].presets) || [];
+        const detectedSet = new Set(detected);
+        const option = (value, label) => {
+            const el = document.createElement('option');
+            el.value = value;
+            el.textContent = label || value;
+            return el;
+        };
+        const group = (label, items) => {
+            if (!items.length) return null;
+            const el = document.createElement('optgroup');
+            el.label = label;
+            items.forEach((item) => el.appendChild(option(item.value, item.label)));
+            return el;
+        };
+        const nodes = [option('', 'Pick a suggestion…')];
+        const found = group('Detected on this system', detected.map((value) => ({ value })));
+        const common = group('Common choices', known
+            .filter((preset) => !detectedSet.has(preset.value))
+            .map((preset) => ({ value: preset.value, label: `${preset.label} — ${preset.value}` })));
+        if (found) nodes.push(found);
+        if (common) nodes.push(common);
+        select.replaceChildren(...nodes);
+        select.classList.toggle('hidden', nodes.length === 1);
+        const input = this.el('Value-' + name);
+        const current = this.values[name] ?? '';
+        select.value = [...select.options].some((o) => o.value === current) ? current : '';
+        if (input && !input.value && current) input.value = current;
+    };
+
+    ImportResolver.prototype.applyPreset = function (name, value) {
+        if (!value) return;
+        const input = this.el('Value-' + name);
+        if (input) input.value = value;
+        this.setValue(name, value);
     };
 
     ImportResolver.prototype.close = function () {
@@ -469,6 +539,13 @@
             }
             if (editable) {
                 const secret = row.name === 'AI_API_KEY';
+                const hasPresets = !secret;
+                if (hasPresets) {
+                    control += `
+                    <select id="${this.prefix}Preset-${row.name}" aria-label="${row.name} suggestions"
+                        onchange="${g}.applyPreset('${row.name}', this.value)"
+                        class="nu-input nu-mono text-xs w-full mb-1 hidden"></select>`;
+                }
                 control += `
                     <input id="${literalID}" type="${secret ? 'password' : 'text'}"
                         ${secret ? 'autocomplete="off"' : `list="${suggestionsID}"`}
@@ -482,6 +559,13 @@
             const flag = row.pending
                 ? `<span class="text-[11px] text-amber-500 ml-2">${row.suggested ? 'confirm' : 'needs a value'}</span>`
                 : '';
+            const help = VARIABLE_HELP[row.name];
+            const helpIcon = help
+                ? `<span class="nu-help" tabindex="0" role="img" aria-label="${escapeHTML(help.title + ': ' + help.tip)}" title="${escapeHTML(help.title + ': ' + help.tip)}">?</span>`
+                : '';
+            const helpLine = help && editable
+                ? `<div class="text-[11px] text-[color:var(--nu-muted)] mb-1">${escapeHTML(help.hint)}</div>`
+                : '';
             // Production: the producer chosen in development has nothing on this
             // host yet. Publishing it there first is the usual way out.
             if (row.producer) {
@@ -492,7 +576,8 @@
             }
             return `
                 <div class="nu-card p-2 mb-2">
-                  <div class="flex items-center mb-1">${label}${flag}</div>
+                  <div class="flex items-center mb-1">${label}${helpIcon}${flag}</div>
+                  ${helpLine}
                   ${control}
                 </div>`;
         }).join('');

@@ -123,12 +123,12 @@
                 </div>
             </div>
             <div class="flex flex-wrap gap-2 mb-4">
-                <button id="filterAllBtn" type="button" aria-pressed="true" onclick="setAppFilter('all')" title="Show every application"
-                    class="nu-chip nu-chip-active px-3 py-1.5 text-sm font-medium">All</button>
-                <button id="filterProductionBtn" type="button" aria-pressed="false" onclick="setAppFilter('production')" title="Show only applications that have been published"
-                    class="nu-chip px-3 py-1.5 text-sm font-medium hover:bg-[color:var(--nu-accent)]">Production</button>
-                <button id="filterDevelopmentBtn" type="button" aria-pressed="false" onclick="setAppFilter('development')" title="Show only applications that have never been published"
-                    class="nu-chip px-3 py-1.5 text-sm font-medium hover:bg-[color:var(--nu-accent)]">Development only</button>
+                <button id="filterAllBtn" type="button" aria-pressed="true" onclick="setAppFilter('all')"
+                    class="nu-chip nu-chip-active px-3 py-1.5 text-sm font-medium">All<span class="nu-help" tabindex="0" role="img" aria-label="Show every application" title="Show every application">?</span></button>
+                <button id="filterProductionBtn" type="button" aria-pressed="false" onclick="setAppFilter('production')"
+                    class="nu-chip px-3 py-1.5 text-sm font-medium hover:bg-[color:var(--nu-accent)]">Production<span class="nu-help" tabindex="0" role="img" aria-label="Show only applications that have been published" title="Show only applications that have been published">?</span></button>
+                <button id="filterDevelopmentBtn" type="button" aria-pressed="false" onclick="setAppFilter('development')"
+                    class="nu-chip px-3 py-1.5 text-sm font-medium hover:bg-[color:var(--nu-accent)]">Development only<span class="nu-help" tabindex="0" role="img" aria-label="Show only applications that have never been published" title="Show only applications that have never been published">?</span></button>
             </div>
             <div id="appList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                 <p class="text-[color:var(--nu-muted)] text-center py-4">Loading...</p>
@@ -152,11 +152,11 @@
                 <h3 class="text-lg font-medium">Licenses</h3>
                 <div class="inline-flex rounded border border-[color:var(--nu-rule)] overflow-hidden bg-white" role="tablist">
                     <button type="button" role="tab" data-legal-tab="deps" onclick="showLegalTab('deps')"
-                        title="Third-party components and their licenses" class="nu-segment-btn">DEPS</button>
+                        class="nu-segment-btn">DEPS<span class="nu-help" tabindex="0" role="img" aria-label="Third-party components and their licenses" title="Third-party components and their licenses">?</span></button>
                     <button type="button" role="tab" data-legal-tab="notice" onclick="showLegalTab('notice')"
-                        title="Copyright statements and NOTICE files" class="nu-segment-btn">NOTICE</button>
+                        class="nu-segment-btn">NOTICE<span class="nu-help" tabindex="0" role="img" aria-label="Copyright statements and NOTICE files" title="Copyright statements and NOTICE files">?</span></button>
                     <button type="button" role="tab" data-legal-tab="license" onclick="showLegalTab('license')"
-                        title="Full license texts" class="nu-segment-btn">LICENSE</button>
+                        class="nu-segment-btn">LICENSE<span class="nu-help" tabindex="0" role="img" aria-label="Full license texts" title="Full license texts">?</span></button>
                 </div>
                 <button type="button" onclick="hideLegalModal()" title="Close" aria-label="Close"
                     class="nu-btn nu-btn-secondary">&#x2715;</button>
@@ -993,6 +993,26 @@
             if (window.ownStarterGithubForm) window.ownStarterGithubForm.stopPolling();
         }
 
+        // Hover explanations for the starter rows. Catalog starters not listed
+        // here fall back to their published description.
+        const STARTER_TOOLTIPS = {
+            truchat: 'A chat application with an AI assistant that answers from your own documents (RAG: retrieval-augmented generation). Pick it to build chatbots, knowledge bases or document Q&A.',
+            trureact: 'A bare React application with no AI features. Pick it to build any web interface from scratch with the assistant.',
+            [OWN_STARTER]: 'Start from a GitHub repository of your own instead of a standard starter. The repository must already exist and follow the Trustant conventions.'
+        };
+
+        // The "?" mark tells the user a tooltip is available on hover or focus.
+        function helpIcon(text) {
+            const icon = document.createElement('span');
+            icon.className = 'nu-help';
+            icon.tabIndex = 0;
+            icon.setAttribute('role', 'img');
+            icon.setAttribute('aria-label', text);
+            icon.title = text;
+            icon.textContent = '?';
+            return icon;
+        }
+
         function renderStarters(warning) {
             const list = document.getElementById('starterList');
             const warningEl = document.getElementById('starterWarning');
@@ -1034,6 +1054,7 @@
                 if (starter.description) {
                     text.appendChild(document.createTextNode(' — ' + starter.description));
                 }
+                text.appendChild(helpIcon(STARTER_TOOLTIPS[starter.name] || starter.description || starter.name));
                 row.appendChild(input);
                 row.appendChild(text);
                 list.appendChild(row);
@@ -1050,6 +1071,7 @@
             const ownText = document.createElement('span');
             ownText.className = 'font-medium';
             ownText.textContent = 'My Application Starter';
+            ownText.appendChild(helpIcon(STARTER_TOOLTIPS[OWN_STARTER]));
             ownRow.appendChild(ownInput);
             ownRow.appendChild(ownText);
             list.appendChild(ownRow);
@@ -2601,8 +2623,10 @@
                 neutral: 'nu-btn-secondary'
             };
             const tip = ACTION_TOOLTIPS[label];
-            const title = tip ? ` title="${escapeHtml(tip)}"` : '';
-            return `<button onclick="${action}"${title} ${attrs || ''} class="nu-btn ${colors[color]}">${icon}${label}</button>`;
+            const help = tip
+                ? `<span class="nu-help" tabindex="0" role="img" aria-label="${escapeHtml(tip)}" title="${escapeHtml(tip)}">?</span>`
+                : '';
+            return `<button onclick="${action}" ${attrs || ''} class="nu-btn ${colors[color]}">${icon}${label}${help}</button>`;
         }
 
         function editIcon(cls) {

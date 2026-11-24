@@ -34,6 +34,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -100,8 +101,7 @@ type ImportResolution struct {
 }
 
 // parseEnvDistBindings returns the bindings declared by a .env.dist body, in
-// file order. It replaces parseEnvDistNames, which threw the value away; the
-// value is now the pattern.
+// file order. The value after `=` is the pattern.
 //
 // Duplicate names keep the FIRST occurrence. A later line would otherwise
 // silently reassign a variable declared above it, and the file is committed:
@@ -132,17 +132,6 @@ func parseEnvDistBindings(content string) []EnvBinding {
 		bindings = append(bindings, EnvBinding{Name: name, Pattern: pattern})
 	}
 	return bindings
-}
-
-// parseEnvDistNames keeps the old name-only view for callers that only need the
-// declared names.
-func parseEnvDistNames(content string) []string {
-	bindings := parseEnvDistBindings(content)
-	names := make([]string, 0, len(bindings))
-	for _, b := range bindings {
-		names = append(names, b.Name)
-	}
-	return names
 }
 
 // readAppEnvDistBindings returns an app's declarations, preferring the workbench
@@ -703,9 +692,6 @@ type importSuggestions struct {
 }
 
 func importOllamaSuggestions(cfg *trustantConfig, rows []ImportResolution) importSuggestions {
-	if cfg.Provider != "ollama" {
-		return importSuggestions{}
-	}
 	var needsURL, needsModel bool
 	for _, row := range rows {
 		needsURL = needsURL || row.Pending && row.Name == "AI_BASE_URL"
@@ -713,6 +699,9 @@ func importOllamaSuggestions(cfg *trustantConfig, rows []ImportResolution) impor
 	}
 	if !needsURL && !needsModel {
 		return importSuggestions{}
+	}
+	if cfg.Provider != "ollama" {
+		return importProviderSuggestions(cfg, needsModel)
 	}
 
 	root, _ := resolveOllamaRoot(cfg)
@@ -733,17 +722,99 @@ func importOllamaSuggestions(cfg *trustantConfig, rows []ImportResolution) impor
 	}
 	suggestions := importSuggestions{BaseURL: piBaseURL(cfg)}
 	if needsModel {
-		seen := make(map[string]bool)
-		sort.Strings(names)
-		for _, name := range names {
-			key := normalizeOllamaModelName(name)
-			if !seen[key] {
-				suggestions.Models = append(suggestions.Models, name)
-				seen[key] = true
-			}
-		}
+		suggestions.Models = uniqueModelNames(names)
 	}
 	return suggestions
+}
+
+// importProviderSuggestions covers every non-Ollama provider: the configured
+// base URL, and the models the provider lists at <base>/models (queried with
+// the configured key, which is never returned) merged with the models saved in
+// the configuration. A provider that cannot be reached still yields the saved
+// models, so the menu is never emptier than Configure.
+func importProviderSuggestions(cfg *trustantConfig, needsModel bool) importSuggestions {
+	baseURL := strings.TrimRight(strings.TrimSpace(cfg.BaseURL), "/")
+	endpoint, err := url.Parse(baseURL)
+	if baseURL == "" || err != nil || endpoint.Hostname() == "" || (endpoint.Scheme != "http" && endpoint.Scheme != "https") ||
+		endpoint.User != nil || endpoint.RawQuery != "" || endpoint.Fragment != "" {
+		return importSuggestions{}
+	}
+	suggestions := importSuggestions{BaseURL: baseURL}
+	if !needsModel {
+		return suggestions
+	}
+
+	var names []string
+	for name, limits := range cfg.Models {
+		if limits != nil && limits.Enabled != nil && !*limits.Enabled {
+			continue
+		}
+		names = append(names, name)
+	}
+	if cfg.Pi != nil && strings.TrimSpace(cfg.Pi.Default) != "" {
+		names = append(names, cfg.Pi.Default)
+	}
+	names = append(names, providerModelNames(baseURL, cfg.APIKey)...)
+	suggestions.Models = uniqueModelNames(names)
+	return suggestions
+}
+
+// providerModelNames lists <baseURL>/models of an OpenAI-compatible provider.
+// Any failure returns nil: suggestions are a convenience, never an error.
+func providerModelNames(baseURL, apiKey string) []string {
+	client := &http.Client{
+		Timeout: 3 * time.Second,
+		CheckRedirect: func(*http.Request, []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
+	req, err := http.NewRequest(http.MethodGet, baseURL+"/models", nil)
+	if err != nil {
+		return nil
+	}
+	if key := strings.TrimSpace(apiKey); key != "" && key != "dummy" {
+		req.Header.Set("Authorization", "Bearer "+key)
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil
+	}
+	var payload struct {
+		Data []struct {
+			ID string `json:"id"`
+		} `json:"data"`
+	}
+	if err := json.NewDecoder(io.LimitReader(resp.Body, 4<<20)).Decode(&payload); err != nil {
+		return nil
+	}
+	names := make([]string, 0, len(payload.Data))
+	for _, m := range payload.Data {
+		names = append(names, m.ID)
+	}
+	return names
+}
+
+// uniqueModelNames trims, sorts and de-duplicates model names, treating
+// "foo" and "foo:latest" as the same model.
+func uniqueModelNames(names []string) []string {
+	sorted := append([]string(nil), names...)
+	sort.Strings(sorted)
+	seen := make(map[string]bool, len(sorted))
+	var out []string
+	for _, name := range sorted {
+		name = strings.TrimSpace(name)
+		key := normalizeOllamaModelName(name)
+		if name == "" || seen[key] {
+			continue
+		}
+		seen[key] = true
+		out = append(out, name)
+	}
+	return out
 }
 
 func handleProductionImportsGet(w http.ResponseWriter, app, host string) {

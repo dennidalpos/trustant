@@ -354,6 +354,10 @@ Below the list there are two fields:
   starter and read-only (visibly greyed). Editable only when "My Application
   Starter" is selected.
 
+Each starter row, including "My Application Starter", has a "?" icon with a tooltip
+explaining what it is (catalog starters without a written tooltip show their
+published description).
+
 There is no password field: the backend reuses an existing user's password or
 generates one ([2-repo.md](2-repo.md)).
 
