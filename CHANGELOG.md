@@ -44,6 +44,10 @@ All notable changes to Trustant are listed here. The latest release tag is
   `ops` is detected by its usage error and retried with the positional form
   until the updated plugin is published (#100).
 
+- `TRUSTANT_AUTH_TRUSTED_PROXIES` (IPs or CIDRs) lets the login rate limiter use
+  the client address from `X-Forwarded-For` when the request comes from a listed
+  proxy. Unset keeps the transport-peer behaviour.
+
 ### Tests
 
 - Added tests for session key parsing, the session and logout endpoints, host

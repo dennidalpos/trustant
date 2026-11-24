@@ -93,8 +93,14 @@ Authentication endpoints:
 - `POST /api/auth/logout` invalidates the server session and clears cookies.
 
 Login requires a same-origin `Origin` header and is rate limited by the
-transport peer address. Forwarded client-address headers are not trusted unless
-a future deployment explicitly configures trusted proxies.
+transport peer address. Forwarded client-address headers are ignored unless
+`TRUSTANT_AUTH_TRUSTED_PROXIES` lists the proxies in front of Trustant
+(comma-separated IPs or CIDR ranges, for example the ingress controller's pod
+range). For a request from a listed peer, the limiter key is the right-most
+`X-Forwarded-For` address that is not itself a listed proxy; a malformed header
+falls back to the peer, and `X-Real-IP` is never used. Behind an ingress without
+this setting all clients share one bucket, so five failed logins lock everyone
+out. An invalid list stops startup.
 The response creates an opaque, signed, host-only cookie with `HttpOnly`,
 `SameSite=Strict`, `Path=/`, and `Secure` whenever the external request uses
 HTTPS. Sessions are stored only in memory, expire after eight hours, are

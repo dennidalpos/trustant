@@ -42,6 +42,7 @@ const (
 	authUsernameEnv         = "TRUSTANT_AUTH_USERNAME"
 	authPasswordHashEnv     = "TRUSTANT_AUTH_PASSWORD_HASH"
 	authSessionKeyEnv       = "TRUSTANT_AUTH_SESSION_KEY"
+	authTrustedProxiesEnv   = "TRUSTANT_AUTH_TRUSTED_PROXIES"
 	authSessionCookie       = "trustant_session"
 	authSecureSessionCookie = "__Host-trustant_session"
 	authCSRFHeader          = "X-Trustant-CSRF"
@@ -79,10 +80,13 @@ type authManager struct {
 	username     string
 	passwordHash passwordHash
 	sessionKey   []byte
-	ttl          time.Duration
-	maxSessions  int
-	now          func() time.Time
-	random       io.Reader
+	// trustedProxies are the peers whose X-Forwarded-For is believed when
+	// choosing the login rate-limit identity. Empty means never.
+	trustedProxies []*net.IPNet
+	ttl            time.Duration
+	maxSessions    int
+	now            func() time.Time
+	random         io.Reader
 
 	mu       sync.Mutex
 	sessions map[string]*authSession
@@ -121,7 +125,13 @@ func newAuthManagerFromEnv() (*authManager, error) {
 	if err != nil {
 		return nil, fmt.Errorf("invalid %s: %w", authSessionKeyEnv, err)
 	}
-	return newLocalAuthManager(username, parsedHash, sessionKey), nil
+	proxies, err := parseTrustedProxies(os.Getenv(authTrustedProxiesEnv))
+	if err != nil {
+		return nil, fmt.Errorf("invalid %s: %w", authTrustedProxiesEnv, err)
+	}
+	manager := newLocalAuthManager(username, parsedHash, sessionKey)
+	manager.trustedProxies = proxies
+	return manager, nil
 }
 
 func explicitSecret(name string) (string, error) {
@@ -323,7 +333,7 @@ func (a *authManager) handleLogin(w http.ResponseWriter, r *http.Request) {
 		writeAuthJSON(w, http.StatusForbidden, map[string]any{"error": "invalid request origin"})
 		return
 	}
-	client := authClientKey(r)
+	client := a.clientKey(r)
 	if retryAfter, limited := a.loginLimited(client); limited {
 		w.Header().Set("Retry-After", strconv.Itoa(int(retryAfter.Seconds())+1))
 		writeAuthJSON(w, http.StatusTooManyRequests, map[string]any{"error": "too many login attempts"})
@@ -542,6 +552,75 @@ func authClientKey(r *http.Request) string {
 		return host
 	}
 	return r.RemoteAddr
+}
+
+// parseTrustedProxies reads a comma-separated list of IP addresses and CIDR
+// ranges. An empty value means no trusted proxy.
+func parseTrustedProxies(value string) ([]*net.IPNet, error) {
+	if strings.TrimSpace(value) == "" {
+		return nil, nil
+	}
+	var nets []*net.IPNet
+	for _, entry := range strings.Split(value, ",") {
+		entry = strings.TrimSpace(entry)
+		if entry == "" {
+			return nil, errors.New("empty entry in the proxy list")
+		}
+		if strings.Contains(entry, "/") {
+			_, network, err := net.ParseCIDR(entry)
+			if err != nil {
+				return nil, fmt.Errorf("%q is not a valid CIDR range", entry)
+			}
+			nets = append(nets, network)
+			continue
+		}
+		ip := net.ParseIP(entry)
+		if ip == nil {
+			return nil, fmt.Errorf("%q is not a valid IP address", entry)
+		}
+		bits := 8 * len(ip.To16())
+		if ip4 := ip.To4(); ip4 != nil {
+			ip, bits = ip4, 32
+		}
+		nets = append(nets, &net.IPNet{IP: ip, Mask: net.CIDRMask(bits, bits)})
+	}
+	return nets, nil
+}
+
+func (a *authManager) isTrustedProxy(host string) bool {
+	ip := net.ParseIP(host)
+	if ip == nil {
+		return false
+	}
+	for _, network := range a.trustedProxies {
+		if network.Contains(ip) {
+			return true
+		}
+	}
+	return false
+}
+
+// clientKey is the identity the login limiter counts failures against. By
+// default that is the transport peer. When the peer is a configured trusted
+// proxy, the client is the right-most X-Forwarded-For address that is not
+// itself a trusted proxy; anything unparsable falls back to the peer, and a
+// peer that is not trusted can never choose its own key.
+func (a *authManager) clientKey(r *http.Request) string {
+	peer := authClientKey(r)
+	if len(a.trustedProxies) == 0 || !a.isTrustedProxy(peer) {
+		return peer
+	}
+	forwarded := strings.Split(strings.Join(r.Header.Values("X-Forwarded-For"), ","), ",")
+	for i := len(forwarded) - 1; i >= 0; i-- {
+		entry := strings.TrimSpace(forwarded[i])
+		if net.ParseIP(entry) == nil {
+			return peer
+		}
+		if !a.isTrustedProxy(entry) {
+			return entry
+		}
+	}
+	return peer
 }
 
 func (a *authManager) loginLimited(client string) (time.Duration, bool) {
