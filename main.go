@@ -104,6 +104,17 @@ func noStoreHTML(next http.Handler) http.Handler {
 	})
 }
 
+// authWarning describes the exposure when local authentication is off. The
+// server always listens on every interface, so a disabled manager means anyone
+// who can reach the port gets the terminal, file and deploy APIs.
+func authWarning(a *authManager) string {
+	if a != nil && a.enabled {
+		return ""
+	}
+	return "WARNING: authentication is disabled and Trustant listens on all interfaces on port 8910 over plain HTTP. " +
+		"Keep it on a trusted network or set TRUSTANT_AUTH_MODE=local (see spec/authentication.md)."
+}
+
 func main() {
 	auth, err := newAuthManagerFromEnv()
 	if err != nil {
@@ -203,6 +214,9 @@ func main() {
 		http.Handle("/", noStoreHTML(http.FileServer(http.FS(webFS))))
 	}
 
+	if warning := authWarning(auth); warning != "" {
+		log.Println(warning)
+	}
 	log.Println("Starting server on :8910")
 	// Wrap with hostname verification middleware (implements spec points 7 & 8)
 	handler := hostnameMiddleware(auth.middleware(limitBody(http.DefaultServeMux)))

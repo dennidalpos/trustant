@@ -365,6 +365,9 @@ URL="http://${GUI_HOST}:8910/"
 
 # Air can keep running while the application builds or retries a failed build.
 echo "Trustant server: starting (waiting for HTTP on port 8910)"
+if [[ "${TRUSTANT_AUTH_MODE:-}" != "local" ]]; then
+    echo "WARNING: authentication is disabled; port 8910 serves the terminal, files and deploy APIs over plain HTTP to every host that can reach it. Set TRUSTANT_AUTH_MODE=local (see spec/authentication.md)."
+fi
 air &
 AIR_PID=$!
 

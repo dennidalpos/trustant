@@ -215,7 +215,7 @@ flowchart LR
 
 Requests using `localhost`, an IPv4 address, or a hostname without a dot receive an HTTP 307 redirect to the Trustant FQDN. Use the printed FQDN for browser access and hostname-routing checks. These surfaces use separate hostnames.
 
-Local administrator authentication is optional and disabled by default. See [authentication scope and configuration](spec/authentication.md) before exposing the environment outside your development machine.
+Local administrator authentication is optional and disabled by default; the server logs a warning at startup while it is off, and port 8910 uses plain HTTP, so use it on a trusted network. See [authentication scope and configuration](spec/authentication.md) before exposing the environment outside your development machine.
 
 ## Contributing and testing
 

@@ -52,6 +52,13 @@ not pass the session check. Any other label is proxied to that application when
 it is a registered repository (`getAppRepo`); otherwise the server shows an
 "Invalid Hostname" page.
 
+## Startup warning
+
+When authentication is disabled the server logs `authWarning` before it starts
+listening, and `run.sh` prints the same message in the console. The server
+always listens on every interface of port `8910`; there is no bind-address
+setting, so the warning does not depend on the address.
+
 ## Configuration
 
 Local mode requires three explicit values. Each value may be supplied directly

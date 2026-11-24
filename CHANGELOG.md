@@ -48,6 +48,9 @@ All notable changes to Trustant are listed here. The latest release tag is
   the client address from `X-Forwarded-For` when the request comes from a listed
   proxy. Unset keeps the transport-peer behaviour.
 
+- The server and `run.sh` warn at startup while authentication is disabled,
+  because port 8910 listens on all interfaces over plain HTTP.
+
 ### Tests
 
 - Added tests for session key parsing, the session and logout endpoints, host
