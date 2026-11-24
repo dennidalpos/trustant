@@ -355,14 +355,15 @@ Listed as a count only; every tracked file not named above is identical to upstr
 - Upstream: https://github.com/trustant/openserverless-mcp
 - Baseline revision: `baf14007f9106cfd63b1396fd5d374f7dd9b7537`
 - License: Apache-2.0, Copyright 2024 The Apache Software Foundation
-- Files: 28 unmodified, 2 modified, 0 added, 0 removed upstream files
+- Files: 27 unmodified, 3 modified, 0 added, 0 removed upstream files
 
-### Modified (2)
+### Modified (3)
 
 - `package-lock.json`
 - `package.json`
+- `requirements.txt`
 
-### Unmodified (28)
+### Unmodified (27)
 
 Listed as a count only; every tracked file not named above is identical to upstream.
 
