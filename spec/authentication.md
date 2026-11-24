@@ -59,6 +59,24 @@ listening, and `run.sh` prints the same message in the console. The server
 always listens on every interface of port `8910`; there is no bind-address
 setting, so the warning does not depend on the address.
 
+## Accepted risk: default exposure
+
+Decision (owner, task #115, 2026-11-24): the default behaviour does not change.
+Without `TRUSTANT_AUTH_MODE=local`, port `8910` is served on every interface
+without login, and the following surfaces are reachable by anyone who can reach
+the port:
+
+- the `api terminal` shell, file and deploy APIs of the Trustant host;
+- `truacp.<domain>`, `vite.<domain>` and registered application hosts, which
+  bypass the local session even when local mode is on (see Scope).
+
+The risk is accepted for development on a trusted network, which is the
+supported deployment of the default configuration. Mitigations: the startup
+warning above, `TRUSTANT_AUTH_MODE=local` for any shared or exposed host, and
+network-level controls (firewall, loopback-only port publishing, private
+network) for the proxied hosts. Revisit the decision if a bind-address setting
+or host-specific sessions are introduced.
+
 ## Configuration
 
 Local mode requires three explicit values. Each value may be supplied directly
