@@ -106,7 +106,7 @@ Where `repo` is optional (only sent when user provides it from the popup).
    - otherwise add `production` as `git@github.com:<OPS_REPO>.git`;
    - run `git push production <default-branch>` with the isolated managed Git
      environment. SSH fallback also adds
-     `GIT_SSH_COMMAND=ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes -o StrictHostKeyChecking=no`.
+     `GIT_SSH_COMMAND=ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=~/.ssh/known_hosts_trustant` (built by `gitSSHCommand`; a changed host key is refused).
 6. Return `{"output": "..."}` on success, or `{"error": "...", "output": "..."}` on failure
 
 The same transport and default-branch rules apply to

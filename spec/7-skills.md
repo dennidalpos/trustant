@@ -19,7 +19,7 @@ Pi share one set.
 
 1. Determine the skills repo: read `OPS_SKILLS` from `.env.production` if available and not empty, otherwise from `.env`, otherwise fall back to the global `OpsSkills` default (`trustable-ai/skills`)
 2. `cd` into the `.agents` directory
-3. `git clone <repo> skills` — try SSH first (`git@github.com:<repo>.git` with `GIT_SSH_COMMAND` using the ed25519 key and `StrictHostKeyChecking=no`). If SSH fails, clean up and fall back to HTTPS (`https://github.com/<repo>.git`). This is the same pattern used by repo cloning.
+3. `git clone <repo> skills` — try SSH first (`git@github.com:<repo>.git` with `GIT_SSH_COMMAND` using the ed25519 key and `StrictHostKeyChecking=accept-new` with a dedicated known-hosts file, see `gitSSHCommand`). If SSH fails, clean up and fall back to HTTPS (`https://github.com/<repo>.git`). This is the same pattern used by repo cloning.
 4. Remove `skills/.git`
 5. `git add .agents/skills`
 6. `git commit -m "added skills"`

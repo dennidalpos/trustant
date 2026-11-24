@@ -84,7 +84,7 @@ func setupSkills(appName string) error {
 	if _, err := os.Stat(sshKeyPath); err == nil {
 		repoURL := fmt.Sprintf("git@github.com:%s.git", repo)
 		log.Printf("Cloning skills from %s (SSH)...", repoURL)
-		sshCmd := fmt.Sprintf("ssh -i %s -o IdentitiesOnly=yes -o StrictHostKeyChecking=no", sshKeyPath)
+		sshCmd := gitSSHCommand(homeDir)
 		cloneCmd := exec.Command("git", "clone", repoURL, "skills")
 		cloneCmd.Dir = agentsDir
 		cloneCmd.Env = append(os.Environ(), "GIT_SSH_COMMAND="+sshCmd)

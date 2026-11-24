@@ -30,6 +30,11 @@ All notable changes to Trustant are listed here. The latest release tag is
 - `oplugins/ide/deploy`: `glob` 14.0.2 with a regenerated `bun.lock` (Bun 1.4.5);
   its test and a `glob()` call pass.
 
+- Git over SSH no longer disables host-key checking: `gitSSHCommand` uses
+  `StrictHostKeyChecking=accept-new` with `~/.ssh/known_hosts_trustant`, so a
+  host is trusted on first use and a changed key is refused. To accept a
+  legitimately rotated key, delete its line from that file.
+
 ### Tests
 
 - Added tests for session key parsing, the session and logout endpoints, host

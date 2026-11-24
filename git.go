@@ -207,11 +207,19 @@ func gitCommand(dir string, args ...string) *exec.Cmd {
 		cmd.Env = os.Environ()
 	}
 	if homeDir, err := os.UserHomeDir(); err == nil {
-		sshKeyPath := filepath.Join(homeDir, ".ssh", "id_ed25519")
-		sshCmd := fmt.Sprintf("ssh -i %s -o IdentitiesOnly=yes -o StrictHostKeyChecking=no", sshKeyPath)
-		cmd.Env = setEnvValue(cmd.Env, "GIT_SSH_COMMAND", sshCmd)
+		cmd.Env = setEnvValue(cmd.Env, "GIT_SSH_COMMAND", gitSSHCommand(homeDir))
 	}
 	return cmd
+}
+
+// gitSSHCommand is the ssh command git uses for remotes. A host seen for the
+// first time is recorded in a Trustant-owned known-hosts file and any later key
+// change is refused, so a man in the middle cannot silently take over the
+// deploy key's connections. StrictHostKeyChecking=no must not come back here.
+func gitSSHCommand(homeDir string) string {
+	sshDir := filepath.Join(homeDir, ".ssh")
+	return fmt.Sprintf("ssh -i %s -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=%s",
+		filepath.Join(sshDir, "id_ed25519"), filepath.Join(sshDir, "known_hosts_trustant"))
 }
 
 func runGitCommand(dir string, output *bytes.Buffer, args ...string) error {
