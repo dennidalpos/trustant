@@ -27,6 +27,8 @@ All notable changes to Trustant are listed here. The latest release tag is
   2026.10.18, dnspython 2.9.2, langgraph 1.2.14, langgraph-sdk 0.4.6, nltk
   3.10.4, pymongo 4.18.3 and soupsieve 4.0 resolve the open Dependabot alerts
   for those packages. `mcp` typecheck and tests pass on Linux (16/16).
+- `oplugins/ide/deploy`: `glob` 14.0.2 with a regenerated `bun.lock` (Bun 1.4.5);
+  its test and a `glob()` call pass.
 
 ### Tests
 
@@ -36,8 +38,6 @@ All notable changes to Trustant are listed here. The latest release tag is
 
 ### Known issues
 
-- `oplugins/ide/deploy` pins `glob` 12.0.0 (Dependabot alert for 14.0.2); the
-  `bun.lock` needs regenerating with Bun, which is not installed here.
 - Local authentication is disabled unless `TRUSTANT_AUTH_MODE=local` is set, and
   the `truacp.*`, `vite.*` and application hosts bypass it; see
   [spec/authentication.md](spec/authentication.md).
