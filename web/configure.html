@@ -801,11 +801,21 @@
             }
             tbody.innerHTML = keys.map(name => {
                 const policy = piModelPolicy(name, models[name]);
-                const badgeClass = policy.allowed
-                    ? 'border-[color:var(--nu-border)] bg-white text-[color:var(--nu-ink)]'
-                    : 'border-amber-200 bg-amber-50 text-amber-800';
-                const badgeText = policy.allowed ? 'Available' : 'Hidden';
+                const badgeClass = policy.overridden
+                    ? 'border-amber-200 bg-amber-50 text-amber-800'
+                    : policy.allowed
+                        ? 'border-[color:var(--nu-border)] bg-white text-[color:var(--nu-ink)]'
+                        : 'border-amber-200 bg-amber-50 text-amber-800';
+                const badgeText = policy.overridden ? 'Used anyway' : policy.allowed ? 'Available' : 'Hidden';
                 const reason = policy.allowed ? '' : `<div class="mt-1 text-xs text-[color:var(--nu-muted)]">${escapeHtml(policy.reason)}</div>`;
+                const overrideNote = policy.overridden
+                    ? `<div class="mt-1 text-xs text-amber-800">Smaller than recommended: it may follow instructions or call tools poorly.</div>`
+                    : '';
+                const overrideButton = editable && policy.overridable
+                    ? (policy.overridden
+                        ? `<button type="button" onclick="revokeSmallModel('${escapeAttr(name)}')" class="nu-btn nu-btn-secondary nu-btn-compact mt-1">Hide again</button>`
+                        : `<button type="button" onclick="allowSmallModel('${escapeAttr(name)}')" class="nu-btn nu-btn-secondary nu-btn-compact mt-1">Use anyway</button>`)
+                    : '';
                 return `
                 <tr>
                     <td data-label="Model" class="nu-code text-xs">${escapeHtml(name)}</td>
@@ -827,7 +837,7 @@
                         <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs ${badgeClass}">
                             ${badgeText}
                         </span>
-                        ${reason}
+                        ${reason}${overrideNote}${overrideButton}
                     </td>
                     <td class="text-right">
                         ${editable ? `
@@ -995,9 +1005,6 @@
                 'gte-',
                 'bge-',
                 'rerank',
-                '/tiny:',
-                '/small:',
-                'flash:e4b',
                 'whisper',
                 'tts',
                 'vision',
@@ -1006,11 +1013,56 @@
             if (blocked.some(part => id.includes(part))) {
                 return { allowed: false, reason: 'not suitable for Pi agent work' };
             }
+            // Size rules: the only ones the user can lift with "Use anyway".
+            // Everything above cannot work as a chat model, so it stays blocked.
+            let small = '';
+            if (['/tiny:', '/small:', 'flash:e4b'].some(part => id.includes(part))) {
+                small = 'not suitable for Pi agent work';
+            }
             const match = /(^|[/:_-])([0-9]+(?:\.[0-9]+)?)b($|[/:_-])/i.exec(id);
             if (match && parseFloat(match[2]) > 0 && parseFloat(match[2]) < 20) {
-                return { allowed: false, reason: 'below the recommended 20B minimum' };
+                small = 'below the recommended 20B minimum';
+            }
+            if (small) {
+                if (entry && entry.allowSmall === true) {
+                    return { allowed: true, reason: '', overridden: true };
+                }
+                return { allowed: false, reason: small, overridable: true };
             }
             return { allowed: true, reason: '' };
+        }
+
+        /**
+         * "Use anyway": lets a model below the recommended size be chosen for Pi.
+         * The user is warned first; only the size rules are lifted (piModelPolicy).
+         */
+        function allowSmallModel(name) {
+            const ok = window.confirm(
+                name + ' is smaller than the recommended 20B minimum for Pi agent work.\n\n' +
+                'Small models often misread instructions, produce broken tool calls and edit code poorly. ' +
+                'You can use it anyway, and hide it again at any time.\n\nUse it anyway?');
+            if (!ok) return;
+            setSmallModelOverride(name, true);
+        }
+
+        function revokeSmallModel(name) {
+            setSmallModelOverride(name, false);
+        }
+
+        function setSmallModelOverride(name, on) {
+            if (!config.models) config.models = {};
+            let entry = config.models[name];
+            if (entry == null || typeof entry !== 'object') {
+                const legacy = typeof entry === 'string' ? parseSizeInput(entry) : null;
+                entry = Number.isFinite(legacy) && legacy > 0 ? { maxToken: legacy } : {};
+                config.models[name] = entry;
+            }
+            if (on) entry.allowSmall = true;
+            else delete entry.allowSmall;
+            // A default that is no longer allowed must be chosen again.
+            if (!on && config.pi?.default === name) config.pi.default = '';
+            renderModels();
+            renderPiSelect();
         }
 
         function piModelNames() {

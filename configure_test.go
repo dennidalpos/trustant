@@ -231,6 +231,49 @@ func TestModelAllowedForPiBlocksNonAgentModels(t *testing.T) {
 	}
 }
 
+func TestModelAllowedForPiAllowSmallLiftsOnlyTheSizeRules(t *testing.T) {
+	override := &ModelLimits{AllowSmall: true}
+	for _, model := range []string{"qwen3.5:4b", "qwen3.5:9b", "myhost/tiny:1b", "myhost/small:3b", "flash:e4b"} {
+		if ok, reason := modelAllowedForPi("private", model, nil); ok || reason == "" {
+			t.Fatalf("%s should be blocked without the override, ok=%v reason=%q", model, ok, reason)
+		}
+		if ok, reason := modelAllowedForPi("private", model, override); !ok {
+			t.Fatalf("%s should be allowed with the override, reason=%q", model, reason)
+		}
+	}
+
+	// The override never revives a model that cannot work as a chat model.
+	disabled := false
+	for _, tc := range []struct {
+		model  string
+		limits *ModelLimits
+	}{
+		{"bge-m3:latest", &ModelLimits{AllowSmall: true}},
+		{"nomic-embed-text:latest", &ModelLimits{AllowSmall: true}},
+		{"custom-model:4b", &ModelLimits{AllowSmall: true, Roles: []string{"embedding"}}},
+		{"custom-model:4b", &ModelLimits{AllowSmall: true, Enabled: &disabled}},
+	} {
+		if ok, _ := modelAllowedForPi("private", tc.model, tc.limits); ok {
+			t.Fatalf("%s must stay blocked even with the override", tc.model)
+		}
+	}
+}
+
+func TestModelLimitsAllowSmallSurvivesJSON(t *testing.T) {
+	var limits ModelLimits
+	if err := json.Unmarshal([]byte(`{"maxToken":8192,"allowSmall":true}`), &limits); err != nil || !limits.AllowSmall {
+		t.Fatalf("allowSmall not read: %v %+v", err, limits)
+	}
+	out, err := json.Marshal(&limits)
+	if err != nil || !strings.Contains(string(out), `"allowSmall":true`) {
+		t.Fatalf("allowSmall not written: %v %s", err, out)
+	}
+	out, _ = json.Marshal(&ModelLimits{MaxToken: 1})
+	if strings.Contains(string(out), "allowSmall") {
+		t.Fatalf("an unset override must not be serialized: %s", out)
+	}
+}
+
 func TestModelAllowedForPiHonorsCatalogMetadata(t *testing.T) {
 	disabled := false
 	if ok, reason := modelAllowedForPi("trustant", "qwen3.6-27b", &ModelLimits{

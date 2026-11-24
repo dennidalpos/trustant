@@ -58,6 +58,10 @@ type ModelLimits struct {
 	Recommended      bool               `json:"recommended,omitempty"`
 	Roles            []string           `json:"roles,omitempty"`
 	Reason           string             `json:"reason,omitempty"`
+	// AllowSmall is the user's explicit "use anyway" for a model below the
+	// recommended 20B minimum. It lifts only that size rule: embedding, vision,
+	// audio and catalog-disabled models stay blocked because they cannot work.
+	AllowSmall bool `json:"allowSmall,omitempty"`
 }
 
 // UnmarshalJSON accepts the new object form AND the legacy "256K" string form
@@ -868,9 +872,6 @@ func modelAllowedForPi(provider, modelID string, limits *ModelLimits) (bool, str
 		"gte-",
 		"bge-",
 		"rerank",
-		"/tiny:",
-		"/small:",
-		"flash:e4b",
 		"whisper",
 		"tts",
 		"vision",
@@ -882,9 +883,16 @@ func modelAllowedForPi(provider, modelID string, limits *ModelLimits) (bool, str
 		}
 	}
 
+	// Size rules: the only ones the user may lift with "use anyway".
+	allowSmall := limits != nil && limits.AllowSmall
+	for _, part := range []string{"/tiny:", "/small:", "flash:e4b"} {
+		if strings.Contains(name, part) && !allowSmall {
+			return false, "not suitable for Pi agent work"
+		}
+	}
 	if match := modelParamSizePattern.FindStringSubmatch(name); len(match) >= 3 {
 		params, err := strconv.ParseFloat(match[2], 64)
-		if err == nil && params > 0 && params < 20 {
+		if err == nil && params > 0 && params < 20 && !allowSmall {
 			return false, "model is below the recommended 20B minimum for Pi agent work"
 		}
 	}
@@ -1303,6 +1311,9 @@ func buildPiModels(cfg *trustantConfig) []map[string]interface{} {
 		if ok, reason := modelAllowedForPi(cfg.Provider, modelID, limits); !ok {
 			log.Printf("Skipping Pi model %s: %s", modelID, reason)
 			continue
+		}
+		if limits != nil && limits.AllowSmall {
+			log.Printf("Warning: Pi model %s is used despite the recommended minimum size (user override)", modelID)
 		}
 		contextWindow, maxTokens := piDefaultContextWindow, piDefaultMaxOutput
 		if limits != nil {

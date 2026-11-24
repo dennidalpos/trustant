@@ -172,6 +172,16 @@ audio, TTS/Whisper-style models, and models below roughly 20B parameters are
 hidden from the Pi dropdown. They may still appear in the provider model
 table because availability and suitability are different facts.
 
+The size rules (names with `/tiny:`, `/small:`, `flash:e4b`, and a parameter
+count below 20B) can be lifted per model with **Use anyway** in the model table,
+shown only for providers whose models the user manages (own-host Ollama and
+Private AI). A confirmation warns that small models often misread instructions
+and break tool calls. The choice is stored as `allowSmall: true` in that model's
+entry under `models` and the row shows "Used anyway" with a **Hide again**
+button; hiding it again also clears `pi.default` if it was that model.
+`allowSmall` never revives embedding, rerank, vision, audio or catalog-disabled
+models. Trustant logs a warning when such a model is written to Pi.
+
 There is no longer a top-level `version` field driving reselect — the previous `<WorkspaceDir>/models.json` cache and the catalog-level version check have been retired in favor of the per-provider `modelsVersion` mechanism below.
 
 ### Version tracking (per provider)
