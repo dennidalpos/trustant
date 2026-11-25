@@ -1069,6 +1069,22 @@ func ensureRequiredWorkbenchFolders(workbenchPath string) {
 		log.Printf("ensureRequiredWorkbenchFolders: %s", err)
 		return
 	}
+	// Skip paths the workbench .gitignore excludes: "git add" on an ignored
+	// path prints a hint and exits non-zero, which aborted the scaffold commit.
+	tracked := created[:0:0]
+	for _, p := range created {
+		check := exec.Command("git", "check-ignore", "-q", "--", p)
+		check.Dir = workbenchPath
+		if check.Run() == nil {
+			log.Printf("ensureRequiredWorkbenchFolders: %s is git-ignored, not staged", p)
+			continue
+		}
+		tracked = append(tracked, p)
+	}
+	if len(tracked) == 0 {
+		return
+	}
+	created = tracked
 	addArgs := append([]string{"add"}, created...)
 	addCmd := exec.Command("git", addArgs...)
 	addCmd.Dir = workbenchPath

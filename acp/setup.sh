@@ -244,6 +244,7 @@ else
 	exit 1
 fi
 
+# --force: same reason as above, a re-run must overwrite existing bin links.
 npm install -g --force $PREFIX_ARGS "$PI_ACP_PACKAGE"
 
 PI_ACP_ENTRYPOINT="$INSTALL_PREFIX/lib/node_modules/pi-acp/dist/index.js"

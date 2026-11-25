@@ -87,6 +87,8 @@ The start script installs a CPU-only Ollama **inside the VM** at `localhost:1143
 
    Quit and reopen the Ollama app. A small default context makes the assistant fail with `the prompt is longer than the context length`.
 
+> These Ollama steps (`launchctl setenv`, `host.lima.internal`) have not been verified on a Mac yet.
+
 2. Lima exposes the Mac to the VM as `host.lima.internal`. Check from the VM (`./ssh.sh -d`):
 
    ```bash

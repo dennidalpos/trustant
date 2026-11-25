@@ -23,6 +23,7 @@ The workflow [`.github/workflows/environments.yml`](../.github/workflows/environ
 ## Limits to know
 
 - First run (2026-11-25, default inputs): all nine jobs passed. The two `macos-15` jobs were cancelled on the first attempt, without an error in the logs, and passed on a re-run; if a macOS job is cancelled, re-run it before suspecting the scripts. The Lima VM boot was not attempted (`macos_lima` off); on `macos-15` (arm64) `kern.hv_support` is not reported, on `macos-15-intel` it is 1, so only a run with `macos_lima` on shows whether a VM can boot.
+- Decision: no Docker job is added to this workflow, so it never triggers the tag and `opsroot.json` effects of `build.sh`.
 - Not covered by any job yet: building the container image (`build.sh` changes local tags and `oplugins-truinst/opsroot.json`, so it is not run here), the full macOS install, and the Windows + WSL2 install.
 - The full macOS and Windows installs cannot be automated on hosted runners. A self-hosted Mac or Windows machine would be needed; the jobs are written so another `runs-on` can be added.
 - `ubuntu-24.04-arm` and `macos-15-intel` depend on the runner labels GitHub offers to the repository (arm64 runners are free only for public repositories).
