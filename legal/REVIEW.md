@@ -126,7 +126,6 @@ cleared assets. Inline SVG icons in `web/*.html` need the same provenance review
 | `spec/provider-e2e-flow.svg` | `9a513e66e862572c235b55809654dabab9553fa497bd709ea02758289fe9fb3c` | Unverified provenance |
 | `spec/trustant-auth-flow.svg` | `06cf3d6a5ade7c9d69e8018f3137344ac344dc358e44426b0b5b900b2e341f46` | Unverified provenance |
 | `spec/trustant-code-integration.svg` | `82ec9ac5cefd329ecb1994147da56cc2314b754ae473fa4e7c66705584ef22f4` | Unverified provenance |
-| `splash.png` | `a780538a8a9fa45b29dae0d0aa06763b41a8df75b23c8e6cfb823da819f0cd9b` | Unverified provenance |
 | `web/favicon.ico` | `5cc2560eddb2d9f841e425f3dfc701a47b0fedf3d2b969730bcead80bfee06e6` | Unverified provenance |
 | `web/logo-trustant.png` | `6843d0682cbfb3deee6439bdb8211adb24b2a61b5b7e82a5c4eb7643c77a0540` | Unverified provenance |
 | `web/ollama-head.png` | `c1f0bce3a7363d8030142943098889466f5bb21d67759963ece662a73ab6f105` | Unverified provenance |
@@ -138,3 +137,12 @@ cleared assets. Inline SVG icons in `web/*.html` need the same provenance review
 | `web/trustant-logo.svg` | `4634c3087e71f577325131fab2dd4faa285f1d6a679d66bd563b982c93a4990b` | Unverified provenance |
 | `web/trustant.png` | `6843d0682cbfb3deee6439bdb8211adb24b2a61b5b7e82a5c4eb7643c77a0540` | Unverified provenance |
 | `web/wa-trustant.jpeg` | `288742cacea2d6b447e6c1b6644750c5c00add6a283e258ca1977ba8b31b70d5` | Unverified provenance |
+
+## Artwork reviewed on 2026-11-25
+
+Binary-review findings of the publication check were resolved as follows.
+
+| Asset | SHA-256 | Decision |
+|---|---|---|
+| `splash.png` | `a780538a8a9fa45b29dae0d0aa06763b41a8df75b23c8e6cfb823da819f0cd9b` | First-party artwork of the project (mascot and Trustant interface mock-up); provenance confirmed by the owner. It is not referenced by the README or the code. |
+| `oplugins/setup/openserverless/web/os-logo-full-vertical-bg-white.png` | `2c59df59d2b700a5c7807a00832a48a2da0ad94dadc10ac0344716e08822cde0` | Logo of the Apache OpenServerless project, shipped with the vendored `oplugins` sources. It is a third-party mark: the Apache-2.0 license of those sources does not grant trademark rights (Apache-2.0 section 6), and Trustant does not use it as its own branding. |

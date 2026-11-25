@@ -62,6 +62,11 @@ kubectl, kind and Helm (Apache-2.0), bun, yq, k3sup and uutils coreutils (MIT), 
 Ubuntu packages under their distribution licenses. Python application packages
 and npm production trees are listed in full in [DEPS](DEPS).
 
+The vendored `oplugins` sources include the Apache OpenServerless logo
+(`oplugins/setup/openserverless/web/os-logo-full-vertical-bg-white.png`). It is a
+mark of that project, not of Trustant; the Apache-2.0 license of the sources does
+not grant rights over it (see [legal/REVIEW.md](legal/REVIEW.md)).
+
 The image builds `ops` from the [Trustant OpenServerless CLI fork](https://github.com/trustable-ai/openserverless-cli)
 with [go-git](https://github.com/go-git/go-git) (both Apache-2.0).
 The updated Go modules are listed in [DEPS](DEPS). The unchanged
