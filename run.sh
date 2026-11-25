@@ -336,10 +336,20 @@ echo "kubefwd ready for namespace openserverless (excluding trustant-svc)"
 #     start.sh installs it in the VM (owned by another user), so probe the port
 #     system-wide with `ss` — unprivileged `lsof -i` only sees this user's own
 #     sockets and would miss it, spawning a second server that fails to bind.
-if ! ss -ltn 2>/dev/null | grep -q ':11434 '; then
-    echo "Starting ollama serve..."
-    ollama serve &
-fi
+#     When OLLAMA_ENDPOINT points at another host (e.g. the Windows host's
+#     ollama reached from WSL), there is nothing to start locally.
+OLLAMA_URL="${OLLAMA_ENDPOINT:-$(grep -m1 '^OLLAMA_ENDPOINT=' .env 2>/dev/null | cut -d= -f2-)}"
+case "${OLLAMA_URL:-http://localhost:11434}" in
+    http://localhost:*|http://127.0.0.1:*|https://localhost:*|https://127.0.0.1:*)
+        if ! ss -ltn 2>/dev/null | grep -q ':11434 '; then
+            echo "Starting ollama serve..."
+            ollama serve &
+        fi
+        ;;
+    *)
+        echo "Using remote ollama at ${OLLAMA_URL}; not starting a local one"
+        ;;
+esac
 
 # Own the roots themselves so empty directories and hidden Trustant state are
 # handled without an unmatched `*` warning on the first clean run.

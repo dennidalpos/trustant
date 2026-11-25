@@ -18,7 +18,7 @@ tmp_dir = "tmp"
 
 [build]
   cmd = "go build -o ./tmp/main ."
-  bin = "./tmp/main"
+  entrypoint = ["./tmp/main"]
   delay = 1000
   # Every .go file in this program is at the top level (one package main,
   # file-per-feature), so this list must name EVERY subdirectory. It prunes the
