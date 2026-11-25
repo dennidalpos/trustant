@@ -528,10 +528,10 @@
     {
       "section": "binary",
       "name": "ollama",
-      "version": "0.40.17",
+      "version": "0.40.18",
       "license": "MIT",
       "homepage": "https://github.com/ollama/ollama",
-      "source": "url:https://raw.githubusercontent.com/ollama/ollama/v0.40.17/LICENSE",
+      "source": "url:https://raw.githubusercontent.com/ollama/ollama/v0.40.18/LICENSE",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2582,7 +2582,7 @@
       "version": "2.1.9",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/@hono/node-server",
-      "source": "npm:@hono/node-server@2.1.9",
+      "source": "path:mcp/node_modules/@hono/node-server",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2598,7 +2598,7 @@
       "version": "1.32.2",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/@modelcontextprotocol/sdk",
-      "source": "npm:@modelcontextprotocol/sdk@1.32.2",
+      "source": "path:mcp/node_modules/@modelcontextprotocol/sdk",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2614,7 +2614,7 @@
       "version": "2.0.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/accepts",
-      "source": "npm:accepts@2.0.0",
+      "source": "path:mcp/node_modules/accepts",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2630,7 +2630,7 @@
       "version": "8.20.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/ajv",
-      "source": "npm:ajv@8.20.0",
+      "source": "path:mcp/node_modules/ajv",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2646,7 +2646,7 @@
       "version": "3.0.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/ajv-formats",
-      "source": "npm:ajv-formats@3.0.1",
+      "source": "path:mcp/node_modules/ajv-formats",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2662,7 +2662,7 @@
       "version": "2.4.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/body-parser",
-      "source": "npm:body-parser@2.4.0",
+      "source": "path:mcp/node_modules/body-parser",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2678,7 +2678,7 @@
       "version": "3.1.2",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/bytes",
-      "source": "npm:bytes@3.1.2",
+      "source": "path:mcp/node_modules/bytes",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2694,7 +2694,7 @@
       "version": "1.0.2",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/call-bind-apply-helpers",
-      "source": "npm:call-bind-apply-helpers@1.0.2",
+      "source": "path:mcp/node_modules/call-bind-apply-helpers",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2710,7 +2710,7 @@
       "version": "1.0.4",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/call-bound",
-      "source": "npm:call-bound@1.0.4",
+      "source": "path:mcp/node_modules/call-bound",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2726,7 +2726,7 @@
       "version": "1.1.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/content-disposition",
-      "source": "npm:content-disposition@1.1.0",
+      "source": "path:mcp/node_modules/content-disposition",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2742,7 +2742,7 @@
       "version": "1.0.5",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/content-type",
-      "source": "npm:content-type@1.0.5",
+      "source": "path:mcp/node_modules/content-type",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2758,7 +2758,7 @@
       "version": "2.0.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/content-type",
-      "source": "npm:content-type@2.0.0",
+      "source": "path:mcp/node_modules/type-is/node_modules/content-type",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2774,7 +2774,7 @@
       "version": "2.1.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/content-type",
-      "source": "npm:content-type@2.1.0",
+      "source": "path:mcp/node_modules/body-parser/node_modules/content-type",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2790,7 +2790,7 @@
       "version": "0.7.2",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/cookie",
-      "source": "npm:cookie@0.7.2",
+      "source": "path:mcp/node_modules/cookie",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2806,7 +2806,7 @@
       "version": "1.2.2",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/cookie-signature",
-      "source": "npm:cookie-signature@1.2.2",
+      "source": "path:mcp/node_modules/cookie-signature",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2822,7 +2822,7 @@
       "version": "2.8.6",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/cors",
-      "source": "npm:cors@2.8.6",
+      "source": "path:mcp/node_modules/cors",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2838,7 +2838,7 @@
       "version": "7.0.6",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/cross-spawn",
-      "source": "npm:cross-spawn@7.0.6",
+      "source": "path:mcp/node_modules/cross-spawn",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2854,7 +2854,7 @@
       "version": "4.4.3",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/debug",
-      "source": "npm:debug@4.4.3",
+      "source": "path:mcp/node_modules/debug",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2870,7 +2870,7 @@
       "version": "2.0.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/depd",
-      "source": "npm:depd@2.0.0",
+      "source": "path:mcp/node_modules/depd",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2886,7 +2886,7 @@
       "version": "1.0.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/dunder-proto",
-      "source": "npm:dunder-proto@1.0.1",
+      "source": "path:mcp/node_modules/dunder-proto",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2902,7 +2902,7 @@
       "version": "1.1.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/ee-first",
-      "source": "npm:ee-first@1.1.1",
+      "source": "path:mcp/node_modules/ee-first",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2918,7 +2918,7 @@
       "version": "2.0.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/encodeurl",
-      "source": "npm:encodeurl@2.0.0",
+      "source": "path:mcp/node_modules/encodeurl",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2934,7 +2934,7 @@
       "version": "1.0.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/es-define-property",
-      "source": "npm:es-define-property@1.0.1",
+      "source": "path:mcp/node_modules/es-define-property",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2950,7 +2950,7 @@
       "version": "1.3.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/es-errors",
-      "source": "npm:es-errors@1.3.0",
+      "source": "path:mcp/node_modules/es-errors",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2966,7 +2966,7 @@
       "version": "1.1.2",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/es-object-atoms",
-      "source": "npm:es-object-atoms@1.1.2",
+      "source": "path:mcp/node_modules/es-object-atoms",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2982,7 +2982,7 @@
       "version": "1.0.3",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/escape-html",
-      "source": "npm:escape-html@1.0.3",
+      "source": "path:mcp/node_modules/escape-html",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -2998,7 +2998,7 @@
       "version": "1.8.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/etag",
-      "source": "npm:etag@1.8.1",
+      "source": "path:mcp/node_modules/etag",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3014,7 +3014,7 @@
       "version": "3.0.7",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/eventsource",
-      "source": "npm:eventsource@3.0.7",
+      "source": "path:mcp/node_modules/eventsource",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3030,7 +3030,7 @@
       "version": "3.1.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/eventsource-parser",
-      "source": "npm:eventsource-parser@3.1.0",
+      "source": "path:mcp/node_modules/eventsource-parser",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3046,7 +3046,7 @@
       "version": "5.2.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/express",
-      "source": "npm:express@5.2.1",
+      "source": "path:mcp/node_modules/express",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3062,7 +3062,7 @@
       "version": "8.5.2",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/express-rate-limit",
-      "source": "npm:express-rate-limit@8.5.2",
+      "source": "path:mcp/node_modules/express-rate-limit",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3078,7 +3078,7 @@
       "version": "3.1.3",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/fast-deep-equal",
-      "source": "npm:fast-deep-equal@3.1.3",
+      "source": "path:mcp/node_modules/fast-deep-equal",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3094,7 +3094,7 @@
       "version": "3.1.9",
       "license": "BSD-3-Clause",
       "homepage": "https://www.npmjs.com/package/fast-uri",
-      "source": "npm:fast-uri@3.1.9",
+      "source": "path:mcp/node_modules/fast-uri",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3110,7 +3110,7 @@
       "version": "2.1.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/finalhandler",
-      "source": "npm:finalhandler@2.1.1",
+      "source": "path:mcp/node_modules/finalhandler",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3126,7 +3126,7 @@
       "version": "0.2.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/forwarded",
-      "source": "npm:forwarded@0.2.0",
+      "source": "path:mcp/node_modules/forwarded",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3142,7 +3142,7 @@
       "version": "2.0.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/fresh",
-      "source": "npm:fresh@2.0.0",
+      "source": "path:mcp/node_modules/fresh",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3158,7 +3158,7 @@
       "version": "1.1.2",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/function-bind",
-      "source": "npm:function-bind@1.1.2",
+      "source": "path:mcp/node_modules/function-bind",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3174,7 +3174,7 @@
       "version": "1.3.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/get-intrinsic",
-      "source": "npm:get-intrinsic@1.3.0",
+      "source": "path:mcp/node_modules/get-intrinsic",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3190,7 +3190,7 @@
       "version": "1.0.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/get-proto",
-      "source": "npm:get-proto@1.0.1",
+      "source": "path:mcp/node_modules/get-proto",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3206,7 +3206,7 @@
       "version": "1.2.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/gopd",
-      "source": "npm:gopd@1.2.0",
+      "source": "path:mcp/node_modules/gopd",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3222,7 +3222,7 @@
       "version": "1.1.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/has-symbols",
-      "source": "npm:has-symbols@1.1.0",
+      "source": "path:mcp/node_modules/has-symbols",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3238,7 +3238,7 @@
       "version": "2.0.4",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/hasown",
-      "source": "npm:hasown@2.0.4",
+      "source": "path:mcp/node_modules/hasown",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3254,7 +3254,7 @@
       "version": "4.13.19",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/hono",
-      "source": "npm:hono@4.13.19",
+      "source": "path:mcp/node_modules/hono",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3270,7 +3270,7 @@
       "version": "2.0.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/http-errors",
-      "source": "npm:http-errors@2.0.1",
+      "source": "path:mcp/node_modules/http-errors",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3286,7 +3286,7 @@
       "version": "0.7.3",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/iconv-lite",
-      "source": "npm:iconv-lite@0.7.3",
+      "source": "path:mcp/node_modules/iconv-lite",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3302,7 +3302,7 @@
       "version": "2.0.4",
       "license": "ISC",
       "homepage": "https://www.npmjs.com/package/inherits",
-      "source": "npm:inherits@2.0.4",
+      "source": "path:mcp/node_modules/inherits",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3318,7 +3318,7 @@
       "version": "10.7.6",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/ip-address",
-      "source": "npm:ip-address@10.7.6",
+      "source": "path:mcp/node_modules/ip-address",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3334,7 +3334,7 @@
       "version": "1.9.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/ipaddr.js",
-      "source": "npm:ipaddr.js@1.9.1",
+      "source": "path:mcp/node_modules/ipaddr.js",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3350,7 +3350,7 @@
       "version": "4.0.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/is-promise",
-      "source": "npm:is-promise@4.0.0",
+      "source": "path:mcp/node_modules/is-promise",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3366,7 +3366,7 @@
       "version": "2.0.0",
       "license": "ISC",
       "homepage": "https://www.npmjs.com/package/isexe",
-      "source": "npm:isexe@2.0.0",
+      "source": "path:mcp/node_modules/isexe",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3382,7 +3382,7 @@
       "version": "6.2.3",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/jose",
-      "source": "npm:jose@6.2.3",
+      "source": "path:mcp/node_modules/jose",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3398,7 +3398,7 @@
       "version": "1.0.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/json-schema-traverse",
-      "source": "npm:json-schema-traverse@1.0.0",
+      "source": "path:mcp/node_modules/json-schema-traverse",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3414,7 +3414,7 @@
       "version": "8.0.2",
       "license": "BSD-2-Clause",
       "homepage": "https://www.npmjs.com/package/json-schema-typed",
-      "source": "npm:json-schema-typed@8.0.2",
+      "source": "path:mcp/node_modules/json-schema-typed",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3430,7 +3430,7 @@
       "version": "1.1.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/math-intrinsics",
-      "source": "npm:math-intrinsics@1.1.0",
+      "source": "path:mcp/node_modules/math-intrinsics",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3446,7 +3446,7 @@
       "version": "1.1.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/media-typer",
-      "source": "npm:media-typer@1.1.0",
+      "source": "path:mcp/node_modules/media-typer",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3462,7 +3462,7 @@
       "version": "2.0.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/merge-descriptors",
-      "source": "npm:merge-descriptors@2.0.0",
+      "source": "path:mcp/node_modules/merge-descriptors",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3478,7 +3478,7 @@
       "version": "1.54.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/mime-db",
-      "source": "npm:mime-db@1.54.0",
+      "source": "path:mcp/node_modules/mime-db",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3494,7 +3494,7 @@
       "version": "3.0.2",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/mime-types",
-      "source": "npm:mime-types@3.0.2",
+      "source": "path:mcp/node_modules/mime-types",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3510,7 +3510,7 @@
       "version": "2.1.3",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/ms",
-      "source": "npm:ms@2.1.3",
+      "source": "path:mcp/node_modules/ms",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3526,7 +3526,7 @@
       "version": "1.0.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/negotiator",
-      "source": "npm:negotiator@1.0.0",
+      "source": "path:mcp/node_modules/negotiator",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3542,7 +3542,7 @@
       "version": "4.1.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/object-assign",
-      "source": "npm:object-assign@4.1.1",
+      "source": "path:mcp/node_modules/object-assign",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3558,7 +3558,7 @@
       "version": "1.13.4",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/object-inspect",
-      "source": "npm:object-inspect@1.13.4",
+      "source": "path:mcp/node_modules/object-inspect",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3574,7 +3574,7 @@
       "version": "2.4.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/on-finished",
-      "source": "npm:on-finished@2.4.1",
+      "source": "path:mcp/node_modules/on-finished",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3590,7 +3590,7 @@
       "version": "1.4.0",
       "license": "ISC",
       "homepage": "https://www.npmjs.com/package/once",
-      "source": "npm:once@1.4.0",
+      "source": "path:mcp/node_modules/once",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3606,7 +3606,7 @@
       "version": "1.3.3",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/parseurl",
-      "source": "npm:parseurl@1.3.3",
+      "source": "path:mcp/node_modules/parseurl",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3622,7 +3622,7 @@
       "version": "3.1.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/path-key",
-      "source": "npm:path-key@3.1.1",
+      "source": "path:mcp/node_modules/path-key",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3638,7 +3638,7 @@
       "version": "8.4.2",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/path-to-regexp",
-      "source": "npm:path-to-regexp@8.4.2",
+      "source": "path:mcp/node_modules/path-to-regexp",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3654,7 +3654,7 @@
       "version": "5.0.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/pkce-challenge",
-      "source": "npm:pkce-challenge@5.0.1",
+      "source": "path:mcp/node_modules/pkce-challenge",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3670,7 +3670,7 @@
       "version": "2.0.8",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/proxy-addr",
-      "source": "npm:proxy-addr@2.0.8",
+      "source": "path:mcp/node_modules/proxy-addr",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3686,7 +3686,7 @@
       "version": "6.17.1",
       "license": "BSD-3-Clause",
       "homepage": "https://www.npmjs.com/package/qs",
-      "source": "npm:qs@6.17.1",
+      "source": "path:mcp/node_modules/qs",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3702,7 +3702,7 @@
       "version": "1.2.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/range-parser",
-      "source": "npm:range-parser@1.2.1",
+      "source": "path:mcp/node_modules/range-parser",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3718,7 +3718,7 @@
       "version": "3.0.2",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/raw-body",
-      "source": "npm:raw-body@3.0.2",
+      "source": "path:mcp/node_modules/raw-body",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3734,7 +3734,7 @@
       "version": "2.0.2",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/require-from-string",
-      "source": "npm:require-from-string@2.0.2",
+      "source": "path:mcp/node_modules/require-from-string",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3750,7 +3750,7 @@
       "version": "2.2.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/router",
-      "source": "npm:router@2.2.0",
+      "source": "path:mcp/node_modules/router",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3766,7 +3766,7 @@
       "version": "2.1.2",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/safer-buffer",
-      "source": "npm:safer-buffer@2.1.2",
+      "source": "path:mcp/node_modules/safer-buffer",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3782,7 +3782,7 @@
       "version": "1.2.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/send",
-      "source": "npm:send@1.2.1",
+      "source": "path:mcp/node_modules/send",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3798,7 +3798,7 @@
       "version": "2.2.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/serve-static",
-      "source": "npm:serve-static@2.2.1",
+      "source": "path:mcp/node_modules/serve-static",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3814,7 +3814,7 @@
       "version": "1.2.0",
       "license": "ISC",
       "homepage": "https://www.npmjs.com/package/setprototypeof",
-      "source": "npm:setprototypeof@1.2.0",
+      "source": "path:mcp/node_modules/setprototypeof",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3830,7 +3830,7 @@
       "version": "2.0.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/shebang-command",
-      "source": "npm:shebang-command@2.0.0",
+      "source": "path:mcp/node_modules/shebang-command",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3846,7 +3846,7 @@
       "version": "3.0.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/shebang-regex",
-      "source": "npm:shebang-regex@3.0.0",
+      "source": "path:mcp/node_modules/shebang-regex",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3862,7 +3862,7 @@
       "version": "1.1.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/side-channel",
-      "source": "npm:side-channel@1.1.1",
+      "source": "path:mcp/node_modules/side-channel",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3878,7 +3878,7 @@
       "version": "1.0.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/side-channel-list",
-      "source": "npm:side-channel-list@1.0.1",
+      "source": "path:mcp/node_modules/side-channel-list",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3894,7 +3894,7 @@
       "version": "1.0.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/side-channel-map",
-      "source": "npm:side-channel-map@1.0.1",
+      "source": "path:mcp/node_modules/side-channel-map",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3910,7 +3910,7 @@
       "version": "1.0.2",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/side-channel-weakmap",
-      "source": "npm:side-channel-weakmap@1.0.2",
+      "source": "path:mcp/node_modules/side-channel-weakmap",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3926,7 +3926,7 @@
       "version": "2.0.2",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/statuses",
-      "source": "npm:statuses@2.0.2",
+      "source": "path:mcp/node_modules/statuses",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3942,7 +3942,7 @@
       "version": "1.0.1",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/toidentifier",
-      "source": "npm:toidentifier@1.0.1",
+      "source": "path:mcp/node_modules/toidentifier",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3958,7 +3958,7 @@
       "version": "2.1.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/type-is",
-      "source": "npm:type-is@2.1.0",
+      "source": "path:mcp/node_modules/type-is",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3974,7 +3974,7 @@
       "version": "1.0.0",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/unpipe",
-      "source": "npm:unpipe@1.0.0",
+      "source": "path:mcp/node_modules/unpipe",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -3990,7 +3990,7 @@
       "version": "1.1.2",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/vary",
-      "source": "npm:vary@1.1.2",
+      "source": "path:mcp/node_modules/vary",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -4006,7 +4006,7 @@
       "version": "2.0.2",
       "license": "ISC",
       "homepage": "https://www.npmjs.com/package/which",
-      "source": "npm:which@2.0.2",
+      "source": "path:mcp/node_modules/which",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -4022,7 +4022,7 @@
       "version": "1.0.2",
       "license": "ISC",
       "homepage": "https://www.npmjs.com/package/wrappy",
-      "source": "npm:wrappy@1.0.2",
+      "source": "path:mcp/node_modules/wrappy",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -4035,10 +4035,10 @@
     {
       "section": "npm-mcp",
       "name": "zod",
-      "version": "3.25.76",
+      "version": "4.6.7",
       "license": "MIT",
       "homepage": "https://www.npmjs.com/package/zod",
-      "source": "npm:zod@3.25.76",
+      "source": "path:mcp/node_modules/zod",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -4054,7 +4054,7 @@
       "version": "3.25.2",
       "license": "ISC",
       "homepage": "https://www.npmjs.com/package/zod-to-json-schema",
-      "source": "npm:zod-to-json-schema@3.25.2",
+      "source": "path:mcp/node_modules/zod-to-json-schema",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [
@@ -5607,10 +5607,10 @@
     {
       "section": "npmglobal",
       "name": "@agentclientprotocol/codex-acp",
-      "version": "2.9.0",
+      "version": "2.12.0",
       "license": "Apache-2.0",
       "homepage": "https://github.com/agentclientprotocol/codex-acp",
-      "source": "npm:@agentclientprotocol/codex-acp@2.9.0",
+      "source": "npm:@agentclientprotocol/codex-acp@2.12.0",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
       "evidence": [

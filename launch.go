@@ -209,10 +209,10 @@ func buildMCPFromOpsConfig(cfg *opsConfig) map[string]interface{} {
 				"--password", cfg.Redis.Password,
 			},
 			"environment": map[string]string{
-				"REDIS_USERNAME":         redisUsername(cfg),
-				"REDIS_HOST":             cfg.Redis.Service,
-				"REDIS_PORT":             fmt.Sprintf("%d", cfg.Redis.Port),
-				"REDIS_PWD":              cfg.Redis.Password,
+				"REDIS_USERNAME":        redisUsername(cfg),
+				"REDIS_HOST":            cfg.Redis.Service,
+				"REDIS_PORT":            fmt.Sprintf("%d", cfg.Redis.Port),
+				"REDIS_PWD":             cfg.Redis.Password,
 				"TRUSTANT_REDIS_PREFIX": cfg.Redis.Prefix,
 			},
 			"enabled": true,
@@ -353,7 +353,7 @@ type trustantPiRuntimeWorkbench struct {
 // every consumer must validate one host contract instead of interpreting
 // incompatible files carried in the same TRUSTANT_RUNTIME_CONFIG variable.
 type trustantPiRuntimeManifest struct {
-	Version     int                           `json:"version"`
+	Version     int                          `json:"version"`
 	Workbenches []trustantPiRuntimeWorkbench `json:"workbenches"`
 }
 

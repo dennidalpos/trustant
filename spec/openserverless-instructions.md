@@ -173,7 +173,7 @@ It must say:
   no longer hide or reject mutation tools. The integrated runtime must not
   repeatedly replace a normal final answer with automatic completion recovery.
   When source changed and no completion check ran, it may request exactly one
-  internal turn to call `trustant_completion_check`. If the provider stops without text,
+  internal turn to run the completion checks. If the provider stops without text,
   Trustant renders a concise visible status instead of leaving an empty
   assistant message. Stricter recovery behavior remains limited to legacy
   non-integrated OpenCode runtimes;
@@ -191,11 +191,12 @@ It must say:
   the request has completed; such views need an explicit loading state;
 - the frontend checker must reject localStorage user/profile data used as
   authoritative authentication without a backend `me`/session validation;
-- after source changes, `trustant_completion_check` must pass the action and
-  frontend checkers, `git diff --check`, the project typecheck, and the
-  available frontend build before the assistant claims completion. When no
-  `typecheck` script exists but a local TypeScript compiler and `tsconfig.json`
-  do, the gate runs `tsc -b --noEmit --incremental false` so Vite-only builds
+- after source changes, the assistant runs the action and frontend checkers,
+  `git diff --check`, the project typecheck, and the available frontend build
+  before claiming completion (see
+  [application-test-completion-gate.md](application-test-completion-gate.md)).
+  When no `typecheck` script exists but a local TypeScript compiler and
+  `tsconfig.json` do, it runs `tsc -b --noEmit --incremental false` so Vite-only builds
   cannot hide undefined JSX symbols or leave `.tsbuildinfo` artifacts.
 
 ## Non-Negotiable Rules
@@ -235,7 +236,7 @@ The embedded guidance must include these rules:
   `packages/setup/`. The same endpoint tracking applies when the command enters
   the action inline with `cd packages/<package>/<action> && ...`.
 - If setup actions change, run `timeout 120 ops ide setup` only after deploy.
-- The generated completion gate must remain blocked until required setup runs.
+- Completion must not be reported until required setup has run.
 - Never create, edit, move, or delete action ZIP files manually; deploy owns
   the sibling `packages/<package>/<action>.zip` artifacts.
 - Assistants must not use shell redirection to create or replace source files.
@@ -980,9 +981,8 @@ dock remains hidden until the current turn writes its own plan, preventing stale
 tasks from being presented as current work.
 
 The integrated runtime never injects a hidden completion-recovery turn after a
-normal final answer. `trustant_completion_check` is used near the end of
-substantial implementation, once per source revision and no more than three
-times per real request. Failures are reported concretely and must not cause
+normal final answer. The checker scripts are run near the end of substantial
+implementation. Failures are reported concretely and must not cause
 placeholder-test churn. Read-only inspection of a checker path is distinct from
 executing and masking that checker's exit status.
 

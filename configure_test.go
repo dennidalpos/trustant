@@ -697,10 +697,10 @@ func TestBuildLaunchMCPFromOpsConfig(t *testing.T) {
 	}
 	redisEnv := redis["environment"].(map[string]string)
 	wantRedisEnv := map[string]string{
-		"REDIS_USERNAME":         "app",
-		"REDIS_HOST":             "redis",
-		"REDIS_PORT":             "6379",
-		"REDIS_PWD":              "pw",
+		"REDIS_USERNAME":        "app",
+		"REDIS_HOST":            "redis",
+		"REDIS_PORT":            "6379",
+		"REDIS_PWD":             "pw",
 		"TRUSTANT_REDIS_PREFIX": "app:",
 	}
 	if !reflect.DeepEqual(redisEnv, wantRedisEnv) {

@@ -530,13 +530,13 @@ func passwdShell(path string, uid int) string {
 // so provider credentials and auth secrets are stripped rather than inherited.
 func terminalEnvironment(workbenchPath string) []string {
 	blocked := map[string]bool{
-		"OPENAI_API_KEY":         true,
-		"OPENAI_BASE_URL":        true,
-		authUsernameEnv:          true,
-		authPasswordHashEnv:      true,
-		authSessionKeyEnv:        true,
-		"GITHUB_TOKEN":           true,
-		"GH_TOKEN":               true,
+		"OPENAI_API_KEY":        true,
+		"OPENAI_BASE_URL":       true,
+		authUsernameEnv:         true,
+		authPasswordHashEnv:     true,
+		authSessionKeyEnv:       true,
+		"GITHUB_TOKEN":          true,
+		"GH_TOKEN":              true,
 		"TRUSTANT_GITHUB_TOKEN": true,
 	}
 	environment := make([]string, 0, len(os.Environ())+2)

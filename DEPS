@@ -313,7 +313,7 @@ unpipe                     1.0.0    MIT           https://www.npmjs.com/package/
 vary                       1.1.2    MIT           https://www.npmjs.com/package/vary
 which                      2.0.2    ISC           https://www.npmjs.com/package/which
 wrappy                     1.0.2    ISC           https://www.npmjs.com/package/wrappy
-zod                        3.25.76  MIT           https://www.npmjs.com/package/zod
+zod                        4.6.7    MIT           https://www.npmjs.com/package/zod
 zod-to-json-schema         3.25.2   ISC           https://www.npmjs.com/package/zod-to-json-schema
 
 
@@ -478,7 +478,7 @@ groupcache (ops dependency)              0.0.0-20241129210726-2c02b8208cf8   Apa
 knownhosts (ops dependency)              1.3.1                               Apache-2.0                https://github.com/skeema/knownhosts
 mcp-s3                                   1.3.0                               Apache-2.0                https://github.com/txn2/mcp-s3
 Node.js (NodeSource)                     24.x                                MIT                       https://nodejs.org
-ollama                                   0.40.17                             MIT                       https://github.com/ollama/ollama
+ollama                                   0.40.18                             MIT                       https://github.com/ollama/ollama
 ops (Trustant OpenServerless CLI build)  0.9.0-incubating+26i15n55-snapshot  Apache-2.0                https://github.com/trustable-ai/openserverless-cli
 ProtonMail go-crypto (ops dependency)    1.1.6                               BSD-3-Clause              https://github.com/ProtonMail/go-crypto
 sha1cd (ops dependency)                  0.7.0                               Apache-2.0                https://github.com/pjbgf/sha1cd
@@ -525,7 +525,7 @@ tree, with its license files, is installed under the global node_modules.
 
 NAME                             VERSION  LICENSE             HOMEPAGE
 ----                             -------  -------             --------
-@agentclientprotocol/codex-acp   2.9.0    Apache-2.0          https://github.com/agentclientprotocol/codex-acp
+@agentclientprotocol/codex-acp   2.12.0   Apache-2.0          https://github.com/agentclientprotocol/codex-acp
 @earendil-works/pi-agent-core    1.6.0    MIT                 https://github.com/earendil-works/pi
 @earendil-works/pi-ai            1.6.0    MIT                 https://github.com/earendil-works/pi
 @earendil-works/pi-coding-agent  1.6.0    MIT                 https://github.com/earendil-works/pi

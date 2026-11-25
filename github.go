@@ -138,15 +138,15 @@ func managedGitHubEnvironment() ([]string, error) {
 		return nil, err
 	}
 	blocked := map[string]bool{
-		"GH_TOKEN":            true,
-		"GITHUB_TOKEN":        true,
-		"GH_ENTERPRISE_TOKEN": true,
+		"GH_TOKEN":                true,
+		"GITHUB_TOKEN":            true,
+		"GH_ENTERPRISE_TOKEN":     true,
 		"GITHUB_ENTERPRISE_TOKEN": true,
-		"GH_CONFIG_DIR":       true,
-		"GIT_CONFIG_GLOBAL":   true,
-		"HOME":                true,
-		"GH_HOST":             true,
-		"GH_BROWSER":          true,
+		"GH_CONFIG_DIR":           true,
+		"GIT_CONFIG_GLOBAL":       true,
+		"HOME":                    true,
+		"GH_HOST":                 true,
+		"GH_BROWSER":              true,
 	}
 	environment := make([]string, 0, len(os.Environ())+7)
 	for _, entry := range os.Environ() {
