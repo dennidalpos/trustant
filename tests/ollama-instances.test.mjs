@@ -59,10 +59,10 @@ function load() {
 }
 
 // A fake server that mirrors the contract of /api/ollama-instances.
-function fakeServer({ instances = [], active = '', models = ['m1', 'm2'] } = {}) {
+function fakeServer({ instances = [], active = '', models = ['m1', 'm2'], detected = null } = {}) {
     const calls = [];
     const state = { instances, active };
-    const view = () => ({ instances: state.instances.map((i) => ({ ...i, key_set: false })), active: state.active, base_url: state.active ? 'http://x/v1' : 'http://localhost:11434/v1' });
+    const view = () => ({ ...(detected && !state.instances.some((i) => i.url === detected.url) ? { detected } : {}), instances: state.instances.map((i) => ({ ...i, key_set: false })), active: state.active, base_url: state.active ? 'http://x/v1' : 'http://localhost:11434/v1' });
     const reply = (data, status = 200) => Promise.resolve({ ok: status < 400, status, json: async () => data });
     const fetchImpl = (url, opts = {}) => {
         const body = opts.body ? JSON.parse(opts.body) : null;
@@ -94,12 +94,13 @@ function build(server, onChange) {
     const lib = load();
     const root = makeElement('div');
     const control = lib.mount(root, { fetch: server.fetchImpl, onChange });
-    const [toggleRow, hint, pickRow, status, form] = root.children;
+    const [toggleRow, hint, pickRow, detectedRow, status, form] = root.children;
+    const [detectedText, detectedBtn] = detectedRow.children;
     const toggle = toggleRow.children[0];
     const [select, addBtn, editBtn, removeBtn, testBtn] = pickRow.children;
     const [nameField, urlField, keyField, , formError, formButtons] = form.children;
     return {
-        control, toggle, hint, select, addBtn, editBtn, removeBtn, testBtn, status, form, formError,
+        control, toggle, hint, select, detectedRow, detectedText, detectedBtn, addBtn, editBtn, removeBtn, testBtn, status, form, formError,
         nameInput: nameField.children[1], urlInput: urlField.children[1], keyInput: keyField.children[1],
         saveBtn: formButtons.children[0], cancelBtn: formButtons.children[1],
     };
@@ -198,4 +199,27 @@ test('Refresh models re-reads the selected instance and updates the page when it
     await ui.testBtn.listeners.click();
     assert.match(ui.status.textContent, /Found 1 model on Lab/);
     assert.deepEqual(plain(seen.at(-1)), { models: ['x'] });
+});
+
+test('offers the detected host Ollama and saves it without switching it on', async () => {
+    const detected = { name: 'Ollama host', url: 'http://172.27.224.1:11434', source: 'WSL host' };
+    const server = fakeServer({ detected });
+    const ui = build(server);
+    await ui.control.refresh();
+    assert.equal(ui.detectedRow.classList.contains('hidden'), false);
+    assert.match(ui.detectedText.textContent, /WSL host.*172\.27\.224\.1:11434/);
+
+    await ui.detectedBtn.listeners.click();
+    assert.deepEqual(plain(server.state.instances), [{ id: 'ollama-host', name: 'Ollama host', url: detected.url }]);
+    assert.equal(server.state.active, '');
+    assert.equal(ui.toggle.checked, false);
+    assert.equal(ui.detectedRow.classList.contains('hidden'), true);
+    assert.match(ui.status.textContent, /Turn on the switch/);
+    assert.ok(!server.calls.some((c) => c.includes('"action":"select"')), 'must not select the instance');
+});
+
+test('shows nothing extra when no host Ollama is detected', async () => {
+    const ui = build(fakeServer());
+    await ui.control.refresh();
+    assert.equal(ui.detectedRow.classList.contains('hidden'), true);
 });

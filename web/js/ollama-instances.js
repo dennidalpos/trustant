@@ -94,6 +94,14 @@
         const pickRow = el('div', 'flex flex-wrap items-center gap-2 mt-3');
         pickRow.append(select, addBtn, editBtn, removeBtn, testBtn);
 
+        // An Ollama found on the machine hosting this one (WSL / Lima). It is
+        // only offered: adding it saves a preset, switching it on stays manual.
+        const detectedText = el('span', 'text-sm');
+        const detectedBtn = el('button', 'nu-btn nu-btn-secondary', 'Add');
+        detectedBtn.type = 'button';
+        const detectedRow = el('div', 'flex flex-wrap items-center gap-2 mt-3 hidden');
+        detectedRow.append(detectedText, detectedBtn);
+
         const status = el('p', 'text-sm mt-2 hidden');
         status.setAttribute('role', 'status');
 
@@ -123,7 +131,7 @@
         formButtons.append(saveBtn, cancelBtn);
         form.append(field('Name', nameInput), field('URL', urlInput), field('API key (optional)', keyInput), clearRow, formError, formButtons);
 
-        root.replaceChildren(toggleRow, hint, pickRow, status, form);
+        root.replaceChildren(toggleRow, hint, pickRow, detectedRow, status, form);
 
         function selected() {
             return state.instances.find((i) => i.id === select.value) || null;
@@ -161,6 +169,11 @@
             removeBtn.disabled = busy || !have;
             testBtn.disabled = busy || !have;
             form.classList.toggle('hidden', editingId === null);
+
+            const found = state.detected;
+            detectedRow.classList.toggle('hidden', !found);
+            if (found) detectedText.textContent = 'Ollama found on the ' + found.source + ': ' + found.url;
+            detectedBtn.disabled = busy;
         }
 
         function openForm(id, activate) {
@@ -228,6 +241,24 @@
         select.addEventListener('change', () => {
             if (state.active) return switchTo(select.value);
             return render();
+        });
+        detectedBtn.addEventListener('click', async () => {
+            const found = state.detected;
+            if (!found || busy) return;
+            busy = true;
+            render();
+            const result = await request(fetchImpl, 'POST', {
+                action: 'save', instance: { name: found.name, url: found.url },
+            });
+            busy = false;
+            if (!result.ok) {
+                render();
+                say(result.data.error || 'Could not add the detected Ollama.', 'error');
+                return;
+            }
+            state = result.data;
+            render();
+            say('Added "' + found.name + '". Turn on the switch to use it.', 'info');
         });
         addBtn.addEventListener('click', () => openForm('', false));
         editBtn.addEventListener('click', () => { if (selected()) openForm(selected().id, false); });

@@ -16,6 +16,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -23,6 +24,26 @@ import (
 	"strings"
 	"testing"
 )
+
+// Tests never probe the real network: host detection is off unless a test
+// switches it on with stubHostDetection.
+func init() {
+	ollamaIsWSL = func() bool { return false }
+	ollamaLimaHostResolves = func() bool { return false }
+	ollamaHostProbe = func(context.Context, string) bool { return false }
+}
+
+func stubHostDetection(t *testing.T, wsl, lima bool, gateway string, answers bool) {
+	t.Helper()
+	oldWSL, oldLima, oldGw, oldProbe := ollamaIsWSL, ollamaLimaHostResolves, ollamaDefaultGateway, ollamaHostProbe
+	t.Cleanup(func() {
+		ollamaIsWSL, ollamaLimaHostResolves, ollamaDefaultGateway, ollamaHostProbe = oldWSL, oldLima, oldGw, oldProbe
+	})
+	ollamaIsWSL = func() bool { return wsl }
+	ollamaLimaHostResolves = func() bool { return lima }
+	ollamaDefaultGateway = func() string { return gateway }
+	ollamaHostProbe = func(context.Context, string) bool { return answers }
+}
 
 func ollamaInstancesCall(t *testing.T, method, body string) (*httptest.ResponseRecorder, ollamaInstancesState) {
 	t.Helper()
@@ -193,5 +214,78 @@ func TestDiscoverModelsReadsASavedInstanceWithItsKey(t *testing.T) {
 	handleDiscoverModels(rec, httptest.NewRequest(http.MethodPost, "/api/discover-models", strings.NewReader(`{"instance_id":"ghost"}`)))
 	if rec.Code != http.StatusNotFound {
 		t.Fatalf("unknown instance = %d, want 404", rec.Code)
+	}
+}
+
+func TestParseDefaultGateway(t *testing.T) {
+	route := "Iface\tDestination\tGateway\tFlags\tRefCnt\tUse\tMetric\tMask\n" +
+		"eth0\t00000000\t01E01BAC\t0003\t0\t0\t0\t00000000\n" +
+		"eth0\t00E01BAC\t00000000\t0001\t0\t0\t0\t00F0FFFF\n"
+	if got := parseDefaultGateway(route); got != "172.27.224.1" {
+		t.Fatalf("gateway = %q, want 172.27.224.1", got)
+	}
+	for _, in := range []string{"", "Iface\tDestination\tGateway\n", "eth0\t00E01BAC\t00000000\n"} {
+		if got := parseDefaultGateway(in); got != "" {
+			t.Fatalf("parseDefaultGateway(%q) = %q, want empty", in, got)
+		}
+	}
+}
+
+func TestDetectHostOllama(t *testing.T) {
+	ctx := context.Background()
+
+	stubHostDetection(t, true, false, "172.27.224.1", true)
+	got := detectHostOllama(ctx, &trustantConfig{})
+	if got == nil || got.URL != "http://172.27.224.1:11434" || got.Source != "WSL host" {
+		t.Fatalf("WSL = %+v", got)
+	}
+	// A saved instance with the same URL hides the suggestion.
+	saved := &trustantConfig{OllamaInstances: []ollamaInstance{{ID: "w", Name: "W", URL: "http://172.27.224.1:11434"}}}
+	if got := detectHostOllama(ctx, saved); got != nil {
+		t.Fatalf("already saved still suggested: %+v", got)
+	}
+	// Not answering means no suggestion.
+	stubHostDetection(t, true, false, "172.27.224.1", false)
+	if got := detectHostOllama(ctx, &trustantConfig{}); got != nil {
+		t.Fatalf("unreachable host suggested: %+v", got)
+	}
+	// No default gateway under WSL.
+	stubHostDetection(t, true, false, "", true)
+	if got := detectHostOllama(ctx, &trustantConfig{}); got != nil {
+		t.Fatalf("no gateway suggested: %+v", got)
+	}
+	// Lima.
+	stubHostDetection(t, false, true, "", true)
+	got = detectHostOllama(ctx, &trustantConfig{})
+	if got == nil || got.URL != "http://host.lima.internal:11434" || got.Source != "Lima host" {
+		t.Fatalf("Lima = %+v", got)
+	}
+	// Plain Linux: the local Ollama is the default, nothing to suggest.
+	stubHostDetection(t, false, false, "192.168.1.1", true)
+	if got := detectHostOllama(ctx, &trustantConfig{}); got != nil {
+		t.Fatalf("plain Linux suggested: %+v", got)
+	}
+}
+
+func TestOllamaInstancesListIncludesTheDetectedHost(t *testing.T) {
+	withPredefinedEnvWorkspace(t, `{"provider":"ollama","base_url":"http://localhost:11434/v1","api_key":"dummy"}`)
+	stubHostDetection(t, true, false, "172.27.224.1", true)
+
+	_, st := ollamaInstancesCall(t, http.MethodGet, "")
+	if st.Detected == nil || st.Detected.URL != "http://172.27.224.1:11434" {
+		t.Fatalf("detected = %+v", st.Detected)
+	}
+	if len(st.Instances) != 0 || st.Active != "" {
+		t.Fatalf("detection must not save or select anything: %+v", st)
+	}
+
+	// Adding it as a preset, like the button does, leaves it unselected and hides the suggestion.
+	_, st = ollamaInstancesCall(t, http.MethodPost, `{"action":"save","instance":{"name":"Ollama host","url":"http://172.27.224.1:11434"}}`)
+	if len(st.Instances) != 1 || st.Active != "" || st.Detected != nil {
+		t.Fatalf("after add = %+v", st)
+	}
+	_, st = ollamaInstancesCall(t, http.MethodGet, "")
+	if st.Detected != nil {
+		t.Fatalf("saved host still suggested: %+v", st.Detected)
 	}
 }

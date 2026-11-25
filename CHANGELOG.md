@@ -5,6 +5,13 @@ All notable changes to Trustant are listed here. The latest release tag is
 
 ## Unreleased
 
+### Added
+
+- The Ollama Instance card detects an Ollama on the host of a WSL or Lima
+  environment (default gateway, or `host.lima.internal`), checks that it answers
+  and offers it with an **Add** button. It only suggests: the switch stays off
+  until you turn it on.
+
 ### Changed
 
 - `oplugins/` (trustable-ai/openserverless-task), `skills/` (trustable-ai/skills)

@@ -288,7 +288,7 @@ as the Bearer token by discovery, the model test and Pi's `auth.json`
 stored workspace, so Save & Configure never erases them.
 
 `GET /api/ollama-instances` returns `{instances:[{id,name,url,key_set}], active,
-base_url}`. `POST` takes `{action:"save", instance:{id?, name, url, api_key?,
+base_url, detected?}`. `POST` takes `{action:"save", instance:{id?, name, url, api_key?,
 clear_key?}}` (name 1-60 characters and unique ignoring case, URL
 `http(s)://host[:port]` with an optional `/v1`, no credentials, query or other
 path; the id is a slug of the name; up to 50 instances), `{action:"delete", id}`
@@ -307,6 +307,26 @@ offered; the choice is already persisted, and Save & Configure rewrites Pi. The
 local Ollama is not started or stopped by the switch (see "Local Ollama
 control"). Changing the instance does not affect `start.sh`, `run.sh` or
 `OLLAMA_ENDPOINT`.
+
+### Host Ollama detection
+
+`GET /api/ollama-instances` also looks for an Ollama on the machine that hosts
+this one and returns it as `detected: {name, url, source}`. Under WSL (the
+`WSL_DISTRO_NAME` variable or `/proc/sys/fs/binfmt_misc/WSLInterop`) the
+candidate is the IPv4 default gateway from `/proc/net/route` on port 11434
+(`source: "WSL host"`); under Lima, where `host.lima.internal` resolves, it is
+`http://host.lima.internal:11434` (`source: "Lima host"`). On a plain Linux host
+nothing is suggested, because the local Ollama is already the default. A
+candidate is returned only when `GET <url>/api/tags` answers 200 within 1.5
+seconds and no saved instance already has that URL, so an unreachable host is
+never offered. The suggestion is read-only: nothing is saved, selected or
+switched on. The card shows "Ollama found on the <source>: <url>" with an
+**Add** button that saves it as the instance **Ollama host** (a normal `save`);
+turning the switch on stays a separate, manual step. The address is recomputed
+on every read, so a WSL gateway that changes after a reboot is picked up; an
+already saved preset keeps its stored URL and is not rewritten. The Mac path is
+covered by unit tests only: the `host.lima.internal` steps are not verified on a
+Mac (see [docs/setup-macos.md](../docs/setup-macos.md)).
 
 ## Private AI endpoint
 

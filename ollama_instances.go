@@ -16,14 +16,18 @@
 package main
 
 import (
+	"context"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 )
 
 // Named Ollama servers the "ollama" provider can be pointed at, for example
@@ -161,6 +165,9 @@ type ollamaInstanceView struct {
 type ollamaInstancesState struct {
 	Instances []ollamaInstanceView `json:"instances"`
 	Active    string               `json:"active"`
+	// Detected is an Ollama found on the machine hosting this one (WSL or
+	// Lima). It is only a suggestion: nothing is saved or switched on by it.
+	Detected *ollamaDetectedHost `json:"detected,omitempty"`
 	// BaseURL is the provider base_url after the change, so the page can keep
 	// its in-memory configuration in step.
 	BaseURL string `json:"base_url,omitempty"`
@@ -229,7 +236,9 @@ func handleOllamaInstances(w http.ResponseWriter, r *http.Request) {
 			writeOllamaInstancesJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
 			return
 		}
-		writeOllamaInstancesJSON(w, http.StatusOK, ollamaInstancesView(cfg))
+		state := ollamaInstancesView(cfg)
+		state.Detected = detectHostOllama(r.Context(), cfg)
+		writeOllamaInstancesJSON(w, http.StatusOK, state)
 	case http.MethodPost:
 		var req ollamaInstanceRequest
 		if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, 1<<14)).Decode(&req); err != nil {
@@ -335,4 +344,98 @@ func applyOllamaInstanceRequest(cfg *trustantConfig, req ollamaInstanceRequest) 
 		return nil
 	}
 	return bad(`action must be "save", "delete" or "select"`)
+}
+
+// ollamaDetectedHost is a reachable Ollama on the host machine.
+type ollamaDetectedHost struct {
+	Name   string `json:"name"`
+	URL    string `json:"url"`
+	Source string `json:"source"`
+}
+
+// limaHostName is how Lima exposes the Mac to its VM.
+const limaHostName = "host.lima.internal"
+
+// The probes are variables so tests can replace them.
+var (
+	ollamaIsWSL = func() bool {
+		if os.Getenv("WSL_DISTRO_NAME") != "" {
+			return true
+		}
+		_, err := os.Stat("/proc/sys/fs/binfmt_misc/WSLInterop")
+		return err == nil
+	}
+	ollamaDefaultGateway = func() string {
+		data, err := os.ReadFile("/proc/net/route")
+		if err != nil {
+			return ""
+		}
+		return parseDefaultGateway(string(data))
+	}
+	ollamaLimaHostResolves = func() bool {
+		addrs, err := net.LookupHost(limaHostName)
+		return err == nil && len(addrs) > 0
+	}
+	ollamaHostProbe = func(ctx context.Context, root string) bool {
+		ctx, cancel := context.WithTimeout(ctx, 1500*time.Millisecond)
+		defer cancel()
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, root+"/api/tags", nil)
+		if err != nil {
+			return false
+		}
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			return false
+		}
+		defer resp.Body.Close()
+		return resp.StatusCode == http.StatusOK
+	}
+)
+
+// parseDefaultGateway returns the IPv4 default gateway from the text of
+// /proc/net/route (little-endian hex), or "".
+func parseDefaultGateway(route string) string {
+	for _, line := range strings.Split(route, "\n")[1:] {
+		f := strings.Fields(line)
+		if len(f) < 3 || f[1] != "00000000" {
+			continue
+		}
+		raw, err := hex.DecodeString(f[2])
+		if err != nil || len(raw) != 4 || (raw[0] == 0 && raw[1] == 0 && raw[2] == 0 && raw[3] == 0) {
+			continue
+		}
+		return fmt.Sprintf("%d.%d.%d.%d", raw[3], raw[2], raw[1], raw[0])
+	}
+	return ""
+}
+
+// detectHostOllama looks for an Ollama on the machine that hosts this one: the
+// Windows host under WSL (the default gateway) or the Mac under Lima
+// (host.lima.internal). It returns nil when there is none, when it does not
+// answer /api/tags, or when a saved instance already points at it. On a plain
+// Linux host the Ollama is the local default, so nothing is suggested.
+func detectHostOllama(ctx context.Context, cfg *trustantConfig) *ollamaDetectedHost {
+	var root, source string
+	switch {
+	case ollamaIsWSL():
+		if gw := ollamaDefaultGateway(); gw != "" {
+			root, source = "http://"+gw+":11434", "WSL host"
+		}
+	case ollamaLimaHostResolves():
+		root, source = "http://"+limaHostName+":11434", "Lima host"
+	}
+	if root == "" {
+		return nil
+	}
+	if cfg != nil {
+		for _, inst := range cfg.OllamaInstances {
+			if strings.EqualFold(inst.URL, root) {
+				return nil
+			}
+		}
+	}
+	if !ollamaHostProbe(ctx, root) {
+		return nil
+	}
+	return &ollamaDetectedHost{Name: "Ollama host", URL: root, Source: source}
 }
