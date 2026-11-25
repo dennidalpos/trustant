@@ -164,12 +164,17 @@ def read_manual():
 
 
 def go_mod():
-    goversion, mods = None, []
+    goversion, toolchain, mods = None, None, []
     inreq = False
     for line in open(rel("go.mod")):
         line = line.split("//")[0].strip()
         if line.startswith("go "):
             goversion = line.split()[1]
+        elif line.startswith("toolchain "):
+            # WHY: `go 1.27` is a language level, not a release: the runtime and
+            # standard library that ship are the toolchain's (go1.27.4), and only
+            # that tag has a LICENSE to fetch (go1.27 does not exist upstream).
+            toolchain = line.split()[1].removeprefix("go")
         elif line.startswith("require ("):
             inreq = True
         elif inreq and line == ")":
@@ -178,7 +183,7 @@ def go_mod():
             fields = line.replace("require ", "").split()
             if len(fields) >= 2:
                 mods.append((fields[0], fields[1]))
-    return goversion, mods
+    return toolchain or goversion, mods
 
 
 def requirements():
