@@ -108,6 +108,11 @@ ensure_build_metadata
 
 source ./.env
 
+# main() builds the auth manager before the Go-side loadEnv reads .env, so the
+# TRUSTANT_AUTH_* values sourced above must be in the process environment.
+for _auth_var in $(compgen -v TRUSTANT_AUTH_); do export "$_auth_var"; done
+unset _auth_var
+
 # setup.sh persists the selected user-owned npm prefix, but running this script
 # from the same non-interactive shell does not reload ~/.bashrc. Reconstruct the
 # setup-owned PATH here so TruACP can spawn the pinned pi-acp and Pi binaries on
