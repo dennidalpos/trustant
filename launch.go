@@ -1675,13 +1675,13 @@ func handleLaunchGet(w http.ResponseWriter, r *http.Request, app string) {
 	reportLaunchProgress(w, 8, "Waiting for services to become ready...")
 	// Wait for both ports to be listening
 	log.Printf("Waiting for ports %d and %d to be listening...", leftPort, rightPort)
-	if err := waitForPort(leftPort, 30*time.Second); err != nil {
+	if err := waitForPort(leftPort, scaledTimeout(120*time.Second)); err != nil {
 		killPgid(pgid)
 		removePgidFile()
 		json.NewEncoder(w).Encode(map[string]string{"error": fmt.Sprintf("truacp failed to start listening: %s", err)})
 		return
 	}
-	if err := waitForPort(rightPort, 30*time.Second); err != nil {
+	if err := waitForPort(rightPort, scaledTimeout(120*time.Second)); err != nil {
 		killPgid(pgid)
 		removePgidFile()
 		json.NewEncoder(w).Encode(map[string]string{"error": fmt.Sprintf("ops ide devel failed to start listening: %s", err)})
@@ -1919,7 +1919,7 @@ func serveRedeploy(w http.ResponseWriter, r *http.Request, previewPort int) {
 
 	// Step 2: Wait for port free
 	send("status", fmt.Sprintf("Waiting for port %d to be free...", previewPort))
-	if err := waitForPortFree(previewPort, 10*time.Second); err != nil {
+	if err := waitForPortFree(previewPort, scaledTimeout(30*time.Second)); err != nil {
 		send("error", fmt.Sprintf("Port %d did not free up: %s", previewPort, err))
 		return
 	}
@@ -1996,7 +1996,7 @@ func serveRedeploy(w http.ResponseWriter, r *http.Request, previewPort int) {
 	// Step 6: Wait for dev server to respond
 	send("status", "Waiting for dev server to be ready...")
 	log.Printf("Redeploy: waiting for HTTP response on port %d...", previewPort)
-	if err := waitForHTTP(previewPort, 30*time.Second); err != nil {
+	if err := waitForHTTP(previewPort, scaledTimeout(120*time.Second)); err != nil {
 		send("error", fmt.Sprintf("Dev server not responding: %s", err))
 		return
 	}

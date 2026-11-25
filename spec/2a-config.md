@@ -943,9 +943,12 @@ not proof the model is usable for coding. A non-confirming reply becomes
 `model did not confirm: <first 80 chars of the reply>`.
 
 The same probe is shared by `GET /api/configure` and `POST /api/configuration`,
-so all three entry points apply one consistent gate. For Private AI, the
-180-second limit covers the request and response body. A timeout reports the
-limit and suggests retrying because the model may still be loading. A connection
+so all three entry points apply one consistent gate. For every provider, the
+180-second limit covers the request and response body (multiplied by
+`TRUSTANT_TIMEOUT_FACTOR` when set, see [docs/ollama.md](../docs/ollama.md)): a
+cold model on a slow computer can need minutes to load. For Private AI, a
+timeout reports the limit and suggests retrying because the model may still be
+loading. A connection
 failure reports that the endpoint could not be reached, and an interrupted
 response reports that it could not be read. Authentication failures
 still take precedence over the content assertion: an Ollama sign-in error is

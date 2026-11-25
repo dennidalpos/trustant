@@ -575,7 +575,7 @@
 
             let url;
             try {
-                const resp = await fetch('/api/ollama-connect', { signal: AbortSignal.timeout(10000) });
+                const resp = await fetch('/api/ollama-connect', { signal: AbortSignal.timeout(30000) });
                 if (resp.ok) url = (await resp.json()).url;
             } catch {
                 // The terminal sign-in instructions are also the network fallback.

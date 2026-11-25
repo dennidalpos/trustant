@@ -711,7 +711,7 @@ func importOllamaSuggestions(cfg *trustantConfig, rows []ImportResolution) impor
 		return importSuggestions{}
 	}
 	client := &http.Client{
-		Timeout: 2 * time.Second,
+		Timeout: scaledTimeout(8 * time.Second),
 		CheckRedirect: func(*http.Request, []*http.Request) error {
 			return http.ErrUseLastResponse
 		},
@@ -763,7 +763,7 @@ func importProviderSuggestions(cfg *trustantConfig, needsModel bool) importSugge
 // Any failure returns nil: suggestions are a convenience, never an error.
 func providerModelNames(baseURL, apiKey string) []string {
 	client := &http.Client{
-		Timeout: 3 * time.Second,
+		Timeout: scaledTimeout(8 * time.Second),
 		CheckRedirect: func(*http.Request, []*http.Request) error {
 			return http.ErrUseLastResponse
 		},

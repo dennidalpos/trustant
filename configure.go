@@ -1005,7 +1005,7 @@ func normalizeOllamaModelName(name string) string {
 // non-nil error: callers fall back to pulling everything rather than silently
 // skipping an install that never happened.
 func installedOllamaModels(root string) (map[string]bool, error) {
-	names, err := ollamaModelNames(root, &http.Client{Timeout: 10 * time.Second})
+	names, err := ollamaModelNames(root, &http.Client{Timeout: scaledTimeout(30 * time.Second)})
 	if err != nil {
 		return nil, err
 	}
@@ -1504,7 +1504,7 @@ func handleConfigure(w http.ResponseWriter, r *http.Request) {
 		ollamaOK := false
 		maxAttempts := 12 // 2 minutes at 10-second intervals
 		for attempt := 1; attempt <= maxAttempts; attempt++ {
-			client := &http.Client{Timeout: 5 * time.Second}
+			client := &http.Client{Timeout: scaledTimeout(15 * time.Second)}
 			resp, err := client.Get(probe)
 			if err == nil {
 				resp.Body.Close()
@@ -2339,10 +2339,9 @@ func runTestModel(cfg *trustantConfig) testModelResult {
 	}
 
 	log.Printf("Testing model %s at %s...", model, baseURL)
-	timeout := 60 * time.Second
-	if cfg.Provider == "private" {
-		timeout = 180 * time.Second
-	}
+	// A cold model can need minutes to load on a slow PC, so every provider
+	// gets the generous limit that only the remote Private AI had before.
+	timeout := scaledTimeout(180 * time.Second)
 	client := &http.Client{Timeout: timeout}
 	reqBody, _ := json.Marshal(map[string]interface{}{
 		"model": model,

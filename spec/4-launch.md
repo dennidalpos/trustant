@@ -958,7 +958,9 @@ Check the command does not terminate within .5 seconds.
 
 If it terminates, kill the whole process group and remove  `<workbenchdir>/pgid`, and return error
 
-Wait that both the processes are up and running and ports are listening.
+Wait that both the processes are up and running and ports are listening: up to
+120 seconds per port (multiplied by `TRUSTANT_TIMEOUT_FACTOR`), so a slow computer
+is not reported as failed while the dev server is still compiling.
 
 From this point until the app runtime stops, `ops ide devel` is the sole live
 deploy owner. Pi reads its redacted authoritative tail through
@@ -1040,7 +1042,7 @@ Stream: `event: status` / `data: Terminating ops ide devel...`
 
 ## Step 2: Wait for port 5173 to be free
 
-Poll until port 5173 is no longer listening (timeout: 10 seconds). If it doesn't free up, send `event: error` and return.
+Poll until port 5173 is no longer listening (timeout: 30 seconds, multiplied by `TRUSTANT_TIMEOUT_FACTOR`). If it doesn't free up, send `event: error` and return.
 
 Stream: `event: status` / `data: Waiting for port 5173 to be free...`
 
@@ -1066,7 +1068,7 @@ Stream: `event: status` / `data: Starting dev server (ops ide devel --fast)...`
 
 ## Step 6: Wait for dev server to be ready
 
-Send repeated HTTP HEAD requests to `http://127.0.0.1:5173/` every 500ms until the server responds (timeout: 30 seconds). If it doesn't respond, send `event: error` and return.
+Send repeated HTTP HEAD requests to `http://127.0.0.1:5173/` every 500ms until the server responds (timeout: 120 seconds, multiplied by `TRUSTANT_TIMEOUT_FACTOR`). If it doesn't respond, send `event: error` and return.
 
 Stream: `event: status` / `data: Waiting for dev server to be ready...`
 

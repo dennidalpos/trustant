@@ -24,6 +24,7 @@ flowchart TD
 ## Then
 
 - [How it works](how-it-works.md): components, hostnames, data layout, a chat turn, providers, publishing and authentication, with diagrams.
+- [Ollama and Trustant](ollama.md): using an Ollama outside the environment, what the two need from each other, and more time for slow computers.
 - [Use cases](use-cases.md): first run, creating and building an application, a local model with Ollama, backend services, shared secrets, publishing, restricting access, updating.
 
 ## Conventions
