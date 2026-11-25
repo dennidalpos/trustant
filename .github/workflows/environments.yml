@@ -1,0 +1,217 @@
+# Checks the start scripts and the install path on operating systems a
+# maintainer may not have at hand (Ubuntu, macOS, Windows).
+#
+# Manual only, like tests.yml: a full install downloads several GB and takes a
+# long time. Run it from the Actions tab (Environments -> Run workflow).
+#
+# What each job can and cannot prove is written in docs/ci-environments.md.
+# In short: "scripts" is cheap and reliable, "ubuntu-install" runs the real
+# start.sh on a clean Ubuntu runner, and "macos-lima" only reports whether a
+# Lima VM can boot at all, because hosted macOS runners usually cannot run one.
+
+name: Environments
+
+on:
+  workflow_dispatch:
+    inputs:
+      ubuntu_install:
+        description: "Run ./start.sh -n on clean Ubuntu runners (downloads about 5 GB, up to 90 minutes)"
+        type: boolean
+        default: true
+      macos_lima:
+        description: "Try to boot the Lima VM on macOS (hosted runners usually cannot: expect a skip)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  # Cheap and fast: every script parses with the shell each OS really ships
+  # (macOS still has bash 3.2 as /bin/bash), shellcheck finds real errors, and
+  # start.ps1 parses under both PowerShell editions on Windows.
+  scripts:
+    name: Scripts (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm, macos-15, macos-15-intel, windows-latest]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Shell syntax with the system bash
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          echo "bash: $(/bin/bash --version | head -n 1)"
+          status=0
+          while IFS= read -r file; do
+            if ! /bin/bash -n "$file"; then
+              echo "::error file=$file::syntax error under /bin/bash"
+              status=1
+            fi
+          done < <(git ls-files '*.sh')
+          exit "$status"
+
+      - name: Install shellcheck (macOS)
+        if: runner.os == 'macOS'
+        run: brew install shellcheck
+
+      - name: shellcheck (errors only)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          shellcheck --version | sed -n 2p
+          git ls-files -z '*.sh' | xargs -0 shellcheck -S error -x
+
+      - name: start.ps1 parses (Windows PowerShell 5.1)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $errors = $null; $tokens = $null
+          [void][System.Management.Automation.Language.Parser]::ParseFile("$PWD\start.ps1", [ref]$tokens, [ref]$errors)
+          $errors | ForEach-Object { Write-Host "::error file=start.ps1::$($_.Message)" }
+          exit $errors.Count
+
+      - name: start.ps1 parses (PowerShell 7)
+        shell: pwsh
+        run: |
+          $errors = $null; $tokens = $null
+          [void][System.Management.Automation.Language.Parser]::ParseFile("$PWD/start.ps1", [ref]$tokens, [ref]$errors)
+          $errors | ForEach-Object { Write-Host "::error file=start.ps1::$($_.Message)" }
+          exit $errors.Count
+
+  # The real native path of start.sh on a clean Ubuntu 24.04 machine, amd64 and
+  # arm64: preflight, the Trustant package (k3s), Ollama, kubefwd, gh and
+  # setup.sh. It stops before run.sh (-n), then starts the server by hand and
+  # checks that the API answers.
+  ubuntu-install:
+    name: Ubuntu install (${{ matrix.runner }})
+    if: ${{ inputs.ubuntu_install }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    steps:
+      # k3s, the serverless package and Ollama need far more than the default
+      # free space of a hosted runner.
+      - name: Free disk space
+        if: runner.arch == 'X64'
+        uses: jlumbroso/free-disk-space@cf1e78c50ca91e757bab3edc229027eebfc07871 # main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: false
+          docker-images: true
+          swap-storage: false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+        with:
+          go-version-file: go.mod
+          cache: false
+
+      - name: Host facts
+        run: |
+          . /etc/os-release
+          echo "OS: $PRETTY_NAME  arch: $(dpkg --print-architecture)"
+          echo "CPU: $(nproc)  memory: $(free -g | awk '/Mem:/ {print $2}') GB"
+          df -h / | tail -n 1
+          sudo -n true && echo "passwordless sudo: yes"
+          for port in 80 443; do
+            if sudo ss -ltn "sport = :$port" | grep -q LISTEN; then
+              echo "::warning::port $port is already in use on the runner"
+            fi
+          done
+
+      # Ports 80 and 443 must be free for k3s (docs/setup-ubuntu.md).
+      - name: Stop web servers that hold ports 80 and 443
+        run: |
+          sudo systemctl stop apache2 nginx 2>/dev/null || true
+
+      - name: ./start.sh -n
+        run: |
+          printf 'Version: %s\n' "$(cat version.txt)" > _build.txt
+          ./start.sh -n 2>&1 | tee start.log
+
+      - name: Start the server and check the API
+        run: |
+          set -euo pipefail
+          nohup ./run.sh > run.log 2>&1 &
+          for attempt in $(seq 1 60); do
+            if curl -fsS -H 'Host: trustant.localhost' http://127.0.0.1:8910/api/version -o version.json; then
+              echo "API answered after $((attempt * 5)) seconds"
+              cat version.json
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::the Trustant API did not answer on port 8910"
+          tail -n 60 run.log || true
+          exit 1
+
+      - name: Logs
+        if: always()
+        run: |
+          for file in start.log run.log; do
+            [ -f "$file" ] || continue
+            echo "::group::$file (last 120 lines)"
+            tail -n 120 "$file"
+            echo "::endgroup::"
+          done
+
+  # Hosted macOS runners are virtual machines themselves. Apple's
+  # Virtualization.framework, which Lima uses (vmType vz), is generally not
+  # available inside them, so this job does not try to prove the install: it
+  # checks that Lima installs, that the start.sh host dispatch picks the macOS
+  # path, and only then, when asked, attempts a boot. A boot that cannot start
+  # is reported as a skip with the reason, not as a failure of Trustant.
+  macos-lima:
+    name: macOS Lima (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15, macos-15-intel]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Host facts
+        run: |
+          sw_vers
+          echo "arch: $(uname -m)  CPU: $(sysctl -n hw.ncpu)  memory: $(($(sysctl -n hw.memsize) / 1073741824)) GB"
+          echo "hypervisor support (kern.hv_support): $(sysctl -n kern.hv_support 2>/dev/null || echo unknown)"
+          df -h / | tail -n 1
+
+      - name: Install Lima
+        run: |
+          brew install lima
+          limactl --version
+
+      - name: Boot a Lima VM (experimental)
+        if: ${{ inputs.macos_lima }}
+        continue-on-error: true
+        run: |
+          export LIMA_HOME="$RUNNER_TEMP/lima"
+          if [ "$(sysctl -n kern.hv_support 2>/dev/null)" != "1" ]; then
+            echo "::notice::kern.hv_support is not 1: a hosted runner cannot boot a Lima VM, skipping"
+            exit 0
+          fi
+          timeout 900 limactl start --name=probe --tty=false template://ubuntu-24.04 \
+            && limactl shell probe uname -a \
+            || echo "::notice::the Lima VM did not boot on this runner (hosted macOS has no nested virtualization)"
+          limactl delete -f probe 2>/dev/null || true
