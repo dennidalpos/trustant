@@ -1,4 +1,4 @@
-ARG OLLAMA_VERSION=0.40.17
+ARG OLLAMA_VERSION=0.40.18
 # NOTE: there is deliberately no OPS_REPO/OPS_BRANCH here. `ops` resolves its
 # task source from the binary (the Trustant fork embeds
 # trustable-ai/openserverless-task). Both variables still override that default,

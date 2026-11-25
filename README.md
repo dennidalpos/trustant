@@ -65,6 +65,8 @@ cd trustant
 
 The script prepares the host, runs `setup.sh`, then starts `run.sh`. See [native Ubuntu setup](spec/start.md#native-ubuntu-linux).
 
+Step-by-step guides per system, with diagrams, are in [docs/](docs/README.md): [Windows](docs/setup-windows.md), [macOS](docs/setup-macos.md), [Ubuntu](docs/setup-ubuntu.md), plus [how it works](docs/how-it-works.md) and [use cases](docs/use-cases.md).
+
 ### What the start scripts do
 
 ```mermaid
