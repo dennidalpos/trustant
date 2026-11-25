@@ -23,6 +23,9 @@ All notable changes to Trustant are listed here. The latest release tag is
 
 ### Fixed
 
+- Save & Configure no longer stops with "Ollama hostname is required" when an
+  external Ollama instance is active: the hand-typed host check now applies only
+  when no saved instance owns the endpoint.
 - The Private AI connection test allows up to 180 seconds for cold starts and
   distinguishes timeouts from unreachable endpoints and incomplete responses.
 - Configure warns beside the Pi model menu when the saved Private AI model list

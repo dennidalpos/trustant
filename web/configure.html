@@ -1318,6 +1318,9 @@
 
         function validateOllamaHost() {
             if (config.provider !== 'ollama') return null;
+            // An active saved instance owns the endpoint and the hand-typed
+            // host card is hidden, so there is nothing to validate.
+            if (config.ollama_active) return null;
             if (!isOwnHostMode()) return null;
             const host = document.getElementById('ollamaHost').value.trim();
             const port = document.getElementById('ollamaPort').value.trim();

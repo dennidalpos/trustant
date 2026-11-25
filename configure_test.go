@@ -2797,3 +2797,26 @@ func TestModelLimitsUnmarshalsLegacyStringContextSize(t *testing.T) {
 		t.Fatalf("legacy context size did not reach Pi: %#v", models)
 	}
 }
+
+// An active saved Ollama instance owns the endpoint and hides the hand-typed
+// host card, so Save & Configure must not demand a hostname from it.
+func TestConfigurePageSkipsHostCheckForActiveOllamaInstance(t *testing.T) {
+	data, err := os.ReadFile("web/configure.html")
+	if err != nil {
+		t.Fatalf("read configure.html: %s", err)
+	}
+	page := string(data)
+	start := strings.Index(page, "function validateOllamaHost()")
+	if start < 0 {
+		t.Fatal("validateOllamaHost is missing from configure.html")
+	}
+	body := page[start:]
+	if end := strings.Index(body, "function setSaveStatus"); end > 0 {
+		body = body[:end]
+	}
+	guard := strings.Index(body, "if (config.ollama_active) return null;")
+	host := strings.Index(body, "ollamaHost')")
+	if guard < 0 || host < 0 || guard > host {
+		t.Fatal("validateOllamaHost must return early for an active instance before reading the host field")
+	}
+}
