@@ -175,6 +175,7 @@ func main() {
 	http.HandleFunc("/api/configure", handleConfigure)
 	http.HandleFunc("/api/testmodel", handleTestModel)
 	http.HandleFunc("/api/ollama-connect", handleOllamaConnect)
+	http.HandleFunc("/api/ollama-local", handleOllamaLocal)
 	http.HandleFunc("/api/discover-models", handleDiscoverModels)
 	http.HandleFunc("/api/configuration", handleConfiguration)
 	http.HandleFunc("/api/predefined-env", handlePredefinedEnv)

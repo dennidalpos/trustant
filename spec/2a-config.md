@@ -304,6 +304,31 @@ hidden (there is no `status.private` catalog). `model_versions` and the
 Ollama). **Save & Configure** runs the say-OK test against the stored
 endpoint's `/chat/completions`.
 
+### Local Ollama control
+
+When the Private AI Base URL (in the splash dialog) or the saved `base_url` (on
+the configure screen) points at `localhost`, `127.0.0.1` or `[::1]`, a status
+line with a **Start**/**Stop** button appears under it
+(`web/js/ollama-local.js`). It drives the `ollama` systemd unit that `start.sh`
+installs, so a machine that also reaches another Ollama (for example the
+Windows host from WSL) can free `localhost:11434` without a shell.
+
+`GET /api/ollama-local` returns `{supported, wsl, state, active, reachable,
+models, error?}`: `state` is the unit `LoadState`, `active` comes from
+`systemctl is-active`, and `reachable`/`models` from `GET
+http://127.0.0.1:11434/api/tags`. `supported` is true only on Linux with a
+loadable (not masked, not missing) unit; otherwise the button is hidden and a
+masked unit shows an explanatory message. `POST /api/ollama-local` with
+`{"action":"start"|"stop"}` runs `systemctl <action> ollama` (through `sudo -n`
+when the server is not root, so a missing sudo rule fails at once instead of
+waiting for a password), then waits up to 15 seconds
+(`TRUSTANT_TIMEOUT_FACTOR` applies) for the unit to answer or go inactive and
+returns the new status. Other actions answer 400, a host without a usable unit
+409, a failed `systemctl`/`sudo` 500 with the first line of its output. The
+control starts or stops the service for the current boot only; it does not
+enable or disable it at boot. As every non-GET API, the POST requires a session
+when authentication is enabled.
+
 ## POST /api/discover-models
 
 Server-side proxy that lets the configure UI discover the models a given OpenAI-compatible provider exposes, without browser CORS or mixed-content issues. The endpoint is **provider-agnostic** — it hits `<base_url>/models` on whatever the caller passes. (The Test button in the UI is currently shown only for own-host Ollama; the endpoint itself does not enforce that.)

@@ -24,6 +24,7 @@
     <script src="tailwind.js"></script>
     <script src="trustant-auth.js"></script>
     <script src="js/modal-a11y.js" defer></script>
+    <script src="js/ollama-local.js"></script>
     <script src="js/github-account.js"></script>
     <link rel="stylesheet" href="trustant-ui.css">
     <style>
@@ -104,6 +105,7 @@
             <p class="text-sm text-[color:var(--nu-muted)] mt-2">
                 To point Trustant at a different endpoint, use Change Provider and pick Private AI again.
             </p>
+            <div id="ollamaLocalControl" class="hidden mt-4"></div>
         </div>
 
         <!-- Provider Models -->
@@ -646,6 +648,19 @@
             section.classList.toggle('hidden', config.provider !== 'private');
             const value = document.getElementById('privateHostValue');
             if (value) value.textContent = String(config.base_url || '');
+            syncOllamaLocal();
+        }
+
+        // Start/Stop and status of the Ollama service on this machine, offered
+        // while the saved endpoint points at localhost.
+        let ollamaLocal = null;
+        function syncOllamaLocal() {
+            const root = document.getElementById('ollamaLocalControl');
+            if (!root || !window.TrustantOllamaLocal) return;
+            if (!ollamaLocal) ollamaLocal = window.TrustantOllamaLocal.mount(root);
+            const local = config.provider === 'private' && window.TrustantOllamaLocal.isLocalBaseUrl(config.base_url);
+            ollamaLocal.setVisible(local);
+            if (local) ollamaLocal.refresh();
         }
 
         // Private AI: discover the model list from the user-supplied endpoint
