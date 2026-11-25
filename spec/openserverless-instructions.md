@@ -119,6 +119,10 @@ The embedded guidance must have an early section named
 
 It must say:
 
+> **Removed guardrails.** The OpenCode plugin, session gates, guardrail state
+> and `opencode.md`/`opencode.json` rules in the sections below describe the
+> removed OpenCode runtime. They are not enforced; see the notice at the top.
+
 - Trustant generates `AGENTS.md` in the app root as the mandatory app-local
   entrypoint, so Claude Code compatibility files cannot override Trustant
   rules;
@@ -944,8 +948,9 @@ runtime generation details live in:
 - `spec/4-launch.md`: MCP server generation, service CLI wrappers, and launch
   behavior;
 - `spec/7-skills.md`: installed app skills under `.agents/skills`;
-- `spec/opencode-guardrail-flow.svg`: flow diagram for contract, checker,
-  deploy, and runtime verification.
+- `spec/opencode-guardrail-flow.svg`: historical diagram of the removed
+  OpenCode guardrail flow (contract, checker, deploy, runtime verification);
+  kept for reference, not current behaviour.
 
 ## Trustant Code Core Workflow
 
