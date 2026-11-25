@@ -106,6 +106,10 @@ The start script installs a CPU-only Ollama **inside the distribution** at `loca
 
 3. In the UI choose **Private AI** and enter `http://<that-ip>:11434/v1` (the `/v1` suffix is required); leave the key empty.
 
+   With the **Cloud AI** provider you can instead use the **Ollama Instance** card on the Configure page: it detects the Windows host's Ollama by itself (the WSL default gateway, only when it answers `/api/tags`) and offers it with an **Add** button. Adding it saves a preset; you still turn on **Use an external Ollama** yourself.
+
+4. Optional: to stop `start.sh` from installing and enabling the distribution's own Ollama (which would then answer on `localhost:11434`), run it with `OLLAMA_EXTERNAL=1` in its environment, for example `wsl -d <distro> -- env OLLAMA_EXTERNAL=1 bash ./start.sh`. The default is unchanged. If you start through `start.ps1`, check that the variable reaches `start.sh`: that path has not been verified.
+
 Do not use `localhost:11434` for this: inside the distribution it is the distribution's own Ollama, and WSL's localhost forwarding can also map Windows `127.0.0.1:11434` to it. The host address can change after a reboot; repeat step 2 if the assistant stops responding.
 
 ## Troubleshooting

@@ -79,7 +79,7 @@ Press Ctrl+C to stop the loop. `run.sh` frees ports 8910, 5173 and 4096 before i
 
 `start.sh` installs a CPU-only Ollama at `localhost:11434`, pinned to the version in `image/Dockerfile`, and the Cloud AI card uses it. The `OLLAMA_ENDPOINT` in `.env` points there, and `run.sh` starts `ollama serve` only when `OLLAMA_ENDPOINT` is a local address and nothing listens on the port.
 
-This local copy is kept for provisioning: if you point `OLLAMA_ENDPOINT` at another machine (below) it stays installed but unused.
+This local copy is kept for provisioning: if you point `OLLAMA_ENDPOINT` at another machine (below) it stays installed but unused. Run `OLLAMA_EXTERNAL=1 ./start.sh` to skip installing and enabling it altogether.
 
 To use a different Ollama, for example one with a GPU on another machine:
 

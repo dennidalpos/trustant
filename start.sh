@@ -34,6 +34,8 @@
 #              gh via apt in-VM, writes the VM ip/apihost/ssh key to the
 #              Trustant support dir, runs setup.sh in-VM, and finally runs
 #              ./run.sh in the VM (foreground — Ctrl-C stops the dev server).
+#              OLLAMA_EXTERNAL=1 skips the ollama install/enable (an
+#              Ollama elsewhere owns localhost:11434, e.g. the Windows app).
 #              Linux does the same minus everything that only makes sense
 #              against a VM, and stops before run.sh (just run it yourself).
 #   ./start.sh

@@ -95,7 +95,9 @@ The start script installs a CPU-only Ollama **inside the VM** at `localhost:1143
    curl http://host.lima.internal:11434/api/tags
    ```
 
-3. In the UI choose **Private AI** and enter `http://host.lima.internal:11434/v1` (the `/v1` suffix is required); leave the key empty.
+3. In the UI choose **Private AI** and enter `http://host.lima.internal:11434/v1` (the `/v1` suffix is required); leave the key empty. With **Cloud AI**, the **Ollama Instance** card also offers the host Ollama when `host.lima.internal` resolves and answers `/api/tags` (not verified on a Mac, tracker #34).
+
+4. Optional: run `OLLAMA_EXTERNAL=1 ./start.sh` to skip installing and enabling the VM's own CPU Ollama. The default is unchanged.
 
 Do not use `localhost:11434` for this: inside the VM it is the VM's own Ollama.
 

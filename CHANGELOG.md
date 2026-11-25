@@ -11,9 +11,16 @@ All notable changes to Trustant are listed here. The latest release tag is
   environment (default gateway, or `host.lima.internal`), checks that it answers
   and offers it with an **Add** button. It only suggests: the switch stays off
   until you turn it on.
+- `OLLAMA_EXTERNAL=1` makes `start.sh` skip installing and enabling the local
+  Ollama service, so an Ollama on another machine (for example the Windows
+  app under WSL) keeps `localhost:11434`. The default is unchanged.
 
 ### Changed
 
+- The OpenCode end-to-end scripts (`tests/e2e_*.sh`, `issue98.spec.mjs`,
+  `issue98-session-tree.mjs`), the provider benchmarks built on them and their
+  diagrams were removed with the OpenCode runtime; `npm run e2e:*` and
+  `test:e2e-providers` no longer exist. See [spec/8-e2e.md](spec/8-e2e.md).
 - `oplugins/` (trustable-ai/openserverless-task), `skills/` (trustable-ai/skills)
   and `mcp/` (trustant/openserverless-mcp) are now vendored directories instead
   of Git submodules. Their `LICENSE` and `NOTICE` files are unchanged and their
