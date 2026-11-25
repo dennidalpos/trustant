@@ -473,6 +473,13 @@ ensure_ollama_tarball() {
 # below reproduce what upstream's install.sh does for this case; when no cache
 # entry is available it falls back to that installer unchanged.
 ensure_ollama() {
+  # OLLAMA_EXTERNAL=1: Ollama runs elsewhere (e.g. the Windows app) and owns
+  # localhost:11434. Do not install or enable the local service — on WSL the
+  # relay would otherwise forward 127.0.0.1:11434 to the distro's Ollama.
+  if [[ "${OLLAMA_EXTERNAL:-}" == "1" ]]; then
+    ok "OLLAMA_EXTERNAL=1 — leaving the local ollama service alone"
+    return 0
+  fi
   if $NATIVE_LINUX; then
     echo "--- Ensuring ollama on this host (localhost:11434) ---"
   else

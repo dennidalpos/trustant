@@ -299,7 +299,11 @@ enable its systemd service so it serves on localhost:11434 — the app's
 OLLAMA_ENDPOINT. Apple's vz gives the Linux guest no GPU passthrough, so this is
 CPU-only; that's fine because the app mostly uses cloud models. Idempotent: skip
 the install when ollama is already present at the pinned version. Runs on every
-start (in the finish path), so an existing VM gets ollama too.
+start (in the finish path), so an existing VM gets ollama too. With
+`OLLAMA_EXTERNAL=1` in the environment the step is skipped entirely: Ollama runs
+elsewhere (e.g. the Windows app) and owns localhost:11434, so the local service
+is neither installed nor enabled (on WSL the relay would otherwise forward
+127.0.0.1:11434 to the distro's Ollama). The default stays the local service.
 
 Cache the ~1.5GB release tarball on the HOST under `dist/`, next to the `.deb`
 and for the same reason: `dist/` outlives the VM, so `./start.sh -k` followed by

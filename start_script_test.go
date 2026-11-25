@@ -276,6 +276,12 @@ func TestStartScriptsKeepVMInDataAndSeedDist(t *testing.T) {
 		t.Error("the start.ps1 bootstrap must silence needrestart too")
 	}
 
+	if !strings.Contains(sh, `if [[ "${OLLAMA_EXTERNAL:-}" == "1" ]]; then`) ||
+		strings.Index(sh, `OLLAMA_EXTERNAL:-`) > strings.Index(sh, `ensure_ollama_tarball
+`) {
+		t.Error("ensure_ollama must return early when OLLAMA_EXTERNAL=1, before installing anything")
+	}
+
 	inst := read("install")
 	if !strings.Contains(inst, `cp -R "$SRC/." "$DEST/dist/"`) ||
 		!strings.Contains(inst, `Copy-Item -Recurse -Force -ErrorAction Stop (Join-Path $Src '*') (Join-Path $Dest 'dist')`) {
