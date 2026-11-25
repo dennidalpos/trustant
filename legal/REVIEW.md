@@ -104,32 +104,35 @@ SBOM is asserted by this review. The following remain unresolved:
 
 ## Artwork without per-file provenance
 
-The following tracked assets have no per-file author/source/license declaration
-in the registry. Their repository revision identifies the files under review;
-it does not prove that they are third-party works or that permission is absent.
-Their status is **ownership and source unverified**. Confirm first-party authorship
-or record the original source and permission before using them as independently
-cleared assets. Inline SVG icons in `web/*.html` need the same provenance review.
+Inline SVG icons in `web/app.html`, `web/applist.html` and `web/index.html`
+(24x24 viewBox, rounded round-capped strokes, about 55 occurrences) carry no
+author, source or license, and the files name no icon set. Their source is
+**undetermined**; the repository's AGPL headers do not establish ownership.
+They need the same review as the files below: confirm first-party authorship,
+or identify the original set and record its license and notice, or replace them.
 
-| Asset | SHA-256 | Status |
+## Artwork reviewed on 2026-11-26
+
+Decisions of the provenance review (task GOV02-ASSET-PROVENANCE). First-party
+means confirmed by the repository owner, not inferred from the repository
+history or its headers. `intro.png` and `web/wa-trustant.jpeg`, listed earlier
+in this register, are no longer tracked and were removed from it.
+
+| Asset | SHA-256 | Decision |
 |---|---|---|
-| `intro.png` | `c643f370f5936fce4f975107ded698ec6fa8ded2d7ba95c17eda0a05c0d123ba` | Unverified provenance |
-| `spec/action-deploy-guard-flow.svg` | `7743f9ade18be5e39e2742ddb940dc594ef7abd6343b077f1d6bb226d1bd7235` | Unverified provenance |
-| `spec/application-test-completion-gate.svg` | `1ef034cbb132702ce1291dbf546ec68b1928a1affed3660a982a3a3bae07a1e7` | Unverified provenance |
-| `spec/git-pull-flow.svg` | `e565c6ced55777c900e0705d05e965b78aa2062ff9ce22fb055d3f9f116c270e` | Unverified provenance |
-| `spec/trustant-auth-flow.svg` | `06cf3d6a5ade7c9d69e8018f3137344ac344dc358e44426b0b5b900b2e341f46` | Unverified provenance |
-| `spec/trustant-code-integration.svg` | `82ec9ac5cefd329ecb1994147da56cc2314b754ae473fa4e7c66705584ef22f4` | Unverified provenance |
-| `web/favicon.ico` | `5cc2560eddb2d9f841e425f3dfc701a47b0fedf3d2b969730bcead80bfee06e6` | Unverified provenance |
-| `web/logo-trustant.png` | `6843d0682cbfb3deee6439bdb8211adb24b2a61b5b7e82a5c4eb7643c77a0540` | Unverified provenance |
-| `web/ollama-head.png` | `c1f0bce3a7363d8030142943098889466f5bb21d67759963ece662a73ab6f105` | Unverified provenance |
-| `web/privateai-head.png` | `8e428a3e82ddee0e13b0f0ed7e008f81ec5bf50eb93294b2ab8b0f06bfd57411` | Unverified provenance |
-| `web/regolo-head.png` | `dc654fa1a66ee1919d4656b67723c81dd80bc65bbebb09001a2d6cdb8a7efadb` | Unverified provenance |
-| `web/trustant-head.png` | `6843d0682cbfb3deee6439bdb8211adb24b2a61b5b7e82a5c4eb7643c77a0540` | Unverified provenance |
-| `web/trustant-logo-small.png` | `e5ad92afcef328909c0cd5be8af0b388bd7616dbba25e946b1a54202aba13368` | Unverified provenance |
-| `web/trustant-logo.png` | `bfdde3b38d2eaeac1dcc63db41abdd5d411de1d2b82097241df1c4c215d42bf4` | Unverified provenance |
-| `web/trustant-logo.svg` | `4634c3087e71f577325131fab2dd4faa285f1d6a679d66bd563b982c93a4990b` | Unverified provenance |
-| `web/trustant.png` | `6843d0682cbfb3deee6439bdb8211adb24b2a61b5b7e82a5c4eb7643c77a0540` | Unverified provenance |
-| `web/wa-trustant.jpeg` | `288742cacea2d6b447e6c1b6644750c5c00add6a283e258ca1977ba8b31b70d5` | Unverified provenance |
+| `web/logo-trustant.png`, `web/trustant-head.png`, `web/trustant.png` | `6843d0682cbfb3deee6439bdb8211adb24b2a61b5b7e82a5c4eb7643c77a0540` | First-party Trustant mark (hexagon with a T); the three files are identical. Confirmed by the owner. |
+| `web/trustant-logo.png` | `bfdde3b38d2eaeac1dcc63db41abdd5d411de1d2b82097241df1c4c215d42bf4` | First-party Trustant artwork, confirmed by the owner. |
+| `web/trustant-logo-small.png` | `e5ad92afcef328909c0cd5be8af0b388bd7616dbba25e946b1a54202aba13368` | First-party Trustant artwork, confirmed by the owner. |
+| `web/trustant-logo.svg` | `4634c3087e71f577325131fab2dd4faa285f1d6a679d66bd563b982c93a4990b` | First-party Trustant artwork, confirmed by the owner. |
+| `web/favicon.ico` | `5cc2560eddb2d9f841e425f3dfc701a47b0fedf3d2b969730bcead80bfee06e6` | First-party project asset, confirmed by the owner. |
+| `spec/action-deploy-guard-flow.svg` | `7743f9ade18be5e39e2742ddb940dc594ef7abd6343b077f1d6bb226d1bd7235` | First-party diagram of the project, confirmed by the owner. |
+| `spec/application-test-completion-gate.svg` | `1ef034cbb132702ce1291dbf546ec68b1928a1affed3660a982a3a3bae07a1e7` | First-party diagram of the project, confirmed by the owner. |
+| `spec/git-pull-flow.svg` | `e565c6ced55777c900e0705d05e965b78aa2062ff9ce22fb055d3f9f116c270e` | First-party diagram of the project, confirmed by the owner. |
+| `spec/trustant-auth-flow.svg` | `06cf3d6a5ade7c9d69e8018f3137344ac344dc358e44426b0b5b900b2e341f46` | First-party diagram of the project, confirmed by the owner. |
+| `spec/trustant-code-integration.svg` | `82ec9ac5cefd329ecb1994147da56cc2314b754ae473fa4e7c66705584ef22f4` | First-party diagram of the project, confirmed by the owner. |
+| `web/ollama-head.png` | `c1f0bce3a7363d8030142943098889466f5bb21d67759963ece662a73ab6f105` | Logo of Ollama. Third-party mark of its owner; shown only to identify the Ollama Cloud option. No rights over it are granted by this project's license. |
+| `web/regolo-head.png` | `dc654fa1a66ee1919d4656b67723c81dd80bc65bbebb09001a2d6cdb8a7efadb` | Logo of Regolo.AI. Third-party mark of its owner; shown only to identify the Regolo.AI option. No rights over it are granted by this project's license. |
+| `web/privateai-head.png` | `8e428a3e82ddee0e13b0f0ed7e008f81ec5bf50eb93294b2ab8b0f06bfd57411` | Wordmark "Private AI" with a drawing of a device. Shown to identify the Private AI option. The author and source are not recorded in the repository; treated as a third-party mark, with no rights granted by this project's license, until the owner records its author. |
 
 ## Artwork reviewed on 2026-11-25
 

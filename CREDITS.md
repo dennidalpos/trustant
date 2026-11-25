@@ -67,6 +67,12 @@ The vendored `oplugins` sources include the Apache OpenServerless logo
 mark of that project, not of Trustant; the Apache-2.0 license of the sources does
 not grant rights over it (see [legal/REVIEW.md](legal/REVIEW.md)).
 
+The provider logos `web/ollama-head.png`, `web/regolo-head.png` and
+`web/privateai-head.png` are marks of Ollama, Regolo.AI and Private AI. They are
+shown only to identify those options in the UI; this project's license grants no
+rights over them. The inline SVG icons in `web/*.html` have no recorded source and
+remain under review (see [legal/REVIEW.md](legal/REVIEW.md)).
+
 The image builds `ops` from the [Trustant OpenServerless CLI fork](https://github.com/trustable-ai/openserverless-cli)
 with [go-git](https://github.com/go-git/go-git) (both Apache-2.0).
 The updated Go modules are listed in [DEPS](DEPS). The unchanged
