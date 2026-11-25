@@ -25,6 +25,7 @@
     <script src="trustant-auth.js"></script>
     <script src="js/modal-a11y.js" defer></script>
     <script src="js/ollama-local.js"></script>
+    <script src="js/ollama-instances.js"></script>
     <script src="js/github-account.js"></script>
     <link rel="stylesheet" href="trustant-ui.css">
     <style>
@@ -67,6 +68,12 @@
             <span id="configurationBannerMessage">Model catalog updated. Please re-select the Pi model below, then click <strong>Save &amp; Configure</strong>.</span>
         </div>
 
+        <!-- Ollama instance: default = this machine, or a saved external one (only when provider == "ollama") -->
+        <div id="ollamaInstancesSection" class="nu-card p-5 mb-4 hidden">
+            <h2 class="text-lg font-medium mb-4">Ollama Instance</h2>
+            <div id="ollamaInstancesRoot"></div>
+        </div>
+
         <!-- Ollama Host (only when provider == "ollama") -->
         <div id="ollamaHostSection" class="nu-card p-5 mb-4 hidden">
             <h2 class="text-lg font-medium mb-4">Ollama Host</h2>
@@ -106,6 +113,13 @@
                 To point Trustant at a different endpoint, use Change Provider and pick Private AI again.
             </p>
             <div id="ollamaLocalControl" class="hidden mt-4"></div>
+            <div class="flex flex-wrap items-center gap-3 mt-4">
+                <button id="privateRefreshBtn" type="button" onclick="refreshPrivateModels()"
+                    class="nu-btn nu-btn-secondary">
+                    Refresh models
+                </button>
+                <span id="privateRefreshStatus" role="status" class="text-sm text-[color:var(--nu-muted)]"></span>
+            </div>
         </div>
 
         <!-- Provider Models -->
@@ -461,6 +475,7 @@
                 document.getElementById('currentProvider').innerHTML = providerLabel(config.provider);
                 document.getElementById('modelsHeading').textContent = modelsHeading(config.provider);
                 renderOllamaHost();
+                syncOllamaInstances();
                 renderPrivateHost();
                 renderModels();
                 renderPiSelect();
@@ -657,7 +672,7 @@
         function syncOllamaLocal() {
             const root = document.getElementById('ollamaLocalControl');
             if (!root || !window.TrustantOllamaLocal) return;
-            if (!ollamaLocal) ollamaLocal = window.TrustantOllamaLocal.mount(root);
+            if (!ollamaLocal) ollamaLocal = window.TrustantOllamaLocal.mount(root, { onChange: refreshPrivateModels });
             const local = config.provider === 'private' && window.TrustantOllamaLocal.isLocalBaseUrl(config.base_url);
             ollamaLocal.setVisible(local);
             if (local) ollamaLocal.refresh();
@@ -667,6 +682,7 @@
         // using the stored api_key (sent as Authorization: Bearer unless it is
         // the literal "dummy"). Preserve any previously-saved per-model limits
         // so a returning user keeps the selected Pi model.
+        // Returns true when the list was refreshed from the endpoint.
         async function loadPrivateModels() {
             const status = document.getElementById('privateModelDiscoveryStatus');
             status.textContent = '';
@@ -691,10 +707,32 @@
                 config.models = next;
                 renderModels();
                 renderPiSelect();
+                return true;
             } catch (e) {
                 status.textContent = 'The saved Private AI model list may be out of date. '
                     + 'Check the endpoint and reload this page. ' + e.message;
+                return false;
             }
+        }
+
+        // Re-reads the model list from the saved endpoint on demand, for example
+        // after changing the Ollama behind it or starting/stopping the local one.
+        let privateRefreshing = false;
+        async function refreshPrivateModels() {
+            if (privateRefreshing) return;
+            privateRefreshing = true;
+            const btn = document.getElementById('privateRefreshBtn');
+            const note = document.getElementById('privateRefreshStatus');
+            const label = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Refreshing…';
+            note.textContent = '';
+            const ok = await loadPrivateModels();
+            const count = Object.keys(config.models || {}).length;
+            note.textContent = ok ? 'Found ' + count + (count === 1 ? ' model.' : ' models.') : 'Could not read the models (see below).';
+            btn.disabled = false;
+            btn.textContent = label;
+            privateRefreshing = false;
         }
 
         function parseOllamaBaseURL(url) {
@@ -711,11 +749,49 @@
             return !/^http:\/\/(localhost|127\.0\.0\.1|ollama)(:|\/)/i.test(base);
         }
 
+        // Default / saved Ollama instances (web/js/ollama-instances.js).
+        let ollamaInstances = null;
+        function syncOllamaInstances() {
+            const section = document.getElementById('ollamaInstancesSection');
+            const show = config.provider === 'ollama';
+            section.classList.toggle('hidden', !show);
+            if (!show || !window.TrustantOllamaInstances) return;
+            if (!ollamaInstances) {
+                ollamaInstances = window.TrustantOllamaInstances.mount(
+                    document.getElementById('ollamaInstancesRoot'), { onChange: onOllamaInstanceChange });
+            }
+            ollamaInstances.refresh();
+        }
+
+        // The server has already persisted the choice (instances, active one and
+        // base_url); keep the in-memory form in step so Save & Configure echoes it.
+        function onOllamaInstanceChange(state, discovered) {
+            config.ollama_instances = state.instances;
+            config.ollama_active = state.active || '';
+            if (state.base_url) config.base_url = state.base_url;
+            config.api_key = 'dummy';
+            if (discovered && Array.isArray(discovered.models) && discovered.models.length) {
+                const previous = config.pi && config.pi.default;
+                config.models = {};
+                for (const name of discovered.models) {
+                    config.models[name] = { maxToken: DEFAULT_CONTEXT, maxOutput: DEFAULT_MAX_OUTPUT };
+                }
+                // A different server needs an explicit Pi model unless the old one is still offered.
+                config.pi = { default: previous && config.models[previous] ? previous : '' };
+                renderModels();
+                renderPiSelect();
+            }
+            renderOllamaHost();
+        }
+
         function renderOllamaHost() {
             const section = document.getElementById('ollamaHostSection');
             const ownBody = document.getElementById('ollamaOwnHostBody');
             const internalNote = document.getElementById('ollamaInternalNote');
-            if (config.provider !== 'ollama') {
+            // The Ollama Instance card covers the default and the saved
+            // instances; this one remains only for workspaces that were set up
+            // with a hand-typed own host.
+            if (config.provider !== 'ollama' || config.ollama_active || !isOwnHostMode()) {
                 section.classList.add('hidden');
                 return;
             }
@@ -1193,7 +1269,7 @@
             // Only rebuild base_url from inputs in own-host mode. Internal mode
             // shows a read-only note instead of inputs, so we keep whatever
             // base_url is already in config.
-            if (config.provider === 'ollama' && isOwnHostMode()) {
+            if (config.provider === 'ollama' && !config.ollama_active && isOwnHostMode()) {
                 const host = document.getElementById('ollamaHost').value.trim();
                 const port = document.getElementById('ollamaPort').value.trim();
                 baseURL = `http://${host}:${port}/v1`;

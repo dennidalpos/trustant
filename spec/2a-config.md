@@ -268,6 +268,46 @@ On `configure.html?ollama=own` the Ollama Host section is shown with empty input
 
 After **Save & Configure**, `GET /api/configure` reaches the user's host (via `cfg.base_url` stripped of `/v1`) for the connectivity check and for capability discovery via `/api/show`. The model-pull loop (Step 2) is **skipped** when the resolved host is not localhost — the user's host already has the models installed locally; pulling them again would be wasteful. The stream emits `OK: Skipping model pull (using your own Ollama host — models are already installed there)` instead.
 
+## Ollama instances
+
+The default Ollama is the one of this machine (`OLLAMA_ENDPOINT`), unchanged. On
+the configure screen, while the provider is `ollama`, the **Ollama Instance**
+card (`web/js/ollama-instances.js`) adds a persistent switch **Use an external
+Ollama** and a list of named instances (for example different clusters): a
+select, **Add**/**Edit**/**Remove**, and **Refresh models**. It replaces the
+internal-Ollama note of the Ollama Host card, which now appears only for the
+legacy hand-typed own-host workspaces and never while an instance is active.
+
+State lives in the workspace `trustant.json` (workspace-only, like `provider`):
+`ollama_instances: [{id, name, url}]` (`url` is the root without `/v1`) and
+`ollama_active` (the selected `id`, empty = default). An instance's API key is
+stored in `stateDir/secrets/ollama-instances/<id>` (0600) and is never written to
+`trustant.json` nor returned to the browser (`key_set` only); it is sent
+as the Bearer token by discovery, the model test and Pi's `auth.json`
+(`effectiveAPIKey`). `POST /api/configuration` preserves both fields from the
+stored workspace, so Save & Configure never erases them.
+
+`GET /api/ollama-instances` returns `{instances:[{id,name,url,key_set}], active,
+base_url}`. `POST` takes `{action:"save", instance:{id?, name, url, api_key?,
+clear_key?}}` (name 1-60 characters and unique ignoring case, URL
+`http(s)://host[:port]` with an optional `/v1`, no credentials, query or other
+path; the id is a slug of the name; up to 50 instances), `{action:"delete", id}`
+(idempotent; removes the key and, when active, returns to the default) or
+`{action:"select", id}` with `id:""` for the default. A select changes
+`ollama_active` and, while the provider is `ollama`, `base_url`
+(`<url>/v1`, or `http://localhost:11434/v1` for the default) with `api_key:
+"dummy"`; it answers 409 under another provider so a Private AI endpoint is
+never overwritten, and 404 for an unknown id. `resolveOllamaRoot` returns the
+active instance as an own host, so Trustant never pulls models there (as for any
+non-local host) and `GET /api/configure`, the model test and Pi use its URL.
+`POST /api/discover-models` accepts `instance_id` to list the models of a saved
+instance with its stored key. After a switch the page reads the instance's
+models, replaces the model list and keeps `pi.default` only if it is still
+offered; the choice is already persisted, and Save & Configure rewrites Pi. The
+local Ollama is not started or stopped by the switch (see "Local Ollama
+control"). Changing the instance does not affect `start.sh`, `run.sh` or
+`OLLAMA_ENDPOINT`.
+
 ## Private AI endpoint
 
 The user supplies an OpenAI-compatible endpoint in the Private AI dialog on the
@@ -297,7 +337,9 @@ populating `config.models` with one entry per discovered model using default
 limits `{maxToken: 128000, maxOutput: 32768}` while preserving any
 previously-saved limits and Pi selection. If discovery fails, the page keeps
 the saved list and shows the reason beside the Pi model selector, with an
-instruction to check the endpoint and reload. The model table is **editable**
+instruction to check the endpoint and reload. The **Private AI Endpoint** section also has a
+**Refresh models** button that runs the same discovery on demand (after changing the Ollama behind the endpoint) and reports "Found N models." or
+"Could not read the models"; it runs automatically after a successful Start/Stop of the local Ollama (see "Local Ollama control"). Nothing is persisted until **Save & Configure**. The model table is **editable**
 (Add/Remove, like own-host Ollama); the `/api/status` **Refresh** button is
 hidden (there is no `status.private` catalog). `model_versions` and the
 `?reselect=1` redirect do not apply (discover-models-backed, like own-host

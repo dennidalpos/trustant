@@ -128,3 +128,22 @@ test('reports a failed Start without throwing', async () => {
     assert.match(error.textContent, /password is required/);
     assert.equal(error.classList.contains('hidden'), false);
 });
+
+test('calls onChange after a successful Start/Stop but not after a failure', async () => {
+    let fail = false;
+    const lib = load((url, opts = {}) => opts.method === 'POST'
+        ? reply({ supported: true, state: 'loaded', active: !fail, reachable: !fail, models: 2, error: fail ? 'boom' : undefined }, fail ? 500 : 200)
+        : reply({ supported: true, state: 'loaded', active: false, reachable: false, models: 0 }));
+    const seen = [];
+    const root = makeElement('div');
+    const control = lib.mount(root, { onChange: (st) => seen.push(st.models) });
+    control.setVisible(true);
+    await control.refresh();
+
+    await root.children[2].listeners.click();
+    assert.deepEqual(seen, [2]);
+
+    fail = true;
+    await root.children[2].listeners.click();
+    assert.deepEqual(seen, [2]);
+});

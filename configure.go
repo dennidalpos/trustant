@@ -119,6 +119,12 @@ type NotebookConfig struct {
 // trustantConfig represents the structure of trustant.json
 type trustantConfig struct {
 	Provider string `json:"provider,omitempty"`
+	// OllamaInstances are named Ollama servers the user can point the "ollama"
+	// provider at; OllamaActive is the id of the one in use ("" = the default
+	// Ollama of this machine, OLLAMA_ENDPOINT). Workspace-only, like Provider.
+	// Their API keys live in stateDir/secrets, never here. See ollama_instances.go.
+	OllamaInstances []ollamaInstance `json:"ollama_instances,omitempty"`
+	OllamaActive    string           `json:"ollama_active,omitempty"`
 	// BaseURL and APIKey are the top-level provider credentials.
 	// Ollama: BaseURL="http://localhost:11434/v1", APIKey="dummy".
 	// Trustant: posted by the ai-proxy registration iframe.
@@ -379,6 +385,13 @@ func mergeConfigs(base, override *trustantConfig) *trustantConfig {
 
 	if override.Provider != "" {
 		result.Provider = override.Provider
+	}
+
+	if override.OllamaInstances != nil {
+		result.OllamaInstances = override.OllamaInstances
+	}
+	if override.OllamaActive != "" {
+		result.OllamaActive = override.OllamaActive
 	}
 
 	if override.BaseURL != "" {
@@ -977,6 +990,11 @@ func modelDisplayName(modelID string) string {
 // case we return cfg.BaseURL stripped of its /v1 suffix. Otherwise we fall
 // back to the OLLAMA_ENDPOINT loaded by preflight.
 func resolveOllamaRoot(cfg *trustantConfig) (root string, isOwnHost bool) {
+	// A selected Ollama instance (ollama_instances.go) wins over everything,
+	// including a localhost URL reached through a tunnel on another port.
+	if inst := findOllamaInstance(cfg, cfg.OllamaActive); inst != nil {
+		return inst.URL, true
+	}
 	base := strings.TrimSpace(cfg.BaseURL)
 	if base == "" {
 		return OllamaEndpoint, false
@@ -1410,7 +1428,7 @@ func writePiGlobalConfig(cfg *trustantConfig) error {
 
 	authPath := filepath.Join(dir, "auth.json")
 	auth := readPiJSONFile(authPath)
-	apiKey := strings.TrimSpace(cfg.APIKey)
+	apiKey := effectiveAPIKey(cfg)
 	if apiKey == "" {
 		apiKey = "dummy"
 	}
@@ -2329,7 +2347,7 @@ func runTestModel(cfg *trustantConfig) testModelResult {
 	model := cfg.Pi.Default
 
 	baseURL := strings.TrimRight(strings.TrimSpace(cfg.BaseURL), "/")
-	apiKey := strings.TrimSpace(cfg.APIKey)
+	apiKey := effectiveAPIKey(cfg)
 	if baseURL == "" {
 		return testModelResult{Error: "base_url not defined in trustant.json"}
 	}
@@ -2569,11 +2587,25 @@ func handleDiscoverModels(w http.ResponseWriter, r *http.Request) {
 	var req struct {
 		BaseURL string `json:"base_url"`
 		APIKey  string `json:"api_key"`
+		// InstanceID reads a saved Ollama instance (URL and its stored key), so
+		// the browser never needs to hold the key.
+		InstanceID string `json:"instance_id"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid JSON: " + err.Error()})
 		return
+	}
+	if req.InstanceID != "" {
+		saved, err := loadTrustantConfig()
+		inst := findOllamaInstance(saved, req.InstanceID)
+		if err != nil || inst == nil {
+			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Unknown Ollama instance"})
+			return
+		}
+		req.BaseURL = inst.URL + "/v1"
+		req.APIKey = readOllamaInstanceKey(inst.ID)
 	}
 	baseURL := strings.TrimRight(strings.TrimSpace(req.BaseURL), "/")
 	if baseURL == "" {
@@ -2725,6 +2757,8 @@ func handlePostConfiguration(w http.ResponseWriter, r *http.Request) {
 		cfg.Current = wsCfg.Current
 		cfg.PredefinedEnv = wsCfg.PredefinedEnv
 		cfg.SharedProduction = wsCfg.SharedProduction
+		cfg.OllamaInstances = wsCfg.OllamaInstances
+		cfg.OllamaActive = wsCfg.OllamaActive
 		cfg.LegacyPredefinedEnvProduction = nil
 		cfg.License = wsCfg.License
 		cfg.LicenseHost = wsCfg.LicenseHost

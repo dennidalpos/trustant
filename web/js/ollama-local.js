@@ -38,7 +38,9 @@
 
     // mount fills `root` with the control and returns { refresh, setVisible }.
     // The control stays hidden when this host has no controllable service.
-    function mount(root) {
+    // opts.onChange runs after a successful Start/Stop, so the caller can
+    // re-read the models the service now serves.
+    function mount(root, opts) {
         let supported = false;
         let wanted = true;
         let busy = false;
@@ -104,6 +106,11 @@
             try {
                 status = await call('POST', { action: status.active ? 'stop' : 'start' });
                 supported = !!status.supported;
+                if (!status.error && opts && typeof opts.onChange === 'function') {
+                    busy = false;
+                    render();
+                    await opts.onChange(status);
+                }
             } catch (e) {
                 status = Object.assign({}, status, { error: 'The request failed or timed out.' });
             }
