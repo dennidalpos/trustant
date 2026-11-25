@@ -108,6 +108,13 @@ Development lint uses [Biome](https://biomejs.dev) (MIT or Apache-2.0),
 - Items marked `declared-only` in the registers have license metadata but no
   collected license text. They are not legal clearance. See
   [legal/REVIEW.md](legal/REVIEW.md).
+- The `trustable-ai` GitHub organization is the owner's fork namespace and is
+  intentional, not a leftover of the rebrand (owner decision 2026-11-25, task
+  #30): `MILVUS_MCP_REPO` (`trustable-ai/mcp-server-milvus`) and the default
+  `ops` task source (`trustable-ai/openserverless-task`) in
+  [image/Dockerfile](image/Dockerfile), the `openserverless-cli` tarball
+  and the default notebook templates `trustable-ai/templates`. Rename them only
+  when the owner moves those repositories.
 
 ## Keeping this file current
 

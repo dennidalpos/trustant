@@ -6,9 +6,10 @@
 > exists today for TruACP with Pi. The previous text stays in Git history; see
 > [pi.md](pi.md) "Trustant execution policy" for why Pi has no tool-call gate.
 
-> `application-test-completion-gate.svg` and the `issue98-*`, `opencode-guardrail-flow`
-> and `provider-e2e-flow` diagrams illustrate the removed OpenCode flows. They
-> are kept as historical records (owner decision 2026-11-25) and are not current behaviour.
+> `application-test-completion-gate.svg` illustrates the removed OpenCode flow.
+> It is kept as a historical record and is not current behaviour. The
+> `issue98-*`, `opencode-guardrail-flow` and `provider-e2e-flow` diagrams were
+> deleted on 2026-11-25 (owner decision, task #29) and stay in Git history.
 
 ## Goal
 

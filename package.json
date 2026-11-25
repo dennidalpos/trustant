@@ -5,12 +5,6 @@
   "scripts": {
     "lint": "node tools/lint.mjs",
     "lint:web": "biome lint",
-    "e2e:issue98": "./tests/e2e_issue98.sh",
-    "e2e:auth": "./tests/e2e_auth.sh",
-    "e2e:private": "./tests/e2e_private_app.sh",
-    "e2e:ollama-cloud": "./tests/e2e_ollama_cloud_app.sh",
-    "e2e:regolo": "./tests/e2e_regolo_app.sh",
-    "test:e2e-providers": "bash tests/e2e_provider_common_test.sh && node --test tests/issue98-session-tree.test.mjs",
     "test:tutorial": "node --test tests/tutorial-spotlight.test.mjs",
     "test:ollama-local": "node --test tests/ollama-local.test.mjs",
     "test:ollama-instances": "node --test tests/ollama-instances.test.mjs"

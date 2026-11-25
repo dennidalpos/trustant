@@ -927,27 +927,6 @@ func TestMilvusMCPUsesPinnedTrustantFork(t *testing.T) {
 	}
 }
 
-func TestLocalE2ERequiresRunKubefwd(t *testing.T) {
-	data, err := os.ReadFile("tests/e2e_issue98.sh")
-	if err != nil {
-		t.Fatalf("read local E2E runner: %s", err)
-	}
-	source := string(data)
-	for _, required := range []string{
-		`pgrep -x kubefwd`,
-		`"${#KUBEFWD_PIDS[@]}" -ne 1`,
-		`"-n openserverless"`,
-		`metadata.name!=trustant-svc`,
-	} {
-		if !strings.Contains(source, required) {
-			t.Fatalf("local E2E runner is missing kubefwd preflight %q", required)
-		}
-	}
-	if strings.Contains(source, "kubefwd svc") {
-		t.Fatal("E2E runner must not start a second kubefwd process")
-	}
-}
-
 func TestScriptSpecificationsLiveUnderSpec(t *testing.T) {
 	for _, name := range []string{"setup.md", "run.md", "start.md"} {
 		if _, err := os.Stat(name); !os.IsNotExist(err) {

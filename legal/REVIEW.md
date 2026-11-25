@@ -117,13 +117,6 @@ cleared assets. Inline SVG icons in `web/*.html` need the same provenance review
 | `spec/action-deploy-guard-flow.svg` | `7743f9ade18be5e39e2742ddb940dc594ef7abd6343b077f1d6bb226d1bd7235` | Unverified provenance |
 | `spec/application-test-completion-gate.svg` | `1ef034cbb132702ce1291dbf546ec68b1928a1affed3660a982a3a3bae07a1e7` | Unverified provenance |
 | `spec/git-pull-flow.svg` | `e565c6ced55777c900e0705d05e965b78aa2062ff9ce22fb055d3f9f116c270e` | Unverified provenance |
-| `spec/issue98-action-workflow-e2e.svg` | `d5b764b7a6ae70f834607b31684710e2d316feee2b2e65a00bb8e5357db19331` | Unverified provenance |
-| `spec/issue98-auth-e2e.svg` | `65d5f430bac0ebbcd388bfbc798c9bd046eaff668593333924846fecfc7d49ed` | Unverified provenance |
-| `spec/issue98-compaction-e2e.svg` | `ced15b31cfbb0651218fa597280bc7ed6096c35d7aea53815a59a1ad2c510515` | Unverified provenance |
-| `spec/issue98-e2e-flow.svg` | `bccd9cea58605fe0f18471b017a6c2343612e657d85f77d886d8b025598a146e` | Unverified provenance |
-| `spec/issue98-session-enforcement-flow.svg` | `36e0db5b8d05ff69209342a05865d9ab1d3060973e30c01799feaa48cbd8e4ff` | Unverified provenance |
-| `spec/opencode-guardrail-flow.svg` | `11ccf73c322687c1835a779ac475b3e27a630f6261fb53e29c78b9fe9696d864` | Unverified provenance |
-| `spec/provider-e2e-flow.svg` | `9a513e66e862572c235b55809654dabab9553fa497bd709ea02758289fe9fb3c` | Unverified provenance |
 | `spec/trustant-auth-flow.svg` | `06cf3d6a5ade7c9d69e8018f3137344ac344dc358e44426b0b5b900b2e341f46` | Unverified provenance |
 | `spec/trustant-code-integration.svg` | `82ec9ac5cefd329ecb1994147da56cc2314b754ae473fa4e7c66705584ef22f4` | Unverified provenance |
 | `web/favicon.ico` | `5cc2560eddb2d9f841e425f3dfc701a47b0fedf3d2b969730bcead80bfee06e6` | Unverified provenance |

@@ -254,12 +254,11 @@ The lightweight Node checks use the built-in test runner:
 
 ```bash
 npm run test:tutorial
-node --test tests/issue98-session-tree.test.mjs
 ```
 
 The TruACP suites (`npm test` in `acp/` and `acp/pi-acp/`) assume POSIX paths and processes. Run these suites in the Ubuntu environment; they are not reliable on a native Windows host.
 
-[package.json](package.json) also defines `test:e2e-providers` and the `e2e:*` scenarios. Cluster E2E tests launch applications and can invoke model providers; review their requirements and side effects before running them. See [E2E guide](spec/8-e2e.md) and [issue 98 scenario](tests/issue98-e2e.md).
+The OpenCode cluster E2E scenarios were removed with the runtime; see the [E2E guide](spec/8-e2e.md).
 
 ### Submodules and releases
 

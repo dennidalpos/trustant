@@ -45,10 +45,8 @@ jobs:
         with:
           node-version: 24
           package-manager-cache: false
-      - name: Test tutorial and provider fixtures
-        run: |
-          npm run test:tutorial
-          npm run test:e2e-providers
+      - name: Test tutorial fixtures
+        run: npm run test:tutorial
       - name: Test and build TruACP
         working-directory: acp
         run: |

@@ -948,9 +948,6 @@ runtime generation details live in:
 - `spec/4-launch.md`: MCP server generation, service CLI wrappers, and launch
   behavior;
 - `spec/7-skills.md`: installed app skills under `.agents/skills`;
-- `spec/opencode-guardrail-flow.svg`: historical diagram of the removed
-  OpenCode guardrail flow (contract, checker, deploy, runtime verification);
-  kept for reference, not current behaviour.
 
 ## Trustant Code Core Workflow
 
