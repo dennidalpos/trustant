@@ -37,6 +37,13 @@
         }[c]));
     }
 
+    // Embedding and reranking models cannot answer a chat request, so they are
+    // not offered for AI_CHAT_MODEL (they stay typeable for unusual setups).
+    function isChatModel(name) {
+        return !/(^|[\/:_-])(bge|nomic-embed|mxbai-embed|snowflake-arctic-embed|all-minilm|gte|e5)\b|embed|rerank/i
+            .test(String(name || ''));
+    }
+
     function maskValue(value) {
         if (!value) return '';
         if (value.length <= 8) return '••••••••';
@@ -392,7 +399,7 @@
             selectedURL.trim().replace(/\/+$/, '') === url);
         const options = {
             AI_BASE_URL: url ? [url] : [],
-            AI_CHAT_MODEL: matchesURL ? this.suggestions.models || [] : []
+            AI_CHAT_MODEL: matchesURL ? (this.suggestions.models || []).filter(isChatModel) : []
         };
         for (const [name, values] of Object.entries(options)) {
             const list = this.el('Suggestions-' + name);
@@ -481,11 +488,15 @@
         }
 
         body.innerHTML = this.rows.map((row) => {
-            const label = `<div class="nu-mono text-xs font-semibold">${escapeHTML(row.name)}</div>`;
             let control;
             const editable = this.mode === 'development' && row.pending &&
                 ['AI_BASE_URL', 'AI_CHAT_MODEL', 'AI_API_KEY'].includes(row.name);
             const literalID = this.prefix + 'Value-' + row.name;
+            // An editable row labels its value field, so a click on the name
+            // focuses it and assistive technology reads the name with the field.
+            const label = editable
+                ? `<label for="${literalID}" class="nu-mono text-xs font-semibold">${escapeHTML(row.name)}</label>`
+                : `<div class="nu-mono text-xs font-semibold">${escapeHTML(row.name)}</div>`;
             const choiceID = this.prefix + 'Choice-' + row.name;
             const suggestionsID = this.prefix + 'Suggestions-' + row.name;
 

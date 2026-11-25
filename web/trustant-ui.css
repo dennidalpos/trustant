@@ -195,6 +195,7 @@ textarea {
     display: flex;
     align-items: center;
     gap: .5rem;
+    min-height: 2.5rem;
     padding: .5rem .75rem;
     color: var(--nu-ink);
     font-size: var(--nu-label-size);
@@ -446,6 +447,11 @@ textarea {
     outline: 2px solid var(--nu-control-text);
     outline-offset: 1px;
     border-color: var(--nu-control-text);
+}
+
+/* Fields inside dialogs: 40px tall so they are easy to hit. */
+.nu-modal .nu-input {
+    min-height: 2.5rem;
 }
 
 .nu-output {
