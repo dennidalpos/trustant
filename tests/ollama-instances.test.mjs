@@ -218,6 +218,19 @@ test('offers the detected host Ollama and saves it without switching it on', asy
     assert.ok(!server.calls.some((c) => c.includes('"action":"select"')), 'must not select the instance');
 });
 
+test('offers to update a stale host preset instead of adding a second one', async () => {
+    const detected = { name: 'Ollama host', url: 'http://172.27.224.9:11434', source: 'WSL host', replaces_id: 'ollama-host', replaces_url: 'http://172.27.224.1:11434' };
+    const server = fakeServer({ instances: [{ id: 'ollama-host', name: 'Ollama host', url: 'http://172.27.224.1:11434' }], detected });
+    const ui = build(server);
+    await ui.control.refresh();
+    assert.match(ui.detectedText.textContent, /no longer answers.*172\.27\.224\.9/);
+    assert.equal(ui.detectedBtn.textContent, 'Update');
+
+    await ui.detectedBtn.listeners.click();
+    assert.deepEqual(plain(server.state.instances), [{ id: 'ollama-host', name: 'Ollama host', url: detected.url }]);
+    assert.match(ui.status.textContent, /Updated "Ollama host"/);
+});
+
 test('shows nothing extra when no host Ollama is detected', async () => {
     const ui = build(fakeServer());
     await ui.control.refresh();

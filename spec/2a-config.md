@@ -323,8 +323,14 @@ never offered. The suggestion is read-only: nothing is saved, selected or
 switched on. The card shows "Ollama found on the <source>: <url>" with an
 **Add** button that saves it as the instance **Ollama host** (a normal `save`);
 turning the switch on stays a separate, manual step. The address is recomputed
-on every read, so a WSL gateway that changes after a reboot is picked up; an
-already saved preset keeps its stored URL and is not rewritten. The Mac path is
+on every read, so a WSL gateway that changes after a reboot is picked up; a
+saved preset keeps its stored URL and is never rewritten on its own. When a
+preset named **Ollama host** exists with another URL that no longer answers,
+`detected` also carries `replaces_id` and `replaces_url` and the card reads
+"The preset ... no longer answers", with an **Update** button that saves the new
+URL into that preset (same `save`, with its `id`; the stored key is kept). If
+the old URL still answers, nothing is offered. Presets with other names are
+never touched. The Mac path is
 covered by unit tests only: the `host.lima.internal` steps are not verified on a
 Mac (see [docs/setup-macos.md](../docs/setup-macos.md)).
 

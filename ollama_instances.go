@@ -351,7 +351,14 @@ type ollamaDetectedHost struct {
 	Name   string `json:"name"`
 	URL    string `json:"url"`
 	Source string `json:"source"`
+	// ReplacesID and ReplacesURL name the saved preset that was added from an
+	// earlier detection and no longer answers; the UI offers to update it.
+	ReplacesID  string `json:"replaces_id,omitempty"`
+	ReplacesURL string `json:"replaces_url,omitempty"`
 }
+
+// ollamaHostPresetName is the name the detected host is saved under.
+const ollamaHostPresetName = "Ollama host"
 
 // limaHostName is how Lima exposes the Mac to its VM.
 const limaHostName = "host.lima.internal"
@@ -427,15 +434,31 @@ func detectHostOllama(ctx context.Context, cfg *trustantConfig) *ollamaDetectedH
 	if root == "" {
 		return nil
 	}
+	var stale *ollamaInstance
 	if cfg != nil {
-		for _, inst := range cfg.OllamaInstances {
+		for i := range cfg.OllamaInstances {
+			inst := &cfg.OllamaInstances[i]
 			if strings.EqualFold(inst.URL, root) {
 				return nil
+			}
+			if strings.EqualFold(inst.Name, ollamaHostPresetName) {
+				stale = inst
 			}
 		}
 	}
 	if !ollamaHostProbe(ctx, root) {
 		return nil
 	}
-	return &ollamaDetectedHost{Name: "Ollama host", URL: root, Source: source}
+	found := &ollamaDetectedHost{Name: ollamaHostPresetName, URL: root, Source: source}
+	if stale != nil {
+		// The preset added from an earlier detection points elsewhere (the WSL
+		// gateway IP changes across restarts). If it still answers it is a
+		// different Ollama and the name is taken, so offer nothing; otherwise
+		// offer to repoint it.
+		if ollamaHostProbe(ctx, stale.URL) {
+			return nil
+		}
+		found.ReplacesID, found.ReplacesURL = stale.ID, stale.URL
+	}
+	return found
 }

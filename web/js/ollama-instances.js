@@ -172,7 +172,13 @@
 
             const found = state.detected;
             detectedRow.classList.toggle('hidden', !found);
-            if (found) detectedText.textContent = 'Ollama found on the ' + found.source + ': ' + found.url;
+            if (found) {
+                detectedText.textContent = found.replaces_id
+                    ? 'The preset "' + found.name + '" (' + found.replaces_url + ') no longer answers. Ollama found on the '
+                        + found.source + ': ' + found.url
+                    : 'Ollama found on the ' + found.source + ': ' + found.url;
+                detectedBtn.textContent = found.replaces_id ? 'Update' : 'Add';
+            }
             detectedBtn.disabled = busy;
         }
 
@@ -248,7 +254,7 @@
             busy = true;
             render();
             const result = await request(fetchImpl, 'POST', {
-                action: 'save', instance: { name: found.name, url: found.url },
+                action: 'save', instance: { id: found.replaces_id || '', name: found.name, url: found.url },
             });
             busy = false;
             if (!result.ok) {
@@ -258,7 +264,9 @@
             }
             state = result.data;
             render();
-            say('Added "' + found.name + '". Turn on the switch to use it.', 'info');
+            say(found.replaces_id
+                ? 'Updated "' + found.name + '" to ' + found.url + '.'
+                : 'Added "' + found.name + '". Turn on the switch to use it.', 'info');
         });
         addBtn.addEventListener('click', () => openForm('', false));
         editBtn.addEventListener('click', () => { if (selected()) openForm(selected().id, false); });

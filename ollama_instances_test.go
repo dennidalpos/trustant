@@ -267,6 +267,30 @@ func TestDetectHostOllama(t *testing.T) {
 	}
 }
 
+func TestDetectHostOllamaOffersToRepointAStalePreset(t *testing.T) {
+	ctx := context.Background()
+	stubHostDetection(t, true, false, "172.27.224.9", true)
+	old := "http://172.27.224.1:11434"
+	ollamaHostProbe = func(_ context.Context, root string) bool { return root != old }
+	cfg := &trustantConfig{OllamaInstances: []ollamaInstance{{ID: "ollama-host", Name: "Ollama host", URL: old}}}
+
+	got := detectHostOllama(ctx, cfg)
+	if got == nil || got.URL != "http://172.27.224.9:11434" || got.ReplacesID != "ollama-host" || got.ReplacesURL != old {
+		t.Fatalf("stale preset = %+v", got)
+	}
+	// The old URL still answers: a different Ollama owns the name, offer nothing.
+	ollamaHostProbe = func(context.Context, string) bool { return true }
+	if got := detectHostOllama(ctx, cfg); got != nil {
+		t.Fatalf("reachable preset still replaced: %+v", got)
+	}
+	// Other presets are never touched.
+	other := &trustantConfig{OllamaInstances: []ollamaInstance{{ID: "gpu", Name: "GPU box", URL: old}}}
+	ollamaHostProbe = func(_ context.Context, root string) bool { return root != old }
+	if got := detectHostOllama(ctx, other); got == nil || got.ReplacesID != "" {
+		t.Fatalf("unrelated preset = %+v", got)
+	}
+}
+
 func TestOllamaInstancesListIncludesTheDetectedHost(t *testing.T) {
 	withPredefinedEnvWorkspace(t, `{"provider":"ollama","base_url":"http://localhost:11434/v1","api_key":"dummy"}`)
 	stubHostDetection(t, true, false, "172.27.224.1", true)

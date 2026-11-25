@@ -23,7 +23,7 @@ Use this when the model runs on your computer (for example with a GPU and models
 2. **Open the port.** Allow inbound TCP 11434 from the Trustant environment (firewall, security group).
 3. **Check from the Trustant environment**, not from the machine itself: `curl http://<address>:11434/api/tags` must list your models.
 4. **Point Trustant at it.** Either keep the **Cloud AI** provider and, on the Configure page, turn on **Use an external Ollama** in the **Ollama Instance** card (add the server once as a named instance and switch between several, for example different clusters; the choice is saved and turning it off returns to the Ollama of this machine, which stays the default). Or, in the UI choose **Private AI**, enter `http://<address>:11434/v1` (the `/v1` suffix is required) and leave the key empty. Pick the chat model from the list or type it.
-   Under WSL and Lima the Ollama Instance card also detects the host's Ollama by itself and offers it with an **Add** button; it never turns the switch on for you.
+   Under WSL and Lima the Ollama Instance card also detects the host's Ollama by itself and offers it with an **Add** button; it never turns the switch on for you. If the **Ollama host** preset was saved with an address that no longer answers (the WSL address changes after a restart), the card shows the new address with an **Update** button.
 5. **Never use `localhost` for it** from inside WSL2 or a VM: there it is the environment's own Ollama. On Windows, WSL's localhost forwarding can even map `127.0.0.1:11434` to the distribution's Ollama.
 
 Per system details: [Windows](setup-windows.md#ollama-on-your-computer), [macOS](setup-macos.md#ollama-on-your-computer), [Ubuntu](setup-ubuntu.md#ollama-on-your-computer).
