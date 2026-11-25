@@ -6,7 +6,17 @@ This guide helps new users run Trustant from source and create or import an appl
 
 Trustant runs as a server and is used from a web browser. The repository has no desktop application.
 
-[![Watch the Trustant demo](splash.png)](https://trustant.ai/#video?v=demo)
+[Watch the Trustant demo](https://trustant.ai/#video?v=demo) · [Website](https://trustant.ai)
+
+## Documentation
+
+| I want to | Read |
+|---|---|
+| Install and start Trustant | [Windows](docs/setup-windows.md), [macOS](docs/setup-macos.md) or [Ubuntu](docs/setup-ubuntu.md) |
+| Understand the architecture | [How it works](docs/how-it-works.md) |
+| Do something with it | [Use cases](docs/use-cases.md): first run, building an app, a local model with Ollama, publishing |
+| Know the exact intended behavior | [spec/](spec/) |
+| Contribute | [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md) |
 
 ## How it fits together
 
@@ -86,7 +96,7 @@ flowchart TD
 ### Open the UI
 
 1. Open the URL printed by the development loop in your browser.
-2. Configure a provider and its credentials in the UI, then choose a model.
+2. Configure a provider and its credentials in the UI, then choose a model. To use an Ollama running on your own computer or network, choose **Private AI** with `http://<host>:11434/v1` and give that Ollama a context window of at least 32768 tokens (see [use cases](docs/use-cases.md#4-use-a-local-model-ollama)).
 3. Create or import an application from the app list and open it.
 
 The app workbench provides the assistant, preview, file viewer, terminal, and application configuration.
