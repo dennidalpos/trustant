@@ -1,7 +1,7 @@
 # pi.integrity — reviewed npm Subresource Integrity values for the lockstep
 # upstream Pi runtime and Codex in pi.version. Format: `<module>@<version> <sha512>`.
 @openai/codex@0.171.0 sha512-1IOFzL2Xg86tLdw6kDo3GoKbkQENgQi7TI6rlEvN132R7ngSw7SNOIQoTcnKzSZZ8kf9N9GynCweSoaFbqk2Eg==
-@agentclientprotocol/codex-acp@2.9.0 sha512-2w0hyqz/8a4N6U+4ysE9zeINfpZzrrRtBjusNkQ5gCx4j5GTknPlVcIhq/ULmFNmb8DIvfI0dDHVO8dSI4h+7Q==
+@agentclientprotocol/codex-acp@2.12.0 sha512-UYZwEZoDUdzre4VG/ECGlAVVWlB4tSuy40WiGGiNcA/t3qx0i2Iz9i1BRgzrFHhq2QgEsxH8c7FFEdRwgLUBvg==
 @earendil-works/pi-ai@1.6.0 sha512-9hL+eygFDEiFp//cydeUfmFsKmEqpmvsNPb10Y1W8+m5K9O+sx1hMStfu6nukrBD5sl6mP4RykCYBBNEgsVLfw==
 @earendil-works/pi-tui@1.6.0 sha512-nVtWZ4rYr3KHDla3skGAWG5XoITEUJCoEx1AsWv1yKxV7+v86ulD2hxVn/P+COI6jsoeQmj3orqHbCHZwAUsUg==
 @earendil-works/pi-agent-core@1.6.0 sha512-IU/x+2XtE4KIdIkEndZssdLPbIUR38Btj+Q7vjIIXIK7GSamLtDH5jOw/dzBWAvWFAgZ2dslF5sPc6GcGOnS+w==

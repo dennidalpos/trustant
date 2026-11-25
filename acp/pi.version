@@ -16,7 +16,7 @@
 # (@zed-industries/codex-acp is deprecated in favour of the
 #  @agentclientprotocol scope; same codex-acp bin, drop-in.)
 @openai/codex@0.171.0
-@agentclientprotocol/codex-acp@2.9.0
+@agentclientprotocol/codex-acp@2.12.0
 
 # Pi CLI and core — exact upstream release. setup.sh verifies the four package
 # integrities recorded in pi.integrity before installing them as one lockstep

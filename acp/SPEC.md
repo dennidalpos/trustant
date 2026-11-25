@@ -453,7 +453,7 @@ and blank lines are ignored:
 
 ```
 @openai/codex@0.171.0
-@agentclientprotocol/codex-acp@2.9.0
+@agentclientprotocol/codex-acp@2.12.0
 pi-mcp-adapter@7.0.1
 pi-web-access@0.48.0
 ```

@@ -111,7 +111,7 @@ hardcoded in `setup.sh`.** Each line is a literal npm install spec,
 ```
 # Codex — CLI + ACP adapter
 @openai/codex@0.171.0
-@agentclientprotocol/codex-acp@2.9.0
+@agentclientprotocol/codex-acp@2.12.0
 ...
 @earendil-works/pi-ai@1.6.0
 @earendil-works/pi-tui@1.6.0
