@@ -179,21 +179,41 @@ func (a *authManager) hostSession(r *http.Request, label string) *authSession {
 }
 
 func (a *authManager) setHostCookie(w http.ResponseWriter, r *http.Request, label string, session *authSession) {
-	secure := requestIsHTTPS(r)
+	https := requestIsHTTPS(r)
 	name := hostSessionCookie
-	if secure {
+	if https {
 		name = hostSecureCookie
 	}
-	http.SetCookie(w, &http.Cookie{
+	cookie := &http.Cookie{
 		Name:     name,
 		Value:    a.hostCookieValue(label, session.ID),
 		Path:     "/",
 		Expires:  session.ExpiresAt,
 		MaxAge:   int(session.ExpiresAt.Sub(a.now()).Seconds()),
 		HttpOnly: true,
-		Secure:   secure,
+		Secure:   https,
 		SameSite: http.SameSiteStrictMode,
-	})
+	}
+	// The assistant is embedded as an iframe of the trustant host. When the two
+	// hosts are different sites (for example *.localhost or a public-suffix
+	// domain such as nip.io) a Strict cookie is dropped in that third-party
+	// frame. Over HTTPS, or on a loopback name that browsers treat as secure,
+	// issue a partitioned cookie (CHIPS): it is only sent inside this embedding
+	// and never to other sites.
+	if https || isLoopbackHostname(r) {
+		cookie.Secure = true
+		cookie.SameSite = http.SameSiteNoneMode
+		cookie.Partitioned = true
+	}
+	http.SetCookie(w, cookie)
+}
+
+// isLoopbackHostname reports whether the request host is localhost or a
+// *.localhost name, which browsers treat as a secure context.
+func isLoopbackHostname(r *http.Request) bool {
+	hostname, _, _ := parseHostname(r)
+	hostname = strings.ToLower(hostname)
+	return hostname == "localhost" || strings.HasSuffix(hostname, ".localhost")
 }
 
 // hostGate wraps the handler of a proxied host. With local authentication off

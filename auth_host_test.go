@@ -294,3 +294,36 @@ func TestHostnameMiddlewareGatesTruacpAndLeavesOtherHosts(t *testing.T) {
 		t.Fatalf("trustant = %d %q", rec.Code, rec.Body.String())
 	}
 }
+
+func TestHostCookieIsPartitionedWhereEmbeddingNeedsIt(t *testing.T) {
+	a := testAuthManager()
+	session := &authSession{ID: "s1", ExpiresAt: a.now().Add(time.Hour)}
+	cases := []struct {
+		name, host, proto string
+		embedded          bool
+	}{
+		{"plain http on a public name stays strict", "truacp.example.test", "", false},
+		{"loopback name is embeddable", "truacp.localhost:8910", "", true},
+		{"https is embeddable", "truacp.example.test", "https", true},
+	}
+	for _, tc := range cases {
+		req := hostRequest(http.MethodGet, "/")
+		req.Host = tc.host
+		if tc.proto != "" {
+			req.Header.Set("X-Forwarded-Proto", tc.proto)
+		}
+		rec := httptest.NewRecorder()
+		a.setHostCookie(rec, req, "truacp", session)
+		c := rec.Result().Cookies()[0]
+		if tc.embedded {
+			if !c.Secure || c.SameSite != http.SameSiteNoneMode || !c.Partitioned {
+				t.Errorf("%s: want Secure+None+Partitioned, got %#v", tc.name, c)
+			}
+		} else if c.Secure || c.SameSite != http.SameSiteStrictMode || c.Partitioned {
+			t.Errorf("%s: want Strict, got %#v", tc.name, c)
+		}
+		if !c.HttpOnly || c.Domain != "" || c.Path != "/" {
+			t.Errorf("%s: unexpected attributes %#v", tc.name, c)
+		}
+	}
+}

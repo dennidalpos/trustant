@@ -101,8 +101,16 @@ Flow:
    `trustant_host_session` (`__Host-trustant_host_session` over HTTPS) and
    redirects to `next`, which is kept to a local path (anything else becomes `/`).
 
-The cookie is host-only (no `Domain`), `HttpOnly`, `SameSite=Strict`, and its
-signature covers the host label, so the trustant session cookie value is not
+The cookie is host-only (no `Domain`), `HttpOnly`, and its signature covers the
+host label. The assistant is an iframe of the trustant host, and a `Strict`
+cookie is dropped in that frame when the two hosts are different sites (for
+example `*.localhost`, or a public-suffix domain such as nip.io). So over HTTPS,
+or on `localhost` and `*.localhost` (secure contexts for browsers), the cookie is
+`Secure; SameSite=None; Partitioned` (CHIPS): it is stored and sent only inside
+this embedding, never to other sites. Over plain HTTP on any other name it stays
+`SameSite=Strict`, which works only when both hosts share a registrable domain;
+elsewhere the assistant frame shows the 401 page (use HTTPS or `*.localhost`).
+Because the signature covers the label, the trustant session cookie value is not
 accepted on the assistant host and the reverse. It points at the same server
 session: logging out, expiry (eight hours) or a restart close the assistant host
 too. Requests without a valid cookie get a 401 page that links to the login
