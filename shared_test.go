@@ -114,7 +114,7 @@ func TestSharedEnvIsWrittenInSortedOrder(t *testing.T) {
 func TestSharedEnvNeverContainsAResolvedValue(t *testing.T) {
 	isolateSharedWorkspace(t)
 	makeWorkbench(t, "appsuite")
-	writeOpsConfigTree(t, `{"postgres":{"url":"postgres://user:s3cr3t@db/app"}}`)
+	writeOpsConfigTree(t, `{"postgres":{"url":"postgres://user:s3cr3t@db/app"}}`) // sb-check: ignore (synthetic test credentials)
 
 	if err := saveSharedEnv("appsuite", map[string]string{
 		"<app>__POSTGRES_URL": wrapSharedPath("postgres.url"),
@@ -267,7 +267,7 @@ func TestOpsConfigTreeExcludesAuth(t *testing.T) {
 
 func TestOpsConfigTreeIsNotRedacted(t *testing.T) {
 	isolateSharedWorkspace(t)
-	writeOpsConfigTree(t, `{"postgres":{"url":"postgres://user:s3cr3t@db/app"}}`)
+	writeOpsConfigTree(t, `{"postgres":{"url":"postgres://user:s3cr3t@db/app"}}`) // sb-check: ignore (synthetic test credentials)
 
 	tree, err := opsConfigTree()
 	if err != nil {

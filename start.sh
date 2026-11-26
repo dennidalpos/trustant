@@ -706,7 +706,7 @@ for u in "$HOST_USER" trustant; do
   seen="$seen $u"
 
   # Resolve the real home from passwd — never assume /home/$u. Lima hands the
-  # mirrored user a suffixed home (e.g. /home/msciab.guest) to avoid colliding
+  # mirrored user a suffixed home (e.g. /home/<user>.guest) to avoid colliding
   # with the virtiofs mount, so the assumed path would miss the real rc files.
   home="$(getent passwd "$u" | cut -d: -f6)"
   [ -n "$home" ] && [ -d "$home" ] || continue
@@ -1565,7 +1565,7 @@ chmod 0440 "/etc/sudoers.d/90-$HOST_USER"
 
 # Resolve the account's REAL home and group from passwd — never assume
 # /home/$HOST_USER. Lima may already own the account and give it a suffixed home
-# (e.g. /home/msciab.guest, with /home/msciab.linux symlinked to it) to avoid
+# (e.g. /home/<user>.guest, with /home/<user>.linux symlinked to it) to avoid
 # colliding with the virtiofs mount. sshd reads authorized_keys from the passwd
 # home, so writing to the assumed path silently authorizes nothing and every
 # publickey auth fails with "Permission denied (publickey)".

@@ -1,0 +1,15 @@
+# Reviewed false positives for `sb check` (2026-11-26, task #42).
+# Format: fingerprint, then the reason.
+04f5a1eb519caa9d public project contact (Nuvolaris Inc, CLA requests)
+58fc2fd373b7b36b public security contact in SECURITY.md
+f01deffae34a8416 public contact documented in the license spec
+83333e6e60a7b97a public sales contact shown in the UI (spec)
+6e9524da2fb30805 public sales contact shown in the UI
+254c2dfdc4e08431 upstream pi-acp author metadata (MIT, vendored, kept unchanged)
+60ca18d378f02add vendored Apache OpenServerless default (oplugins, kept unchanged)
+fe99369df10c762c vendored Apache OpenServerless placeholder default (oplugins, kept unchanged)
+bb6ca1fc6701d3d1 vendored upstream package author metadata (oplugins)
+e4239a25fae80118 vendored upstream package author metadata (oplugins)
+ef1fe18af1c3e981 public Apache OpenServerless mailing list (vendored page)
+3bd52ee3ab5952f8 public Apache OpenServerless mailing list (vendored page)
+b3cc65e7160c7918 container path /home/openserverless, not a personal home (vendored)

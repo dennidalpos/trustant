@@ -372,7 +372,7 @@ run, so existing machines carry it and nothing else would ever remove it.
 
 Reuse the same account and file discovery the block itself used — resolve each
 home from `getent passwd` rather than assuming `/home/<user>` (Lima gives the
-mirrored user a suffixed home such as `/home/msciab.guest`), skip an account
+mirrored user a suffixed home such as `/home/<user>.guest`), skip an account
 that does not exist, skip an rc file that does not exist, and leave ownership
 unchanged. Removal is idempotent and silent when there is no block to remove.
 

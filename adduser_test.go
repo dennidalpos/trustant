@@ -29,11 +29,11 @@ func readCalls(t *testing.T, logPath string) []string {
 
 func TestAddOpsUserKeepsPasswordOutOfArgv(t *testing.T) {
 	logPath := installFakeOps(t, "exit 0\n")
-	if out, err := addOpsUser("demoapp1", "demoapp1@n7s.co", "s3cret-pw"); err != nil {
+	if out, err := addOpsUser("demoapp1", "demoapp1@example.com", "s3cret-pw"); err != nil {
 		t.Fatalf("addOpsUser: %v %s", err, out)
 	}
 	calls := readCalls(t, logPath)
-	if len(calls) != 1 || calls[0] != "admin adduser demoapp1 demoapp1@n7s.co --all|s3cret-pw" {
+	if len(calls) != 1 || calls[0] != "admin adduser demoapp1 demoapp1@example.com --all|s3cret-pw" {
 		t.Fatalf("unexpected calls: %q", calls)
 	}
 }
@@ -48,18 +48,18 @@ if [ "$#" -lt 6 ]; then
 fi
 exit 0
 `)
-	if out, err := addOpsUser("demoapp1", "demoapp1@n7s.co", "s3cret-pw"); err != nil {
+	if out, err := addOpsUser("demoapp1", "demoapp1@example.com", "s3cret-pw"); err != nil {
 		t.Fatalf("addOpsUser: %v %s", err, out)
 	}
 	calls := readCalls(t, logPath)
-	if len(calls) != 2 || calls[1] != "admin adduser demoapp1 demoapp1@n7s.co s3cret-pw --all|" {
+	if len(calls) != 2 || calls[1] != "admin adduser demoapp1 demoapp1@example.com s3cret-pw --all|" {
 		t.Fatalf("expected an env attempt then a legacy retry, got %q", calls)
 	}
 }
 
 func TestAddOpsUserDoesNotRetryOtherFailures(t *testing.T) {
 	logPath := installFakeOps(t, "echo boom\nexit 3\n")
-	out, err := addOpsUser("demoapp1", "demoapp1@n7s.co", "s3cret-pw")
+	out, err := addOpsUser("demoapp1", "demoapp1@example.com", "s3cret-pw")
 	if err == nil || !strings.Contains(string(out), "boom") {
 		t.Fatalf("expected the original failure, got err=%v out=%q", err, out)
 	}

@@ -115,26 +115,26 @@ func TestLicenseSettings(t *testing.T) {
 		handleLicenseSettings(rec, httptest.NewRequest(http.MethodPost, "/api/license/settings", strings.NewReader(body)))
 		return rec
 	}
-	if rec := post(`{"license_host":"https://other.example.com","license_email":"a@b.io"}`); rec.Code != http.StatusBadRequest {
+	if rec := post(`{"license_host":"https://other.example.com","license_email":"a@example.com"}`); rec.Code != http.StatusBadRequest {
 		t.Errorf("unlicensed host accepted: %d", rec.Code)
 	}
 	if rec := post(`{"license_host":"` + provisionTestHost + `","license_email":"not-an-email"}`); rec.Code != http.StatusBadRequest {
 		t.Errorf("bad email accepted: %d", rec.Code)
 	}
-	rec := post(`{"license_host":"` + provisionTestHost + `","license_email":"b@c.io","provisioning_token":"tok"}`)
+	rec := post(`{"license_host":"` + provisionTestHost + `","license_email":"b@example.com","provisioning_token":"tok"}`)
 	if rec.Code != http.StatusOK || strings.Contains(rec.Body.String(), "tok\"") {
 		t.Fatalf("save = %d %s", rec.Code, rec.Body.String())
 	}
 	cfg, _ := loadWorkspaceConfig()
-	if cfg.LicenseEmail != "b@c.io" || cfg.ProvisioningToken != "tok" {
+	if cfg.LicenseEmail != "b@example.com" || cfg.ProvisioningToken != "tok" {
 		t.Fatalf("cfg = %+v", cfg)
 	}
 	// An empty token keeps the stored one; clear_token removes it.
-	post(`{"license_host":"` + provisionTestHost + `","license_email":"b@c.io"}`)
+	post(`{"license_host":"` + provisionTestHost + `","license_email":"b@example.com"}`)
 	if cfg, _ := loadWorkspaceConfig(); cfg.ProvisioningToken != "tok" {
 		t.Error("empty token cleared the stored one")
 	}
-	post(`{"license_host":"` + provisionTestHost + `","license_email":"b@c.io","clear_token":true}`)
+	post(`{"license_host":"` + provisionTestHost + `","license_email":"b@example.com","clear_token":true}`)
 	if cfg, _ := loadWorkspaceConfig(); cfg.ProvisioningToken != "" {
 		t.Error("clear_token did not clear")
 	}
