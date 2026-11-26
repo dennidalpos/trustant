@@ -41,6 +41,9 @@ This repository's private context, decisions and tasks live in SecondBrain, outs
 
 - At the start of a session run `sb context` (MCP tool `get_context`) and work from it.
 - Run `sb start` to check recorded checkouts, refresh managed agent files and see which SecondBrain build is running.
+- When asked to run `sb start` in chat, include the full result in the first reply after execution, even in a new session. Use bullet lists for the executable and PATH status, repository, context and tasks, instruction alignment, MCP configuration, health findings, all suggested next steps and every command shown. Under each command, list its parameters and what they do. State when no issues are reported and distinguish MCP configuration from runtime verification.
+- When asked to onboard a repository with missing or empty context, read `sb guide onboarding` or call `get_guide` with topic `onboarding`. Inspect the checkout and save the verified starting context in the private dossier.
+- When asked to work through tasks in the current chat, read `sb guide chat` or call `get_guide` with topic `chat`.
 - Track work with `sb task add`, `sb task list` and `sb task done` (MCP task tools).
 - Record durable decisions with `sb decide "..."` and keep the current state with `sb context --set`.
 - Never copy dossier content into the repository.
