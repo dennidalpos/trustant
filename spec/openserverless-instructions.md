@@ -93,24 +93,25 @@ debugging inside a Trustant workbench.
 
 It must then contain these sections, in this order:
 
-1. Serverless operating model.
-2. Critical recovery contract.
-3. Non-negotiable rules.
-4. Project layout.
-5. Application development workflow.
-6. OpenServerless action tools.
-7. Action endpoint grammar.
-8. MCP servers and service access.
-9. Runtime host rules.
-10. PostgreSQL action pattern.
-11. Skills.
-12. Web action request rules.
-13. Web action response rules.
-14. Authentication UI rules.
-15. Setup and service initialization.
-16. Dependencies.
-17. Data/service restrictions.
-18. Validation checklist.
+1. How the system works (read first): what the preview shows, where screens, assets, build output and backend live, and when the work is done. Generic for every app type.
+2. Serverless operating model.
+3. Critical recovery contract.
+4. Non-negotiable rules.
+5. Project layout.
+6. Application development workflow.
+7. OpenServerless action tools.
+8. Action endpoint grammar.
+9. MCP servers and service access.
+10. Runtime host rules.
+11. PostgreSQL action pattern.
+12. Skills.
+13. Web action request rules.
+14. Web action response rules.
+15. Authentication UI rules.
+16. Setup and service initialization.
+17. Dependencies.
+18. Data/service restrictions.
+19. Validation checklist.
 
 ## Critical Recovery Contract
 

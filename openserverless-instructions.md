@@ -13,6 +13,35 @@ You are working inside a user-created Trustant app. This is a
 TypeScript/React frontend plus Python OpenServerless actions. It is not a
 conventional backend server project.
 
+## How the System Works (read first)
+
+This applies to every app, whatever it does. Orient yourself with it before
+choosing where code goes, especially when the user's request is short or
+generic.
+
+- The user sees the app in the Trustant preview pane. That pane shows the Vite
+  dev server on port 5173 at its root URL, with hot reload: it renders what the
+  app entry (`index.html` -> `src/main.tsx` -> router -> pages) renders, and
+  nothing else. A feature the user cannot reach from that entry is invisible to
+  them, so wire every new screen into the existing router and make the
+  requested app the page shown at `/`. Replace the starter's placeholder page
+  rather than leaving it in place.
+- `public/` holds static assets (images, icons, fonts) served at their own
+  path. It is not where application screens live: a standalone HTML page there
+  is not the app and does not appear in the preview.
+- `web/` is the production build output written by `deploy` (`vite build`).
+  It is generated: never put source code there or edit it.
+- Backend code is OpenServerless actions under `packages/`, never a server
+  process. The dev server proxies `/api/my/...` to OpenServerless, so the
+  frontend calls actions with relative URLs and no hostnames.
+- Trustant runs `devel` (preview with hot reload) while the user edits and
+  `deploy` (build into `web/`, upload `web/` and `packages/`) when they
+  publish. Both come from the `openserverless` section of `package.json`; keep
+  them working.
+- You are finished only when the requested behavior is visible in the preview
+  at `/` and, if it has a backend, works against the real action endpoint.
+  Say what you verified.
+
 ## Serverless Operating Model
 
 Core principle: build the app through Trustant/OpenServerless primitives. Do
