@@ -279,7 +279,7 @@
                         <p class="text-sm mb-2">
                             To save and read a private repo add this ssh key to your GitHub account.
                         </p>
-                        <textarea id="addAppSshKey" readonly rows="3"
+                        <textarea id="addAppSshKey" aria-label="SSH public key" readonly rows="3"
                             class="nu-input nu-code w-full px-2 py-1 text-xs resize-none"></textarea>
                         <div class="flex items-center gap-2 mt-2">
                             <button type="button" onclick="copyKeyFromTextarea('addAppSshKey', 'addAppSshCopied')"
@@ -327,7 +327,7 @@
                 <a href="#" onclick="toggleOwnStarterSshKey(); return false"
                     class="nu-link text-sm font-medium">Use an SSH key instead</a>
                 <div id="ownStarterSshReveal" class="hidden mt-2 nu-banner p-3">
-                    <textarea id="ownStarterSshKey" readonly rows="3"
+                    <textarea id="ownStarterSshKey" aria-label="SSH public key" readonly rows="3"
                         class="nu-input nu-code w-full px-2 py-1 text-xs resize-none"></textarea>
                     <div class="flex items-center gap-2 mt-2">
                         <button type="button" onclick="copyKeyFromTextarea('ownStarterSshKey', 'ownStarterSshCopied')"
@@ -467,12 +467,13 @@
                 <h3 class="text-lg font-medium mb-4">Git Push</h3>
                 <div class="text-left space-y-3">
                     <div>
-                        <label class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">Production Repository (org/repo)</label>
+                        <label for="gitPushRepo" class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">Production Repository</label>
                         <input type="text" id="gitPushRepo"
                             placeholder="org/repo"
                             pattern="[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+"
-                            title="Format: org/repo"
+                            aria-describedby="gitPushRepoFormat"
                             class="nu-input w-full px-3 py-2">
+                        <p id="gitPushRepoFormat" class="mt-1 text-xs text-[color:var(--nu-muted)]">Format: org/repo</p>
                     </div>
                     <!-- Connecting a GitHub account is the primary way to
                          authenticate a push: the backend then pushes over HTTPS
@@ -494,7 +495,7 @@
                                 Add this SSH public key to the repository's deploy keys (with write
                                 access) or to your GitHub account.
                             </p>
-                            <textarea id="gitPushSshKey" readonly rows="3"
+                            <textarea id="gitPushSshKey" aria-label="SSH public key" readonly rows="3"
                                 class="nu-input nu-code w-full px-2 py-1 text-xs resize-none"></textarea>
                             <div class="flex items-center gap-2 mt-2">
                                 <button type="button" onclick="copyKeyFromTextarea('gitPushSshKey', 'gitPushSshCopied')"
@@ -580,7 +581,7 @@
                     </div>
                     <div id="publishTokenPanel" class="hidden nu-banner p-3 space-y-2">
                         <p id="publishTokenInvalid" class="hidden nu-feedback nu-feedback-error text-sm p-2">The provisioning token was rejected and has been removed. Please enter it again.</p>
-                        <p class="text-sm font-medium">Please add your provisioning Token for <span id="publishTokenHost" class="nu-mono"></span></p>
+                        <label for="publishProvisionToken" class="block text-sm font-medium">Provisioning token for <span id="publishTokenHost" class="nu-mono"></span></label>
                         <p class="text-sm">To provision an app you have to install the Trustant Serverless package
                             on the server pointed by <span id="publishTokenHost2" class="nu-mono"></span>
                             then get the token with the command <code class="nu-mono">trulicense</code></p>
@@ -594,18 +595,18 @@
                     </div>
                     <div id="publishExistsWarning" class="hidden nu-feedback nu-feedback-warning text-sm p-3"></div>
                     <div>
-                        <label class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">API Host</label>
+                        <label for="publishApiHost" class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">API Host</label>
                         <input type="text" id="publishApiHost" oninput="updatePublishButton()"
                             placeholder="https://your-truserverless-host.n7s.co"
                             class="nu-input w-full px-3 py-2">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">User</label>
+                        <label for="publishUser" class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">User</label>
                         <input type="text" id="publishUser" oninput="updatePublishButton()"
                             class="nu-input w-full px-3 py-2">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">Password</label>
+                        <label for="publishPassword" class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">Password</label>
                         <input type="password" id="publishPassword" oninput="updatePublishButton()"
                             class="nu-input w-full px-3 py-2">
                     </div>
@@ -2375,7 +2376,7 @@
                                 <div class="flex items-start justify-between gap-3">
                                     <div class="min-w-0">
                                         <h3 class="text-lg font-semibold text-[color:var(--nu-ink)] truncate">${escapeHtml(app.name)}</h3>
-                                        ${links.repo ? `<a href="${links.repo}" target="_blank" class="nu-link block text-sm truncate mt-0.5">${escapeHtml(links.repoLabel)}</a>` : '<p class="text-sm text-[color:var(--nu-muted)] mt-0.5">No repository</p>'}
+                                        ${links.repo ? `<a href="${links.repo}" target="_blank" class="nu-link nu-app-link text-sm mt-0.5"><span class="truncate">${escapeHtml(links.repoLabel)}</span></a>` : '<p class="text-sm text-[color:var(--nu-muted)] mt-0.5">No repository</p>'}
                                     </div>
                                     <button onclick="launchApp('${escapeAttr(app.name)}')"
                                         title="Open this application in the editor"
@@ -2393,8 +2394,8 @@
                     </div>
                     <div class="px-4 py-3 border-y border-[color:var(--nu-rule)] bg-[color:var(--nu-accent)]">
                         <div class="grid grid-cols-2 gap-2 text-sm">
-                            <a href="${links.local}" target="_blank" class="nu-btn nu-btn-secondary">${weblinkIcon()} Development</a>
-                            ${links.production ? `<a href="${links.production}" target="_blank" class="nu-btn nu-btn-secondary">${weblinkIcon()} Production</a>` : '<span class="nu-btn border-[color:var(--nu-rule)] text-[color:var(--nu-muted)] bg-white">No production</span>'}
+                            <a href="${links.local}" target="_blank" class="nu-btn nu-btn-secondary">${weblinkIcon()} Open dev</a>
+                            ${links.production ? `<a href="${links.production}" target="_blank" class="nu-btn nu-btn-secondary">${weblinkIcon()} Open production</a>` : ''}
                         </div>
                     </div>
                     <div class="p-3 flex flex-wrap gap-2">
@@ -2438,15 +2439,15 @@
                         <div class="min-w-0">
                             <div class="font-semibold text-[color:var(--nu-ink)] truncate">${escapeHtml(app.name)}</div>
                             <div class="flex flex-wrap gap-x-3 gap-y-1 text-sm mt-1">
-                                <a href="${links.local}" target="_blank" class="nu-link inline-flex items-center gap-1">${weblinkIcon('w-3.5 h-3.5')} Development</a>
-                                ${links.production ? `<a href="${links.production}" target="_blank" class="nu-link inline-flex items-center gap-1">${weblinkIcon('w-3.5 h-3.5')} Production</a>` : ''}
+                                <a href="${links.local}" target="_blank" class="nu-link nu-app-link gap-1">${weblinkIcon('w-3.5 h-3.5')} Open dev</a>
+                                ${links.production ? `<a href="${links.production}" target="_blank" class="nu-link nu-app-link gap-1">${weblinkIcon('w-3.5 h-3.5')} Open production</a>` : ''}
                             </div>
                         </div>
                     </div>
                     <div role="cell" class="text-sm min-w-0">
-                        ${links.repo ? `<a href="${links.repo}" target="_blank" class="nu-link truncate block">${escapeHtml(links.repoLabel)}</a>` : '<span class="text-[color:var(--nu-muted)]">No repository</span>'}
+                        ${links.repo ? `<a href="${links.repo}" target="_blank" class="nu-link nu-app-link"><span class="truncate">${escapeHtml(links.repoLabel)}</span></a>` : '<span class="text-[color:var(--nu-muted)]">No repository</span>'}
                     </div>
-                    <div role="cell" class="text-center">${statusBadge(hasProduction(app))}</div>
+                    <div role="cell" class="xl:text-center">${statusBadge(hasProduction(app))}</div>
                     <div role="cell" class="nu-app-actions flex flex-wrap gap-2">
                         <button onclick="launchApp(${name})" title="Open this application in the editor" class="nu-btn nu-btn-primary">${editIcon('w-3.5 h-3.5')} Edit</button>
                         ${actionButton('Publish', `handlePublishRemote(${name})`, globeIcon(), 'teal')}
@@ -3311,6 +3312,11 @@
         // Close modals on escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
+                if (!document.getElementById('licenseModal').classList.contains('hidden')) {
+                    e.preventDefault();
+                    hideLicenseModal();
+                    return;
+                }
                 const menu = e.target.closest('.nu-app-actions-menu[open]');
                 if (menu) {
                     e.preventDefault();
@@ -3465,9 +3471,10 @@
                     const sdata = await sresp.json();
                     if (sdata && !sdata.error) {
                         // 1) Operator message banner.
-                        if (typeof sdata.message === 'string' && sdata.message.trim()) {
+                        const message = typeof sdata.message === 'string' ? sdata.message.trim() : '';
+                        if (message && message !== 'Welcome') {
                             const banner = document.getElementById('statusMessage');
-                            banner.innerHTML = sdata.message;
+                            banner.innerHTML = message;
                             banner.classList.remove('hidden');
                         }
                         // 2) Per-provider catalog drift -> reselect.

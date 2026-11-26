@@ -1,5 +1,9 @@
 This file describes the configuration system and the configure.go module.
 
+The Configuration page shows a loading status while it prepares the provider,
+model and account sections. It reveals the populated form together. A link to
+`#sharedVariables` scrolls to the card after it becomes visible.
+
 # Layered Configuration
 
 Configuration uses a two-layer system based on `trustant.json`:

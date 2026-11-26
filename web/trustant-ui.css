@@ -652,6 +652,20 @@ input[type="radio"] {
     text-transform: uppercase;
 }
 
+.nu-app-link {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    min-height: 24px;
+}
+
+@media (pointer: coarse) {
+    #appList .nu-btn,
+    .nu-app-link {
+        min-height: 44px;
+    }
+}
+
 .nu-app-table *,
 .nu-app-table .nu-link,
 .nu-app-table .nu-btn,

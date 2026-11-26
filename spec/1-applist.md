@@ -14,6 +14,12 @@ After the provider guard passes, fetch `GET /api/status` and apply the same per-
 
 # App List Page
 
+The inventory displays one status badge per application. The **Open dev** and
+**Open production** links open the corresponding app URLs. Repository and app
+links have at least 24 CSS px of clickable height, increased to 44 CSS px for
+coarse pointers. The operator message banner is shown for meaningful messages
+and omitted for the default `Welcome` greeting.
+
 The page shows the Trustant logo (`trustant-logo.svg`), product name, and the
 version returned by the version API as a compact release tag.
 

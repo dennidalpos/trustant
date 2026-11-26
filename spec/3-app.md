@@ -145,7 +145,9 @@ spotlights the toggle first and continues once the assistant is back — the
 controls it waits on cannot report while the frame is hidden. This is why
 `sidebarToggleBtn` and `leftFrame` are part of the tutorial's page contract.
 
-In the body there are two iframes, 50% width and 90% height (full page except for the top bar), resizable horizontally. The chat iframe cannot be narrower than the width its header needs: TruACP posts `{type: "trustant-chat-min-width", px}` (the width at which its dropdowns reach their minimum on one row), and the host applies it as the `#leftFrame` `min-width` and as the divider's drag floor (default 100px until a value arrives). The preview keeps its 100px floor. The right iframe sits inside a preview pane that can constrain it to a device viewport — see "Device Preview" below.
+Above 700 CSS px, the body shows the AI assistant and application preview iframes side by side, with a draggable divider. TruACP posts `{type: "trustant-chat-min-width", px}` for its single-row toolbar, and the host applies it as the chat width floor where space allows. The preview keeps its 100px floor and can constrain the right iframe to a device viewport. See "Device Preview" below.
+
+At 700 CSS px or below, one pane fills the available width. The toolbar button shows **Preview** from the chat and **Chat** from the preview. The chat toolbar can wrap within the frame. Both frames stay loaded when switching, and widening the window restores the desktop layout and divider width.
 
 # Sidebar Toggle
 

@@ -29,6 +29,8 @@
     <script src="js/github-account.js"></script>
     <link rel="stylesheet" href="trustant-ui.css">
     <style>
+        #configurationSettings.is-loading > :not(#configurationLoading) { display: none; }
+
         @media (max-width: 700px) {
             .models-table, .models-table tbody, .models-table tr, .models-table td { display: block; width: 100%; }
             .models-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
@@ -57,7 +59,11 @@
         </div>
     </header>
 
-    <main class="nu-shell-narrow px-4 md:px-6 py-6">
+    <main id="configurationSettings" class="nu-shell-narrow px-4 md:px-6 py-6 is-loading">
+        <div id="configurationLoading" class="nu-panel px-4 py-3 text-sm text-[color:var(--nu-muted)]">
+            <p id="configurationLoadStatus" role="status">Loading configuration…</p>
+            <button id="configurationRetry" type="button" onclick="location.reload()" class="nu-btn nu-btn-secondary mt-3 hidden">Reload configuration</button>
+        </div>
         <div class="nu-panel px-4 py-3 mb-4 text-sm text-[color:var(--nu-muted)]">
             Current provider: <span id="currentProvider" class="font-semibold text-[color:var(--nu-ink)]">—</span>
         </div>
@@ -432,16 +438,15 @@
         // here and rides the shared component's status callback.
         function loadGitHubAccount() {
             if (!window.githubAccountForm) {
-                renderGitHubAccountForm('githubAccountPanel', {
+                window.githubAccountForm = new GitHubAccountForm(document.getElementById('githubAccountPanel'), {
                     globalName: 'githubAccountForm',
                     badgeId: 'githubAccountBadge',
                     onStatus: function (status) {
                         setGitHubElementVisible('gitUserCard', !status.authenticated);
                     }
                 });
-                return;
             }
-            window.githubAccountForm.load();
+            return window.githubAccountForm.load();
         }
 
         function providerLabel(name) {
@@ -458,43 +463,51 @@
             return 'Models';
         }
 
-        async function loadConfig() {
-            try {
-                const resp = await fetch('/api/configuration');
-                config = await resp.json();
-                if (!config.models) config.models = {};
-                if (!config.pi) config.pi = { default: '' };
-                if (!config.notebook) {
-                    config.notebook = {
-                        repository: 'trustable-ai/templates',
-                        ref: 'main',
-                        has_token: false
-                    };
-                }
-
-                document.getElementById('currentProvider').innerHTML = providerLabel(config.provider);
-                document.getElementById('modelsHeading').textContent = modelsHeading(config.provider);
-                renderOllamaHost();
-                syncOllamaInstances();
-                renderPrivateHost();
-                renderModels();
-                renderPiSelect();
-                document.getElementById('gitUser').value = config.git?.user || '';
-                document.getElementById('gitEmail').value = config.git?.email || '';
-                document.getElementById('notebookRepository').value =
-                    config.notebook.repository || 'trustable-ai/templates';
-                document.getElementById('notebookRef').value =
-                    config.notebook.ref || 'main';
-                document.getElementById('notebookGitHubToken').value = '';
-                document.getElementById('notebookClearToken').checked = false;
-                renderNotebookTokenStatus();
-                loadLicenseStatus();
-                if (config.provider === 'private') {
-                    await loadPrivateModels();
-                }
-            } catch (e) {
-                console.error('Failed to load config:', e);
+        async function loadConfig(initialConfig) {
+            config = initialConfig;
+            if (!config.models) config.models = {};
+            if (!config.pi) config.pi = { default: '' };
+            if (!config.notebook) {
+                config.notebook = {
+                    repository: 'trustable-ai/templates',
+                    ref: 'main',
+                    has_token: false
+                };
             }
+
+            document.getElementById('currentProvider').innerHTML = providerLabel(config.provider);
+            document.getElementById('modelsHeading').textContent = modelsHeading(config.provider);
+            renderOllamaHost();
+            const instances = syncOllamaInstances();
+            const localRuntime = renderPrivateHost();
+            renderModels();
+            renderPiSelect();
+            document.getElementById('gitUser').value = config.git?.user || '';
+            document.getElementById('gitEmail').value = config.git?.email || '';
+            document.getElementById('notebookRepository').value =
+                config.notebook.repository || 'trustable-ai/templates';
+            document.getElementById('notebookRef').value =
+                config.notebook.ref || 'main';
+            document.getElementById('notebookGitHubToken').value = '';
+            document.getElementById('notebookClearToken').checked = false;
+            renderNotebookTokenStatus();
+            await Promise.all([
+                instances,
+                localRuntime,
+                config.provider === 'private' ? loadPrivateModels() : undefined
+            ]);
+        }
+
+        async function loadVersion() {
+            try {
+                const resp = await fetch('/api/version');
+                const data = await resp.json();
+                licenseEnabled = !!data.license;
+                renderOpsInfo(data.opsinfo);
+            } catch (e) {
+                console.error('Failed to check version:', e);
+            }
+            return loadLicenseStatus();
         }
 
         // ---- License (spec/14-license.md) ----
@@ -663,7 +676,7 @@
             section.classList.toggle('hidden', config.provider !== 'private');
             const value = document.getElementById('privateHostValue');
             if (value) value.textContent = String(config.base_url || '');
-            syncOllamaLocal();
+            return syncOllamaLocal();
         }
 
         // Start/Stop and status of the Ollama service on this machine, offered
@@ -675,7 +688,7 @@
             if (!ollamaLocal) ollamaLocal = window.TrustantOllamaLocal.mount(root, { onChange: refreshPrivateModels });
             const local = config.provider === 'private' && window.TrustantOllamaLocal.isLocalBaseUrl(config.base_url);
             ollamaLocal.setVisible(local);
-            if (local) ollamaLocal.refresh();
+            if (local) return ollamaLocal.refresh();
         }
 
         // Private AI: discover the model list from the user-supplied endpoint
@@ -760,7 +773,7 @@
                 ollamaInstances = window.TrustantOllamaInstances.mount(
                     document.getElementById('ollamaInstancesRoot'), { onChange: onOllamaInstanceChange });
             }
-            ollamaInstances.refresh();
+            return ollamaInstances.refresh();
         }
 
         // The server has already persisted the choice (instances, active one and
@@ -1687,6 +1700,7 @@
         // did not exist. Arriving from the app list must land on the section.
         let sharedVariablesScrolled = false;
         function scrollToSharedVariables() {
+            if (document.getElementById('configurationSettings').classList.contains('is-loading')) return;
             if (sharedVariablesScrolled || location.hash !== '#sharedVariables') return;
             const card = document.getElementById('sharedVariables');
             if (!card) return;
@@ -1837,9 +1851,10 @@
         // by query string or if the cached catalog version differs from the saved one.
         (async function() {
             // Guard: no provider configured -> send user to provider selection
+            let cfg;
             try {
                 const cfgResp = await fetch('/api/configuration');
-                const cfg = await cfgResp.json();
+                cfg = await cfgResp.json();
                 if (!cfg || !cfg.provider) {
                     window.location.href = 'index.html?choose=1';
                     return;
@@ -1850,14 +1865,13 @@
             }
 
             try {
-                const resp = await fetch('/api/version');
-                const data = await resp.json();
-                licenseEnabled = !!data.license;
-                renderOpsInfo(data.opsinfo);
+                await Promise.all([loadConfig(cfg), loadVersion(), loadGitHubAccount(), loadPredefinedEnv()]);
             } catch (e) {
-                console.error('Failed to check version:', e);
+                console.error('Failed to load configuration:', e);
+                document.getElementById('configurationLoadStatus').textContent = 'Configuration could not be loaded.';
+                document.getElementById('configurationRetry').classList.remove('hidden');
+                return;
             }
-            await Promise.all([loadConfig(), loadGitHubAccount(), loadPredefinedEnv()]);
 
             // setup=1 is provider-independent: every provider must make the
             // new Pi selection explicitly because legacy opencode settings are
@@ -1874,6 +1888,12 @@
                 }
                 document.getElementById('reselectBanner').classList.remove('hidden');
             }
+
+            // Show the completed form in one paint, after the provider-specific
+            // panels and rows have reached their initial sizes.
+            document.getElementById('configurationLoading').classList.add('hidden');
+            document.getElementById('configurationSettings').classList.remove('is-loading');
+            scrollToSharedVariables();
         })();
         window.addEventListener('beforeunload', () => {
             if (window.githubAccountForm) window.githubAccountForm.stopPolling();

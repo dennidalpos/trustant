@@ -37,6 +37,14 @@ All notable changes to Trustant are listed here. The latest release tag is
 
 ### Fixed
 
+- Configuration displays the provider and model settings together after loading.
+  Long Ollama instance names and addresses fit the panel on narrow screens.
+- The app inventory distinguishes status from links, increases link click areas,
+  and suppresses the default Welcome banner.
+- Inventory and editor dialogs expose labels for their fields. Escape dismisses
+  the license and Route dialogs and restores focus to their openers.
+- The editor switches between the chat and preview at narrow widths and keeps
+  both frames loaded. The frames have names that describe their contents.
 - Save & Configure no longer stops with "Ollama hostname is required" when an
   external Ollama instance is active: the hand-typed host check now applies only
   when no saved instance owns the endpoint.

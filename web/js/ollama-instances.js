@@ -84,7 +84,7 @@
         toggleRow.append(toggle, el('span', '', 'Use an external Ollama'));
         const hint = el('p', 'text-sm text-[color:var(--nu-muted)] mt-1');
 
-        const select = el('select', 'nu-input');
+        const select = el('select', 'nu-input min-w-0 max-w-full');
         select.setAttribute('aria-label', 'Ollama instance');
         const addBtn = el('button', 'nu-btn nu-btn-secondary', 'Add');
         const editBtn = el('button', 'nu-btn nu-btn-secondary', 'Edit');
