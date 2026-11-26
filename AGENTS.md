@@ -40,6 +40,7 @@
 This repository's private context, decisions and tasks live in SecondBrain, outside the repository.
 
 - At the start of a session run `sb context` (MCP tool `get_context`) and work from it.
+- Run `sb start` to check recorded checkouts, refresh managed agent files and see which SecondBrain build is running.
 - Track work with `sb task add`, `sb task list` and `sb task done` (MCP task tools).
 - Record durable decisions with `sb decide "..."` and keep the current state with `sb context --set`.
 - Never copy dossier content into the repository.
