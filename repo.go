@@ -675,6 +675,10 @@ func handleDeleteRepo(w http.ResponseWriter, r *http.Request) {
 		fail(http.StatusInternalServerError, "OpenServerless cleanup completed. Workbench removal failed. Retry deletion.", err)
 		return
 	}
+	if err := removeRuntimeLogDir(req.Name); err != nil {
+		fail(http.StatusInternalServerError, "OpenServerless and workbench cleanup completed. Runtime log removal failed. Retry deletion.", err)
+		return
+	}
 
 	// Keep the bare repository visible until the other cleanup steps finish,
 	// so the user can retry partial failures from the app list.

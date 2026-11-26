@@ -541,6 +541,42 @@ func TestDeleteRepoPrunesWhatTheAppShared(t *testing.T) {
 	}
 }
 
+// TestDeleteRepoRemovesTheRuntimeLogDirectory: the watcher log lives outside
+// the workbench, so deleting the app must remove it explicitly, and only that
+// app's directory.
+func TestDeleteRepoRemovesTheRuntimeLogDirectory(t *testing.T) {
+	root := isolateSharedWorkspace(t)
+	installDeleteUserFixture(t, root)
+	old := trustantRuntimeLogRootOverride
+	trustantRuntimeLogRootOverride = filepath.Join(root, "runtime")
+	t.Cleanup(func() { trustantRuntimeLogRootOverride = old })
+
+	for _, app := range []string{"logdeleted", "logkept"} {
+		if err := os.MkdirAll(filepath.Join(trustantRuntimeLogRootOverride, app), 0700); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filepath.Join(trustantRuntimeLogRootOverride, app, "ops-ide-devel.log"), []byte("x"), 0600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := os.MkdirAll(filepath.Join(WorkspaceDir, "workspace", "logdeleted"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	saveWorkspaceConfig(&trustantConfig{Apps: map[string]*AppConfig{"logdeleted": {Password: "p"}, "logkept": {Password: "p"}}})
+
+	rec := httptest.NewRecorder()
+	handleDeleteRepo(rec, httptest.NewRequest("DELETE", "/api/repo", strings.NewReader(`{"name":"logdeleted"}`)))
+	if rec.Code != 204 {
+		t.Fatalf("delete: %d %s", rec.Code, rec.Body.String())
+	}
+	if _, err := os.Stat(filepath.Join(trustantRuntimeLogRootOverride, "logdeleted")); !os.IsNotExist(err) {
+		t.Fatalf("the deleted app's runtime directory survived: %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(trustantRuntimeLogRootOverride, "logkept", "ops-ide-devel.log")); err != nil {
+		t.Fatalf("another app's runtime log was touched: %v", err)
+	}
+}
+
 // TestRecreatingADeletedAppDoesNotInheritItsSecrets is the sharpest
 // consequence of the old behaviour. Ownership is derived from the name prefix
 // matching an app that exists, so orphaned entries were reclaimed as

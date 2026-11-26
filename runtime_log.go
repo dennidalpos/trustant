@@ -44,6 +44,17 @@ func opsDevelLogPath(app string) (string, error) {
 	return filepath.Join(root, app, "ops-ide-devel.log"), nil
 }
 
+// removeRuntimeLogDir deletes the host-owned runtime directory of one app
+// (watcher log and its rotation). WHY: it lives outside the workbench, so
+// removing the workbench on app deletion would otherwise leave it behind.
+func removeRuntimeLogDir(app string) error {
+	logPath, err := opsDevelLogPath(app)
+	if err != nil {
+		return err
+	}
+	return os.RemoveAll(filepath.Dir(logPath))
+}
+
 type rotatingRuntimeLog struct {
 	mu       sync.Mutex
 	path     string
