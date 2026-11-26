@@ -122,9 +122,9 @@ Inline SVG icons in `web/app.html`, `web/applist.html` and `web/index.html`
   hand-drawn.
 
 The Heroicons MIT notice is recorded in `legal/deps.manual.txt`, `CREDITS.md`
-and the generated `NOTICE`. Per-icon authorship of the 26 non-identical icons
-stays unverified: the owner must confirm they are first-party or adapted from
-Heroicons, or they must be replaced with the unmodified Heroicons shapes.
+and the generated `NOTICE`. The owner confirmed on 2026-11-26 that the 26
+non-identical icons are either first-party or adapted from Heroicons; no other
+third-party source is known. Their individual authorship was not traced.
 
 ## Artwork reviewed on 2026-11-26
 

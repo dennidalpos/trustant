@@ -72,8 +72,8 @@ not grant rights over it (see [legal/REVIEW.md](legal/REVIEW.md)).
 The provider logos `web/ollama-head.png`, `web/regolo-head.png` and
 `web/privateai-head.png` are marks of Ollama, Regolo.AI and Private AI. They are
 shown only to identify those options in the UI; this project's license grants no
-rights over them. Inline SVG icons that are not byte-identical to Heroicons remain under
-review (see [legal/REVIEW.md](legal/REVIEW.md)).
+rights over them. Inline SVG icons that are not byte-identical to Heroicons are first-party or
+adapted from Heroicons, as confirmed by the owner (see [legal/REVIEW.md](legal/REVIEW.md)).
 
 The image builds `ops` from the [Trustant OpenServerless CLI fork](https://github.com/trustable-ai/openserverless-cli)
 with [go-git](https://github.com/go-git/go-git) (both Apache-2.0).
