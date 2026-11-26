@@ -113,6 +113,7 @@ npmglobal | typescript | 6.0.3 | Apache-2.0 | https://github.com/microsoft/TypeS
 npmglobal | typescript-language-server | 6.1.0 | Apache-2.0 AND MIT | https://github.com/typescript-language-server/typescript-language-server | npm:typescript-language-server@6.1.0
 npmglobal | tsx | 4.23.15 | MIT | https://github.com/privatenumber/tsx | npm:tsx@4.23.15
 npmglobal | mongodb-mcp-server | 1.9.0 | Apache-2.0 | https://github.com/mongodb-js/mongodb-mcp-server | npm:mongodb-mcp-server@1.9.0
+npmglobal | cli-table (transitive, no license metadata) | 0.3.11 | MIT | https://github.com/Automattic/cli-table | npm:cli-table@0.3.11
 
 # pi.version packages whose npm tarball has no LICENSE file: the version comes
 # from pi.version (`*`), these lines only say where the license lives.
@@ -133,6 +134,7 @@ pytool | psycopg-pool (postgres-mcp dependency) | 3.3.3 | LGPL-3.0-only | https:
 pytool | docstring-to-markdown (python-lsp-server dependency) | 0.17 | LGPL-2.1-or-later | https://pypi.org/project/docstring-to-markdown | pypi:docstring-to-markdown==0.17
 pytool | redis-mcp-server | 0.5.1 | MIT | https://github.com/redis/mcp-redis | url:https://raw.githubusercontent.com/redis/mcp-redis/11e67e44358cd6410d5a7e615a29539ccd71a045/LICENSE
 pytool | mcp-server-milvus (fork, a7e624f) | a7e624f | Apache-2.0 | https://github.com/trustable-ai/mcp-server-milvus | url:https://raw.githubusercontent.com/trustable-ai/mcp-server-milvus/a7e624f3057a0d739528bca3ed92504943224ceb/LICENSE
+pytool | redis-entraid (transitive, no license metadata) | 1.2.2 | MIT | https://github.com/redis/redis-py-entraid | pypi:redis-entraid==1.2.2
 pytool | mcp (Python MCP SDK, <2) | 1.x | MIT | https://github.com/modelcontextprotocol/python-sdk | pypi:mcp<2
 
 # --- 10. Python packages for user apps (acp/extensions/requirements.txt) ----

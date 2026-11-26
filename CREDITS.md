@@ -124,6 +124,9 @@ Development lint uses [Biome](https://biomejs.dev) (MIT or Apache-2.0),
   and the default notebook templates `trustable-ai/templates`. Rename them only
   when the owner moves those repositories.
 
+- Source code for the GPL/LGPL components of the container image is offered in
+  [legal/SOURCE-OFFER.md](legal/SOURCE-OFFER.md).
+
 ## Keeping this file current
 
 Update this file in the same change that adds, removes, or re-sources a

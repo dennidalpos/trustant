@@ -5706,6 +5706,22 @@
     },
     {
       "section": "npmglobal",
+      "name": "cli-table (transitive, no license metadata)",
+      "version": "0.3.11",
+      "license": "MIT",
+      "homepage": "https://github.com/Automattic/cli-table",
+      "source": "npm:cli-table@0.3.11",
+      "status": "license-files-collected",
+      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
+      "evidence": [
+        {
+          "file": "LICENSE",
+          "sha256": "ca3d2af003b3a718fc9d43e5d232955d5e089c8b5d8b01fcbe9fa26f1e76f0b0"
+        }
+      ]
+    },
+    {
+      "section": "npmglobal",
       "name": "mongodb-mcp-server",
       "version": "1.9.0",
       "license": "Apache-2.0",
@@ -7485,6 +7501,22 @@
         {
           "file": "licenses__LICENSE",
           "sha256": "aec02b478e57f395ae45802b2aa70fcf99bba3eabf4cd700c065cd62a7d92a1b"
+        }
+      ]
+    },
+    {
+      "section": "pytool",
+      "name": "redis-entraid (transitive, no license metadata)",
+      "version": "1.2.2",
+      "license": "MIT",
+      "homepage": "https://github.com/redis/redis-py-entraid",
+      "source": "pypi:redis-entraid==1.2.2",
+      "status": "license-files-collected",
+      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
+      "evidence": [
+        {
+          "file": "licenses__LICENSE",
+          "sha256": "c192cb4950b0b82d5782289a53180388406ca5d20c6de54fa4c52395182ec54a"
         }
       ]
     },

@@ -2555,7 +2555,7 @@ The license for original unRAR code has the following restriction:
 ===============================================================================
 License: MIT
 ===============================================================================
-Used by 261 components (see DEPS), including: @earendil-works/pi-agent-core,
+Used by 263 components (see DEPS), including: @earendil-works/pi-agent-core,
 @earendil-works/pi-ai, @earendil-works/pi-coding-agent, @earendil-works/pi-tui,
 @hono/node-server, @modelcontextprotocol/sdk, @tailwindcss/browser
 (web/tailwind.js), @types/debug, @types/estree, @types/estree-jsx, @types/hast,

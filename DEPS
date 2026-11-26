@@ -524,20 +524,21 @@ Coding agents pinned in acp/pi.version plus the tools installed by
 image/Dockerfile. Listed at top level; each package's own dependency
 tree, with its license files, is installed under the global node_modules.
 
-NAME                             VERSION  LICENSE             HOMEPAGE
-----                             -------  -------             --------
-@agentclientprotocol/codex-acp   2.12.0   Apache-2.0          https://github.com/agentclientprotocol/codex-acp
-@earendil-works/pi-agent-core    1.6.0    MIT                 https://github.com/earendil-works/pi
-@earendil-works/pi-ai            1.6.0    MIT                 https://github.com/earendil-works/pi
-@earendil-works/pi-coding-agent  1.6.0    MIT                 https://github.com/earendil-works/pi
-@earendil-works/pi-tui           1.6.0    MIT                 https://github.com/earendil-works/pi
-@openai/codex                    0.171.0  Apache-2.0          https://github.com/openai/codex
-mongodb-mcp-server               1.9.0    Apache-2.0          https://github.com/mongodb-js/mongodb-mcp-server
-pi-mcp-adapter                   7.0.1    MIT                 https://www.npmjs.com/package/pi-mcp-adapter
-pi-web-access                    0.48.0   MIT                 https://www.npmjs.com/package/pi-web-access
-tsx                              4.23.15  MIT                 https://github.com/privatenumber/tsx
-typescript                       6.0.3    Apache-2.0          https://github.com/microsoft/TypeScript
-typescript-language-server       6.1.0    Apache-2.0 AND MIT  https://github.com/typescript-language-server/typescript-language-server
+NAME                                         VERSION  LICENSE             HOMEPAGE
+----                                         -------  -------             --------
+@agentclientprotocol/codex-acp               2.12.0   Apache-2.0          https://github.com/agentclientprotocol/codex-acp
+@earendil-works/pi-agent-core                1.6.0    MIT                 https://github.com/earendil-works/pi
+@earendil-works/pi-ai                        1.6.0    MIT                 https://github.com/earendil-works/pi
+@earendil-works/pi-coding-agent              1.6.0    MIT                 https://github.com/earendil-works/pi
+@earendil-works/pi-tui                       1.6.0    MIT                 https://github.com/earendil-works/pi
+@openai/codex                                0.171.0  Apache-2.0          https://github.com/openai/codex
+cli-table (transitive, no license metadata)  0.3.11   MIT                 https://github.com/Automattic/cli-table
+mongodb-mcp-server                           1.9.0    Apache-2.0          https://github.com/mongodb-js/mongodb-mcp-server
+pi-mcp-adapter                               7.0.1    MIT                 https://www.npmjs.com/package/pi-mcp-adapter
+pi-web-access                                0.48.0   MIT                 https://www.npmjs.com/package/pi-web-access
+tsx                                          4.23.15  MIT                 https://github.com/privatenumber/tsx
+typescript                                   6.0.3    Apache-2.0          https://github.com/microsoft/TypeScript
+typescript-language-server                   6.1.0    Apache-2.0 AND MIT  https://github.com/typescript-language-server/typescript-language-server
 
 
 15. CONTAINER IMAGE - PYTHON TOOLS (uv tool install)
@@ -555,6 +556,7 @@ pglast (postgres-mcp dependency, bundles libpg_query)  7.21     GPL-3.0-or-later
 postgres-mcp                                           0.3.0    MIT                                               https://github.com/crystaldba/postgres-mcp
 psycopg-pool (postgres-mcp dependency)                 3.3.3    LGPL-3.0-only                                     https://pypi.org/project/psycopg-pool
 python-lsp-server                                      latest   MIT                                               https://github.com/python-lsp/python-lsp-server
+redis-entraid (transitive, no license metadata)        1.2.2    MIT                                               https://github.com/redis/redis-py-entraid
 redis-mcp-server                                       0.5.1    MIT                                               https://github.com/redis/mcp-redis
 yapf                                                   latest   Apache-2.0                                        https://github.com/google/yapf
 
