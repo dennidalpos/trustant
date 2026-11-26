@@ -10,6 +10,7 @@ Before you report a change as done, run the checks that fit what you touched and
 Detected commands (confirm them against the project's own instructions before relying on them):
 - `npm run lint`
 - `go test ./...`
+- When files under `acp/`, `oplugins/`, `skills/` or `mcp/` changed: `python legal/vendored_changes.py` then `python legal/upstream_compare.py` (add a `REASONS` entry in the script for each new modified file); verify with `--check`.
 
 - Run the narrowest check first, then the wider ones.
 - If a check fails, show the failure; do not claim success.

@@ -37,7 +37,7 @@ This comparison does not cover every dependency of global tools or binaries.
 | Component | Version/source | SPDX expression | Status and obligation |
 |---|---|---|---|
 | Trustant | Repository source; headers and NOTICE.head | AGPL-3.0-or-later | Declaration agrees with LICENSE and .licenserc.yaml; review source delivery for binaries and modified network deployments. |
-| skills | Commit recorded in COMPONENTS.json | AGPL-3.0-or-later | Corrected the former Apache-2.0 entry to match the checked-out LICENSE. Preserve the license; review any copied skills separately. |
+| skills | Commit recorded in COMPONENTS.json | Apache-2.0 | The checked-out LICENSE is Apache-2.0 (an earlier note here wrongly said AGPL; corrected 2026-11-26). Preserve the license; review any copied skills separately. |
 | 7-Zip / 7zz | 2407; upstream 24.07 source license | LGPL-2.1-or-later AND BSD-3-Clause AND BSD-2-Clause AND LicenseRef-unRAR | Added the BSD-2-Clause portion and used the release-specific text. Review the unRAR restriction and source obligations; do not infer compatibility from the LGPL identifier alone. |
 | Work Sans | Unpinned Google Fonts response | OFL-1.1 | Added the browser-fetched font and upstream copyright/license. Font binaries are not stored in the image. |
 | JetBrains Mono | Unpinned Google Fonts response | OFL-1.1 | Added the browser-fetched font and upstream copyright/license. Font binaries are not stored in the image. |
@@ -58,7 +58,7 @@ not establish the legal boundary of any combined work.
 
 | Components | Review required before distributing a resolved image |
 |---|---|
-| Trustant, ACP, installer plugin and skills (AGPL) | Determine and provide the corresponding source matching the actual artifacts, including relevant build/install inputs. |
+| Trustant, ACP and installer plugin (AGPL) | Determine and provide the corresponding source matching the actual artifacts, including relevant build/install inputs. |
 | pglast (GPL), psycopg/psycopg-binary (LGPL), GPL/LGPL Ubuntu packages | Review the particular library/executable boundaries, source delivery, installation information and any replacement/relinking requirements. Merely installing an unmodified package does not prove completion of these obligations. |
 | certifi, orjson, tqdm and other MPL-covered files | Identify the covered files and provide the applicable source availability notices for the distributed versions. |
 | 7-Zip with unRAR restriction | Review the additional restriction separately; keep it distinct from permissive or LGPL-only components. |

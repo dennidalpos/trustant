@@ -113,3 +113,11 @@ Dockerfile ship the files into the image.
 unavailable sources and missing license texts preserve existing outputs, that
 shared sources are fetched once, and that original multiline license notices
 survive generation. These checks use fixtures and do not fetch dependencies.
+
+## Comparison with the original repository
+
+`python legal/upstream_compare.py` writes [UPSTREAM-COMPARISON.md](../UPSTREAM-COMPARISON.md): the gitlinks of
+`trustant/trustant` against this fork, every file changed since each vendored baseline with the reason, and the
+root diff against `upstream/main`. Run it with `legal/vendored_changes.py` whenever `acp/`, `oplugins/`, `skills/` or
+`mcp/` change and after an upstream sync; `--check` exits 1 when the report is out of date and `--offline` skips the
+network. Reasons are hand-written in `REASONS` inside the script.

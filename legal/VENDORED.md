@@ -325,9 +325,9 @@ Listed as a count only; every tracked file not named above is identical to upstr
 - Upstream: https://github.com/trustable-ai/openserverless-task
 - Baseline revision: `27b281eb7615c9094f1c6edab10a2b4fe2fd621c`
 - License: Apache-2.0, Copyright 2024-2026 The Apache Software Foundation
-- Files: 202 unmodified, 6 modified, 0 added, 1 removed upstream files
+- Files: 201 unmodified, 7 modified, 0 added, 1 removed upstream files
 
-### Modified (6)
+### Modified (7)
 
 - `admin/docopts.md`
 - `admin/opsfile.yml`
@@ -335,12 +335,13 @@ Listed as a count only; every tracked file not named above is identical to upstr
 - `ide/deploy/bun.lock`
 - `ide/deploy/package.json`
 - `prereq.yml`
+- `setup/kubernetes/DEBUG.txt`
 
 ### Removed (1)
 
 - `util/upload/.env.test`
 
-### Unmodified (202)
+### Unmodified (201)
 
 Listed as a count only; every tracked file not named above is identical to upstream.
 

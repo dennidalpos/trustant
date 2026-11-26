@@ -1,3 +1,4 @@
+// Modified by the Trustant project (see legal/VENDORED.md and TRUSTANT-CHANGES.md for the changes).
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information

@@ -62,3 +62,7 @@ belongs to the upstream project, not only to this repository.
 
 `python legal/vendored_changes.py` compares every file here with the baseline and
 rewrites `legal/VENDORED.md`. Run it whenever files in this directory change.
+
+The comparison with the original `trustant/trustant` repository and its gitlinks is
+[../UPSTREAM-COMPARISON.md](../UPSTREAM-COMPARISON.md); regenerate it with
+`python legal/upstream_compare.py` whenever this directory changes.
