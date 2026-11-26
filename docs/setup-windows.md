@@ -70,18 +70,6 @@ flowchart TD
 
 When the loop is ready it prints a URL like `http://trustant.<ip>.nip.io:8910/`. Open it in your browser, then follow the [first-run steps](use-cases.md#1-first-run-choose-a-provider). Use the printed hostname: `localhost` and bare IP addresses are redirected to it.
 
-### Start a provisioned demo
-
-If your local provisioning directory provides `start-demo.ps1` for the existing `Trustant-Demo` distribution, run it from that directory in PowerShell.
-
-```powershell
-.\start-demo.ps1
-```
-
-The launcher synchronizes the Windows checkout to the demo's Linux source directory, checks that Windows Ollama is reachable from WSL, and starts the development loop. Watch the terminal until it reports `Trustant server: ready`, then open the printed URL in Chrome.
-
-For a smoke test, open **Change Provider → Private AI** and check the **Base URL** and **API key** fields. Return to **Configuration** to check the model list and **Pi Model** selector, then use **Back** to check the application list and search.
-
 ### Test an app from another LAN device
 
 Launch the app with **Edit**. In WSL2 NAT mode, the IP on the printed URL belongs to WSL. Use the Windows host's LAN IP from another device. Forward TCP port `8080` on the Windows LAN address to port `8080` on the current WSL address, and scope the Windows firewall rule to the private LAN. Leave the Trustant editor port `8910` outside that forwarding rule.

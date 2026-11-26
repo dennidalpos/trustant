@@ -130,7 +130,7 @@ func TestSetupOpenServerlessPromptFixture(t *testing.T) {
 		lima, installs     bool
 	}{
 		{name: "native host with matching hostname", host: "trudev"},
-		{name: "unrelated WSL", distro: "Trustant-Demo", host: "trudev"},
+		{name: "unrelated WSL", distro: "other-distro", host: "trudev"},
 		{name: "Trustant WSL", distro: "trudev", host: "windows", installs: true},
 		{name: "unrelated Lima guest", lima: true, host: "other"},
 		{name: "Trustant Lima guest", lima: true, host: "lima-trudev", installs: true},
