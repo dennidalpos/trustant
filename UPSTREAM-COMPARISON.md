@@ -41,7 +41,7 @@ Scope: line diffs are reproduced for every vendored file except lockfiles and di
 | `NOTICE` | modified | +8/-1 | (auto) d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
 | `README.md` | modified | +79/-27 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; 2c36504 2026-11-20 Fix optional Obsidian tooling advisories; 8b1c109 2026-11-20 Update runtime dependencies and report development GUI readiness |
 | `SPEC.md` | modified | +88/-108 | (auto) f8f165c 2026-11-25 Aggiorna @agentclientprotocol/codex-acp a 2.12.0; e4d8961 2026-11-24 Corregge accessibilità di Inventario, Template e TruACP (UIX02); 044b0e9 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102); 6d3b735 2026-11-22 Migrate Pi to 1.6.0 with pi-mcp-adapter 7.0.1 and pi-web-access 0.48.0; ... and 8 more |
-| `UPSTREAM.md` | added | +64/-0 | (auto) b35ec05 2026-11-19 docs(legal): track vendored acp changes against the original submodule commits; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `UPSTREAM.md` | added | +68/-0 | (auto) a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b); b35ec05 2026-11-19 docs(legal): track vendored acp changes against the original submodule commits; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
 | `esbuild.config.mjs` | removed | +0/-90 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
 | `esbuild.web.mjs` | modified | +2/-2 | (auto) 8b1c109 2026-11-20 Update runtime dependencies and report development GUI readiness |
 | `eslint.config.mjs` | removed | +0/-42 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; 8b1c109 2026-11-20 Update runtime dependencies and report development GUI readiness; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
@@ -333,19 +333,19 @@ The `acp/` delta is too large to reproduce line by line. Per-file diff: `git dif
 +import type { Agent as ACPAgent, AgentSideConnection } from './sdk-compat.js'
  import { getAuthMethods } from './auth.js'
 @@ -717,3 +716,3 @@ export class PiAcpAgent implements ACPAgent {
- 
+
 -        let text = ''
 +        let text: string
          try {
 @@ -801,3 +800,3 @@ export class PiAcpAgent implements ACPAgent {
- 
+
 -        let resultPath = ''
 +        let resultPath: string
          try {
 @@ -1398,3 +1397,2 @@ async function getModelState(
    // Ask pi for available models.
 -  let availableModels: AdvertisedModel[] = []
- 
+
 @@ -1411,3 +1409,3 @@ async function getModelState(
    const models: any[] = Array.isArray(data?.models) ? data.models : []
 -  availableModels = models
@@ -480,7 +480,7 @@ The `acp/` delta is too large to reproduce line by line. Per-file diff: `git dif
 +import type { AgentSideConnection } from './sdk-compat.js'
  import { readFileSync } from 'node:fs'
 @@ -205,3 +205,3 @@ export class SessionManager {
- 
+
 -    let state: any = null
 +    let state: any
      try {
@@ -499,10 +499,10 @@ The `acp/` delta is too large to reproduce line by line. Per-file diff: `git dif
 +import { serveAgent } from './acp/sdk-compat.js'
  import { PiAcpAgent } from './acp/agent.js'
 @@ -51,3 +52,3 @@ const stream = ndJsonStream(input, output)
- 
+
 -const agent = new AgentSideConnection(conn => new PiAcpAgent(conn), stream)
 +const served = serveAgent(conn => new PiAcpAgent(conn), stream)
- 
+
 @@ -56,3 +57,3 @@ function shutdown() {
      // Best-effort: dispose session subprocesses when the client disconnects.
 -    ;(agent as any)?.agent?.dispose?.()
@@ -518,7 +518,7 @@ The `acp/` delta is too large to reproduce line by line. Per-file diff: `git dif
 +  mcpProjectServers?: 'allow'
  }
 @@ -66,4 +67,9 @@ export function parseTrustantPiLaunch(meta: unknown, cwd: string): EffectivePiLa
- 
+
 +  if (raw.mcpProjectServers !== undefined && raw.mcpProjectServers !== 'allow') {
 +    throw new Error('trustant.piLaunch.mcpProjectServers must be "allow"')
 +  }
@@ -548,7 +548,7 @@ The `acp/` delta is too large to reproduce line by line. Per-file diff: `git dif
 
 ```diff
 @@ -45,2 +45,11 @@ test('Trustant Pi launch config produces discrete validated argv entries', () =>
- 
+
 +test('Trustant Pi launch config forwards the MCP project server policy only as "allow"', () => {
 +  const parsed = parseTrustantPiLaunch({ trustant: { piLaunch: { version: 1, mcpProjectServers: 'allow' } } }, '/workspace/app')
 +  assert.deepEqual(piLaunchArgs(parsed), ['--mcp-project-servers', 'allow'])
@@ -566,40 +566,90 @@ The `acp/` delta is too large to reproduce line by line. Per-file diff: `git dif
 - Origin: https://github.com/trustable-ai/openserverless-task
 - Baseline vendored by the fork: `27b281eb7615c9094f1c6edab10a2b4fe2fd621c` (vendored 2026-11-24 (c41c63c))
 - Gitlink in the original repository: `455258e93971cab00d1811d409f172b9260a2761`; baseline is 0 commit(s) behind and 47 commit(s) ahead of it
-- Files changed since the baseline: 8; every other file is identical to the baseline.
+- Files changed since the baseline: 10; every other file is identical to the baseline.
 
 | File | Status | +/- | Why |
 |---|---|---|---|
-| `admin/docopts.md` | modified | +2/-2 | Documents the OPS_ADMIN_PASSWORD environment variable added to `admin adduser` (see opsfile.yml): the password no longer has to appear in the process list. Plus the Apache 4(b) modification notice. |
-| `admin/opsfile.yml` | modified | +7/-1 | Security: `adduser` reads the password from OPS_ADMIN_PASSWORD when set (keeps it out of argv and the process list), falls back to the positional argument, then unsets the variable (commit a0bd211, #119). Plus the Apache 4(b) modification notice. |
+| `TRUSTANT-CHANGES.md` | added | +16/-0 | (auto) 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app; a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b) |
+| `admin/docopts.md` | modified | +3/-2 | Documents the OPS_ADMIN_PASSWORD environment variable added to `admin adduser` (see opsfile.yml): the password no longer has to appear in the process list. Plus the Apache 4(b) modification notice. |
+| `admin/ingress/opsfile.yml` | modified | +3/-1 | Ingress deletion tolerates resources already removed so a retry can finish cleaning up the app. Includes the Apache 4(b) modification notice. |
+| `admin/opsfile.yml` | modified | +10/-3 | Security: `adduser` reads the password from OPS_ADMIN_PASSWORD when set (keeps it out of argv and the process list), falls back to the positional argument, then unsets the variable (commit a0bd211, #119). User deletion tolerates an already absent user. Includes the Apache 4(b) modification notice. |
 | `debug/runtime/invoke.py` | modified | +3/-2 | Code quality: `!= None` becomes `is not None`; bare `except:` becomes `except Exception:` (a bare except also swallows KeyboardInterrupt and SystemExit); a comment clarifies payload handling. |
 | `ide/deploy/bun.lock` | modified | +7/-27 | Lockfile regenerated for the glob 14.0.2 update (commit 64a17b2). |
 | `ide/deploy/package.json` | modified | +1/-1 | Dependency update: glob 14.0.2 (commit 64a17b2). |
 | `prereq.yml` | modified | +66/-14 | Supply chain: the new `download-verified` task pins and sha256-verifies the Linux Kubernetes tool downloads instead of fetching them unchecked. Fork note added in the header. |
-| `setup/kubernetes/DEBUG.txt` | modified | +43/-43 | Only the Apache 4(b) modification notice in the first line; the whole file shows as changed because its line endings differ from the baseline (CRLF/LF). |
+| `setup/kubernetes/DEBUG.txt` | modified | +44/-43 | Only the Apache 4(b) modification notice in the first line; the whole file shows as changed because its line endings differ from the baseline (CRLF/LF). |
 | `util/upload/.env.test` | removed | +0/-23 | Removed: a test environment file that should not be vendored (not needed by the Trustant build). |
 
 ### Line diffs
 
+#### `TRUSTANT-CHANGES.md`
+
+```diff
++++ b/TRUSTANT-CHANGES.md
+@@ -0,0 +1,16 @@
++# Changes made by the Trustant project
++
++This directory is a vendored copy of https://github.com/trustable-ai/openserverless-task
++(Apache-2.0, baseline commit `27b281eb7615c9094f1c6edab10a2b4fe2fd621c`). The upstream
++LICENSE and NOTICE are unchanged. As required by Apache-2.0 section 4(b), these files
++were modified by the Trustant project:
++
++- `admin/docopts.md`, `admin/opsfile.yml`: admin password can be passed through `OPS_ADMIN_PASSWORD`. User deletion tolerates an already absent user.
++- `admin/ingress/opsfile.yml`: ingress deletion tolerates resources already removed.
++- `debug/runtime/invoke.py`: payload handling and exception clean-up.
++- `ide/deploy/package.json`, `ide/deploy/bun.lock`: dependency update (glob).
++- `prereq.yml`: pinned, checksum-verified downloads of the Linux Kubernetes tools.
++- `setup/kubernetes/DEBUG.txt`: documentation change.
++- `util/upload/.env.test`: removed.
++
++The per-file registry is [../legal/VENDORED.md](../legal/VENDORED.md).
+```
+
 #### `admin/docopts.md`
 
 ```diff
-@@ -29,3 +29,3 @@ You can create namespaces and choose which services to enable.
+@@ -1 +1,2 @@
++<!-- Modified by the Trustant project (see legal/VENDORED.md and TRUSTANT-CHANGES.md for the changes). -->
+ <!---
+@@ -29,3 +30,3 @@ You can create namespaces and choose which services to enable.
  Usage:
 -  admin adduser <username> <email> <password> [--all] [--redis] [--mongodb] [--seaweedfs] [--postgres] [--milvus] [--storagequota=<quota>|auto]
 +  admin adduser <username> <email> [<password>] [--all] [--redis] [--mongodb] [--seaweedfs] [--postgres] [--milvus] [--storagequota=<quota>|auto]
    admin deleteuser <username> [--confirm-namespace-delete]
-@@ -39,3 +39,3 @@ Usage:
+@@ -39,3 +40,3 @@ Usage:
  ```
 -  admin adduser       create a new user in OpenServerless with the username, email and password provided
 +  admin adduser       create a new user in OpenServerless with the username, email and password provided; the password may be given in the OPS_ADMIN_PASSWORD environment variable instead of the command line, which keeps it out of the process list
    admin deleteuser    delete a user from the OpenServerless installation via the username provided
 ```
 
+#### `admin/ingress/opsfile.yml`
+
+```diff
+@@ -16,2 +16,4 @@
+ # under the License.
++#
++# Modified by Trustant: ingress deletion tolerates resources already removed.
+
+@@ -63,2 +65,2 @@ tasks:
+         vars:
+-             ACTION: "delete"
++             ACTION: "delete --ignore-not-found=true"
+```
+
 #### `admin/opsfile.yml`
 
 ```diff
-@@ -66,3 +66,9 @@ tasks:
+@@ -1 +1,2 @@
++# Modified by the Trustant project (see legal/VENDORED.md and TRUSTANT-CHANGES.md for the changes).
+ # Licensed to the Apache Software Foundation (ASF) under one
+@@ -57,3 +58,3 @@ tasks:
+       - |
+-        {{.DRY}} kubectl -n openserverless delete wsku/{{._username_}}
++        {{.DRY}} kubectl -n openserverless delete wsku/{{._username_}} --ignore-not-found=true
+         {{.DRY}}  $OPS -config -r {{._username_}}
+@@ -66,3 +67,9 @@ tasks:
          export EMAIL={{._email_}}
 -        export PASSWORD={{._password_}}
 +        # OPS_ADMIN_PASSWORD keeps the password out of the process list;
@@ -610,6 +660,11 @@ The `acp/` delta is too large to reproduce line by line. Per-file diff: `git dif
 +        fi
 +        unset OPS_ADMIN_PASSWORD
          export SECRET_USER_AUTH="$($OPS -random -u):$($OPS -random --str 64)"
+@@ -202,2 +209,2 @@ tasks:
+         fi
+-        bun usage/usage.js $FLAG
+\ No newline at end of file
++        bun usage/usage.js $FLAG
 ```
 
 #### `debug/runtime/invoke.py`
@@ -620,7 +675,7 @@ The `acp/` delta is too large to reproduce line by line. Per-file diff: `git dif
 +# Modified by the Trustant project to clarify payload handling.
  """Executable Python script for testing the action proxy.
 @@ -124,3 +125,3 @@ def init(args):
- 
+
 -    if r.status_code == 200 and args.run != None:
 +    if r.status_code == 200 and args.run is not None:
          runArgs = objectify({})
@@ -649,9 +704,9 @@ The `acp/` delta is too large to reproduce line by line. Per-file diff: `git dif
 @@ -17,2 +17,3 @@
  #
 +# Trustant fork: pin and verify the Linux Kubernetes provisioning tools.
- 
+
 @@ -50,2 +51,16 @@ tasks:
- 
+
 +  download-verified:
 +    cmds:
 +      - |
@@ -684,7 +739,7 @@ The `acp/` delta is too large to reproduce line by line. Per-file diff: `git dif
 @@ -124,2 +145,3 @@ tasks:
            OUT: kubectl
 +          SHA256: "{{.SHA256}}"
- 
+
 @@ -128,8 +150,15 @@ tasks:
      vars:
 -      VERSION: 0.30.0
@@ -703,7 +758,7 @@ The `acp/` delta is too large to reproduce line by line. Per-file diff: `git dif
 +          URL: "https://github.com/kubernetes-sigs/kind/releases/download/v{{.VERSION}}/kind-{{.OS}}-{{.ARCH}}"
            OUT: kind
 +          SHA256: "{{.SHA256}}"
- 
+
 @@ -205,3 +234,9 @@ tasks:
      vars:
 -      VERSION: "4.47.1"
@@ -724,7 +779,7 @@ The `acp/` delta is too large to reproduce line by line. Per-file diff: `git dif
 +          URL: "{{.URL}}"
 +          OUT: "{{.OUT}}"
 +          SHA256: "{{.SHA256}}"
- 
+
 @@ -216,3 +254,9 @@ tasks:
      vars:
 -      VERSION: "3.18.0"
@@ -756,12 +811,16 @@ The `acp/` delta is too large to reproduce line by line. Per-file diff: `git dif
 +        else
 +          extract "{{.FILE}}" "{{.OUT}}{{.EXE}}" && remove "{{.FILE}}"
 +        fi
- 
+
 ```
 
 #### `setup/kubernetes/DEBUG.txt`
 
-No textual change besides line endings or deletion.
+```diff
+@@ -1 +1,2 @@
++# Modified by the Trustant project (see legal/VENDORED.md and TRUSTANT-CHANGES.md for the changes).
+ # Licensed to the Apache Software Foundation (ASF) under one
+```
 
 #### `util/upload/.env.test`
 
@@ -807,16 +866,35 @@ No file differs from the baseline: the directory is identical to the original gi
 - Origin: https://github.com/trustant/openserverless-mcp
 - Baseline vendored by the fork: `baf14007f9106cfd63b1396fd5d374f7dd9b7537` (vendored 2026-11-24 (c41c63c))
 - Gitlink in the original repository: `baf14007f9106cfd63b1396fd5d374f7dd9b7537`; same commit
-- Files changed since the baseline: 4; every other file is identical to the baseline.
+- Files changed since the baseline: 5; every other file is identical to the baseline.
 
 | File | Status | +/- | Why |
 |---|---|---|---|
+| `TRUSTANT-CHANGES.md` | added | +11/-0 | (auto) a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b) |
 | `package-lock.json` | modified | +47/-42 | Lockfile regenerated for the zod 4.6.7 update (commit d254cb9). |
 | `package.json` | modified | +2/-2 | Dependency update: zod 4.6.7 (commit d254cb9, Dependabot alerts). |
 | `requirements.txt` | modified | +7/-7 | Python pins updated for Dependabot alerts (certifi 2026.10.18, dnspython 2.9.2 and others; commit d254cb9). |
-| `tests/invoke.test.ts` | modified | +4/-1 | The test writes a POSIX shebang stub for `ops`, which Windows cannot execute, so it is skipped on win32 (commit 11f03a7, #125 #126). Plus the Apache 4(b) modification notice. |
+| `tests/invoke.test.ts` | modified | +5/-1 | The test writes a POSIX shebang stub for `ops`, which Windows cannot execute, so it is skipped on win32 (commit 11f03a7, #125 #126). Plus the Apache 4(b) modification notice. |
 
 ### Line diffs
+
+#### `TRUSTANT-CHANGES.md`
+
+```diff
++++ b/TRUSTANT-CHANGES.md
+@@ -0,0 +1,11 @@
++# Changes made by the Trustant project
++
++This directory is a vendored copy of https://github.com/trustant/openserverless-mcp
++(Apache-2.0, baseline commit `baf14007f9106cfd63b1396fd5d374f7dd9b7537`). The upstream
++LICENSE and NOTICE are unchanged. As required by Apache-2.0 section 4(b), these files
++were modified by the Trustant project:
++
++- `package.json`, `package-lock.json`, `requirements.txt`: dependency updates.
++- `tests/invoke.test.ts`: the test is skipped on Windows.
++
++The per-file registry is [../legal/VENDORED.md](../legal/VENDORED.md).
+```
 
 `package-lock.json`: lockfile, +47/-42 lines, not reproduced.
 
@@ -875,8 +953,11 @@ No file differs from the baseline: the directory is identical to the original gi
 #### `tests/invoke.test.ts`
 
 ```diff
-@@ -28,3 +28,6 @@ function resultText(result: { content: { text: string }[] }): string {
- 
+@@ -1 +1,2 @@
++// Modified by the Trustant project (see legal/VENDORED.md and TRUSTANT-CHANGES.md for the changes).
+ // Licensed to the Apache Software Foundation (ASF) under one
+@@ -28,3 +29,6 @@ function resultText(result: { content: { text: string }[] }): string {
+
 -test("action_invoke returns the action result instead of an activation id", async () => {
 +// The stub is a shebang script: Windows cannot execute it and execFile("ops") does not resolve it.
 +test("action_invoke returns the action result instead of an activation id", {
@@ -887,14 +968,14 @@ No file differs from the baseline: the directory is identical to the original gi
 
 ## Root repository against `upstream/main`
 
-- Merge base `b901510`; the fork has 333 commits upstream lacks, upstream has 20 the fork lacks.
+- Merge base `b901510`; the fork has 335 commits upstream lacks, upstream has 20 the fork lacks.
 - Files also changed upstream since the merge base are marked **conflict risk**.
 
 | File | St | +/- | Conflict risk | Latest fork commits touching it (the reason) |
 |---|---|---|---|---|
 | `.agents/skills/changelog-entry/SKILL.md` | A | +11/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
 | `.agents/skills/ci-failure-triage/SKILL.md` | A | +12/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
-| `.agents/skills/project-checks/SKILL.md` | A | +16/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
+| `.agents/skills/project-checks/SKILL.md` | A | +17/-0 |  | a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
 | `.agents/skills/repo-map/SKILL.md` | A | +32/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
 | `.agents/skills/review-checklist/SKILL.md` | A | +12/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
 | `.agents/skills/secondbrain-context/SKILL.md` | A | +10/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
@@ -903,7 +984,7 @@ No file differs from the baseline: the directory is identical to the original gi
 | `.claude/settings.json` | M | +0/-1 |  | 086b68d 2026-11-21 Remove private workstation examples from current sources |
 | `.claude/skills/changelog-entry/SKILL.md` | A | +11/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
 | `.claude/skills/ci-failure-triage/SKILL.md` | A | +12/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
-| `.claude/skills/project-checks/SKILL.md` | A | +16/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
+| `.claude/skills/project-checks/SKILL.md` | A | +17/-0 |  | a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
 | `.claude/skills/repo-map/SKILL.md` | A | +32/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
 | `.claude/skills/review-checklist/SKILL.md` | A | +12/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
 | `.claude/skills/secondbrain-context/SKILL.md` | A | +10/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
@@ -922,15 +1003,16 @@ No file differs from the baseline: the directory is identical to the original gi
 | `.gitmodules` | M | +0/-16 |  | c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>19f8d3e 2026-09-24 branch<br>... and 5 more |
 | `.licenserc.yaml` | M | +7/-6 |  | c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>56225db 2026-08-26 added license<br>... and 1 more |
 | `.sbcheck-ignore` | A | +15/-0 |  | d29f1bb 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42) |
-| `AGENTS.md` | M | +32/-145 |  | 75b289d 2026-11-25 Link SecondBrain 5: sb block in AGENTS.md, CLAUDE.md points to it, v4 files removed<br>c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 26 more |
-| `CHANGELOG.md` | A | +102/-0 |  | dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>87a8f0c 2026-11-26 Docs: OLLAMA_EXTERNAL, rilevamento host Ollama e rimozione degli e2e OpenCode<br>... and 12 more |
+| `AGENTS.md` | M | +32/-145 |  | a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>75b289d 2026-11-25 Link SecondBrain 5: sb block in AGENTS.md, CLAUDE.md points to it, v4 files removed<br>... and 27 more |
+| `AUDIT-2026-11-26.md` | A | +184/-0 |  | a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b) |
+| `CHANGELOG.md` | A | +111/-0 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>... and 13 more |
 | `CLAUDE.md` | M | +1/-258 | **yes** | 75b289d 2026-11-25 Link SecondBrain 5: sb block in AGENTS.md, CLAUDE.md points to it, v4 files removed<br>3c49237 2026-11-12 docs: consolidate agent instructions in AGENTS.md |
 | `CONTRIBUTING.md` | M | +62/-6 |  | 93ebe52 2026-11-24 Completa il lotto Private AI e ripristina la scansione Go<br>c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 8 more |
 | `CREDITS.md` | A | +130/-0 |  | cbe651c 2026-11-26 Legal: conferma del titolare sulle icone SVG inline non identiche a Heroicons<br>128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>... and 16 more |
 | `DEPS` | M | +205/-150 |  | 128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>7bbc207 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS<br>... and 19 more |
 | `LICENSE` | M | +70/-14 |  | 128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 10 more |
 | `NOTICE` | M | +21528/-1510 |  | 128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>7bbc207 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS<br>... and 15 more |
-| `README.md` | M | +192/-230 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>cd7af16 2026-11-25 README: rimuove l'immagine di copertina e rimanda alle guide in docs/<br>... and 40 more |
+| `README.md` | M | +192/-230 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>... and 41 more |
 | `SECURITY.md` | A | +36/-0 |  | f184fc4 2026-11-19 docs: add mermaid flows and community and security files |
 | `aaa.code-workspace` | M | +20/-26 |  | 8b094a3 2026-11-21 Keep machine-specific workspace data local |
 | `adduser_test.go` | A | +69/-0 |  | d29f1bb 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42)<br>a0bd211 2026-11-24 Passa la password di ops admin adduser per ambiente invece che da argv (#119) |
@@ -942,8 +1024,8 @@ No file differs from the baseline: the directory is identical to the original gi
 | `bind.go` | M | +200/-70 |  | 7287dd0 2026-11-25 Più tempo per i PC lenti e guida su Ollama<br>d6f441c 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip<br>... and 4 more |
 | `bind_test.go` | M | +114/-0 |  | d6f441c 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip<br>01f73cf 2026-11-20 Update Trustant tooling and add Ollama import suggestions |
 | `biome.jsonc` | A | +55/-0 |  | b45002b 2026-11-19 chore: add repository lint and ACP streaming regression tests |
-| `configure.go` | M | +355/-205 | **yes** | 58b4209 2026-11-25 Aggiunge preset di istanze Ollama con interruttore locale/esterno e Refresh models per il Private AI<br>7287dd0 2026-11-25 Più tempo per i PC lenti e guida su Ollama<br>... and 7 more |
-| `configure_test.go` | M | +227/-5 | **yes** | 9101e0e 2026-11-25 Configure: Save & Configure non chiede l'host con un'istanza Ollama attiva<br>7bbc207 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS<br>... and 4 more |
+| `configure.go` | M | +369/-209 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>58b4209 2026-11-25 Aggiunge preset di istanze Ollama con interruttore locale/esterno e Refresh models per il Private AI<br>... and 8 more |
+| `configure_test.go` | M | +248/-5 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>9101e0e 2026-11-25 Configure: Save & Configure non chiede l'host con un'istanza Ollama attiva<br>... and 5 more |
 | `credits.go` | M | +1/-1 |  | d6f441c 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip |
 | `docs/README.md` | A | +35/-0 |  | 035c701 2026-11-25 CI: workflow manuale per testare Ubuntu, macOS e Windows<br>7287dd0 2026-11-25 Più tempo per i PC lenti e guida su Ollama<br>... and 1 more |
 | `docs/ci-environments.md` | A | +29/-0 |  | 99bbcd9 2026-11-25 Non mette in stage i percorsi ignorati e completa le note di setup<br>31e446f 2026-11-25 Docs: esito del primo run del workflow Environments e copertura mancante<br>... and 1 more |
@@ -951,8 +1033,8 @@ No file differs from the baseline: the directory is identical to the original gi
 | `docs/ollama.md` | A | +74/-0 |  | 7f7a287 2026-11-26 Ollama Instance: propone di aggiornare il preset Ollama host con IP WSL cambiato<br>33cca5c 2026-11-25 Ollama Instance: rileva e propone l'Ollama dell'host (WSL, Lima)<br>... and 2 more |
 | `docs/setup-macos.md` | A | +115/-0 |  | 87a8f0c 2026-11-26 Docs: OLLAMA_EXTERNAL, rilevamento host Ollama e rimozione degli e2e OpenCode<br>99bbcd9 2026-11-25 Non mette in stage i percorsi ignorati e completa le note di setup<br>... and 1 more |
 | `docs/setup-ubuntu.md` | A | +101/-0 |  | 87a8f0c 2026-11-26 Docs: OLLAMA_EXTERNAL, rilevamento host Ollama e rimozione degli e2e OpenCode<br>99bbcd9 2026-11-25 Non mette in stage i percorsi ignorati e completa le note di setup<br>... and 1 more |
-| `docs/setup-windows.md` | A | +127/-0 |  | 87a8f0c 2026-11-26 Docs: OLLAMA_EXTERNAL, rilevamento host Ollama e rimozione degli e2e OpenCode<br>5ad82aa 2026-11-25 Aggiorna Ollama a 0.40.18 e aggiunge le guide in docs/ |
-| `docs/use-cases.md` | A | +158/-0 |  | 5ad82aa 2026-11-25 Aggiorna Ollama a 0.40.18 e aggiunge le guide in docs/ |
+| `docs/setup-windows.md` | A | +151/-0 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>87a8f0c 2026-11-26 Docs: OLLAMA_EXTERNAL, rilevamento host Ollama e rimozione degli e2e OpenCode<br>... and 1 more |
+| `docs/use-cases.md` | A | +178/-0 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>5ad82aa 2026-11-25 Aggiorna Ollama a 0.40.18 e aggiunge le guide in docs/ |
 | `envcrypt.env` | D | +0/-2 |  | 8b094a3 2026-11-21 Keep machine-specific workspace data local |
 | `envinject_test.go` | A | +128/-0 |  | b26271d 2026-11-24 Rifiuta caratteri di controllo nei file env e valida i nomi di appconfig (#124) |
 | `envsafe.go` | A | +39/-0 |  | b26271d 2026-11-24 Rifiuta caratteri di controllo nei file env e valida i nomi di appconfig (#124) |
@@ -973,11 +1055,12 @@ No file differs from the baseline: the directory is identical to the original gi
 | `launch_lifecycle_test.go` | M | +150/-0 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
 | `launch_progress_test.go` | M | +27/-9 |  | 7bbc207 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS |
 | `legal/COMPONENTS.json` | A | +7773/-0 |  | 128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>7bbc207 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS<br>... and 19 more |
-| `legal/REVIEW.md` | A | +159/-0 |  | 482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>cbe651c 2026-11-26 Legal: conferma del titolare sulle icone SVG inline non identiche a Heroicons<br>... and 6 more |
-| `legal/VENDORED.md` | A | +535/-0 |  | 93ebe52 2026-11-24 Completa il lotto Private AI e ripristina la scansione Go<br>1b14877 2026-11-24 Rigenera VENDORED.md dopo la modifica a mcp/tests/invoke.test.ts (#126)<br>... and 20 more |
+| `legal/REVIEW.md` | A | +159/-0 |  | a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>... and 7 more |
+| `legal/VENDORED.md` | A | +545/-0 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>... and 22 more |
 | `legal/deps.manual.txt` | M | +47/-20 |  | 128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>5ad82aa 2026-11-25 Aggiorna Ollama a 0.40.18 e aggiunge le guide in docs/<br>... and 15 more |
 | `legal/deps.py` | M | +125/-25 |  | 058c9b2 2026-11-25 deps.py: usa la versione del toolchain Go per la licenza<br>bd1d130 2026-11-22 Rebuild ops from the CLI fork and bump Trustant to v1.1.3<br>... and 4 more |
 | `legal/licenses/OFL-1.1.txt` | A | +43/-0 |  | f5ee4bc 2026-11-12 docs: refresh third-party licensing records |
+| `legal/upstream_compare.py` | A | +296/-0 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b) |
 | `legal/vendored_changes.py` | A | +233/-0 |  | c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>b35ec05 2026-11-19 docs(legal): track vendored acp changes against the original submodule commits<br>... and 1 more |
 | `license.go` | M | +27/-36 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
 | `limitbody_test.go` | A | +62/-0 |  | 120c8c0 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
@@ -1000,12 +1083,12 @@ No file differs from the baseline: the directory is identical to the original gi
 | `provision.go` | M | +25/-25 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
 | `provision_test.go` | M | +5/-5 |  | d29f1bb 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42) |
 | `proxy_test.go` | A | +41/-0 |  | 47fd99b 2026-11-19 fix(files,proxy): stop caching the file tree and document the stream timeout chain |
-| `prune_test.go` | M | +195/-2 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
+| `prune_test.go` | M | +240/-2 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
 | `publish.go` | M | +45/-65 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
 | `publish_imports_test.go` | M | +135/-0 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
 | `react-mcp/package-lock.json` | M | +52/-48 |  | 044b0e9 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102)<br>8b1c109 2026-11-20 Update runtime dependencies and report development GUI readiness<br>... and 2 more |
 | `react-mcp/package.json` | M | +2/-2 |  | 044b0e9 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102)<br>8b1c109 2026-11-20 Update runtime dependencies and report development GUI readiness |
-| `repo.go` | M | +127/-59 | **yes** | a0bd211 2026-11-24 Passa la password di ops admin adduser per ambiente invece che da argv (#119)<br>120c8c0 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste<br>... and 1 more |
+| `repo.go` | M | +157/-57 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>a0bd211 2026-11-24 Passa la password di ops admin adduser per ambiente invece che da argv (#119)<br>... and 2 more |
 | `run.sh` | M | +49/-16 | **yes** | d0f1057 2026-11-25 Esporta TRUSTANT_AUTH_* da run.sh dopo aver caricato .env<br>0891295 2026-11-25 Migra Air a build.entrypoint e salta ollama locale con endpoint remoto<br>... and 2 more |
 | `safefile.go` | A | +79/-0 |  | 5ef1079 2026-11-24 Estende le scritture senza symlink agli altri file del workbench<br>120c8c0 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
 | `safefile_test.go` | A | +75/-0 |  | 120c8c0 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
@@ -1019,8 +1102,8 @@ No file differs from the baseline: the directory is identical to the original gi
 | `skills.go` | M | +78/-7 |  | 11f03a7 2026-11-24 Allinea SkillInfo con gofmt e salta il test invoke su Windows (#125 #126)<br>478ec5e 2026-11-24 Esegue l'escape di Host nella pagina errore e vincola la sorgente OPS_SKILLS (#114 #116 #123)<br>... and 1 more |
 | `skills_test.go` | A | +147/-0 |  | 478ec5e 2026-11-24 Esegue l'escape di Host nella pagina errore e vincola la sorgente OPS_SKILLS (#114 #116 #123) |
 | `spec/0-preflight.md` | M | +17/-12 |  | 47353bb 2026-11-21 Fix local links in Trustant specifications (#76)<br>8984b16 2026-11-12 fix: recover provider setup and align routing documentation |
-| `spec/1-applist.md` | M | +53/-15 | **yes** | dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>d6f441c 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip<br>... and 6 more |
-| `spec/1-index.md` | M | +16/-1 | **yes** | baa0daf 2026-11-20 Fix catalog failures and modal accessibility<br>8984b16 2026-11-12 fix: recover provider setup and align routing documentation |
+| `spec/1-applist.md` | M | +56/-15 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>... and 7 more |
+| `spec/1-index.md` | M | +20/-1 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>baa0daf 2026-11-20 Fix catalog failures and modal accessibility<br>... and 1 more |
 | `spec/11-files.md` | M | +1/-1 |  | 47fd99b 2026-11-19 fix(files,proxy): stop caching the file tree and document the stream timeout chain |
 | `spec/12-terminal.md` | M | +2/-2 |  | 404894a 2026-11-20 Improve mobile workbench controls and update Claude Code pin |
 | `spec/14-license.md` | M | +1/-1 | **yes** | 086b68d 2026-11-21 Remove private workstation examples from current sources |
@@ -1028,9 +1111,9 @@ No file differs from the baseline: the directory is identical to the original gi
 | `spec/16-tutorial.md` | M | +1/-1 |  |  |
 | `spec/17-proxy.md` | M | +24/-0 |  | b45002b 2026-11-19 chore: add repository lint and ACP streaming regression tests<br>47fd99b 2026-11-19 fix(files,proxy): stop caching the file tree and document the stream timeout chain |
 | `spec/18-shared.md` | M | +3/-2 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
-| `spec/2-repo.md` | M | +17/-10 | **yes** | a0bd211 2026-11-24 Passa la password di ops admin adduser per ambiente invece che da argv (#119)<br>e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
-| `spec/20-legal.md` | M | +50/-4 |  | a260c56 2026-11-19 docs(legal): document the registry generation flow and vendored sources<br>f5ee4bc 2026-11-12 docs: refresh third-party licensing records |
-| `spec/2a-config.md` | M | +134/-28 | **yes** | dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>7f7a287 2026-11-26 Ollama Instance: propone di aggiornare il preset Ollama host con IP WSL cambiato<br>... and 8 more |
+| `spec/2-repo.md` | M | +18/-10 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>a0bd211 2026-11-24 Passa la password di ops admin adduser per ambiente invece che da argv (#119)<br>... and 1 more |
+| `spec/20-legal.md` | M | +58/-4 |  | a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>a260c56 2026-11-19 docs(legal): document the registry generation flow and vendored sources<br>... and 1 more |
+| `spec/2a-config.md` | M | +141/-29 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>... and 9 more |
 | `spec/3-app.md` | M | +13/-5 | **yes** | dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>e4d8961 2026-11-24 Corregge accessibilità di Inventario, Template e TruACP (UIX02)<br>... and 1 more |
 | `spec/4-launch.md` | M | +37/-19 | **yes** | 7287dd0 2026-11-25 Più tempo per i PC lenti e guida su Ollama<br>a0bd211 2026-11-24 Passa la password di ops admin adduser per ambiente invece che da argv (#119)<br>... and 6 more |
 | `spec/6-publish.md` | M | +9/-2 |  | dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>cfc7b21 2026-11-24 Abilita la verifica della host key SSH per git (#117)<br>... and 1 more |
@@ -1079,7 +1162,7 @@ No file differs from the baseline: the directory is identical to the original gi
 | `tests/ollama-instances.test.mjs` | A | +238/-0 |  | 7f7a287 2026-11-26 Ollama Instance: propone di aggiornare il preset Ollama host con IP WSL cambiato<br>33cca5c 2026-11-25 Ollama Instance: rileva e propone l'Ollama dell'host (WSL, Lima)<br>... and 1 more |
 | `tests/ollama-local.test.mjs` | A | +149/-0 |  | 58b4209 2026-11-25 Aggiunge preset di istanze Ollama con interruttore locale/esterno e Refresh models per il Private AI<br>bf80f86 2026-11-25 Aggiunge Start/Stop e stato dell'Ollama locale nella UI Private AI |
 | `tests/test_legal_deps.py` | A | +80/-0 |  | f5ee4bc 2026-11-12 docs: refresh third-party licensing records |
-| `tests/uix02.spec.mjs` | A | +251/-0 |  | 93ebe52 2026-11-24 Completa il lotto Private AI e ripristina la scansione Go<br>e4d8961 2026-11-24 Corregge accessibilità di Inventario, Template e TruACP (UIX02) |
+| `tests/uix02.spec.mjs` | A | +318/-0 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>93ebe52 2026-11-24 Completa il lotto Private AI e ripristina la scansione Go<br>... and 1 more |
 | `timeouts.go` | A | +55/-0 |  | 7287dd0 2026-11-25 Più tempo per i PC lenti e guida su Ollama |
 | `timeouts_test.go` | A | +45/-0 |  | 7287dd0 2026-11-25 Più tempo per i PC lenti e guida su Ollama |
 | `tools/lint.mjs` | A | +104/-0 |  | b45002b 2026-11-19 chore: add repository lint and ACP streaming regression tests |
@@ -1087,13 +1170,13 @@ No file differs from the baseline: the directory is identical to the original gi
 | `version.txt` | M | +1/-1 | **yes** | 93ebe52 2026-11-24 Completa il lotto Private AI e ripristina la scansione Go<br>bd1d130 2026-11-22 Rebuild ops from the CLI fork and bump Trustant to v1.1.3<br>... and 3 more |
 | `web/app.html` | M | +196/-149 | **yes** | dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>... and 7 more |
 | `web/applist.html` | M | +307/-130 | **yes** | dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>066da17 2026-11-25 UI: menu accessibili, etichette dei campi e modelli di chat filtrati<br>... and 10 more |
-| `web/configure.html` | M | +266/-106 | **yes** | dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>9101e0e 2026-11-25 Configure: Save & Configure non chiede l'host con un'istanza Ollama attiva<br>... and 10 more |
-| `web/index.html` | M | +108/-73 | **yes** | bf80f86 2026-11-25 Aggiunge Start/Stop e stato dell'Ollama locale nella UI Private AI<br>7287dd0 2026-11-25 Più tempo per i PC lenti e guida su Ollama<br>... and 5 more |
+| `web/configure.html` | M | +317/-119 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>... and 11 more |
+| `web/index.html` | M | +121/-88 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>bf80f86 2026-11-25 Aggiunge Start/Stop e stato dell'Ollama locale nella UI Private AI<br>... and 6 more |
 | `web/js/bind.js` | M | +185/-7 |  | 066da17 2026-11-25 UI: menu accessibili, etichette dei campi e modelli di chat filtrati<br>d6f441c 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip<br>... and 1 more |
 | `web/js/modal-a11y.js` | A | +134/-0 |  | baa0daf 2026-11-20 Fix catalog failures and modal accessibility<br>5ea565a 2026-11-18 fix(setup,web): confine OpenServerless prompt to trudev VMs and close UX residuals |
 | `web/js/ollama-instances.js` | A | +351/-0 |  | dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>7f7a287 2026-11-26 Ollama Instance: propone di aggiornare il preset Ollama host con IP WSL cambiato<br>... and 2 more |
 | `web/js/ollama-local.js` | A | +131/-0 |  | 58b4209 2026-11-25 Aggiunge preset di istanze Ollama con interruttore locale/esterno e Refresh models per il Private AI<br>bf80f86 2026-11-25 Aggiunge Start/Stop e stato dell'Ollama locale nella UI Private AI |
 | `web/js/toolbar-collapse.js` | M | +1/-1 |  | 404894a 2026-11-20 Improve mobile workbench controls and update Claude Code pin |
-| `web/trustant-ui.css` | M | +250/-14 |  | dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>066da17 2026-11-25 UI: menu accessibili, etichette dei campi e modelli di chat filtrati<br>... and 8 more |
+| `web/trustant-ui.css` | M | +254/-14 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>... and 9 more |
 | `web/wa-trustant.jpeg` | D | +-/-- |  | 086b68d 2026-11-21 Remove private workstation examples from current sources |
 | `workbench_symlink_test.go` | A | +70/-0 |  | 5ef1079 2026-11-24 Estende le scritture senza symlink agli altri file del workbench |
