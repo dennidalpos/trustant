@@ -13,11 +13,12 @@ port `8910`. It is independent from:
 - model-provider and Ollama credentials;
 - per-application `.env` files.
 
-The Kubernetes ingresses route `truacp.<domain>` and `vite.<domain>` directly
-to service ports `4096` and `5173`. The Go server also proxies those hostnames
-when requests arrive on port `8910`. Both paths bypass the Trustant local
-session middleware. A future session bootstrap for these hosts must use
-host-specific sessions and host-only cookies.
+In local mode the assistant host `truacp.<domain>` has its own host-only
+session (see "Assistant host session"). The Kubernetes ingress `truacp-ing`
+sends it to service port `8910`, so the Go server is the only way in and applies
+that check; before this change it went straight to port `4096` and bypassed it.
+`vite.<domain>` (ingress to `5173`) and registered application hosts still
+bypass the Trustant session middleware, on port `8910` and through the ingress.
 
 See [trustant-auth-flow.svg](trustant-auth-flow.svg).
 
@@ -32,7 +33,9 @@ flowchart TD
     H -->|"localhost or IPv4 host"| N1["307 to trustant.IP.nip.io<br/>middleware.go:112-126"]
     H -->|"host without a dot"| N2["307 to trustant.LOCALIP.nip.io<br/>middleware.go:129-143"]
     H -->|"first label trustant"| A{"auth.middleware<br/>auth.go:222"}
-    H -->|"first label truacp"| T["truacpProxy 127.0.0.1:4096<br/>middleware.go:45"]
+    H -->|"first label truacp"| G{"hostGate truacp<br/>auth_host.go"}
+    G -->|"auth disabled or valid host session"| T["truacpProxy 127.0.0.1:4096<br/>middleware.go:45"]
+    G -->|"no host session: 401, or redeem token at /__trustant/auth"| X2["rejected<br/>auth_host.go"]
     H -->|"first label vite"| V["viteProxy 127.0.0.1:5173<br/>middleware.go:46"]
     H -->|"other label"| D{"registered application?<br/>proxyDevelopmentApplication<br/>middleware.go:58"}
     D -->|yes| P["proxy to developmentApplicationURL<br/>repo.go:223"]
@@ -46,9 +49,10 @@ flowchart TD
 Text alternative: `hostnameMiddleware` redirects localhost, IP and dotless
 hosts to `trustant.<ip>.nip.io`, then routes on the first hostname label.
 `trustant` goes through the session check (skipped when authentication is
-disabled or the path is public) to the API handlers and static UI. `truacp` and
-`vite` go straight to local reverse proxies on ports `4096` and `5173` and do
-not pass the session check. Any other label is proxied to that application when
+disabled or the path is public) to the API handlers and static UI. `truacp`
+goes through the host session check to the reverse proxy on port `4096` (a
+pass-through when authentication is disabled); `vite` goes straight to the proxy
+on `5173` and does not pass any session check. Any other label is proxied to that application when
 it is a registered repository (`getAppRepo`); otherwise the server shows an
 "Invalid Hostname" page.
 
@@ -67,15 +71,57 @@ without login, and the following surfaces are reachable by anyone who can reach
 the port:
 
 - the `api terminal` shell, file and deploy APIs of the Trustant host;
-- `truacp.<domain>`, `vite.<domain>` and registered application hosts, which
-  bypass the local session even when local mode is on (see Scope).
+- `truacp.<domain>` (in local mode it is protected, see below), and
+  `vite.<domain>` and registered application hosts, which bypass the local
+  session even when local mode is on (see Scope).
 
 The risk is accepted for development on a trusted network, which is the
 supported deployment of the default configuration. Mitigations: the startup
 warning above, `TRUSTANT_AUTH_MODE=local` for any shared or exposed host, and
 network-level controls (firewall, loopback-only port publishing, private
 network) for the proxied hosts. Revisit the decision if a bind-address setting
-or host-specific sessions are introduced.
+is introduced or host sessions are extended to `vite` and application hosts.
+
+## Assistant host session
+
+Decision (owner, task #4, 2026-11-26): with `TRUSTANT_AUTH_MODE=local`, the
+assistant host `truacp.<domain>` requires a session of its own. With
+authentication disabled nothing changes.
+
+Flow:
+
+1. The signed-in UI (`web/app.html`) calls `POST /api/auth/host-token` with
+   `{"host":"truacp"}`. The call needs the session and the CSRF header. Only
+   `truacp` is accepted; any other host is a 400. The token is random, valid
+   for one minute, single use, and bound to the session and to that host (at
+   most 256 pending tokens).
+2. The UI loads the assistant frame at
+   `<truacp host>/__trustant/auth?token=<token>&next=%2F`.
+3. `hostGate` redeems the token on the proxied host, sets the cookie
+   `trustant_host_session` (`__Host-trustant_host_session` over HTTPS) and
+   redirects to `next`, which is kept to a local path (anything else becomes `/`).
+
+The cookie is host-only (no `Domain`), `HttpOnly`, `SameSite=Strict`, and its
+signature covers the host label, so the trustant session cookie value is not
+accepted on the assistant host and the reverse. It points at the same server
+session: logging out, expiry (eight hours) or a restart close the assistant host
+too. Requests without a valid cookie get a 401 page that links to the login
+host. The cookie is removed from the request before it is proxied to TruACP.
+
+HTTP and WebSocket both pass the gate. A WebSocket handshake that carries an
+`Origin` different from the host is refused with 403; a handshake without
+`Origin` is a non-browser client and is allowed once it has the cookie.
+
+Limits: the check does not apply to `vite.<domain>` or application hosts;
+port `4096` itself is still a cluster service port and anything that reaches it
+inside the cluster is not checked; an application host on the same domain can
+set cookies for the parent domain (cookie tossing), which the host-prefixed
+cookie name only resists over HTTPS.
+
+Tests: `auth_host_test.go` covers the disabled pass-through, the full token and
+cookie flow, single use, expiry, host binding, open-redirect handling,
+WebSocket origin, cookie stripping, logout, and the routing in
+`hostnameMiddleware`.
 
 ## Configuration
 

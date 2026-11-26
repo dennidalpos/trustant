@@ -154,7 +154,8 @@ func hostnameMiddleware(next http.Handler) http.Handler {
 			// it is TruACP, which serves its own UI and owns cwd/session state
 			// internally, so no OpenCode directory or session rewriting is
 			// performed. The matching ingress is truacp-ing.
-			truacpProxy.ServeHTTP(w, r)
+			// With local authentication on, a host session is required (auth_host.go).
+			hostAuth.hostGate("truacp", truacpProxy).ServeHTTP(w, r)
 		case "vite":
 			// Proxy pass to port 5173
 			viteProxy.ServeHTTP(w, r)

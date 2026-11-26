@@ -143,7 +143,7 @@ in this register, are no longer tracked and were removed from it.
 | `spec/action-deploy-guard-flow.svg` | `7743f9ade18be5e39e2742ddb940dc594ef7abd6343b077f1d6bb226d1bd7235` | First-party diagram of the project, confirmed by the owner. |
 | `spec/application-test-completion-gate.svg` | `1ef034cbb132702ce1291dbf546ec68b1928a1affed3660a982a3a3bae07a1e7` | First-party diagram of the project, confirmed by the owner. |
 | `spec/git-pull-flow.svg` | `e565c6ced55777c900e0705d05e965b78aa2062ff9ce22fb055d3f9f116c270e` | First-party diagram of the project, confirmed by the owner. |
-| `spec/trustant-auth-flow.svg` | `06cf3d6a5ade7c9d69e8018f3137344ac344dc358e44426b0b5b900b2e341f46` | First-party diagram of the project, confirmed by the owner. |
+| `spec/trustant-auth-flow.svg` | `d3fd788f4551af8551fecca55f87692253633d07143f01a84aae6cb1a5000b55` | First-party diagram of the project, confirmed by the owner. |
 | `spec/trustant-code-integration.svg` | `82ec9ac5cefd329ecb1994147da56cc2314b754ae473fa4e7c66705584ef22f4` | First-party diagram of the project, confirmed by the owner. |
 | `web/ollama-head.png` | `c1f0bce3a7363d8030142943098889466f5bb21d67759963ece662a73ab6f105` | Logo of Ollama. Third-party mark of its owner; shown only to identify the Ollama Cloud option. No rights over it are granted by this project's license. |
 | `web/regolo-head.png` | `dc654fa1a66ee1919d4656b67723c81dd80bc65bbebb09001a2d6cdb8a7efadb` | Logo of Regolo.AI. Third-party mark of its owner; shown only to identify the Regolo.AI option. No rights over it are granted by this project's license. |

@@ -58,6 +58,6 @@
 
   <rect x="40" y="430" width="1000" height="58" class="warn"/>
   <text x="62" y="456" class="title">Follow-up boundary</text>
-  <text x="242" y="456" class="text">OpenCode and Vite Kubernetes ingresses still bypass port 8910 and are not protected by this phase.</text>
+  <text x="242" y="456" class="text">The TruACP ingress goes through port 8910 and needs a host session; Vite and application hosts still bypass it.</text>
   <text x="62" y="478" class="small">Do not use a parent-domain cookie; future ingress protection requires host-specific session bootstrap.</text>
 </svg>

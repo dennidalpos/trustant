@@ -67,7 +67,7 @@ func TestTruACPProxiesItsOwnHostnameWithoutRewriting(t *testing.T) {
 		t.Fatalf("read middleware.go: %s", err)
 	}
 	source := string(data)
-	if !strings.Contains(source, `case "truacp":`) || !strings.Contains(source, `truacpProxy.ServeHTTP(w, r)`) {
+	if !strings.Contains(source, `case "truacp":`) || !strings.Contains(source, `hostAuth.hostGate("truacp", truacpProxy).ServeHTTP(w, r)`) {
 		t.Fatal("truacp hostname must proxy the TruACP UI")
 	}
 	if strings.Contains(source, `case "opencode":`) {

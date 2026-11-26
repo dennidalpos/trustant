@@ -603,8 +603,30 @@
         // TruACP owns its cwd and ACP sessions. The public hostname is
         // truacp.<domain>, but the iframe always loads the
         // runtime root instead of an OpenCode directory/session route.
+        // With local authentication on, the assistant host needs its own
+        // host-only session: trade the Trustant login for a one-time token and
+        // let the host redeem it (spec/authentication.md). With authentication
+        // off the endpoint answers 404 and the frame loads the plain URL.
+        async function openAssistantFrame(base) {
+            const frame = document.getElementById('leftFrame');
+            try {
+                const response = await fetch('/api/auth/host-token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ host: 'truacp' })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    frame.src = `${base}${data.path}?token=${encodeURIComponent(data.token)}&next=%2F`;
+                    return;
+                }
+            } catch (error) {
+                // fall through to the plain URL
+            }
+            frame.src = `${base}/`;
+        }
         if (leftURL) {
-            document.getElementById('leftFrame').src = `${leftURL}/`;
+            openAssistantFrame(leftURL);
         }
         if (rightURL) {
             const currentQuery = getCookie('QUERY') || '';

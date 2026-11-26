@@ -201,6 +201,7 @@ func main() {
 	http.HandleFunc("/api/credits", handleCredits)
 	http.HandleFunc("/api/topup", handleTopUp)
 	auth.registerRoutes(http.DefaultServeMux)
+	hostAuth = auth
 
 	// Static file serving
 	if _, err := os.Stat("web"); err == nil {

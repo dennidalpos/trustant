@@ -88,9 +88,10 @@ type authManager struct {
 	now            func() time.Time
 	random         io.Reader
 
-	mu       sync.Mutex
-	sessions map[string]*authSession
-	attempts map[string]*loginAttempt
+	mu         sync.Mutex
+	sessions   map[string]*authSession
+	attempts   map[string]*loginAttempt
+	hostTokens map[string]*hostToken
 }
 
 func newAuthManagerFromEnv() (*authManager, error) {
@@ -227,6 +228,7 @@ func (a *authManager) registerRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/api/auth/login", a.handleLogin)
 	mux.HandleFunc("/api/auth/session", a.handleSession)
 	mux.HandleFunc("/api/auth/logout", a.handleLogout)
+	mux.HandleFunc("/api/auth/host-token", a.handleHostToken)
 }
 
 func (a *authManager) middleware(next http.Handler) http.Handler {
