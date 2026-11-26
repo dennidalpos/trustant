@@ -230,7 +230,7 @@ func (a *authManager) hostGate(label string, next http.Handler) http.Handler {
 		}
 		session := a.hostSession(r, label)
 		if session == nil {
-			a.hostUnauthorized(w, r, label)
+			a.hostUnauthorized(w, r)
 			return
 		}
 		if isWebSocketUpgrade(r) && !sameUpgradeOrigin(r) {
@@ -250,7 +250,7 @@ func (a *authManager) serveHostAuth(w http.ResponseWriter, r *http.Request, labe
 	}
 	session, ok := a.redeemHostToken(r.URL.Query().Get("token"), label)
 	if !ok {
-		a.hostUnauthorized(w, r, label)
+		a.hostUnauthorized(w, r)
 		return
 	}
 	next := r.URL.Query().Get("next")
@@ -263,7 +263,7 @@ func (a *authManager) serveHostAuth(w http.ResponseWriter, r *http.Request, labe
 	http.Redirect(w, r, next, http.StatusSeeOther)
 }
 
-func (a *authManager) hostUnauthorized(w http.ResponseWriter, r *http.Request, label string) {
+func (a *authManager) hostUnauthorized(w http.ResponseWriter, r *http.Request) {
 	hostname, port, protocol := parseHostname(r)
 	login := ""
 	if dot := strings.Index(hostname, "."); dot > 0 {

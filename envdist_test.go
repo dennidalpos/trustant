@@ -19,7 +19,6 @@ import (
 	"encoding/json"
 	"net/http/httptest"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -51,33 +50,6 @@ func envDistTestApp(t *testing.T, name string, dev, prod map[string]string) stri
 		t.Fatalf("save workspace config: %s", err)
 	}
 	return workbenchPath
-}
-
-func initEnvDistRepo(t *testing.T, dir string) {
-	t.Helper()
-	for _, args := range [][]string{
-		{"init"},
-		{"config", "user.name", "Trustant Test"},
-		{"config", "user.email", "trustant@example.test"},
-		{"commit", "--allow-empty", "-m", "initial"},
-	} {
-		cmd := exec.Command("git", args...)
-		cmd.Dir = dir
-		if output, err := cmd.CombinedOutput(); err != nil {
-			t.Fatalf("git %s: %s: %s", strings.Join(args, " "), err, output)
-		}
-	}
-}
-
-func envDistGitOutput(t *testing.T, dir string, args ...string) string {
-	t.Helper()
-	cmd := exec.Command("git", args...)
-	cmd.Dir = dir
-	output, err := cmd.Output()
-	if err != nil {
-		t.Fatalf("git %s: %s", strings.Join(args, " "), err)
-	}
-	return strings.TrimSpace(string(output))
 }
 
 // .env.dist is a SOURCE file now, not a generated one: it declares what the app

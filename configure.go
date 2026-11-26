@@ -856,7 +856,7 @@ func modelHasRole(limits *ModelLimits, roles ...string) bool {
 	return false
 }
 
-func modelAllowedForPi(provider, modelID string, limits *ModelLimits) (bool, string) {
+func modelAllowedForPi(modelID string, limits *ModelLimits) (bool, string) {
 	name := strings.ToLower(strings.TrimSpace(modelID))
 	if name == "" {
 		return false, "model id is empty"
@@ -949,7 +949,7 @@ func validatePiModelSelection(cfg *trustantConfig) error {
 	if !ok {
 		return fmt.Errorf("pi.default model %q is not in the configured model list", defaultModel)
 	}
-	if ok, reason := modelAllowedForPi(cfg.Provider, defaultModel, limits); !ok {
+	if ok, reason := modelAllowedForPi(defaultModel, limits); !ok {
 		return fmt.Errorf("pi.default model %q is not allowed: %s", defaultModel, reason)
 	}
 	return nil
@@ -1326,7 +1326,7 @@ func buildPiModels(cfg *trustantConfig) []map[string]interface{} {
 	models := make([]map[string]interface{}, 0, len(ids))
 	for _, modelID := range ids {
 		limits := cfg.Models[modelID]
-		if ok, reason := modelAllowedForPi(cfg.Provider, modelID, limits); !ok {
+		if ok, reason := modelAllowedForPi(modelID, limits); !ok {
 			log.Printf("Skipping Pi model %s: %s", modelID, reason)
 			continue
 		}
@@ -2273,17 +2273,6 @@ func writeManagedMCPConfigs(projectDir string, mcp map[string]interface{}) (stri
 	return privatePath, nil
 }
 
-// writeClaudeMCPConfig remains as a test/source compatibility helper. The
-// managed launch path uses writeManagedMCPConfigs so credentials never enter
-// the workbench.
-func writeClaudeMCPConfig(projectDir string, mcp map[string]interface{}) error {
-	return writeJSONAtomic(
-		filepath.Join(projectDir, ".mcp.json"),
-		map[string]interface{}{"mcpServers": standardMCPServers(mcp)},
-		0644,
-	)
-}
-
 // toStringSlice coerces a []string or []interface{} (as produced by JSON
 // unmarshaling) into a []string, dropping non-string elements.
 func toStringSlice(v interface{}) []string {
@@ -2712,7 +2701,7 @@ func handleConfiguration(w http.ResponseWriter, r *http.Request) {
 }
 
 // handleGetConfiguration returns the merged configuration (base + workspace overrides)
-func handleGetConfiguration(w http.ResponseWriter, r *http.Request) {
+func handleGetConfiguration(w http.ResponseWriter, _ *http.Request) {
 	cfg, err := loadTrustantConfig()
 	if err != nil {
 		http.Error(w, "Failed to read configuration: "+err.Error(), http.StatusInternalServerError)
@@ -3137,7 +3126,7 @@ func handleAppConfig(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleGetAppConfig(w http.ResponseWriter, r *http.Request, name, workspacePath string) {
+func handleGetAppConfig(w http.ResponseWriter, _ *http.Request, name, _ string) {
 	cfg, err := loadTrustantConfig()
 	if err != nil {
 		http.Error(w, "Failed to load config: "+err.Error(), http.StatusInternalServerError)
@@ -3263,7 +3252,7 @@ func handleGetAppConfig(w http.ResponseWriter, r *http.Request, name, workspaceP
 	})
 }
 
-func handlePostAppConfig(w http.ResponseWriter, r *http.Request, name, workspacePath string) {
+func handlePostAppConfig(w http.ResponseWriter, r *http.Request, name, _ string) {
 	var req struct {
 		Vars []EnvVar `json:"vars"`
 	}
@@ -3453,7 +3442,7 @@ func handleDeletePredefinedEnv(w http.ResponseWriter, r *http.Request) {
 
 // handleGetPredefinedEnv returns the merged set, sorted by name so the table
 // renders in a stable order.
-func handleGetPredefinedEnv(w http.ResponseWriter, r *http.Request) {
+func handleGetPredefinedEnv(w http.ResponseWriter, _ *http.Request) {
 	cfg, err := loadTrustantConfig()
 	if err != nil {
 		http.Error(w, "Failed to read configuration: "+err.Error(), http.StatusInternalServerError)

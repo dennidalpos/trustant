@@ -260,25 +260,7 @@ var (
 	repoPattern = regexp.MustCompile(`^[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+$`)
 )
 
-func getExistingUsers() (map[string]bool, error) {
-	cmd := exec.Command("sh", "-c", "ops admin listuser | awk 'NR>1{print $1}'")
-	output, err := cmd.Output()
-	if err != nil {
-		return nil, fmt.Errorf("failed to list users: %w", err)
-	}
-
-	users := make(map[string]bool)
-	lines := strings.Split(strings.TrimSpace(string(output)), "\n")
-	for _, line := range lines {
-		line = strings.TrimSpace(line)
-		if line != "" {
-			users[line] = true
-		}
-	}
-	return users, nil
-}
-
-func handleGetRepo(w http.ResponseWriter, r *http.Request) {
+func handleGetRepo(w http.ResponseWriter, _ *http.Request) {
 	apps := []Application{}
 
 	// List folders in workspace

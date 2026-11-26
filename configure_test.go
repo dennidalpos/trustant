@@ -213,7 +213,7 @@ func TestModelAllowedForPiBlocksNonAgentModels(t *testing.T) {
 		"gte-Qwen2",
 	}
 	for _, model := range cases {
-		if ok, reason := modelAllowedForPi("myhost", model, nil); ok || reason == "" {
+		if ok, reason := modelAllowedForPi(model, nil); ok || reason == "" {
 			t.Fatalf("%s should be blocked for Pi, ok=%v reason=%q", model, ok, reason)
 		}
 	}
@@ -225,7 +225,7 @@ func TestModelAllowedForPiBlocksNonAgentModels(t *testing.T) {
 		"gpt-oss-20b",
 	}
 	for _, model := range allowed {
-		if ok, reason := modelAllowedForPi("myhost", model, nil); !ok {
+		if ok, reason := modelAllowedForPi(model, nil); !ok {
 			t.Fatalf("%s should be allowed for Pi, reason=%q", model, reason)
 		}
 	}
@@ -234,10 +234,10 @@ func TestModelAllowedForPiBlocksNonAgentModels(t *testing.T) {
 func TestModelAllowedForPiAllowSmallLiftsOnlyTheSizeRules(t *testing.T) {
 	override := &ModelLimits{AllowSmall: true}
 	for _, model := range []string{"qwen3.5:4b", "qwen3.5:9b", "myhost/tiny:1b", "myhost/small:3b", "flash:e4b"} {
-		if ok, reason := modelAllowedForPi("private", model, nil); ok || reason == "" {
+		if ok, reason := modelAllowedForPi(model, nil); ok || reason == "" {
 			t.Fatalf("%s should be blocked without the override, ok=%v reason=%q", model, ok, reason)
 		}
-		if ok, reason := modelAllowedForPi("private", model, override); !ok {
+		if ok, reason := modelAllowedForPi(model, override); !ok {
 			t.Fatalf("%s should be allowed with the override, reason=%q", model, reason)
 		}
 	}
@@ -253,7 +253,7 @@ func TestModelAllowedForPiAllowSmallLiftsOnlyTheSizeRules(t *testing.T) {
 		{"custom-model:4b", &ModelLimits{AllowSmall: true, Roles: []string{"embedding"}}},
 		{"custom-model:4b", &ModelLimits{AllowSmall: true, Enabled: &disabled}},
 	} {
-		if ok, _ := modelAllowedForPi("private", tc.model, tc.limits); ok {
+		if ok, _ := modelAllowedForPi(tc.model, tc.limits); ok {
 			t.Fatalf("%s must stay blocked even with the override", tc.model)
 		}
 	}
@@ -276,17 +276,17 @@ func TestModelLimitsAllowSmallSurvivesJSON(t *testing.T) {
 
 func TestModelAllowedForPiHonorsCatalogMetadata(t *testing.T) {
 	disabled := false
-	if ok, reason := modelAllowedForPi("trustant", "qwen3.6-27b", &ModelLimits{
+	if ok, reason := modelAllowedForPi("qwen3.6-27b", &ModelLimits{
 		Enabled: &disabled,
 		Reason:  "temporarily unavailable",
 	}); ok || reason != "temporarily unavailable" {
 		t.Fatalf("disabled catalog model should be blocked with reason, ok=%v reason=%q", ok, reason)
 	}
 
-	if ok, reason := modelAllowedForPi("trustant", "custom-safe-model", &ModelLimits{Roles: []string{"coding"}}); !ok {
+	if ok, reason := modelAllowedForPi("custom-safe-model", &ModelLimits{Roles: []string{"coding"}}); !ok {
 		t.Fatalf("coding role should allow model, reason=%q", reason)
 	}
-	if ok, reason := modelAllowedForPi("trustant", "custom-vector-model", &ModelLimits{Roles: []string{"embedding"}}); ok || reason == "" {
+	if ok, reason := modelAllowedForPi("custom-vector-model", &ModelLimits{Roles: []string{"embedding"}}); ok || reason == "" {
 		t.Fatalf("embedding role should block model, ok=%v reason=%q", ok, reason)
 	}
 }

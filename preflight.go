@@ -221,19 +221,6 @@ func runPreflight() error {
 	return nil
 }
 
-// mapsEqual compares two string maps for equality
-func mapsEqual(a, b map[string]string) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for k, v := range a {
-		if b[k] != v {
-			return false
-		}
-	}
-	return true
-}
-
 // stateDirName is the workspace directory holding server-side state that must
 // survive a pod restart: the persistent ssh key, GitHub auth, secrets and the
 // Pi agent config. A pre-rebrand .trustant/ directory is deliberately ignored

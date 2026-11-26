@@ -414,7 +414,7 @@ func (a *authManager) handleLogout(w http.ResponseWriter, r *http.Request) {
 			a.mu.Unlock()
 		}
 	}
-	a.clearSessionCookies(w, r)
+	a.clearSessionCookies(w)
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -531,7 +531,7 @@ func (a *authManager) setSessionCookie(w http.ResponseWriter, r *http.Request, v
 	})
 }
 
-func (a *authManager) clearSessionCookies(w http.ResponseWriter, r *http.Request) {
+func (a *authManager) clearSessionCookies(w http.ResponseWriter) {
 	for _, cookie := range []http.Cookie{
 		{Name: authSessionCookie, Path: "/", MaxAge: -1, Expires: time.Unix(1, 0), HttpOnly: true, SameSite: http.SameSiteStrictMode},
 		{Name: authSecureSessionCookie, Path: "/", MaxAge: -1, Expires: time.Unix(1, 0), HttpOnly: true, Secure: true, SameSite: http.SameSiteStrictMode},

@@ -250,6 +250,12 @@ go test ./...
 
 The file is Git-ignored. Existing metadata is preserved by this example.
 
+On Windows, open the checkout in an editor connected to the prepared WSL
+distribution so the Go language server uses the Linux toolchain. In an
+existing checkout with local Go files under `tmp/` or `node_modules/`, use
+`go vet .` and `go test .` from the repository root to check the Trustant
+package. Use `go test ./...` in a clean checkout as CI does.
+
 The lightweight Node checks use the built-in test runner:
 
 ```bash

@@ -255,18 +255,6 @@ func buildMCPFromOpsConfig(cfg *opsConfig) map[string]interface{} {
 	return mcp
 }
 
-// isTrustantManagedMCPServer reports whether an mcp server name is one this app
-// generates from ~/.ops/config.json. These belong in the LOCAL workbench
-// opencode.json, never the global one (see spec/4-launch.md); the global writer
-// uses this to drop any that leaked into a global config written by older code.
-func isTrustantManagedMCPServer(name string) bool {
-	switch name {
-	case "s3", "postgres", "redis", "milvus", "mongodb", "openserverless", "react":
-		return true
-	}
-	return false
-}
-
 // logOpsServiceBlocks reports which service blocks are present in
 // ~/.ops/config.json after `ops ide login`. The MCP servers and CLI wrappers are
 // generated only for present blocks (see buildMCPFromOpsConfig), so a missing
@@ -991,27 +979,6 @@ func terminateLeftoverProcesses() {
 	time.Sleep(500 * time.Millisecond)
 }
 
-// waitForProcessStart waits for a process to either exit (error) or stay running for the specified duration
-// Returns nil if process stays running, error if it exits prematurely
-func waitForProcessStart(cmd *exec.Cmd, duration time.Duration) error {
-	done := make(chan error, 1)
-	go func() {
-		done <- cmd.Wait()
-	}()
-
-	select {
-	case err := <-done:
-		// Process exited within the duration - this is an error
-		if err != nil {
-			return fmt.Errorf("process exited with error: %w", err)
-		}
-		return fmt.Errorf("process exited unexpectedly")
-	case <-time.After(duration):
-		// Process is still running after the duration - success
-		return nil
-	}
-}
-
 // ensureRequiredWorkbenchFolders scaffolds the folders every app must have
 // (spec/4-launch.md "ensure required folders"). It creates packages/.gitkeep
 // when packages/ is missing, and seeds web/ (index.html from the embedded
@@ -1713,7 +1680,7 @@ func handleLaunchGet(w http.ResponseWriter, r *http.Request, app string) {
 }
 
 // handleLaunchDelete handles DELETE /api/launch
-func handleLaunchDelete(w http.ResponseWriter, r *http.Request) {
+func handleLaunchDelete(w http.ResponseWriter, _ *http.Request) {
 	pgid, err := readPgid()
 	if err != nil {
 		// No pgid file - nothing running

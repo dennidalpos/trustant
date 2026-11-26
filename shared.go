@@ -982,7 +982,7 @@ type sharedListEntry struct {
 }
 
 // handleSharedList returns every app-produced variable across the workspace.
-func handleSharedList(w http.ResponseWriter, r *http.Request) {
+func handleSharedList(w http.ResponseWriter, _ *http.Request) {
 	cfg, err := loadTrustantConfig()
 	if err != nil {
 		http.Error(w, "Failed to read configuration: "+err.Error(), http.StatusInternalServerError)
