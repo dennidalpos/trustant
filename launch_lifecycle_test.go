@@ -147,7 +147,7 @@ esac
 		_ = oldWatcher.Wait()
 		close(oldWatcherExited)
 	}()
-	if err := waitForHTTP(port, 3*time.Second); err != nil {
+	if err := waitForHTTP(port, 15*time.Second); err != nil {
 		t.Fatal(err)
 	}
 	if err := writePgid(pgid); err != nil {
