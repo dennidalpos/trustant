@@ -163,7 +163,7 @@ The `acp/` delta is too large to reproduce line by line. Per-file diff: `git dif
 | `.github/workflows/github-release.yml` | removed | +0/-45 | Removed: release workflow of the standalone repository (unused inside this repository). |
 | `.github/workflows/npm-publish.yml` | removed | +0/-26 | Removed: npm publishing is not used; Trustant packages the source directly. |
 | `package-lock.json` | modified | +753/-749 | Lockfile regenerated for the same upgrade. |
-| `package.json` | modified | +8/-8 | Dependency bump for the SDK and Pi major upgrade (commit d767604, 'Major fase 3'). |
+| `package.json` | modified | +8/-8 | Dependency bump for the SDK and Pi major upgrade (commit d767604, 'Major fase 3'); repository, bugs and homepage point to trustant/pi-acp, the fork's origin. |
 | `src/acp/agent.ts` | modified | +4/-6 | Adapted to the SDK compatibility layer. |
 | `src/acp/sdk-compat.ts` | added | +108/-0 | New file: compatibility layer for the ACP SDK 2.x API used by the fork. |
 | `src/acp/session.ts` | modified | +2/-3 | Adapted to the SDK compatibility layer. |
@@ -968,7 +968,7 @@ No file differs from the baseline: the directory is identical to the original gi
 
 ## Root repository against `upstream/main`
 
-- Merge base `b901510`; the fork has 342 commits upstream lacks, upstream has 20 the fork lacks.
+- Merge base `b901510`; the fork has 346 commits upstream lacks, upstream has 20 the fork lacks.
 - Files also changed upstream since the merge base are marked **conflict risk**.
 
 | File | St | +/- | Conflict risk | Latest fork commits touching it (the reason) |
@@ -1003,15 +1003,15 @@ No file differs from the baseline: the directory is identical to the original gi
 | `.gitmodules` | M | +0/-16 |  | c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>19f8d3e 2026-09-24 branch<br>... and 5 more |
 | `.licenserc.yaml` | M | +7/-6 |  | c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>56225db 2026-08-26 added license<br>... and 1 more |
 | `.sbcheck-ignore` | A | +15/-0 |  | d29f1bb 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42) |
-| `AGENTS.md` | M | +33/-145 |  | 4e4d180 2026-11-26 AGENTS.md: aggiunge il passo sb start alla sezione SecondBrain<br>a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>... and 28 more |
+| `AGENTS.md` | M | +37/-145 |  | 5ead7f6 2026-11-26 Rimuove i riferimenti all'ambiente di test privato dal repository<br>60d135e 2026-11-26 AGENTS.md: blocco SecondBrain aggiornato da sb start<br>... and 30 more |
 | `AUDIT-2026-11-26.md` | A | +184/-0 |  | a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b) |
 | `CHANGELOG.md` | A | +111/-0 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>... and 13 more |
 | `CLAUDE.md` | M | +1/-258 | **yes** | 75b289d 2026-11-25 Link SecondBrain 5: sb block in AGENTS.md, CLAUDE.md points to it, v4 files removed<br>3c49237 2026-11-12 docs: consolidate agent instructions in AGENTS.md |
 | `CONTRIBUTING.md` | M | +62/-6 |  | 93ebe52 2026-11-24 Completa il lotto Private AI e ripristina la scansione Go<br>c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 8 more |
-| `CREDITS.md` | A | +130/-0 |  | cbe651c 2026-11-26 Legal: conferma del titolare sulle icone SVG inline non identiche a Heroicons<br>128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>... and 16 more |
-| `DEPS` | M | +205/-150 |  | 128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>7bbc207 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS<br>... and 19 more |
-| `LICENSE` | M | +70/-14 |  | 128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 10 more |
-| `NOTICE` | M | +21528/-1510 |  | 128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>7bbc207 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS<br>... and 15 more |
+| `CREDITS.md` | A | +130/-0 |  | d8f11bf 2026-11-26 Legal: registri top-level, pi-acp su trustant/pi-acp, esiti immagine v1.0.3<br>cbe651c 2026-11-26 Legal: conferma del titolare sulle icone SVG inline non identiche a Heroicons<br>... and 17 more |
+| `DEPS` | M | +207/-150 |  | d8f11bf 2026-11-26 Legal: registri top-level, pi-acp su trustant/pi-acp, esiti immagine v1.0.3<br>128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>... and 20 more |
+| `LICENSE` | M | +73/-16 |  | d8f11bf 2026-11-26 Legal: registri top-level, pi-acp su trustant/pi-acp, esiti immagine v1.0.3<br>128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>... and 11 more |
+| `NOTICE` | M | +22202/-1507 |  | d8f11bf 2026-11-26 Legal: registri top-level, pi-acp su trustant/pi-acp, esiti immagine v1.0.3<br>128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>... and 16 more |
 | `README.md` | M | +192/-230 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>... and 41 more |
 | `SECURITY.md` | A | +36/-0 |  | f184fc4 2026-11-19 docs: add mermaid flows and community and security files |
 | `aaa.code-workspace` | M | +20/-26 |  | 8b094a3 2026-11-21 Keep machine-specific workspace data local |
@@ -1034,7 +1034,7 @@ No file differs from the baseline: the directory is identical to the original gi
 | `docs/ollama.md` | A | +74/-0 |  | 7f7a287 2026-11-26 Ollama Instance: propone di aggiornare il preset Ollama host con IP WSL cambiato<br>33cca5c 2026-11-25 Ollama Instance: rileva e propone l'Ollama dell'host (WSL, Lima)<br>... and 2 more |
 | `docs/setup-macos.md` | A | +115/-0 |  | 87a8f0c 2026-11-26 Docs: OLLAMA_EXTERNAL, rilevamento host Ollama e rimozione degli e2e OpenCode<br>99bbcd9 2026-11-25 Non mette in stage i percorsi ignorati e completa le note di setup<br>... and 1 more |
 | `docs/setup-ubuntu.md` | A | +101/-0 |  | 87a8f0c 2026-11-26 Docs: OLLAMA_EXTERNAL, rilevamento host Ollama e rimozione degli e2e OpenCode<br>99bbcd9 2026-11-25 Non mette in stage i percorsi ignorati e completa le note di setup<br>... and 1 more |
-| `docs/setup-windows.md` | A | +151/-0 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>87a8f0c 2026-11-26 Docs: OLLAMA_EXTERNAL, rilevamento host Ollama e rimozione degli e2e OpenCode<br>... and 1 more |
+| `docs/setup-windows.md` | A | +139/-0 |  | 5ead7f6 2026-11-26 Rimuove i riferimenti all'ambiente di test privato dal repository<br>68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 2 more |
 | `docs/use-cases.md` | A | +178/-0 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>5ad82aa 2026-11-25 Aggiorna Ollama a 0.40.18 e aggiunge le guide in docs/ |
 | `envcrypt.env` | D | +0/-2 |  | 8b094a3 2026-11-21 Keep machine-specific workspace data local |
 | `envinject_test.go` | A | +128/-0 |  | b26271d 2026-11-24 Rifiuta caratteri di controllo nei file env e valida i nomi di appconfig (#124) |
@@ -1055,11 +1055,11 @@ No file differs from the baseline: the directory is identical to the original gi
 | `launch.go` | M | +105/-50 | **yes** | 99bbcd9 2026-11-25 Non mette in stage i percorsi ignorati e completa le note di setup<br>7bbc207 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS<br>... and 5 more |
 | `launch_lifecycle_test.go` | M | +150/-0 |  | 728801c 2026-11-26 Test: attesa piu' lunga per l'avvio del watcher node su runner ARM64<br>e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
 | `launch_progress_test.go` | M | +27/-9 |  | 7bbc207 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS |
-| `legal/COMPONENTS.json` | A | +7773/-0 |  | 128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>7bbc207 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS<br>... and 19 more |
-| `legal/IMAGE-v1.0.3.md` | A | +71/-0 |  | 2d90eee 2026-11-26 Legal: qualificazione parziale dell'immagine v1.0.3 per digest |
+| `legal/COMPONENTS.json` | A | +7805/-0 |  | d8f11bf 2026-11-26 Legal: registri top-level, pi-acp su trustant/pi-acp, esiti immagine v1.0.3<br>128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>... and 20 more |
+| `legal/IMAGE-v1.0.3.md` | A | +84/-0 |  | d8f11bf 2026-11-26 Legal: registri top-level, pi-acp su trustant/pi-acp, esiti immagine v1.0.3<br>2d90eee 2026-11-26 Legal: qualificazione parziale dell'immagine v1.0.3 per digest |
 | `legal/REVIEW.md` | A | +159/-0 |  | a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>... and 7 more |
 | `legal/VENDORED.md` | A | +545/-0 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>... and 22 more |
-| `legal/deps.manual.txt` | M | +47/-20 |  | 128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>5ad82aa 2026-11-25 Aggiorna Ollama a 0.40.18 e aggiunge le guide in docs/<br>... and 15 more |
+| `legal/deps.manual.txt` | M | +49/-20 |  | d8f11bf 2026-11-26 Legal: registri top-level, pi-acp su trustant/pi-acp, esiti immagine v1.0.3<br>128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>... and 16 more |
 | `legal/deps.py` | M | +125/-25 |  | 058c9b2 2026-11-25 deps.py: usa la versione del toolchain Go per la licenza<br>bd1d130 2026-11-22 Rebuild ops from the CLI fork and bump Trustant to v1.1.3<br>... and 4 more |
 | `legal/licenses/OFL-1.1.txt` | A | +43/-0 |  | f5ee4bc 2026-11-12 docs: refresh third-party licensing records |
 | `legal/upstream_compare.py` | A | +296/-0 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b) |
@@ -1088,20 +1088,21 @@ No file differs from the baseline: the directory is identical to the original gi
 | `provision.go` | M | +25/-25 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
 | `provision_test.go` | M | +5/-5 |  | d29f1bb 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42) |
 | `proxy_test.go` | A | +41/-0 |  | 47fd99b 2026-11-19 fix(files,proxy): stop caching the file tree and document the stream timeout chain |
-| `prune_test.go` | M | +240/-2 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
+| `prune_test.go` | M | +276/-2 |  | 8ceb787 2026-11-26 Cancellazione app: rimuove la directory dei log runtime dell'app<br>68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 1 more |
 | `publish.go` | M | +45/-65 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
 | `publish_imports_test.go` | M | +135/-0 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
 | `react-mcp/package-lock.json` | M | +52/-48 |  | 044b0e9 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102)<br>8b1c109 2026-11-20 Update runtime dependencies and report development GUI readiness<br>... and 2 more |
 | `react-mcp/package.json` | M | +2/-2 |  | 044b0e9 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102)<br>8b1c109 2026-11-20 Update runtime dependencies and report development GUI readiness |
-| `repo.go` | M | +157/-57 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>a0bd211 2026-11-24 Passa la password di ops admin adduser per ambiente invece che da argv (#119)<br>... and 2 more |
+| `repo.go` | M | +161/-57 | **yes** | 8ceb787 2026-11-26 Cancellazione app: rimuove la directory dei log runtime dell'app<br>68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 3 more |
 | `run.sh` | M | +49/-16 | **yes** | d0f1057 2026-11-25 Esporta TRUSTANT_AUTH_* da run.sh dopo aver caricato .env<br>0891295 2026-11-25 Migra Air a build.entrypoint e salta ollama locale con endpoint remoto<br>... and 2 more |
+| `runtime_log.go` | M | +11/-0 |  | 8ceb787 2026-11-26 Cancellazione app: rimuove la directory dei log runtime dell'app |
 | `safefile.go` | A | +79/-0 |  | 5ef1079 2026-11-24 Estende le scritture senza symlink agli altri file del workbench<br>120c8c0 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
 | `safefile_test.go` | A | +75/-0 |  | 120c8c0 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
 | `safefile_unix.go` | A | +21/-0 |  | 120c8c0 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
 | `safefile_windows.go` | A | +19/-0 |  | 120c8c0 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
 | `security_gaps_test.go` | A | +219/-0 |  | 478ec5e 2026-11-24 Esegue l'escape di Host nella pagina errore e vincola la sorgente OPS_SKILLS (#114 #116 #123)<br>c7ff349 2026-11-24 Aggiunge test per sessione, logout e routing per hostname |
 | `setup.sh` | M | +73/-22 | **yes** | 2aa7d7f 2026-11-24 Imposta go 1.27 con toolchain go1.27.4 e allinea setup.sh (#113)<br>c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 20 more |
-| `setup_test.go` | M | +246/-41 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 5 more |
+| `setup_test.go` | M | +246/-41 |  | 5ead7f6 2026-11-26 Rimuove i riferimenti all'ambiente di test privato dal repository<br>0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>... and 6 more |
 | `shared.go` | M | +42/-35 |  | b26271d 2026-11-24 Rifiuta caratteri di controllo nei file env e valida i nomi di appconfig (#124)<br>5ef1079 2026-11-24 Estende le scritture senza symlink agli altri file del workbench<br>... and 1 more |
 | `shared_test.go` | M | +2/-2 |  | d29f1bb 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42) |
 | `skills.go` | M | +78/-7 |  | 11f03a7 2026-11-24 Allinea SkillInfo con gofmt e salta il test invoke su Windows (#125 #126)<br>478ec5e 2026-11-24 Esegue l'escape di Host nella pagina errore e vincola la sorgente OPS_SKILLS (#114 #116 #123)<br>... and 1 more |
@@ -1117,7 +1118,7 @@ No file differs from the baseline: the directory is identical to the original gi
 | `spec/17-proxy.md` | M | +24/-0 |  | b45002b 2026-11-19 chore: add repository lint and ACP streaming regression tests<br>47fd99b 2026-11-19 fix(files,proxy): stop caching the file tree and document the stream timeout chain |
 | `spec/18-shared.md` | M | +3/-2 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
 | `spec/2-repo.md` | M | +18/-10 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>a0bd211 2026-11-24 Passa la password di ops admin adduser per ambiente invece che da argv (#119)<br>... and 1 more |
-| `spec/20-legal.md` | M | +58/-4 |  | a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>a260c56 2026-11-19 docs(legal): document the registry generation flow and vendored sources<br>... and 1 more |
+| `spec/20-legal.md` | M | +64/-4 |  | d8f11bf 2026-11-26 Legal: registri top-level, pi-acp su trustant/pi-acp, esiti immagine v1.0.3<br>a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>... and 2 more |
 | `spec/2a-config.md` | M | +141/-29 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>... and 9 more |
 | `spec/3-app.md` | M | +13/-5 | **yes** | dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>e4d8961 2026-11-24 Corregge accessibilità di Inventario, Template e TruACP (UIX02)<br>... and 1 more |
 | `spec/4-launch.md` | M | +37/-19 | **yes** | 7287dd0 2026-11-25 Più tempo per i PC lenti e guida su Ollama<br>a0bd211 2026-11-24 Passa la password di ops admin adduser per ambiente invece che da argv (#119)<br>... and 6 more |

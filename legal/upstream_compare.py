@@ -77,7 +77,7 @@ REASONS = {
     "mcp/package-lock.json": "Lockfile regenerated for the zod 4.6.7 update (commit d254cb9).",
     "mcp/requirements.txt": "Python pins updated for Dependabot alerts (certifi 2026.10.18, dnspython 2.9.2 and others; commit d254cb9).",
     "mcp/tests/invoke.test.ts": "The test writes a POSIX shebang stub for `ops`, which Windows cannot execute, so it is skipped on win32 (commit 11f03a7, #125 #126). Plus the Apache 4(b) modification notice.",
-    "acp/pi-acp/package.json": "Dependency bump for the SDK and Pi major upgrade (commit d767604, 'Major fase 3').",
+    "acp/pi-acp/package.json": "Dependency bump for the SDK and Pi major upgrade (commit d767604, 'Major fase 3'); repository, bugs and homepage point to trustant/pi-acp, the fork's origin.",
     "acp/pi-acp/package-lock.json": "Lockfile regenerated for the same upgrade.",
     "acp/pi-acp/src/acp/sdk-compat.ts": "New file: compatibility layer for the ACP SDK 2.x API used by the fork.",
     "acp/pi-acp/src/acp/agent.ts": "Adapted to the SDK compatibility layer.",

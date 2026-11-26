@@ -6,16 +6,16 @@
   "author": "Sergii Kozak <svkozak@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/trustable-ai/pi-acp.git"
+    "url": "https://github.com/trustant/pi-acp.git"
   },
   "publishConfig": {
     "access": "public",
     "provenance": true
   },
   "bugs": {
-    "url": "https://github.com/trustable-ai/pi-acp/issues"
+    "url": "https://github.com/trustant/pi-acp/issues"
   },
-  "homepage": "https://github.com/trustable-ai/pi-acp#readme",
+  "homepage": "https://github.com/trustant/pi-acp#readme",
   "keywords": [
     "acp",
     "agent-client-protocol",
