@@ -554,6 +554,8 @@ mcp-server-milvus (fork, a7e624f)                      a7e624f  Apache-2.0      
 milvus-cli                                             1.2.1    Apache-2.0                                        https://github.com/zilliztech/milvus_cli
 pglast (postgres-mcp dependency, bundles libpg_query)  7.21     GPL-3.0-or-later AND BSD-3-Clause AND PostgreSQL  https://github.com/lelit/pglast
 postgres-mcp                                           0.3.0    MIT                                               https://github.com/crystaldba/postgres-mcp
+psycopg (postgres-mcp dependency)                      3.3.9    LGPL-3.0-only                                     https://github.com/psycopg/psycopg
+psycopg-binary (postgres-mcp dependency)               3.3.9    LGPL-3.0-only                                     https://github.com/psycopg/psycopg
 psycopg-pool (postgres-mcp dependency)                 3.3.3    LGPL-3.0-only                                     https://pypi.org/project/psycopg-pool
 python-lsp-server                                      latest   MIT                                               https://github.com/python-lsp/python-lsp-server
 redis-entraid (transitive, no license metadata)        1.2.2    MIT                                               https://github.com/redis/redis-py-entraid

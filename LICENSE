@@ -2034,7 +2034,9 @@ That's all there is to it!
 ===============================================================================
 License: LGPL-3.0-only
 ===============================================================================
-Used by: psycopg, psycopg-binary, psycopg-pool (postgres-mcp dependency)
+Used by: psycopg, psycopg (postgres-mcp dependency), psycopg-binary,
+psycopg-binary (postgres-mcp dependency), psycopg-pool (postgres-mcp
+dependency)
 -------------------------------------------------------------------------------
 
 GNU LESSER GENERAL PUBLIC LICENSE

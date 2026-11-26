@@ -67,13 +67,21 @@ func proxyDevelopmentApplication(w http.ResponseWriter, r *http.Request, appName
 		return false
 	}
 
-	proxy := httputil.NewSingleHostReverseProxy(target)
-	director := proxy.Director
-	proxy.Director = func(request *http.Request) {
-		originalHost := request.Host
-		director(request)
-		request.Host = target.Host
-		request.Header.Set("X-Forwarded-Host", originalHost)
+	proxy := &httputil.ReverseProxy{
+		Rewrite: func(pr *httputil.ProxyRequest) {
+			pr.SetURL(target)
+			pr.Out.Host = target.Host
+			// Rewrite drops inbound forwarding headers: keep the previous Director behavior.
+			if proto := pr.In.Header.Get("X-Forwarded-Proto"); proto != "" {
+				pr.Out.Header.Set("X-Forwarded-Proto", proto)
+			}
+			clientIP, _, splitErr := net.SplitHostPort(pr.In.RemoteAddr)
+			if splitErr == nil {
+				chain := append(append([]string{}, pr.In.Header.Values("X-Forwarded-For")...), clientIP)
+				pr.Out.Header.Set("X-Forwarded-For", strings.Join(chain, ", "))
+			}
+			pr.Out.Header.Set("X-Forwarded-Host", pr.In.Host)
+		},
 	}
 	proxy.Transport = developmentProxyTransport
 	proxy.ErrorHandler = func(response http.ResponseWriter, request *http.Request, proxyErr error) {

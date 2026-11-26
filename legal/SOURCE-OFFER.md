@@ -23,7 +23,7 @@ with a `deb-src` entry for Ubuntu 24.04 (noble) enabled, or from
 | Component | Version | License | Source |
 |---|---|---|---|
 | pglast (with libpg_query) | 7.21 | GPL-3.0-or-later | <https://github.com/lelit/pglast>, sdist `pglast==7.21` on PyPI |
-| psycopg | as installed | LGPL-3.0-only | <https://github.com/psycopg/psycopg>, sdist on PyPI |
+| psycopg, psycopg-binary | 3.3.9 | LGPL-3.0-only | <https://github.com/psycopg/psycopg>, sdist on PyPI |
 | psycopg-pool | 3.3.3 | LGPL-3.0-only | <https://github.com/psycopg/psycopg>, sdist `psycopg-pool==3.3.3` |
 | docstring-to-markdown | 0.17 | LGPL-2.1-or-later | <https://github.com/python-lsp/docstring-to-markdown>, sdist on PyPI |
 
@@ -40,6 +40,4 @@ are no longer available. Open an issue at
 component. The source is provided at no more than the cost of physically
 performing the distribution.
 
-This is a technical notice, not legal advice. Open points: nine apt packages
-without a copyright file and the exact versions of the GPL/LGPL Python
-components in the image.
+This is a technical notice, not legal advice.

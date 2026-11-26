@@ -7474,6 +7474,38 @@
     },
     {
       "section": "pytool",
+      "name": "psycopg (postgres-mcp dependency)",
+      "version": "3.3.9",
+      "license": "LGPL-3.0-only",
+      "homepage": "https://github.com/psycopg/psycopg",
+      "source": "pypi:psycopg==3.3.9",
+      "status": "license-files-collected",
+      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices. Review corresponding/covered source and any replacement or relinking requirements.",
+      "evidence": [
+        {
+          "file": "licenses__LICENSE.txt",
+          "sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118"
+        }
+      ]
+    },
+    {
+      "section": "pytool",
+      "name": "psycopg-binary (postgres-mcp dependency)",
+      "version": "3.3.9",
+      "license": "LGPL-3.0-only",
+      "homepage": "https://github.com/psycopg/psycopg",
+      "source": "pypi:psycopg-binary==3.3.9",
+      "status": "license-files-collected",
+      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices. Review corresponding/covered source and any replacement or relinking requirements.",
+      "evidence": [
+        {
+          "file": "licenses__LICENSE.txt",
+          "sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118"
+        }
+      ]
+    },
+    {
+      "section": "pytool",
       "name": "psycopg-pool (postgres-mcp dependency)",
       "version": "3.3.3",
       "license": "LGPL-3.0-only",

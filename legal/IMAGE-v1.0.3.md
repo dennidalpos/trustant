@@ -97,3 +97,13 @@ Reproduce: resolve the tag through the registry API, take the per-arch manifest
 digests above, download and verify layers, scan tar members for
 `var/lib/dpkg/status`, `usr/share/doc/*/copyright`, `package.json` under
 `node_modules` and `*.dist-info/METADATA`.
+
+## Update 2026-11-27
+
+- The 9 apt packages without their own copyright file have their documentation
+  directory symlinked to a package that has one: libatomic1, libgcc-s1 and
+  libstdc++6 to gcc-14-base; libncursesw6 to libtinfo6; libpython3.12-stdlib to
+  libpython3.12-minimal (libpython3.12t64 to libpython3.12-stdlib);
+  openssh-server and openssh-sftp-server to openssh-client. Nothing is missing.
+- Python LGPL components installed: psycopg 3.3.9, psycopg-binary 3.3.9,
+  psycopg-pool 3.3.3 (all LGPL-3.0-only); now in DEPS.

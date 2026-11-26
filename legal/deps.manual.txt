@@ -130,6 +130,8 @@ pytool | python-lsp-server | latest | MIT | https://github.com/python-lsp/python
 pytool | yapf | latest | Apache-2.0 | https://github.com/google/yapf | pypi:yapf
 pytool | postgres-mcp | 0.3.0 | MIT | https://github.com/crystaldba/postgres-mcp | pypi:postgres-mcp==0.3.0
 pytool | pglast (postgres-mcp dependency, bundles libpg_query) | 7.21 | GPL-3.0-or-later AND BSD-3-Clause AND PostgreSQL | https://github.com/lelit/pglast | url:https://raw.githubusercontent.com/pganalyze/libpg_query/c2c27b1e5b13584b594e5dee082f9d007b5e721b/LICENSE
+pytool | psycopg (postgres-mcp dependency) | 3.3.9 | LGPL-3.0-only | https://github.com/psycopg/psycopg | pypi:psycopg==3.3.9
+pytool | psycopg-binary (postgres-mcp dependency) | 3.3.9 | LGPL-3.0-only | https://github.com/psycopg/psycopg | pypi:psycopg-binary==3.3.9
 pytool | psycopg-pool (postgres-mcp dependency) | 3.3.3 | LGPL-3.0-only | https://pypi.org/project/psycopg-pool | pypi:psycopg-pool==3.3.3
 pytool | docstring-to-markdown (python-lsp-server dependency) | 0.17 | LGPL-2.1-or-later | https://pypi.org/project/docstring-to-markdown | pypi:docstring-to-markdown==0.17
 pytool | redis-mcp-server | 0.5.1 | MIT | https://github.com/redis/mcp-redis | url:https://raw.githubusercontent.com/redis/mcp-redis/11e67e44358cd6410d5a7e615a29539ccd71a045/LICENSE
