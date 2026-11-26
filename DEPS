@@ -69,7 +69,7 @@ acp (TruACP)                                            vendored           AGPL-
 mcp (openserverless-mcp)                                main               Apache-2.0         https://github.com/trustant/openserverless-mcp
 obsidian-agent-client (origin of acp, upstream 0.11.0)  0.11.0             Apache-2.0         https://github.com/RAIT-09/obsidian-agent-client
 oplugins (openserverless-task)                          0.9.0              Apache-2.0         https://github.com/trustable-ai/openserverless-task
-pi-acp (fork, vendored in acp/pi-acp)                   0.0.31-trustant.1  MIT                https://github.com/trustable-ai/pi-acp
+pi-acp (fork, vendored in acp/pi-acp)                   0.0.31-trustant.1  MIT                https://github.com/trustant/pi-acp
 pi-acp (upstream svkozak/pi-acp, base of the fork)      0.0.31             MIT                https://github.com/svkozak/pi-acp
 skills                                                  main               Apache-2.0         https://github.com/trustable-ai/skills
 
@@ -547,11 +547,13 @@ Each tool runs in its own uv-managed virtualenv under /opt/uv/tools.
 
 NAME                                                   VERSION  LICENSE                                           HOMEPAGE
 ----                                                   -------  -------                                           --------
+docstring-to-markdown (python-lsp-server dependency)   0.17     LGPL-2.1-or-later                                 https://pypi.org/project/docstring-to-markdown
 mcp (Python MCP SDK, <2)                               1.x      MIT                                               https://github.com/modelcontextprotocol/python-sdk
 mcp-server-milvus (fork, a7e624f)                      a7e624f  Apache-2.0                                        https://github.com/trustable-ai/mcp-server-milvus
 milvus-cli                                             1.2.1    Apache-2.0                                        https://github.com/zilliztech/milvus_cli
 pglast (postgres-mcp dependency, bundles libpg_query)  7.21     GPL-3.0-or-later AND BSD-3-Clause AND PostgreSQL  https://github.com/lelit/pglast
 postgres-mcp                                           0.3.0    MIT                                               https://github.com/crystaldba/postgres-mcp
+psycopg-pool (postgres-mcp dependency)                 3.3.3    LGPL-3.0-only                                     https://pypi.org/project/psycopg-pool
 python-lsp-server                                      latest   MIT                                               https://github.com/python-lsp/python-lsp-server
 redis-mcp-server                                       0.5.1    MIT                                               https://github.com/redis/mcp-redis
 yapf                                                   latest   Apache-2.0                                        https://github.com/google/yapf

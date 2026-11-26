@@ -7362,6 +7362,22 @@
     },
     {
       "section": "pytool",
+      "name": "docstring-to-markdown (python-lsp-server dependency)",
+      "version": "0.17",
+      "license": "LGPL-2.1-or-later",
+      "homepage": "https://pypi.org/project/docstring-to-markdown",
+      "source": "pypi:docstring-to-markdown==0.17",
+      "status": "license-files-collected",
+      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices. Review corresponding/covered source and any replacement or relinking requirements.",
+      "evidence": [
+        {
+          "file": "licenses__LICENSE",
+          "sha256": "20c17d8b8c48a600800dfd14f95d5cb9ff47066a9641ddeab48dc54aec96e331"
+        }
+      ]
+    },
+    {
+      "section": "pytool",
       "name": "mcp (Python MCP SDK, <2)",
       "version": "1.x",
       "license": "MIT",
@@ -7437,6 +7453,22 @@
         {
           "file": "licenses__LICENSE",
           "sha256": "013c8daa80c427b5f98cf7ff16c0c79f2adc2a5bd29e05aef7775f43f6c00fdd"
+        }
+      ]
+    },
+    {
+      "section": "pytool",
+      "name": "psycopg-pool (postgres-mcp dependency)",
+      "version": "3.3.3",
+      "license": "LGPL-3.0-only",
+      "homepage": "https://pypi.org/project/psycopg-pool",
+      "source": "pypi:psycopg-pool==3.3.3",
+      "status": "license-files-collected",
+      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices. Review corresponding/covered source and any replacement or relinking requirements.",
+      "evidence": [
+        {
+          "file": "licenses__LICENSE.txt",
+          "sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118"
         }
       ]
     },
@@ -7598,7 +7630,7 @@
       "name": "pi-acp (fork, vendored in acp/pi-acp)",
       "version": "0.0.31-trustant.1",
       "license": "MIT",
-      "homepage": "https://github.com/trustable-ai/pi-acp",
+      "homepage": "https://github.com/trustant/pi-acp",
       "source": "path:acp/pi-acp",
       "status": "license-files-collected",
       "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",

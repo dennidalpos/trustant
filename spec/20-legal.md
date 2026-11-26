@@ -78,6 +78,12 @@ container image. Floating versions, indirect Ubuntu packages, global npm/Python
 dependency trees, downloaded runtime libraries and artwork provenance need
 separate verification. See [review scope and open items](../legal/REVIEW.md).
 
+Decision (2026-11-26): DEPS, NOTICE and COMPONENTS.json stay a top-level list of
+declared components, not an inventory of the resolved image. The full per-digest
+inventory (apt, npm, Python) is kept in
+[legal/IMAGE-v1.0.3.md](../legal/IMAGE-v1.0.3.md) and is refreshed per image
+release, not merged into the generated registers.
+
 Claude Code is deliberately absent: it is proprietary and is never shipped
 (issue #12); a note in DEPS says so.
 

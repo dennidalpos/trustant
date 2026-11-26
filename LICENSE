@@ -1849,7 +1849,8 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 ===============================================================================
 License: LGPL-2.1-or-later
 ===============================================================================
-Used by: 7zz (7-Zip), ffmpeg (screenshot.sh), locales
+Used by: 7zz (7-Zip), docstring-to-markdown (python-lsp-server dependency),
+ffmpeg (screenshot.sh), locales
 -------------------------------------------------------------------------------
 
 GNU LESSER GENERAL PUBLIC LICENSE
@@ -2033,7 +2034,7 @@ That's all there is to it!
 ===============================================================================
 License: LGPL-3.0-only
 ===============================================================================
-Used by: psycopg, psycopg-binary
+Used by: psycopg, psycopg-binary, psycopg-pool (postgres-mcp dependency)
 -------------------------------------------------------------------------------
 
 GNU LESSER GENERAL PUBLIC LICENSE

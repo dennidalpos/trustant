@@ -62,8 +62,21 @@ comes from the layer contents. It replaces the v1.0.2 digests recorded earlier.
 - Corresponding sources for the GPL/LGPL components not retrieved or linked.
 - Licenses of the 3 unlicensed npm and 2 unlicensed Python entries not yet
   resolved; 9 apt packages without a copyright file.
-- DEPS / COMPONENTS.json not regenerated to the resolved image contents
-  (decision needed: full resolved inventory vs top-level list).
+- DEPS / COMPONENTS.json stay a top-level list (decision 2026-11-26); this
+  file is the full resolved inventory.
+
+## Follow-up 2026-11-26 (amd64 layers re-read, nothing executed)
+
+- `psycopg-pool` 3.3.3 (LGPL-3.0-only, in the postgres-mcp tool env) and
+  `docstring-to-markdown` 0.17 (LGPL-2.1-or-later, in python-lsp-server) are
+  now in DEPS and NOTICE.
+- **`gh` in the image is 2.96.0** (build string in `usr/local/bin/gh`, layer 6),
+  while `image/Dockerfile` and DEPS pin 2.105.0. DEPS describes the current
+  repository, not v1.0.3; the next image release should carry 2.105.0.
+- `ollama` (layer 2) and `mcp-s3` (layers 10, 24, 25, 27): no reliable version
+  string in the binaries (mcp-s3 shows both 1.3.0 and 1.3.1 patterns), so the
+  shipped versions stay unproven without running them.
+- Corresponding sources for the GPL/LGPL components are still not retrieved.
 
 Reproduce: resolve the tag through the registry API, take the per-arch manifest
 digests above, download and verify layers, scan tar members for

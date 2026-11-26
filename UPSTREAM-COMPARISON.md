@@ -968,7 +968,7 @@ No file differs from the baseline: the directory is identical to the original gi
 
 ## Root repository against `upstream/main`
 
-- Merge base `b901510`; the fork has 335 commits upstream lacks, upstream has 20 the fork lacks.
+- Merge base `b901510`; the fork has 342 commits upstream lacks, upstream has 20 the fork lacks.
 - Files also changed upstream since the merge base are marked **conflict risk**.
 
 | File | St | +/- | Conflict risk | Latest fork commits touching it (the reason) |
@@ -1003,7 +1003,7 @@ No file differs from the baseline: the directory is identical to the original gi
 | `.gitmodules` | M | +0/-16 |  | c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>19f8d3e 2026-09-24 branch<br>... and 5 more |
 | `.licenserc.yaml` | M | +7/-6 |  | c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>56225db 2026-08-26 added license<br>... and 1 more |
 | `.sbcheck-ignore` | A | +15/-0 |  | d29f1bb 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42) |
-| `AGENTS.md` | M | +32/-145 |  | a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>75b289d 2026-11-25 Link SecondBrain 5: sb block in AGENTS.md, CLAUDE.md points to it, v4 files removed<br>... and 27 more |
+| `AGENTS.md` | M | +33/-145 |  | 4e4d180 2026-11-26 AGENTS.md: aggiunge il passo sb start alla sezione SecondBrain<br>a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>... and 28 more |
 | `AUDIT-2026-11-26.md` | A | +184/-0 |  | a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b) |
 | `CHANGELOG.md` | A | +111/-0 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>... and 13 more |
 | `CLAUDE.md` | M | +1/-258 | **yes** | 75b289d 2026-11-25 Link SecondBrain 5: sb block in AGENTS.md, CLAUDE.md points to it, v4 files removed<br>3c49237 2026-11-12 docs: consolidate agent instructions in AGENTS.md |
@@ -1017,13 +1017,14 @@ No file differs from the baseline: the directory is identical to the original gi
 | `aaa.code-workspace` | M | +20/-26 |  | 8b094a3 2026-11-21 Keep machine-specific workspace data local |
 | `adduser_test.go` | A | +69/-0 |  | d29f1bb 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42)<br>a0bd211 2026-11-24 Passa la password di ops admin adduser per ambiente invece che da argv (#119) |
 | `auth.go` | M | +90/-9 |  | 482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>ceda923 2026-11-24 Chiave del limite di login affidabile dietro un proxy (#120) |
-| `auth_host.go` | A | +292/-0 |  | 482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp |
-| `auth_host_test.go` | A | +296/-0 |  | 482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp |
+| `auth_host.go` | A | +312/-0 |  | 1cf39de 2026-11-26 Auth: cookie di sessione host utilizzabile nell'iframe dell'assistente<br>482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp |
+| `auth_host_test.go` | A | +329/-0 |  | 1cf39de 2026-11-26 Auth: cookie di sessione host utilizzabile nell'iframe dell'assistente<br>482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp |
 | `auth_proxy_test.go` | A | +89/-0 |  | ceda923 2026-11-24 Chiave del limite di login affidabile dietro un proxy (#120) |
 | `auth_warning_test.go` | A | +20/-0 |  | 2daaf7e 2026-11-24 Avvisa all'avvio quando l'autenticazione e disattivata (#121) |
 | `bind.go` | M | +200/-70 |  | 7287dd0 2026-11-25 Più tempo per i PC lenti e guida su Ollama<br>d6f441c 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip<br>... and 4 more |
 | `bind_test.go` | M | +114/-0 |  | d6f441c 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip<br>01f73cf 2026-11-20 Update Trustant tooling and add Ollama import suggestions |
 | `biome.jsonc` | A | +55/-0 |  | b45002b 2026-11-19 chore: add repository lint and ACP streaming regression tests |
+| `build.sh` | M | +4/-0 |  | 27bacfe 2026-11-26 Ingress truacp-ing a 8910 via patch applicata dal build, senza push al submodulo |
 | `configure.go` | M | +369/-209 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>58b4209 2026-11-25 Aggiunge preset di istanze Ollama con interruttore locale/esterno e Refresh models per il Private AI<br>... and 8 more |
 | `configure_test.go` | M | +248/-5 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>9101e0e 2026-11-25 Configure: Save & Configure non chiede l'host con un'istanza Ollama attiva<br>... and 5 more |
 | `credits.go` | M | +1/-1 |  | d6f441c 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip |
@@ -1052,9 +1053,10 @@ No file differs from the baseline: the directory is identical to the original gi
 | `image/ops-prereq-error.patch` | A | +84/-0 |  | bd1d130 2026-11-22 Rebuild ops from the CLI fork and bump Trustant to v1.1.3 |
 | `intro.png` | D | +-/-- |  | 086b68d 2026-11-21 Remove private workstation examples from current sources |
 | `launch.go` | M | +105/-50 | **yes** | 99bbcd9 2026-11-25 Non mette in stage i percorsi ignorati e completa le note di setup<br>7bbc207 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS<br>... and 5 more |
-| `launch_lifecycle_test.go` | M | +150/-0 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
+| `launch_lifecycle_test.go` | M | +150/-0 |  | 728801c 2026-11-26 Test: attesa piu' lunga per l'avvio del watcher node su runner ARM64<br>e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
 | `launch_progress_test.go` | M | +27/-9 |  | 7bbc207 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS |
 | `legal/COMPONENTS.json` | A | +7773/-0 |  | 128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>7bbc207 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS<br>... and 19 more |
+| `legal/IMAGE-v1.0.3.md` | A | +71/-0 |  | 2d90eee 2026-11-26 Legal: qualificazione parziale dell'immagine v1.0.3 per digest |
 | `legal/REVIEW.md` | A | +159/-0 |  | a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>... and 7 more |
 | `legal/VENDORED.md` | A | +545/-0 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>... and 22 more |
 | `legal/deps.manual.txt` | M | +47/-20 |  | 128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>5ad82aa 2026-11-25 Aggiorna Ollama a 0.40.18 e aggiunge le guide in docs/<br>... and 15 more |
@@ -1074,9 +1076,12 @@ No file differs from the baseline: the directory is identical to the original gi
 | `ollama_local.go` | A | +187/-0 |  | bf80f86 2026-11-25 Aggiunge Start/Stop e stato dell'Ollama locale nella UI Private AI |
 | `ollama_local_test.go` | A | +172/-0 |  | bf80f86 2026-11-25 Aggiunge Start/Stop e stato dell'Ollama locale nella UI Private AI |
 | `opencode_upgrade_plan.md` | M | +1/-1 |  | d9af289 2026-11-23 docs: note TruACP tests need Ubuntu, fix check script path in upgrade plan |
+| `openserverless-instructions.md` | M | +29/-0 |  | cd545d1 2026-11-26 Direttive app: sezione 'How the System Works' per orientare l'agente |
 | `opsdevel_test.go` | A | +25/-0 |  | c06abb1 2026-11-24 Avvia ops ide devel senza shell (#118) |
 | `package-lock.json` | M | +224/-30 |  | 67db7e2 2026-11-20 Refresh npm dependencies and fix WSL startup<br>b45002b 2026-11-19 chore: add repository lint and ACP streaming regression tests |
 | `package.json` | M | +7/-8 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>58b4209 2026-11-25 Aggiunge preset di istanze Ollama con interruttore locale/esterno e Refresh models per il Private AI<br>... and 4 more |
+| `patches/apply.sh` | A | +27/-0 |  | 27bacfe 2026-11-26 Ingress truacp-ing a 8910 via patch applicata dal build, senza push al submodulo |
+| `patches/oplugins-truinst-truacp-ingress.patch` | A | +39/-0 |  | 27bacfe 2026-11-26 Ingress truacp-ing a 8910 via patch applicata dal build, senza push al submodulo |
 | `predefined_env_test.go` | M | +54/-41 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
 | `preflight.go` | M | +19/-12 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
 | `prep.sh` | M | +1/-0 |  | b45002b 2026-11-19 chore: add repository lint and ACP streaming regression tests |
@@ -1120,8 +1125,8 @@ No file differs from the baseline: the directory is identical to the original gi
 | `spec/7-skills.md` | M | +31/-5 |  | 478ec5e 2026-11-24 Esegue l'escape di Host nella pagina errore e vincola la sorgente OPS_SKILLS (#114 #116 #123)<br>cfc7b21 2026-11-24 Abilita la verifica della host key SSH per git (#117)<br>... and 1 more |
 | `spec/8-e2e.md` | M | +19/-445 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>ac83f52 2026-11-25 Spec: marca come rimosse le sezioni e2e e guardrail legate a OpenCode<br>... and 2 more |
 | `spec/application-test-completion-gate.md` | M | +63/-154 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>ac83f52 2026-11-25 Spec: marca come rimosse le sezioni e2e e guardrail legate a OpenCode<br>... and 1 more |
-| `spec/authentication.md` | M | +115/-6 |  | 482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>11946e7 2026-11-24 Documenta il rischio accettato dell'esposizione predefinita di 8910 (#115)<br>... and 4 more |
-| `spec/build.md` | M | +46/-30 |  | 2aa7d7f 2026-11-24 Imposta go 1.27 con toolchain go1.27.4 e allinea setup.sh (#113)<br>fc95422 2026-11-24 Allinea la documentazione al codice e aggiunge diagramma di routing<br>... and 5 more |
+| `spec/authentication.md` | M | +123/-6 |  | 1cf39de 2026-11-26 Auth: cookie di sessione host utilizzabile nell'iframe dell'assistente<br>482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>... and 5 more |
+| `spec/build.md` | M | +53/-30 |  | 27bacfe 2026-11-26 Ingress truacp-ing a 8910 via patch applicata dal build, senza push al submodulo<br>2aa7d7f 2026-11-24 Imposta go 1.27 con toolchain go1.27.4 e allinea setup.sh (#113)<br>... and 6 more |
 | `spec/credit_check.md` | M | +3/-3 |  | 47353bb 2026-11-21 Fix local links in Trustant specifications (#76) |
 | `spec/issue98-action-workflow-e2e.svg` | D | +0/-50 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
 | `spec/issue98-auth-e2e.svg` | D | +0/-33 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
@@ -1130,7 +1135,7 @@ No file differs from the baseline: the directory is identical to the original gi
 | `spec/issue98-session-enforcement-flow.svg` | D | +0/-58 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
 | `spec/notebook.md` | M | +2/-0 | **yes** | db6c998 2026-11-20 Improve inventory and template settings accessibility |
 | `spec/opencode-guardrail-flow.svg` | D | +0/-47 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `spec/openserverless-instructions.md` | M | +14/-12 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>ac83f52 2026-11-25 Spec: marca come rimosse le sezioni e2e e guardrail legate a OpenCode<br>... and 1 more |
+| `spec/openserverless-instructions.md` | M | +33/-30 |  | cd545d1 2026-11-26 Direttive app: sezione 'How the System Works' per orientare l'agente<br>0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>... and 2 more |
 | `spec/pi.md` | M | +26/-26 | **yes** | b8910a3 2026-11-21 Update Trustant tooling and inventory actions<br>3133d65 2026-11-21 Distinguere il limite di sessione Ollama dai 429 transitori (#5)<br>... and 1 more |
 | `spec/provider-e2e-flow.svg` | D | +0/-52 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
 | `spec/run.md` | M | +5/-2 | **yes** | 8b1c109 2026-11-20 Update runtime dependencies and report development GUI readiness |

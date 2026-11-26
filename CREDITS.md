@@ -17,7 +17,7 @@ Trustant itself is AGPL-3.0-or-later, Copyright 2025-2026 Nuvolaris Inc. See
 |---|---|---|---|
 | `acp/` (TruACP) | Assistant runtime: Node server and browser UI over the Agent Client Protocol | AGPL-3.0-or-later for Trustant's parts; Apache-2.0 for the parts derived from obsidian-agent-client | Vendored from the owner's `trustant-acp` fork, itself derived from obsidian-agent-client (below) |
 | obsidian-agent-client 0.11.0 | Origin of `acp/`; derived files carry its attribution | Apache-2.0, Copyright 2025-2026 RAIT-09 | https://github.com/RAIT-09/obsidian-agent-client |
-| `acp/pi-acp/` | Adapter between ACP and the Pi coding agent | MIT, Copyright (c) 2025 Sergii Kozak | Vendored fork of `svkozak/pi-acp` 0.0.31 (`trustable-ai/pi-acp`) |
+| `acp/pi-acp/` | Adapter between ACP and the Pi coding agent | MIT, Copyright (c) 2025 Sergii Kozak | Vendored fork of `svkozak/pi-acp` 0.0.31 (`trustant/pi-acp`) |
 | `web/` assets | Browser UI libraries | MIT | See below |
 
 Vendored web assets: [Tailwind CSS browser build](https://github.com/tailwindlabs/tailwindcss),
