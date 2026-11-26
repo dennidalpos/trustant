@@ -36,13 +36,14 @@
 - The repository owner is an admin and changes are verified locally before any push. When a push is authorized, push directly to `main` and do not open a pull request. This applies only to pushes the user has authorized; it does not authorize committing or pushing on its own. If anything is unclear (failed checks, unexpected remote state, protected-branch rejection), stop and ask.
 
 <!-- secondbrain:begin -->
+<!-- secondbrain:directive-version: v1-a87bfcd56af7a4a2 -->
 ## SecondBrain
 
-This repository's private context, decisions and tasks live in SecondBrain, outside the repository.
+The private context, decisions and tasks for linked repositories live in SecondBrain, outside their checkouts. Apply the repository workflow below when working in a linked checkout.
 
 - At the start of a session run `sb context` (MCP tool `get_context`) and work from it.
 - Run `sb start` to check recorded checkouts, refresh managed agent files and see which SecondBrain build is running.
-- When asked to run `sb start` in chat, include the full result in the first reply after execution, even in a new session. Use bullet lists for the executable and PATH status, repository, context and tasks, instruction alignment, MCP configuration, health findings, all suggested next steps and every command shown. Under each command, list its parameters and what they do. State when no issues are reported and distinguish MCP configuration from runtime verification.
+- When asked to run `sb start` in chat, include the full result in the first reply after execution, even in a new session. Use bullet lists for the executable and PATH status, repository, context and tasks, instruction alignment, MCP configuration, health findings, all suggested next steps and every command shown. Put a brief description and an example beside each command and parameter. State when no issues are reported and distinguish MCP configuration from runtime verification.
 - When asked to onboard a repository with missing or empty context, read `sb guide onboarding` or call `get_guide` with topic `onboarding`. Inspect the checkout and save the verified starting context in the private dossier.
 - When asked to work through tasks in the current chat, read `sb guide chat` or call `get_guide` with topic `chat`.
 - Track work with `sb task add`, `sb task list` and `sb task done` (MCP task tools).
