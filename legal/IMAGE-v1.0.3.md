@@ -73,10 +73,25 @@ comes from the layer contents. It replaces the v1.0.2 digests recorded earlier.
 - **`gh` in the image is 2.96.0** (build string in `usr/local/bin/gh`, layer 6),
   while `image/Dockerfile` and DEPS pin 2.105.0. DEPS describes the current
   repository, not v1.0.3; the next image release should carry 2.105.0.
-- `ollama` (layer 2) and `mcp-s3` (layers 10, 24, 25, 27): no reliable version
-  string in the binaries (mcp-s3 shows both 1.3.0 and 1.3.1 patterns), so the
-  shipped versions stay unproven without running them.
-- Corresponding sources for the GPL/LGPL components are still not retrieved.
+- `mcp-s3`: `go version -m` (reads the embedded build info, nothing executed)
+  gives module `github.com/txn2/mcp-s3` v1.3.0, commit `872fa60a`, built with
+  go1.26.4. This matches DEPS (1.3.0).
+- `ollama`: Go 1.26.0 build whose embedded info says `(devel)`, with no version
+  string recoverable from the binary. The shipped version stays unproven (DEPS
+  pins 0.40.18); confirm it from the image build log or by running the binary.
+- Corresponding sources, from the pinned PyPI sdists: pglast 7.21
+  (`pglast-7.21.tar.gz`, github.com/lelit/pglast), psycopg 3.3.x and
+  psycopg-pool 3.3.3 (github.com/psycopg/psycopg), docstring-to-markdown 0.17
+  (github.com/python-lsp/docstring-to-markdown). For the apt packages the
+  source is `apt-get source <pkg>=<version>` from the Ubuntu 24.04 archive; the
+  source offer for the image is still to be written.
+- Licenses of the entries without metadata, read from the upstream files:
+  `cli-table` 0.3.11 MIT (LICENSE in the npm tarball, (c) 2010 LearnBoost),
+  `redis-entraid` 1.2.2 MIT (LICENSE in the wheel, (c) Redis Inc.),
+  `mcp-server-milvus` Apache-2.0 (classifier and upstream LICENSE; the sdist
+  does not ship the file). These are not yet in DEPS/NOTICE.
+- Still open: the 9 apt packages without a copyright file, the written source
+  offer, and adding the three licenses above to the registers.
 
 Reproduce: resolve the tag through the registry API, take the per-arch manifest
 digests above, download and verify layers, scan tar members for
