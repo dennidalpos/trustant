@@ -89,6 +89,73 @@ test("Private AI refreshes the Pi model menu when discovery succeeds", async ({ 
   await expect(page.locator("#privateModelDiscoveryStatus")).toBeEmpty();
 });
 
+for (const failure of ["configuration stream", "model health check"]) {
+  test(`Ollama setup can edit the model after a failed ${failure}`, async ({ page }) => {
+    const origin = "http://trustant.example.test";
+    const message = "Add usage credits or subscribe (ref: test-401)";
+    const responses = {
+      "/api/configuration": {
+        provider: "ollama",
+        base_url: "http://ollama.example.test:11434/v1",
+        models: { "model:cloud": {}, "local-model:32b": {} },
+        pi: { default: "model:cloud" },
+      },
+      "/api/ollama-instances": { instances: [] },
+      "/api/testmodel": { error: message },
+    };
+    await serveFixture(page, origin, new URL("../web/", import.meta.url), (route, path) => {
+      if (path === "/api/configure") {
+        return route.fulfill({
+          contentType: "text/plain",
+          body: failure === "configuration stream" ? `ERROR: Pi model test failed: ${message}\n` : "DONE\n",
+        });
+      }
+      return route.fulfill({ json: responses[path] ?? {} });
+    });
+    await page.goto(origin);
+
+    await expect(page.getByRole("log")).toContainText(message);
+    await expect(page.getByRole("button", { name: "Retry", exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Choose another provider" })).toBeVisible();
+    await page.getByRole("link", { name: "Edit configuration" }).click();
+    await expect(page).toHaveURL(`${origin}/configure.html?setup=1`);
+    const model = page.getByRole("combobox", { name: "Default Model" });
+    await expect(model).toHaveValue("model:cloud");
+    await model.selectOption("local-model:32b");
+    await expect(model).toHaveValue("local-model:32b");
+  });
+}
+
+test("Ollama model override can be undone from the row actions", async ({ page }) => {
+  const origin = "http://trustant.example.test";
+  const responses = {
+    "/api/configuration": { provider: "ollama", models: { "qwen3.5:4b": {} } },
+    "/api/ollama-instances": { instances: [] },
+  };
+  await serveFixture(page, origin, new URL("../web/", import.meta.url), (route, path) =>
+    route.fulfill({ json: responses[path] ?? {} }),
+  );
+  await page.goto(`${origin}/configure.html`);
+
+  const row = page.getByRole("row").filter({ hasText: "qwen3.5:4b" });
+  const actions = row.getByRole("cell").filter({ has: page.getByRole("button", { name: "Remove" }) });
+  const hiddenBadge = row.getByText("Hidden", { exact: true });
+  const reason = row.getByText("below the recommended 20B minimum");
+  await expect(hiddenBadge).toBeVisible();
+  await expect(reason).toBeHidden();
+  await hiddenBadge.press("Enter");
+  await expect(reason).toBeVisible();
+  await hiddenBadge.press("Enter");
+  await expect(reason).toBeHidden();
+  page.once("dialog", (dialog) => dialog.accept());
+  await actions.getByRole("button", { name: "Use anyway" }).click();
+  await expect(row.getByText("Used anyway", { exact: true })).toBeVisible();
+
+  await actions.getByRole("button", { name: "Hide again" }).click();
+  await expect(row.getByText("Hidden", { exact: true })).toBeVisible();
+  await expect(actions.getByRole("button", { name: "Use anyway" })).toBeVisible();
+});
+
 test("Inventory and Template expose table semantics and preserve keyboard focus", async ({ page }) => {
   const origin = "http://trustant.example.test";
   const templates = {

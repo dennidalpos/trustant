@@ -65,7 +65,8 @@ LOCAL_TAG = {"oplugins": "vendor/oplugins-baseline", "skills": "vendor/skills-ba
 # Why each modified file differs from the baseline. Key: "<component>/<file>".
 REASONS = {
     "oplugins/admin/docopts.md": "Documents the OPS_ADMIN_PASSWORD environment variable added to `admin adduser` (see opsfile.yml): the password no longer has to appear in the process list. Plus the Apache 4(b) modification notice.",
-    "oplugins/admin/opsfile.yml": "Security: `adduser` reads the password from OPS_ADMIN_PASSWORD when set (keeps it out of argv and the process list), falls back to the positional argument, then unsets the variable (commit a0bd211, #119). Plus the Apache 4(b) modification notice.",
+    "oplugins/admin/opsfile.yml": "Security: `adduser` reads the password from OPS_ADMIN_PASSWORD when set (keeps it out of argv and the process list), falls back to the positional argument, then unsets the variable (commit a0bd211, #119). User deletion tolerates an already absent user. Includes the Apache 4(b) modification notice.",
+    "oplugins/admin/ingress/opsfile.yml": "Ingress deletion tolerates resources already removed so a retry can finish cleaning up the app. Includes the Apache 4(b) modification notice.",
     "oplugins/debug/runtime/invoke.py": "Code quality: `!= None` becomes `is not None`; bare `except:` becomes `except Exception:` (a bare except also swallows KeyboardInterrupt and SystemExit); a comment clarifies payload handling.",
     "oplugins/ide/deploy/package.json": "Dependency update: glob 14.0.2 (commit 64a17b2).",
     "oplugins/ide/deploy/bun.lock": "Lockfile regenerated for the glob 14.0.2 update (commit 64a17b2).",
@@ -200,7 +201,7 @@ def component_section(c, upstream_links, offline):
             continue
         extra = ["--ignore-cr-at-eol"] if f.endswith("DEBUG.txt") else []
         diff = git("diff", "--no-color", "-U1", *extra, tree, "HEAD:" + path, "--", f, check=False)
-        body = diff.splitlines()[4:]
+        body = ["" if line == " " else line for line in diff.splitlines()[4:]]
         if not body:
             out.append("#### `%s`\n\nNo textual change besides line endings or deletion.\n" % f)
         elif len(body) > MAX_DIFF_LINES:
@@ -211,12 +212,15 @@ def component_section(c, upstream_links, offline):
 
 
 def root_section():
-    base = git("merge-base", "HEAD", UPSTREAM).strip()
-    ahead, behind = git("rev-list", "--left-right", "--count", "HEAD..." + UPSTREAM).split()
-    excl = [":!" + c[0] for c in COMPONENTS if "/" not in c[0]] + [":!oplugins-truinst"]
-    numstat = git("diff", "--numstat", base, "HEAD", "--", ".", *excl).splitlines()
+    # A commit that only refreshes this report must not make it stale again.
+    report = ":!UPSTREAM-COMPARISON.md"
+    revision = git("log", "-1", "--format=%H", "HEAD", "--", ".", report).strip()
+    base = git("merge-base", revision, UPSTREAM).strip()
+    ahead, behind = git("rev-list", "--left-right", "--count", revision + "..." + UPSTREAM).split()
+    excl = [":!" + c[0] for c in COMPONENTS if "/" not in c[0]] + [":!oplugins-truinst", report]
+    numstat = git("diff", "--numstat", base, revision, "--", ".", *excl).splitlines()
     status = {}
-    for line in git("diff", "--name-status", base, "HEAD", "--", ".", *excl).splitlines():
+    for line in git("diff", "--name-status", base, revision, "--", ".", *excl).splitlines():
         st, f = line.split("\t", 1)
         status[f] = st[0]
     up = set(git("diff", "--name-only", base, UPSTREAM).splitlines())
@@ -224,9 +228,9 @@ def root_section():
            "- Merge base `%s`; the fork has %s commits upstream lacks, upstream has %s the fork lacks." % (short(base), ahead, behind),
            "- Files also changed upstream since the merge base are marked **conflict risk**.\n",
            "| File | St | +/- | Conflict risk | Latest fork commits touching it (the reason) |\n|---|---|---|---|---|"]
-    for line in sorted(numstat, key=lambda l: l.split("\t", 2)[2]):
+    for line in sorted(numstat, key=lambda row: row.split("\t", 2)[2]):
         a, d, f = line.split("\t", 2)
-        subj = subjects(base + "..HEAD", f, 2)
+        subj = subjects(base + ".." + revision, f, 2)
         out.append("| `%s` | %s | +%s/-%s | %s | %s |" % (f, status.get(f, "?"), a, d, "**yes**" if f in up else "",
                                                        "<br>".join(s.replace("|", "/") for s in subj)))
     out.append("")

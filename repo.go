@@ -32,6 +32,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 )
 
 // appPasswordAlphabet is deliberately alphanumeric: the value is passed to
@@ -740,21 +741,52 @@ func stopRuntimeForDeletion(app string) error {
 	})
 }
 
-// deleteOpenServerlessUser skips an already absent user so local cleanup can
-// resume after a previous request removed the user.
+// deleteOpenServerlessUser rechecks the cluster before retrying because the
+// command can remove the user before reporting an error.
 func deleteOpenServerlessUser(ctx context.Context, app string) error {
+	const attempts = 3
+	var lastErr error
+	for attempt := 0; attempt < attempts; attempt++ {
+		if attempt > 0 {
+			timer := time.NewTimer(500 * time.Millisecond)
+			select {
+			case <-ctx.Done():
+				timer.Stop()
+				return ctx.Err()
+			case <-timer.C:
+			}
+		}
+		exists, err := openServerlessUserExists(ctx, app)
+		if err != nil {
+			if attempt == attempts-1 {
+				return errors.Join(lastErr, err)
+			}
+			lastErr = err
+			continue
+		}
+		if !exists {
+			return nil
+		}
+		if err := exec.CommandContext(ctx, "ops", "admin", "deleteuser", app).Run(); err != nil {
+			lastErr = fmt.Errorf("delete OpenServerless user: %w", err)
+			continue
+		}
+		return nil
+	}
+	exists, err := openServerlessUserExists(ctx, app)
+	if err == nil && !exists {
+		return nil
+	}
+	return errors.Join(lastErr, err)
+}
+
+func openServerlessUserExists(ctx context.Context, app string) (bool, error) {
 	probe := exec.CommandContext(ctx, "ops", "util", "kubectl", "--", "get", "wsku/"+app, "--ignore-not-found", "-o", "name")
 	output, err := probe.Output()
 	if err != nil {
-		return fmt.Errorf("check OpenServerless user: %w", err)
+		return false, fmt.Errorf("check OpenServerless user: %w", err)
 	}
-	if strings.TrimSpace(string(output)) == "" {
-		return nil
-	}
-	if err := exec.CommandContext(ctx, "ops", "admin", "deleteuser", app).Run(); err != nil {
-		return fmt.Errorf("delete OpenServerless user: %w", err)
-	}
-	return nil
+	return strings.TrimSpace(string(output)) != "", nil
 }
 
 func handleRepo(w http.ResponseWriter, r *http.Request) {

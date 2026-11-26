@@ -264,7 +264,10 @@ reaches the probe and surfaces the internal `pi.default not defined` diagnostic.
 
 Every time the index page is opened (after a provider has been chosen), invoke the configuration api.
 Expect a streamed answer and show the messages with a modal while it is configuring.
-If configuration fails, show **Retry** and **Choose another provider**.
+If configuration or the model health check fails, keep the error in the
+configuration dialog and show **Retry**, **Edit configuration**, and
+**Choose another provider**. Edit configuration opens the saved provider's
+settings at `configure.html?setup=1` so the user can change the model.
 Show **Continue** after configuration and the model health check succeed.
 
 When `provider == "trustant"` the backend skips the Ollama connectivity check and model-pull steps and streams a single `OK: Skipping Ollama setup (Trustant Cloud)` line — see [2a-config.md](2a-config.md).
@@ -307,6 +310,7 @@ This action is available whenever the dialog appears, including after reopening
 the splash. The saved configuration changes when the user configures a provider.
 
 **Cancel** in the Trustant sign-in iframe ends registration or recovery. A
-failed model health check after recovery also returns to provider selection.
+failed model health check after recovery returns to the configuration dialog
+with the same recovery actions.
 
 Once configuration completes successfully, navigate to `applist.html`.

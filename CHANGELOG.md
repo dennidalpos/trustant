@@ -37,6 +37,15 @@ All notable changes to Trustant are listed here. The latest release tag is
 
 ### Fixed
 
+- A failed model check offers a direct link to change the model or host, and
+  displays the provider's error message in plain text.
+- Application deletion retries OpenServerless cleanup automatically and can
+  finish when some cluster resources were already removed.
+- Model configuration rows keep their actions together and use consistently
+  sized status badges and buttons. **Hide again** is available after overriding
+  a model's size recommendation.
+- Tooltip question marks and checkboxes align with the surrounding text and
+  match its size.
 - Configuration displays the provider and model settings together after loading.
   Long Ollama instance names and addresses fit the panel on narrow screens.
 - The app inventory distinguishes status from links, increases link click areas,

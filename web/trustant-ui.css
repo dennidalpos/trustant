@@ -527,13 +527,15 @@ textarea {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    margin-left: .4rem;
+    flex: none;
+    inline-size: 1em;
+    block-size: 1em;
+    margin-inline-start: .35em;
     border: 1px solid currentColor;
     border-radius: 9999px;
-    font-size: .75rem;
+    font-size: inherit;
     font-weight: 600;
+    letter-spacing: 0;
     line-height: 1;
     text-transform: none;
     color: inherit;
@@ -586,8 +588,15 @@ footer a {
     padding: .25rem .125rem;
 }
 
-/* Checkboxes and radios: 24px hit area. */
-input[type="checkbox"],
+/* Keep the native checkbox the same size as its label. */
+input[type="checkbox"] {
+    flex: none;
+    font-size: inherit;
+    inline-size: 1em;
+    block-size: 1em;
+    vertical-align: middle;
+}
+
 input[type="radio"] {
     min-width: 1.5rem;
     min-height: 1.5rem;
@@ -599,11 +608,6 @@ input[type="radio"] {
     .nu-segment-btn,
     .nu-chip {
         min-height: 2.75rem;
-    }
-
-    .nu-help {
-        width: 2rem;
-        height: 2rem;
     }
 }
 

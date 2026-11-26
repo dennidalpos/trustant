@@ -587,6 +587,27 @@ func TestRunTestModelKeepsAuthRequiredPrecedence(t *testing.T) {
 	}
 }
 
+func TestRunTestModelReturnsOllamaCreditErrorMessage(t *testing.T) {
+	const message = "Add usage credits or subscribe (ref: test-401)"
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusPaymentRequired)
+		fmt.Fprintf(w, `{"error":{"message":%q,"type":"api_error"}}`, message)
+	}))
+	defer server.Close()
+
+	res := runTestModel(&trustantConfig{
+		Provider:        "ollama",
+		BaseURL:         server.URL + "/v1",
+		OllamaActive:    "fixture",
+		OllamaInstances: []ollamaInstance{{ID: "fixture", URL: server.URL}},
+		Pi:              &piConfig{Default: "model:cloud"},
+	})
+	if res.OK || res.AuthRequired || res.Error != "" || res.Warning != message {
+		t.Fatalf("unexpected credit error result: %+v", res)
+	}
+}
+
 func TestConfigureStreamsOllamaAuthenticationBeforeWritingPiConfig(t *testing.T) {
 	ollama := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {

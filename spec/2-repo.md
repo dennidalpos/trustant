@@ -153,9 +153,10 @@ operation. It returns 404 when the bare repository is absent.
 1. If this app is active, verify the live TruACP group belongs to its workbench,
    stop it and clear its runtime markers. Runtime cleanup errors return 409.
 2. Check for the local OpenServerless user. Run `ops admin deleteuser <name>`
-   if the user exists. A failed check or deletion returns 502 and retains the
-   application data for retry. A successful check for an absent user lets a
-   retry proceed to local cleanup.
+   if the user exists. Retry failed checks or commands up to twice within the
+   same request, rechecking user existence before each deletion. Ingress and
+   user deletion tolerate resources that are already absent. If cleanup still
+   cannot be confirmed, return 502 and retain the application data for retry.
 3. Remove the workbench, then remove the app settings and its shared variables
    from the workspace configuration in one update.
 4. Remove the bare repository last and return 204.

@@ -56,7 +56,7 @@ tasks:
         fi
         {{.DRY}} ops admin ingress undeploy U="{{._username_}}"
       - |
-        {{.DRY}} kubectl -n openserverless delete wsku/{{._username_}}
+        {{.DRY}} kubectl -n openserverless delete wsku/{{._username_}} --ignore-not-found=true
         {{.DRY}}  $OPS -config -r {{._username_}}
 
   adduser:

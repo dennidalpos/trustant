@@ -16,6 +16,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -264,11 +265,20 @@ case "$1 $2" in
   "util kubectl")
     [ "$3 $4 $6 $7 $8" = "-- get --ignore-not-found -o name" ]
     app=${5#wsku/}
+    if [ -f "$TEST_DELETE_ROOT/$app.probe-once" ]; then
+      rm -f -- "$TEST_DELETE_ROOT/$app.probe-once"
+      exit 2
+    fi
     if [ -f "$TEST_DELETE_ROOT/$app.user" ]; then printf 'whiskuser/%s\n' "$app"; fi
     ;;
   "admin deleteuser")
     if [ -f "$TEST_DELETE_ROOT/$3.deny" ]; then exit 2; fi
+    if [ -f "$TEST_DELETE_ROOT/$3.delete-once" ]; then
+      rm -f -- "$TEST_DELETE_ROOT/$3.delete-once"
+      exit 2
+    fi
     rm -f -- "$TEST_DELETE_ROOT/$3.user"
+    if [ -f "$TEST_DELETE_ROOT/$3.removed-with-error" ]; then exit 2; fi
     ;;
   *) exit 3 ;;
 esac
@@ -279,6 +289,41 @@ esac
 	t.Setenv("PATH", root+string(os.PathListSeparator)+os.Getenv("PATH"))
 	t.Setenv("TEST_DELETE_ROOT", root)
 	return filepath.Join(root, "ops.log")
+}
+
+func TestDeleteOpenServerlessUserRecoversFromFailedCommands(t *testing.T) {
+	const app = "fixtureuser"
+	for _, tc := range []struct {
+		name        string
+		failures    []string
+		wantDeletes int
+	}{
+		{"transient check and deletion", []string{"probe-once", "delete-once"}, 2},
+		{"user removed despite command error", []string{"removed-with-error"}, 1},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			root := t.TempDir()
+			opsLog := installDeleteUserFixture(t, root)
+			for _, marker := range append([]string{"user"}, tc.failures...) {
+				if err := os.WriteFile(filepath.Join(root, app+"."+marker), nil, 0600); err != nil {
+					t.Fatal(err)
+				}
+			}
+			if err := deleteOpenServerlessUser(context.Background(), app); err != nil {
+				t.Fatal(err)
+			}
+			if _, err := os.Stat(filepath.Join(root, app+".user")); !os.IsNotExist(err) {
+				t.Fatalf("fixture user should be absent: %v", err)
+			}
+			commands, err := os.ReadFile(opsLog)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if got := strings.Count(string(commands), "admin deleteuser "+app+"\n"); got != tc.wantDeletes {
+				t.Fatalf("want %d deletion attempts, got %d: %s", tc.wantDeletes, got, commands)
+			}
+		})
+	}
 }
 
 func TestDeleteRepoPreservesOtherRuntimeAndCanRetryPartialFailures(t *testing.T) {
@@ -422,8 +467,8 @@ func TestDeleteRepoPreservesOtherRuntimeAndCanRetryPartialFailures(t *testing.T)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got := strings.Count(string(commands), "admin deleteuser "+inactive+"\n"); got != 2 {
-		t.Fatalf("want one denied and one successful user deletion, got %d: %s", got, commands)
+	if got := strings.Count(string(commands), "admin deleteuser "+inactive+"\n"); got != 4 {
+		t.Fatalf("want three denied attempts and one successful user deletion, got %d: %s", got, commands)
 	}
 
 	if rec = deleteApp(active); rec.Code != http.StatusNoContent {

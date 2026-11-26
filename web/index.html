@@ -134,6 +134,9 @@
                 <button id="configRetryBtn" onclick="runConfiguration()" class="hidden nu-btn nu-btn-primary">
                     Retry
                 </button>
+                <a id="configEditBtn" href="configure.html?setup=1" class="hidden nu-btn nu-btn-secondary">
+                    Edit configuration
+                </a>
                 <a id="configChooseBtn" href="?choose=1" class="hidden nu-btn nu-btn-secondary">
                     Choose another provider
                 </a>
@@ -629,7 +632,7 @@
 
         function isSigninError(message) {
             const text = String(message || '').toLowerCase();
-            if (text.includes('usage limit') || text.includes('quota') || text.includes('upgrade')) {
+            if (text.includes('usage limit') || text.includes('usage credits') || text.includes('quota') || text.includes('upgrade')) {
                 return false;
             }
             return [
@@ -739,26 +742,21 @@
 
                 const testResult = await testOpenAIConnection();
 
-                const okDiv = document.createElement('div');
+                const testStatus = document.createElement('div');
                 if (testResult.warning || testResult.error) {
-                    okDiv.className = 'text-[color:var(--nu-danger)]';
-                    okDiv.textContent = 'ERROR: AI model test failed: ' + (testResult.warning || testResult.error);
-                    msgEl.appendChild(okDiv);
-                    msgEl.scrollTop = msgEl.scrollHeight;
-                    // Health check could not be recovered — bounce back to provider choice.
-                    document.getElementById('configModal').classList.add('hidden');
-                    document.getElementById('configModal').classList.remove('flex');
-                    alert('AI model test failed: ' + (testResult.warning || testResult.error) + '\n\nPlease pick a provider again.');
-                    showProviderModal();
-                    return;
+                    configError = true;
+                    testStatus.className = 'text-[color:var(--nu-danger)]';
+                    testStatus.textContent = 'ERROR: AI model test failed: ' + (testResult.warning || testResult.error);
+                } else {
+                    testStatus.className = 'text-[color:var(--nu-signal)]';
+                    testStatus.textContent = 'OK: AI model connection successful';
                 }
-                okDiv.className = 'text-[color:var(--nu-signal)]';
-                okDiv.textContent = 'OK: AI model connection successful';
-                msgEl.appendChild(okDiv);
+                msgEl.appendChild(testStatus);
                 msgEl.scrollTop = msgEl.scrollHeight;
             }
 
             document.getElementById('configRetryBtn').classList.toggle('hidden', !configError);
+            document.getElementById('configEditBtn').classList.toggle('hidden', !configError);
             document.getElementById('configChooseBtn').classList.toggle('hidden', !configError);
             document.getElementById('configContinueBtn').classList.toggle('hidden', configError);
             document.getElementById('configDone').classList.remove('hidden');

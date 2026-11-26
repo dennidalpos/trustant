@@ -5,7 +5,8 @@ This directory is a vendored copy of https://github.com/trustable-ai/openserverl
 LICENSE and NOTICE are unchanged. As required by Apache-2.0 section 4(b), these files
 were modified by the Trustant project:
 
-- `admin/docopts.md`, `admin/opsfile.yml`: admin password can be passed through `OPS_ADMIN_PASSWORD`.
+- `admin/docopts.md`, `admin/opsfile.yml`: admin password can be passed through `OPS_ADMIN_PASSWORD`. User deletion tolerates an already absent user.
+- `admin/ingress/opsfile.yml`: ingress deletion tolerates resources already removed.
 - `debug/runtime/invoke.py`: payload handling and exception clean-up.
 - `ide/deploy/package.json`, `ide/deploy/bun.lock`: dependency update (glob).
 - `prereq.yml`: pinned, checksum-verified downloads of the Linux Kubernetes tools.

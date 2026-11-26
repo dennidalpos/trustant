@@ -90,6 +90,9 @@ style, while generic table body values preserve their original casing; the app
 list is the explicit exception where the full list view uses uppercase as a
 visual transform.
 
+Inline tooltip question marks and native checkboxes use the surrounding text
+size and align vertically with their labels or table headings.
+
 # Shared Trustant visual system
 
 `applist.html` is the source of truth for the Trustant first-party visual

@@ -96,7 +96,7 @@ flowchart TD
 ### Open the UI
 
 1. Open the URL printed by the development loop in your browser.
-2. Configure a provider and its credentials in the UI, then choose a model. To use an Ollama running on your own computer or network, choose **Private AI** with `http://<host>:11434/v1` and give that Ollama a context window of at least 32768 tokens (see [use cases](docs/use-cases.md#4-use-a-local-model-ollama)).
+2. Configure a provider and its credentials in the UI, then choose a model. Use **Private AI** to [connect an OpenAI-compatible endpoint](docs/use-cases.md#use-an-openai-compatible-endpoint), or follow the [local Ollama walkthrough](docs/use-cases.md#4-use-a-local-model-ollama).
 3. Create or import an application from the app list and open it.
 
 The app workbench provides the assistant, preview, file viewer, terminal, and application configuration.

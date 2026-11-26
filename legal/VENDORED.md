@@ -325,11 +325,12 @@ Listed as a count only; every tracked file not named above is identical to upstr
 - Upstream: https://github.com/trustable-ai/openserverless-task
 - Baseline revision: `27b281eb7615c9094f1c6edab10a2b4fe2fd621c`
 - License: Apache-2.0, Copyright 2024-2026 The Apache Software Foundation
-- Files: 201 unmodified, 7 modified, 0 added, 1 removed upstream files
+- Files: 200 unmodified, 8 modified, 1 added, 1 removed upstream files
 
-### Modified (7)
+### Modified (8)
 
 - `admin/docopts.md`
+- `admin/ingress/opsfile.yml`
 - `admin/opsfile.yml`
 - `debug/runtime/invoke.py`
 - `ide/deploy/bun.lock`
@@ -337,11 +338,15 @@ Listed as a count only; every tracked file not named above is identical to upstr
 - `prereq.yml`
 - `setup/kubernetes/DEBUG.txt`
 
+### Added (1)
+
+- `TRUSTANT-CHANGES.md`
+
 ### Removed (1)
 
 - `util/upload/.env.test`
 
-### Unmodified (201)
+### Unmodified (200)
 
 Listed as a count only; every tracked file not named above is identical to upstream.
 
@@ -361,7 +366,7 @@ Listed as a count only; every tracked file not named above is identical to upstr
 - Upstream: https://github.com/trustant/openserverless-mcp
 - Baseline revision: `baf14007f9106cfd63b1396fd5d374f7dd9b7537`
 - License: Apache-2.0, Copyright 2024 The Apache Software Foundation
-- Files: 26 unmodified, 4 modified, 0 added, 0 removed upstream files
+- Files: 26 unmodified, 4 modified, 1 added, 0 removed upstream files
 
 ### Modified (4)
 
@@ -369,6 +374,10 @@ Listed as a count only; every tracked file not named above is identical to upstr
 - `package.json`
 - `requirements.txt`
 - `tests/invoke.test.ts`
+
+### Added (1)
+
+- `TRUSTANT-CHANGES.md`
 
 ### Unmodified (26)
 

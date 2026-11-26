@@ -31,6 +31,43 @@
     <style>
         #configurationSettings.is-loading > :not(#configurationLoading) { display: none; }
 
+        .models-table th { white-space: nowrap; }
+        .models-table th, .models-table td { padding-inline: .375rem; }
+        .models-table .model-name { overflow-wrap: anywhere; }
+        .models-table .model-limit { width: 5rem; max-width: 100%; }
+        .models-table .model-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: .375rem;
+        }
+        .models-table .model-control {
+            display: inline-flex;
+            flex: none;
+            align-items: center;
+            justify-content: center;
+            inline-size: 5.75rem;
+            min-block-size: 2rem;
+            padding: .22rem .375rem;
+            font-size: .6875rem;
+            font-weight: var(--nu-label-weight);
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .models-table summary.model-control { cursor: pointer; gap: .25rem; padding-inline: .25rem; }
+        .models-table summary.model-control::-webkit-details-marker { display: none; }
+        .models-table summary.model-control::after {
+            content: "";
+            flex: none;
+            inline-size: .35em;
+            block-size: .35em;
+            border-inline-end: 1px solid;
+            border-block-end: 1px solid;
+            transform: rotate(45deg);
+        }
+        .models-table details[open] summary.model-control::after { transform: rotate(225deg); }
+        .models-table .model-status-note { margin-block-start: .25rem; max-inline-size: 24ch; }
+
         @media (max-width: 700px) {
             .models-table, .models-table tbody, .models-table tr, .models-table td { display: block; width: 100%; }
             .models-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
@@ -38,7 +75,9 @@
             .models-table tbody tr:last-child { border-bottom: 0; }
             .models-table td { border: 0; padding: .35rem 0; text-align: left; overflow-wrap: anywhere; }
             .models-table td[data-label]::before { content: attr(data-label); display: block; color: var(--nu-muted); margin-bottom: .25rem; }
-            .models-table input, .models-table button { min-height: 44px; }
+            .models-table input, .models-table .model-control { min-block-size: 44px; }
+            .models-table .model-actions { justify-content: flex-start; flex-wrap: wrap; }
+            .models-table td:empty { display: none; }
         }
     </style>
 </head>
@@ -905,52 +944,51 @@
             }
             tbody.innerHTML = keys.map(name => {
                 const policy = piModelPolicy(name, models[name]);
-                const badgeClass = policy.overridden
-                    ? 'border-amber-200 bg-amber-50 text-amber-800'
-                    : policy.allowed
-                        ? 'border-[color:var(--nu-border)] bg-white text-[color:var(--nu-ink)]'
-                        : 'border-amber-200 bg-amber-50 text-amber-800';
+                const badgeClass = policy.allowed && !policy.overridden
+                    ? 'border-[color:var(--nu-rule)] bg-white text-[color:var(--nu-ink)]'
+                    : 'border-amber-200 bg-amber-50 text-amber-800';
                 const badgeText = policy.overridden ? 'Used anyway' : policy.allowed ? 'Available' : 'Hidden';
-                const reason = policy.allowed ? '' : `<div class="mt-1 text-xs text-[color:var(--nu-muted)]">${escapeHtml(policy.reason)}</div>`;
-                const overrideNote = policy.overridden
-                    ? `<div class="mt-1 text-xs text-amber-800">Smaller than recommended: it may follow instructions or call tools poorly.</div>`
-                    : '';
+                const statusNote = policy.overridden
+                    ? 'Smaller than recommended: it may follow instructions or call tools poorly.'
+                    : policy.reason;
+                const badgeClasses = `model-control rounded-full border ${badgeClass}`;
                 const overrideButton = editable && policy.overridable
                     ? (policy.overridden
-                        ? `<button type="button" onclick="revokeSmallModel('${escapeAttr(name)}')" class="nu-btn nu-btn-secondary nu-btn-compact mt-1">Hide again</button>`
-                        : `<button type="button" onclick="allowSmallModel('${escapeAttr(name)}')" class="nu-btn nu-btn-secondary nu-btn-compact mt-1">Use anyway</button>`)
+                        ? `<button type="button" onclick="revokeSmallModel('${escapeAttr(name)}')" class="nu-btn nu-btn-secondary model-control">Hide again</button>`
+                        : `<button type="button" onclick="allowSmallModel('${escapeAttr(name)}')" class="nu-btn nu-btn-secondary model-control">Use anyway</button>`)
                     : '';
                 return `
                 <tr>
-                    <td data-label="Model" class="nu-code text-xs">${escapeHtml(name)}</td>
+                    <td data-label="Model" class="model-name nu-code">${escapeHtml(name)}</td>
                     <td data-label="Context Size">
                         <input type="text" value="${escapeAttr(formatSize(effectiveContext(models[name])))}"
                             aria-label="Context Size for ${escapeAttr(name)}"
                             onchange="setModelLimit('${escapeAttr(name)}', 'maxToken', this.value, this)"
                             title="Context window. Empty uses the default (${formatSize(DEFAULT_CONTEXT)})."
-                            class="nu-input nu-code w-24 px-2 py-1 text-xs">
+                            class="nu-input nu-code model-limit px-2 py-1 text-xs">
                     </td>
                     <td data-label="Max Output">
                         <input type="text" value="${escapeAttr(formatSize(effectiveMaxOutput(models[name])))}"
                             aria-label="Max Output for ${escapeAttr(name)}"
                             onchange="setModelLimit('${escapeAttr(name)}', 'maxOutput', this.value, this)"
                             title="Maximum output tokens. Empty uses the default (${formatSize(DEFAULT_MAX_OUTPUT)})."
-                            class="nu-input nu-code w-24 px-2 py-1 text-xs">
+                            class="nu-input nu-code model-limit px-2 py-1 text-xs">
                     </td>
                     <td data-label="For coding">
-                        <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs ${badgeClass}">
-                            ${badgeText}
-                        </span>
-                        ${reason}${overrideNote}${overrideButton}
+                        ${statusNote ? `
+                            <details>
+                                <summary class="${badgeClasses}">${badgeText}</summary>
+                                <p class="model-status-note text-[color:var(--nu-muted)]">${escapeHtml(statusNote)}</p>
+                            </details>
+                        ` : `<span class="${badgeClasses}">${badgeText}</span>`}
                     </td>
-                    <td class="text-right">
-                        ${editable ? `
-                            <button onclick="removeModel('${escapeAttr(name)}')"
-                                class="nu-btn nu-btn-danger nu-btn-compact">
-                                Remove
-                            </button>
-                        ` : ''}
-                    </td>
+                    <td>${editable ? `
+                        <div class="model-actions">
+                            ${overrideButton}
+                            <button type="button" onclick="removeModel('${escapeAttr(name)}')"
+                                class="nu-btn nu-btn-danger model-control">Remove</button>
+                        </div>
+                    ` : ''}</td>
                 </tr>
             `}).join('');
         }
@@ -1129,7 +1167,7 @@
             }
             if (small) {
                 if (entry && entry.allowSmall === true) {
-                    return { allowed: true, reason: '', overridden: true };
+                    return { allowed: true, reason: '', overridable: true, overridden: true };
                 }
                 return { allowed: false, reason: small, overridable: true };
             }

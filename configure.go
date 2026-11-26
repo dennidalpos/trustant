@@ -2477,17 +2477,27 @@ func handleTestModel(w http.ResponseWriter, r *http.Request) {
 
 func ollamaErrorMessage(bodyStr string) string {
 	var payload struct {
-		Error string `json:"error"`
+		Error json.RawMessage `json:"error"`
 	}
-	if err := json.Unmarshal([]byte(bodyStr), &payload); err == nil && payload.Error != "" {
-		return payload.Error
+	if err := json.Unmarshal([]byte(bodyStr), &payload); err == nil {
+		var message string
+		if err := json.Unmarshal(payload.Error, &message); err == nil && message != "" {
+			return message
+		}
+		var detail struct {
+			Message string `json:"message"`
+		}
+		if err := json.Unmarshal(payload.Error, &detail); err == nil && detail.Message != "" {
+			return detail.Message
+		}
 	}
 	return strings.TrimSpace(bodyStr)
 }
 
 func isOllamaSigninRequired(message string) bool {
 	lower := strings.ToLower(message)
-	if strings.Contains(lower, "usage limit") || strings.Contains(lower, "quota") || strings.Contains(lower, "upgrade") {
+	if strings.Contains(lower, "usage limit") || strings.Contains(lower, "usage credits") ||
+		strings.Contains(lower, "quota") || strings.Contains(lower, "upgrade") {
 		return false
 	}
 	for _, token := range []string{

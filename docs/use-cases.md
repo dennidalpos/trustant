@@ -36,11 +36,25 @@ flowchart TD
 ```
 
 1. Open the URL printed by the development loop.
-2. Pick a card: **Cloud AI** (Ollama Cloud through the internal Ollama; the UI shows a sign-in link if needed), **Trustant Cloud** (hosted service with credits), or **Private AI** (your own endpoint, such as an Ollama on your machine, see case 4).
+2. Pick **Cloud AI** for Ollama Cloud, **Trustant Cloud** for the hosted service if enabled, or **Private AI** for an [OpenAI-compatible endpoint](#use-an-openai-compatible-endpoint).
 3. Choose a model on the Configure page. Pick one that supports tool calls.
 4. Wait for the connectivity check to pass; you land on the application list.
 
 If the model catalog changes later, Trustant asks you to pick the model again. See [provider choice](../spec/1-index.md) and [configuration](../spec/2a-config.md).
+
+### Use an OpenAI-compatible endpoint
+
+1. From **Configuration**, click **Change Provider**, then choose **Private AI**. On first run, choose **Private AI** directly from the provider picker.
+2. Enter the provider's **Base URL**, including its full path ending in `/v1`. For example, use `https://provider.example/compatible-mode/v1` when the provider includes `/compatible-mode` in its base path. Enter the provider's key in **API key** if required.
+3. Click **Save**. Trustant loads the available models from the endpoint's `/models` route. Under **Pi Model → Default Model**, pick a model that supports tool calls and click **Save & Configure**.
+
+The **Ollama Instance** card is for Ollama servers. Use **Private AI** for a compatible hosted API or for your own OpenAI-compatible server.
+
+### Recover from a failed model test
+
+Listing models and running inference are separate checks. If Ollama lists models but the test asks for usage credits or a subscription, check the account used by the Ollama server that Trustant connects to. Use **Retry** once that account can use the model.
+
+To keep the current provider and pick a different model, click **Edit configuration** in the error dialog. You can also open `/configure.html?setup=1` on the same Trustant origin. Choose an available model under **Pi Model → Default Model** and click **Save & Configure**. For local inference through Ollama, choose a model already installed on the connected host. See [Ollama and Trustant](ollama.md#use-an-ollama-outside-the-environment).
 
 ## 2. Create an application
 
@@ -52,6 +66,8 @@ On the application list, press **Add App**. The dialog has two modes:
 | **From a template** | Copy a ready-made application from the catalog (grouped as Apps, Chat, Demo, Utilities and so on) and customize it |
 
 Type a name (it follows the chosen starter until you edit it) and confirm. If the catalog cannot be loaded, the dialog still works with **My Application Starter**. See [applications list](../spec/1-applist.md) and [starters](../spec/15-starters.md).
+
+To delete an app, use **More Actions → Delete** in list view or **Delete** on the app card in grid view. Trustant retries OpenServerless cleanup within the same request. If that cleanup still fails, the app stays listed and its local data remains available for another attempt. See [application deletion](../spec/2-repo.md#delete-apirepo).
 
 ## 3. Build it with the assistant
 
@@ -75,6 +91,10 @@ flowchart LR
 - Use **Save** to commit your changes; **Revert** drops uncommitted ones.
 
 See [application page](../spec/3-app.md) and [Pi runtime](../spec/trustant-pi-runtime.md).
+
+### Test an app on the local cluster
+
+Click **Edit** to launch the app and open its workbench preview. Use **Open Dev** in the application list to open the development app directly. Both use the development cluster, so you can test without a publishing license. On Windows, see [testing from another LAN device](setup-windows.md#test-an-app-from-another-lan-device).
 
 ## 4. Use a local model (Ollama)
 
@@ -132,10 +152,10 @@ flowchart LR
 |---|---|
 | Save, Git push, force-push | not required |
 | Development deploy | not required |
-| Remote production deploy | valid license and destination host |
-| Provisioning an app on a host | valid license |
+| Publish to production | valid license and a covered destination host |
+| Provisioning an app on a host | valid license and a covered license host |
 
-Set the production environment values on the application's configuration before deploying, and install a license on Configure when you publish remotely. Errors beginning with `License required` or `Host not licensed` open the license dialog. See [publishing](../spec/6-publish.md), [license](../spec/14-license.md) and [Git](../spec/5-git.md).
+Set the production environment values before publishing and install a license in Configuration. With license checks enabled, publishing to a local host such as `http://miniops.me` still requires a valid license. Local hosts are exempt from the destination-host check. Errors beginning with `License required` or `Host not licensed` open the license dialog. See [publishing](../spec/6-publish.md), [license](../spec/14-license.md) and [Git](../spec/5-git.md).
 
 ## 8. Restrict access
 
