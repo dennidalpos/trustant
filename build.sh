@@ -225,6 +225,10 @@ if $NO_DEPLOY; then
     exit 0
 fi
 
+# Local changes to oplugins-truinst (e.g. truacp-ing on 8910) live in patches/;
+# apply them before the deployment plugin reads its manifests.
+bash patches/apply.sh
+
 if $MAC_VM; then
     # The VM cluster cannot see the local image store, so export and import.
     # Prune first: the VM disk is small and old images accumulate.

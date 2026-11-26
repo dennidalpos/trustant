@@ -80,6 +80,13 @@ Note that updating `opsroot.json` only records the tag locally. Pushing the
 `oplugins-truinst` submodule is what actually ships a version, and that requires
 explicit user authorization.
 
+Local changes to `oplugins-truinst` are not pushed (the submodule is a release
+repository). They are kept as `patches/oplugins-truinst-*.patch` and applied by
+`patches/apply.sh`, which `build.sh` runs before `undeploy`/`redeploy`. The script
+is idempotent, never commits, and fails if a patch no longer applies. Current
+patch: `truacp-ing` forwards to port 8910 so the Trustant server checks the host
+session (spec/authentication.md) instead of exposing TruACP on 4096 directly.
+
 ## Container runtime
 
 The build scripts source `image/runtime.sh`, which selects the container
