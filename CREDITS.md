@@ -22,7 +22,9 @@ Trustant itself is AGPL-3.0-or-later, Copyright 2025-2026 Nuvolaris Inc. See
 
 Vendored web assets: [Tailwind CSS browser build](https://github.com/tailwindlabs/tailwindcss),
 [marked](https://github.com/markedjs/marked), [CodeJar](https://github.com/antonmedv/codejar),
-and [xterm.js](https://github.com/xtermjs/xterm.js). Fonts Work Sans and
+[xterm.js](https://github.com/xtermjs/xterm.js) and the [Heroicons](https://github.com/tailwindlabs/heroicons)
+v1 outline icons (MIT, Copyright (c) 2020 Refactoring UI Inc.), inlined as SVG in
+`web/app.html` and `web/applist.html`; some were adapted. Fonts Work Sans and
 JetBrains Mono (SIL OFL-1.1) are loaded from Google Fonts at runtime and are not
 bundled.
 
@@ -70,8 +72,8 @@ not grant rights over it (see [legal/REVIEW.md](legal/REVIEW.md)).
 The provider logos `web/ollama-head.png`, `web/regolo-head.png` and
 `web/privateai-head.png` are marks of Ollama, Regolo.AI and Private AI. They are
 shown only to identify those options in the UI; this project's license grants no
-rights over them. The inline SVG icons in `web/*.html` have no recorded source and
-remain under review (see [legal/REVIEW.md](legal/REVIEW.md)).
+rights over them. Inline SVG icons that are not byte-identical to Heroicons remain under
+review (see [legal/REVIEW.md](legal/REVIEW.md)).
 
 The image builds `ops` from the [Trustant OpenServerless CLI fork](https://github.com/trustable-ai/openserverless-cli)
 with [go-git](https://github.com/go-git/go-git) (both Apache-2.0).

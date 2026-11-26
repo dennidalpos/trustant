@@ -7707,6 +7707,22 @@
     },
     {
       "section": "web",
+      "name": "Heroicons v1 icons (inline SVG in web/*.html)",
+      "version": "1.0.6",
+      "license": "MIT",
+      "homepage": "https://github.com/tailwindlabs/heroicons",
+      "source": "npm:heroicons@1.0.6",
+      "status": "license-files-collected",
+      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices.",
+      "evidence": [
+        {
+          "file": "LICENSE",
+          "sha256": "75523ddd65d9620bea09f84e89d0c373b4205a3708b8a1e9f9598a5438a3e641"
+        }
+      ]
+    },
+    {
+      "section": "web",
       "name": "marked (web/js/marked.min.js)",
       "version": "15.0.12",
       "license": "MIT",

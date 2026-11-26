@@ -40,6 +40,7 @@ NAME                                              VERSION  LICENSE  HOMEPAGE
 @xterm/addon-fit (web/js/xterm-addon-fit.min.js)  0.11.0   MIT      https://github.com/xtermjs/xterm.js
 @xterm/xterm (web/js/xterm.min.js, xterm.css)     6.0.0    MIT      https://github.com/xtermjs/xterm.js
 codejar (web/js/codejar.min.js)                   4.2.0    MIT      https://github.com/antonmedv/codejar
+Heroicons v1 icons (inline SVG in web/*.html)     1.0.6    MIT      https://github.com/tailwindlabs/heroicons
 marked (web/js/marked.min.js)                     15.0.12  MIT      https://github.com/markedjs/marked
 
 

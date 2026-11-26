@@ -29,6 +29,7 @@ web | marked (web/js/marked.min.js) | 15.0.12 | MIT | https://github.com/markedj
 web | codejar (web/js/codejar.min.js) | 4.2.0 | MIT | https://github.com/antonmedv/codejar | npm:codejar@4.2.0
 web | @xterm/xterm (web/js/xterm.min.js, xterm.css) | 6.0.0 | MIT | https://github.com/xtermjs/xterm.js | npm:@xterm/xterm@6.0.0
 web | @xterm/addon-fit (web/js/xterm-addon-fit.min.js) | 0.11.0 | MIT | https://github.com/xtermjs/xterm.js | npm:@xterm/addon-fit@0.11.0
+web | Heroicons v1 icons (inline SVG in web/*.html) | 1.0.6 | MIT | https://github.com/tailwindlabs/heroicons | npm:heroicons@1.0.6
 
 # Browser-fetched fonts, referenced by web/trustant-ui.css (not image files).
 webremote | Work Sans | Google Fonts (unpinned) | OFL-1.1 | https://github.com/weiweihuanghuang/Work-Sans | url:https://raw.githubusercontent.com/google/fonts/main/ofl/worksans/OFL.txt

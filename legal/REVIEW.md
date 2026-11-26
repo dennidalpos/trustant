@@ -105,11 +105,26 @@ SBOM is asserted by this review. The following remain unresolved:
 ## Artwork without per-file provenance
 
 Inline SVG icons in `web/app.html`, `web/applist.html` and `web/index.html`
-(24x24 viewBox, rounded round-capped strokes, about 55 occurrences) carry no
-author, source or license, and the files name no icon set. Their source is
-**undetermined**; the repository's AGPL headers do not establish ownership.
-They need the same review as the files below: confirm first-party authorship,
-or identify the original set and record its license and notice, or replace them.
+(55 `<svg>` elements, 24x24 viewBox, 2px round-capped strokes) were compared on
+2026-11-26 with the outline icons of Heroicons 0.4.2, 1.0.0 and 1.0.6, Feather
+4.29.2 and Lucide 0.468.0 (path data, numbers rounded):
+
+- 17 match Heroicons v1 outline paths (distinct icons: book-open, check, chevron-down,
+  chevron-left, desktop-computer, document-text, duplicate, globe, light-bulb,
+  pencil-alt, plus and trash). Heroicons is MIT, Copyright (c) 2020 Refactoring
+  UI Inc. (Tailwind Labs).
+- 12 are the animated loading spinner (circle plus `M4 12a8 8 0 018-8V0C5.373 0
+  0 5.373 0 12h4z`), the common Tailwind CSS `animate-spin` example (MIT). Not
+  compared with the upstream text.
+- 26 are not byte-identical to any of these sets. At least two (terminal, home)
+  are Heroicons v1 shapes with changed corner radii, so they are adapted
+  Heroicons; the others were not individually traced and may be adapted or
+  hand-drawn.
+
+The Heroicons MIT notice is recorded in `legal/deps.manual.txt`, `CREDITS.md`
+and the generated `NOTICE`. Per-icon authorship of the 26 non-identical icons
+stays unverified: the owner must confirm they are first-party or adapted from
+Heroicons, or they must be replaced with the unmodified Heroicons shapes.
 
 ## Artwork reviewed on 2026-11-26
 
