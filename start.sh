@@ -303,8 +303,9 @@ GUEST
 # names traefik's ingresses actually match. Reachable from the host at:
 #   http://<ip>:8080                    -> Host: miniops.me
 #   http://<label>.<ip>.nip.io:8080     -> Host: <label>.miniops.me
-# It forwards to traefik's in-cluster ClusterIP, so traefik keeps owning :80
-# untouched. Port 8080 is outside the package's :80/:443/:6443 firewall DROP.
+# The S3 alias bypasses Traefik so the signed Host reaches SeaweedFS unchanged.
+# Other requests go to Traefik's ClusterIP. Port 8080 is outside the package's
+# :80/:443/:6443 firewall DROP.
 apply_reverse_proxy() {
   local IP="$1"
   local ipre="${IP//./\\.}"   # dotted IP escaped for the nginx regex
@@ -333,9 +334,14 @@ data:
       resolver 10.43.0.10 valid=30s;
       map \$host \$upstream_host {
         default                                      \$host;
+        s3.${IP}.nip.io                              \$http_host;
         "~^(?:www\\.)?${IPRE}(?::\\d+)?\$"            miniops.me;
         "~^(?:www\\.)?${IPRE}\\.nip\\.io(?::\\d+)?\$" miniops.me;
         "~^(?<label>[^.]+)\\.${IPRE}\\.nip\\.io(?::\\d+)?\$" \${label}.miniops.me;
+      }
+      map \$host \$upstream_endpoint {
+        default             ${TRAEFIK_IP}:80;
+        s3.${IP}.nip.io      seaweedfs.openserverless.svc.cluster.local:9000;
       }
       server {
         listen 8080;
@@ -353,7 +359,7 @@ data:
           proxy_request_buffering off;
           proxy_read_timeout 600s;
           proxy_send_timeout 600s;
-          proxy_pass http://${TRAEFIK_IP}:80;
+          proxy_pass http://\$upstream_endpoint;
         }
       }
     }

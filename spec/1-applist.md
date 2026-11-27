@@ -361,7 +361,9 @@ Below the list there are two fields:
   types into it**; from then on the user's value is never overwritten.
 - **GitHub Repository** — in format `<org>/<repo>`. Filled from the selected
   starter and read-only (visibly greyed). Editable only when "My Application
-  Starter" is selected.
+  Starter" is selected. The browser validates the editable field before
+  submission. Each side of the slash accepts letters, digits, periods,
+  underscores and hyphens.
 
 Each starter row, including "My Application Starter", has a "?" icon with a tooltip
 explaining what it is (catalog starters without a written tooltip show their

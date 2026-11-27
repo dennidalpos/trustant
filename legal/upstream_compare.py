@@ -64,6 +64,9 @@ LOCAL_TAG = {"oplugins": "vendor/oplugins-baseline", "skills": "vendor/skills-ba
 
 # Why each modified file differs from the baseline. Key: "<component>/<file>".
 REASONS = {
+    "acp/esbuild.web.mjs": "Embeds the shared Trustant favicon in the standalone browser bundle.",
+    "acp/web/index.html": "Declares the embedded Trustant favicon for direct browser access.",
+    "acp/SPEC.md": "Documents the shared favicon in the embedded browser bundle.",
     "oplugins/admin/docopts.md": "Documents the OPS_ADMIN_PASSWORD environment variable added to `admin adduser` (see opsfile.yml): the password no longer has to appear in the process list. Plus the Apache 4(b) modification notice.",
     "oplugins/admin/opsfile.yml": "Security: `adduser` reads the password from OPS_ADMIN_PASSWORD when set (keeps it out of argv and the process list), falls back to the positional argument, then unsets the variable (commit a0bd211, #119). User deletion tolerates an already absent user. Includes the Apache 4(b) modification notice.",
     "oplugins/admin/ingress/opsfile.yml": "Ingress deletion tolerates resources already removed so a retry can finish cleaning up the app. Includes the Apache 4(b) modification notice.",

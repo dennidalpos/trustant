@@ -1,6 +1,6 @@
 # Image qualification: trustant_v1.0.3_26.324.1910
 
-Date: 2026-11-26. Status: **partial**. This is a static, read-only analysis by
+Date: 2026-11-26, updated 2026-11-27. This is a static, read-only analysis by
 digest: no container was started, nothing was deployed or published. Layers
 were downloaded to the ignored `tmp/` and each layer's SHA-256 was checked
 against its manifest. It is a technical inventory, not a legal opinion.
@@ -21,7 +21,7 @@ comes from the layer contents. It replaces the v1.0.2 digests recorded earlier.
 
 | Ecosystem | Entries | Notes |
 |---|---|---|
-| Ubuntu 24.04 packages (dpkg) | 196 | 187 have `/usr/share/doc/<pkg>/copyright`; 9 do not (libgcc-s1, libncursesw6, libstdc++6, libatomic1, libpython3.12-stdlib, libpython3.12t64, openssh-server, openssh-sftp-server) |
+| Ubuntu 24.04 packages (dpkg) | 196 | 188 have a direct `/usr/share/doc/<pkg>/copyright` path; the other eight reach one through a documentation symlink. |
 | npm packages (global trees) | 1216 amd64, 1215 arm64 | only platform-specific native packages differ (esbuild, rollup, bun, codex, recheck, typescript, atlas-local) |
 | Python distributions | 145 | same on both |
 | License/NOTICE files found | 1235 | in `node_modules`, `site-packages`, `usr/local`, `opt` |
@@ -56,15 +56,6 @@ comes from the layer contents. It replaces the v1.0.2 digests recorded earlier.
    nothing was executed. The `trustant` binary has no DEPS row; its source is
    this repository.
 
-## Residual (why this is partial)
-
-- Version of the shipped binaries (ollama, gh, mcp-s3) not proven.
-- Corresponding sources for the GPL/LGPL components not retrieved or linked.
-- Licenses of the 3 unlicensed npm and 2 unlicensed Python entries not yet
-  resolved; 9 apt packages without a copyright file.
-- DEPS / COMPONENTS.json stay a top-level list (decision 2026-11-26); this
-  file is the full resolved inventory.
-
 ## Follow-up 2026-11-26 (amd64 layers re-read, nothing executed)
 
 - `psycopg-pool` 3.3.3 (LGPL-3.0-only, in the postgres-mcp tool env) and
@@ -90,9 +81,6 @@ comes from the layer contents. It replaces the v1.0.2 digests recorded earlier.
   `redis-entraid` 1.2.2 MIT (LICENSE in the wheel, (c) Redis Inc.),
   `mcp-server-milvus` Apache-2.0 (classifier and upstream LICENSE; the sdist
   does not ship the file). These are not yet in DEPS/NOTICE.
-- Still open: the 9 apt packages without a copyright file, the written source
-  offer, and adding the three licenses above to the registers.
-
 Reproduce: resolve the tag through the registry API, take the per-arch manifest
 digests above, download and verify layers, scan tar members for
 `var/lib/dpkg/status`, `usr/share/doc/*/copyright`, `package.json` under
@@ -100,10 +88,22 @@ digests above, download and verify layers, scan tar members for
 
 ## Update 2026-11-27
 
-- The 9 apt packages without their own copyright file have their documentation
-  directory symlinked to a package that has one: libatomic1, libgcc-s1 and
+- On both architectures, the eight apt packages without a direct copyright
+  path have their documentation directory symlinked to a package with one:
+  libatomic1, libgcc-s1 and
   libstdc++6 to gcc-14-base; libncursesw6 to libtinfo6; libpython3.12-stdlib to
   libpython3.12-minimal (libpython3.12t64 to libpython3.12-stdlib);
-  openssh-server and openssh-sftp-server to openssh-client. Nothing is missing.
+  openssh-server and openssh-sftp-server to openssh-client.
 - Python LGPL components installed: psycopg 3.3.9, psycopg-binary 3.3.9,
   psycopg-pool 3.3.3 (all LGPL-3.0-only); now in DEPS.
+- The verified third-party entries `cli-table`, `redis-entraid`, and
+  `mcp-server-milvus` are now in [DEPS](../DEPS) and [NOTICE](../NOTICE).
+  The two other npm packages are project components. See the vendored
+  [OpenServerless MCP license](../mcp/LICENSE) and the Trustant
+  [React MCP source](../react-mcp/src/index.ts).
+- The [source offer](SOURCE-OFFER.md) gives version-specific source locations.
+  [CREDITS](../CREDITS.md) and [NOTICE](../NOTICE) point to it.
+- For the later fork image `trustant_v1.1.4_26.331.1141`, the published-image
+  smoke test verified gh 2.105.0, Ollama 0.40.18, and mcp-s3 1.3.0 against its
+  own DEPS on amd64 and arm64. The Ollama version in v1.0.3 remains unverified.
+  [GitHub Actions run](https://github.com/dennidalpos/trustant/actions/runs/46064420486).

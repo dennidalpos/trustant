@@ -39,6 +39,10 @@ All notable changes to Trustant are listed here. The latest release tag is
 
 ### Fixed
 
+- TruACP serves the Trustant favicon on its direct URL.
+- Chrome validates the GitHub repository format in the New Application dialog.
+- The development proxy preserves S3 request signatures so static files deploy
+  to Open Dev.
 - A failed model check offers a direct link to change the model or host, and
   displays the provider's error message in plain text.
 - Application deletion retries OpenServerless cleanup automatically and can

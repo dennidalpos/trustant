@@ -170,7 +170,7 @@ Live ACP tool calls in chat and notebook activity can show plain text in a colla
 
 ## 9. Build & packaging
 
-- **Builds**: `web` (browser bundle + `index.html`, embedded into the server) via
+- **Builds**: `web` (browser bundle, `index.html` and the shared Trustant `favicon.ico`, embedded into the server) via
   `esbuild.web.mjs`, and `server` (single self-contained `.cjs`) via
   `esbuild.server.mjs`. `npm run build` chains both and produces
   `dist-bin/truacp.cjs`; installation is owned exclusively by `setup.sh`

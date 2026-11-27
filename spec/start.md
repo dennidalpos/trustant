@@ -274,6 +274,12 @@ reverse proxy into k3s, in the openserverless namespace, as a LoadBalancer Servi
 - http://<apihost>            (Host: <ip> or <ip>.nip.io)        -> Host: miniops.me
 - http://<host>.<apihost>     (Host: <host>.<ip>.nip.io)         -> Host: <host>.miniops.me
 
+The S3 alias `http://s3.<ip>.nip.io:8080` goes directly to the SeaweedFS S3
+Service on port 9000. The proxy preserves the incoming `Host`, including its
+port, because S3 Signature Version 4 signs that header. Static pages requested
+through an application hostname still use Traefik and the application's web
+bucket.
+
 Reachable from the host at http://<ip>:8080 and http://<host>.<ip>.nip.io:8080.
 Port 8080 is used (not 80) so traefik keeps owning the node's :80 untouched, and
 8080 is outside the package's :80/:443/:6443 firewall DROP. The proxy is

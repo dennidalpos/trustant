@@ -20,7 +20,8 @@
  *
  * This entry point keeps the standalone build independent of the Obsidian host API.
  * It bundles web/main.tsx → dist-web/main.js (IIFE), emits
- * main.css, and copies index.html. The Node server serves dist-web/ at /.
+ * main.css, and copies index.html and the shared Trustant favicon. The Node
+ * server serves dist-web/ at /.
  *
  * It also embeds the built bundle into the server itself by generating
  * server/web-bundle.generated.ts (every dist-web file inlined as base64). The
@@ -40,7 +41,6 @@ const outdir = "dist-web";
 const embedFile = "server/web-bundle.generated.ts";
 
 mkdirSync(outdir, { recursive: true });
-copyFileSync("web/index.html", `${outdir}/index.html`);
 
 /**
  * Read every file in dist-web/ and write server/web-bundle.generated.ts, a
@@ -67,14 +67,15 @@ function writeEmbedModule() {
 }
 
 /**
- * Copy index.html and regenerate the embed module on each (re)build so template
- * edits and rebundles show up in watch mode and in the embedded copy.
+ * Copy the static assets before embedding the web bundle so a standalone
+ * server can serve the same favicon as Trustant without a separate web root.
  */
-const copyHtmlPlugin = {
-	name: "copy-html",
+const copyStaticPlugin = {
+	name: "copy-static",
 	setup(build) {
 		build.onEnd(() => {
 			copyFileSync("web/index.html", `${outdir}/index.html`);
+			copyFileSync("../web/favicon.ico", `${outdir}/favicon.ico`);
 			writeEmbedModule();
 		});
 	},
@@ -95,7 +96,7 @@ const options = {
 	logLevel: "info",
 	sourcemap: prod ? false : "inline",
 	minify: prod,
-	plugins: [copyHtmlPlugin],
+	plugins: [copyStaticPlugin],
 };
 
 if (prod) {

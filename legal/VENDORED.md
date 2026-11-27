@@ -393,9 +393,9 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 
 - Source: https://github.com/trustant/trustant-acp.git, gitlink before vendoring
 - Commit: `9786f796380aa9b2000d8cebd913fa41150c89ed`
-- Files: 71 unmodified, 44 modified, 7 added, 62 removed
+- Files: 70 unmodified, 45 modified, 7 added, 62 removed
 
-#### Modified (44)
+#### Modified (45)
 
 - `.gitignore`
 - `.vscode/extensions.json`
@@ -437,6 +437,7 @@ Export a patch with `git diff --binary <commit>^{tree} HEAD:<directory>`.
 - `vitest.config.mts`
 - `web/ChatApp.tsx`
 - `web/NotebookNodeView.tsx`
+- `web/index.html`
 - `web/min-width-bridge.ts`
 - `web/prompt-history.ts`
 - `web/styles.css`

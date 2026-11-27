@@ -9,26 +9,29 @@ the corresponding source code is available as follows.
 
 The image includes Ubuntu packages (coreutils, bash, git, gnupg, curl and so
 on) under the GPL, LGPL and MPL. Their source is published in the Ubuntu
-archive. For a package `<pkg>` at the version recorded in
-[IMAGE-v1.0.3.md](IMAGE-v1.0.3.md) or in `/var/lib/dpkg/status` inside the
-image, obtain it with:
+archive. In the image, query the source package and source version for an
+installed binary package `<pkg>`:
 
-    apt-get source <pkg>=<version>
+    dpkg-query -W -f='${source:Package}=${source:Version}\n' '<pkg>'
 
-with a `deb-src` entry for Ubuntu 24.04 (noble) enabled, or from
-<https://archive.ubuntu.com/ubuntu/pool/> and <https://launchpad.net>.
+On a system with Ubuntu 24.04 (noble) source repositories enabled, pass the
+result to `apt-get source --only-source '<source-package>=<source-version>'`.
+The [Ubuntu archive](https://archive.ubuntu.com/ubuntu/pool/) and
+[Launchpad](https://launchpad.net/ubuntu/+source) also list source packages.
 
 ## Python components under GPL/LGPL
 
 | Component | Version | License | Source |
 |---|---|---|---|
-| pglast (with libpg_query) | 7.21 | GPL-3.0-or-later | <https://github.com/lelit/pglast>, sdist `pglast==7.21` on PyPI |
-| psycopg, psycopg-binary | 3.3.9 | LGPL-3.0-only | <https://github.com/psycopg/psycopg>, sdist on PyPI |
-| psycopg-pool | 3.3.3 | LGPL-3.0-only | <https://github.com/psycopg/psycopg>, sdist `psycopg-pool==3.3.3` |
-| docstring-to-markdown | 0.17 | LGPL-2.1-or-later | <https://github.com/python-lsp/docstring-to-markdown>, sdist on PyPI |
+| pglast (with libpg_query) | 7.21 | GPL-3.0-or-later | [PyPI source distribution](https://pypi.org/project/pglast/7.21/#files) |
+| psycopg | 3.3.9 | LGPL-3.0-only | [PyPI source distribution](https://pypi.org/project/psycopg/3.3.9/#files) |
+| psycopg-binary | 3.3.9 | LGPL-3.0-only | [Tagged source](https://github.com/psycopg/psycopg/tree/3.3.9), [wheel build workflow](https://github.com/psycopg/psycopg/blob/3.3.9/.github/workflows/packages-bin.yml), and [bundled libpq build script](https://github.com/psycopg/psycopg/blob/3.3.9/tools/ci/build_libpq.sh) |
+| psycopg-pool | 3.3.3 | LGPL-3.0-only | [PyPI source distribution](https://pypi.org/project/psycopg-pool/3.3.3/#files) |
+| docstring-to-markdown | 0.17 | LGPL-2.1-or-later | [PyPI source distribution](https://pypi.org/project/docstring-to-markdown/0.17/#files) |
 
-The sdist of any Python distribution is available with
+For releases that publish a source distribution, use
 `pip download --no-binary :all: --no-deps <name>==<version>`.
+The `psycopg-binary` 3.3.9 release on PyPI contains wheels only.
 
 ## Written offer
 
