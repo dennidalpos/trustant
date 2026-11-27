@@ -162,7 +162,7 @@ AI** card, so the splash asks no further questions:
    - `models` and `pi.default` seeded from `status.ollama.models` and `status.ollama.default` — see "Per-provider seeding" in [2a-config.md](2a-config.md)
    - `model_versions.ollama = status.ollama.modelsVersion`
 
-   The dummy `api_key` will fail Ed25519 verification at the publish endpoints, which is the intended behavior for Ollama — see [6-publish.md](6-publish.md).
+   Production publishing uses the separate workspace license described in [6-publish.md](6-publish.md).
 2. Hide the modal and run the **full** Configuration flow (connectivity check + model pull + say-OK test).
 
 There is no splash path that persists an own-host Ollama configuration. Existing

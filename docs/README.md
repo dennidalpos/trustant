@@ -23,6 +23,7 @@ flowchart TD
 
 ## Then
 
+- [Configure AI and publish an application](publish-with-ai.md): provider setup for Private AI, Cloud AI and Sovereign AI, with a checklist for publishing to production.
 - [How it works](how-it-works.md): components, hostnames, data layout, a chat turn, providers, publishing and authentication, with diagrams.
 - [Ollama and Trustant](ollama.md): using an Ollama outside the environment, what the two need from each other, and more time for slow computers.
 - [Testing other operating systems in CI](ci-environments.md): the on-demand workflow that checks the scripts and the Ubuntu install, and what it cannot prove on macOS and Windows.

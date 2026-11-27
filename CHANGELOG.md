@@ -7,6 +7,8 @@ All notable changes to Trustant are listed here. The latest release tag is
 
 ### Added
 
+- Added a [guide to configuring AI and publishing an application](docs/publish-with-ai.md)
+  for Private AI, Cloud AI and Sovereign AI.
 - The Ollama Instance card detects an Ollama on the host of a WSL or Lima
   environment (default gateway, or `host.lima.internal`), checks that it answers
   and offers it with an **Add** button. It only suggests: the switch stays off
