@@ -19,7 +19,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-IMAGE="ghcr.io/trustant/trustant"
+IMAGE="${TRUSTANT_IMAGE:-ghcr.io/trustant/trustant}"
 DOCKERFILE="Dockerfile"
 # shellcheck source=runtime.sh
 . ./runtime.sh
