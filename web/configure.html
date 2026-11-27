@@ -1239,15 +1239,24 @@
                 opt.selected = true;
                 el.appendChild(opt);
             }
+            // No saved default (e.g. right after Private AI discovery): show an
+            // explicit empty choice instead of letting the browser display the
+            // first model, which would look selected while the backend has none.
+            // Save & Configure stays blocked until the user picks a model.
+            if (!selected) {
+                const placeholder = document.createElement('option');
+                placeholder.value = '';
+                placeholder.textContent = 'Select the default model…';
+                placeholder.disabled = true;
+                placeholder.selected = true;
+                el.appendChild(placeholder);
+            }
             for (const o of options) {
                 const opt = document.createElement('option');
                 opt.value = o;
                 opt.textContent = o;
                 if (!stale && o === selected) opt.selected = true;
                 el.appendChild(opt);
-            }
-            if (!selected && options.length > 0) {
-                el.selectedIndex = 0;
             }
         }
 

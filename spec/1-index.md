@@ -260,6 +260,12 @@ absent, so a page reload lands on the same screen.
 *"Please select the default model before saving."* Without that guard the save
 reaches the probe and surfaces the internal `pi.default not defined` diagnostic.
 
+While `pi.default` is empty the Default Model selector shows a disabled
+*"Select the default model…"* placeholder instead of the first model, so the
+screen never suggests a choice the backend does not hold. A saved default that
+is still offered stays selected and is preserved. Covered by
+`tests/private-default-model.spec.mjs`.
+
 # Configuration
 
 Every time the index page is opened (after a provider has been chosen), invoke the configuration api.
