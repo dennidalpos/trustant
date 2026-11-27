@@ -87,9 +87,15 @@ jobs:
       # machine produce the image the same way.
       - name: Build hotfix image
         if: steps.tag.outputs.hotfix == 'true'
+        env:
+          # Optional repository variable for forks that cannot push to
+          # ghcr.io/trustant/trustant; empty keeps the scripts' default.
+          TRUSTANT_IMAGE: ${{ vars.TRUSTANT_IMAGE }}
         run: bash ./hotfix.sh --buildx
 
       - name: Build full image
         if: steps.tag.outputs.hotfix == 'false'
+        env:
+          TRUSTANT_IMAGE: ${{ vars.TRUSTANT_IMAGE }}
         run: bash ./build.sh --buildx
 
