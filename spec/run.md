@@ -57,6 +57,10 @@ instead, exiting 1:
 2b. sanity-check the local k3s (kubeconfig at ~/.ops/tmp/kubeconfig, openserverless
 namespace present). Do NOT call ./start.sh from here — it is the provisioning
 entrypoint and calls run.sh itself, so invoking it would recurse.
+A brief k3s restart right after provisioning is tolerated: the namespace check is
+retried for `K3S_READY_TIMEOUT` seconds (default 60, every `K3S_READY_INTERVAL`,
+default 2) and, if k3s stays down, the last kubectl error is printed. A namespace
+the API reports as `NotFound` is really absent and fails immediately.
 
 2c. before starting the forwarder, terminate any pre-existing `kubefwd` with
 `SIGINT` and wait for it to exit. A forwarder left behind by an earlier run

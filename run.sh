@@ -227,9 +227,30 @@ fi
 kube() {
     KUBECONFIG="$KUBECONFIG_FILE" "${KUBECTL_CMD[@]}" "$@"
 }
-if ! kube get ns openserverless &>/dev/null; then
-    echo "k3s not ready or openserverless namespace missing — is the VM package healthy?"; exit 1
-fi
+# k3s can exit and be restarted by systemd right after provisioning (observed on
+# a first WSL2 run: fatal SQL commit, API back in ~10s), so tolerate a short
+# outage. A namespace the API reports as NotFound is genuinely absent and fails
+# at once; any other error is retried until K3S_READY_TIMEOUT seconds elapse and
+# the last kubectl error is then reported.
+K3S_READY_TIMEOUT="${K3S_READY_TIMEOUT:-60}"
+K3S_READY_INTERVAL="${K3S_READY_INTERVAL:-2}"
+k3s_deadline=$((SECONDS + K3S_READY_TIMEOUT))
+while :; do
+    k3s_status=0
+    k3s_out="$(kube get ns openserverless 2>&1)" || k3s_status=$?
+    (( k3s_status == 0 )) && break
+    if [[ "$k3s_out" == *NotFound* ]]; then
+        echo "openserverless namespace missing — is the VM package healthy?" >&2
+        echo "last kubectl error: $k3s_out" >&2
+        exit 1
+    fi
+    if (( SECONDS >= k3s_deadline )); then
+        echo "k3s not ready after ${K3S_READY_TIMEOUT}s — is the VM package healthy?" >&2
+        echo "last kubectl error (exit $k3s_status): $k3s_out" >&2
+        exit 1
+    fi
+    sleep "$K3S_READY_INTERVAL"
+done
 
 # 2c. Start one forwarder for the complete namespace. WHY: separate kubefwd
 # processes each allocate their first service to the same loopback address and
