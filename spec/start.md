@@ -124,6 +124,17 @@ readiness wait, which times out after ~10min on the big package. Instead boot a
 bare VM fast, then copy the cached deb in (`limactl copy`) and `apt install` it
 over `limactl shell`, where the install is not time-bounded.
 
+## OpenWhisk probe after a restart (WSL2 and native k3s)
+
+On a local k3s the apihost `http://miniops.me` reaches traefik through
+127.0.0.1:80, which is a CNI hostPort of the `svclb-traefik` pod, while the node
+address is served by kube-proxy. After a k3s crash or a WSL2 VM restart the
+svclb pod is recreated and loopback stays unreachable for tens of seconds while
+the node address already answers OpenWhisk. `setup.sh` step 7 therefore retries
+`/api/info` for `OPENWHISK_PROBE_TIMEOUT` seconds (default 120). If it still
+fails and OpenWhisk answers on the node address, the error says the svclb
+hostPort is not ready instead of reporting a generic unreachable apihost.
+
 ## Networking (so the apihost is actually reachable)
 
 The VM gets two interfaces: lima0 (192.168.252.x, reachable from the macOS host)

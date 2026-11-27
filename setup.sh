@@ -385,8 +385,31 @@ fi
 APIHOST="${APIHOST%/}"
 
 echo "Using apihost: $APIHOST"
-WHISK_DESC=$(curl -sL "${APIHOST}/api/info" | jq -r '.description' 2>/dev/null) || true
-[[ "$WHISK_DESC" == "OpenWhisk" ]] || fail "Cannot reach OpenWhisk at ${APIHOST}/api/info (got: ${WHISK_DESC:-no response})"
+# The loopback path to traefik (127.0.0.1:80, a CNI hostPort of the k3s svclb
+# pod) lags the kube-proxy path used for the node address: after k3s or the WSL2
+# VM restarts, the svclb pod is recreated and loopback stays unreachable for
+# tens of seconds while the node address already answers (#93). A single probe
+# therefore failed on a healthy cluster, so retry for a bounded time and, if it
+# still fails, say which path was down.
+OPENWHISK_PROBE_TIMEOUT="${OPENWHISK_PROBE_TIMEOUT:-120}"
+WHISK_DESC=""
+whisk_deadline=$((SECONDS + OPENWHISK_PROBE_TIMEOUT))
+while :; do
+  WHISK_DESC=$(curl -sL -m 5 "${APIHOST}/api/info" 2>/dev/null | jq -r '.description' 2>/dev/null) || true
+  [[ "$WHISK_DESC" == "OpenWhisk" ]] && break
+  if (( SECONDS >= whisk_deadline )); then
+    whisk_hint=""
+    whisk_node_ip="$(ip -4 route get 1.1.1.1 2>/dev/null | awk '{for (i = 1; i < NF; i++) if ($i == "src") { print $(i + 1); exit }}')"
+    if [[ -n "$whisk_node_ip" ]]; then
+      whisk_node_desc=$(curl -sL -m 5 -H "Host: ${APIHOST#*://}" "http://${whisk_node_ip}/api/info" 2>/dev/null | jq -r '.description' 2>/dev/null) || true
+      if [[ "$whisk_node_desc" == "OpenWhisk" ]]; then
+        whisk_hint=" — OpenWhisk answers on the node address ${whisk_node_ip} but not through ${APIHOST}: the k3s svclb hostPort (loopback :80) is not ready, check 'k3s kubectl -n kube-system get pods | grep svclb'"
+      fi
+    fi
+    fail "Cannot reach OpenWhisk at ${APIHOST}/api/info after ${OPENWHISK_PROBE_TIMEOUT}s (got: ${WHISK_DESC:-no response})${whisk_hint}"
+  fi
+  sleep 3
+done
 ok "OpenWhisk reachable at ${APIHOST}"
 
 # --- 8. Extract kubeconfig for ops from the LOCAL k3s (no ssh, no IP rewrite) ---

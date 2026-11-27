@@ -1009,3 +1009,26 @@ func TestOpsInstallsFromTrustantSourceWithoutObsoleteEnvVars(t *testing.T) {
 		t.Fatal("setup.sh must assert ops resolves the Trustant task source")
 	}
 }
+
+// The loopback hostPort of the k3s svclb pod lags the node-address path after a
+// k3s or WSL2 restart, so setup.sh must retry the OpenWhisk probe and name the
+// path that was down instead of failing on its first attempt (task #93).
+func TestSetupScriptRetriesOpenWhiskProbeAndNamesDownPath(t *testing.T) {
+	content, err := os.ReadFile("setup.sh")
+	if err != nil {
+		t.Fatal(err)
+	}
+	script := string(content)
+	for _, want := range []string{
+		"OPENWHISK_PROBE_TIMEOUT",
+		`curl -sL -m 5 "${APIHOST}/api/info"`,
+		"svclb hostPort (loopback :80) is not ready",
+	} {
+		if !strings.Contains(script, want) {
+			t.Fatalf("setup.sh must keep %q in the OpenWhisk probe", want)
+		}
+	}
+	if strings.Contains(script, `WHISK_DESC=$(curl -sL "${APIHOST}/api/info"`) {
+		t.Fatal("setup.sh must not probe OpenWhisk once without a timeout or retry")
+	}
+}
