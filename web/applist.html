@@ -106,7 +106,7 @@
                         <svg class="absolute left-3 top-2.5 h-4 w-4 text-[color:var(--nu-muted)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z"/>
                         </svg>
-                        <input id="appSearch" type="search" aria-label="Search apps or repositories" placeholder="Search apps or repositories"
+                        <input id="appSearch" type="search" name="app-search" autocomplete="off" aria-label="Search apps or repositories" placeholder="Search apps or repositories"
                             class="nu-input w-full pl-9 pr-3 py-2 text-sm placeholder:text-[color:var(--nu-muted)] placeholder:opacity-100">
                     </div>
                     <select id="appSort" aria-label="Sort applications by"
@@ -602,12 +602,12 @@
                     </div>
                     <div>
                         <label for="publishUser" class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">User</label>
-                        <input type="text" id="publishUser" oninput="updatePublishButton()"
+                        <input type="text" id="publishUser" autocomplete="off" oninput="updatePublishButton()"
                             class="nu-input w-full px-3 py-2">
                     </div>
                     <div>
                         <label for="publishPassword" class="block text-sm font-medium text-[color:var(--nu-ink)] mb-1">Password</label>
-                        <input type="password" id="publishPassword" oninput="updatePublishButton()"
+                        <input type="password" id="publishPassword" autocomplete="new-password" oninput="updatePublishButton()"
                             class="nu-input w-full px-3 py-2">
                     </div>
                     <div class="nu-banner p-3">
