@@ -69,8 +69,8 @@ COPY --from=loader /usr/local/lib/ollama/llama-server /usr/local/lib/ollama/
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN \
-    apt update && \
-    apt install -y --no-install-recommends \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
         locales ca-certificates gnupg git sudo curl jq less vim lsof libatomic1 \
         tini openssh-server supervisor iputils-ping inetutils-telnet ripgrep \
         python-is-python3 python3-pip python3-pytest python3-dotenv \
@@ -82,7 +82,7 @@ RUN \
     rm -f /tmp/nodesource.key && \
     echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_24.x nodistro main" \
         > /etc/apt/sources.list.d/nodesource.list && \
-    apt update && apt -y install nodejs && \
+    apt-get update && apt-get -y install nodejs && \
     rm -rf /var/lib/apt/lists/*
 
 RUN \
@@ -212,7 +212,7 @@ COPY --chown=trustant:trustant truacp-runtime/dist-bin/truacp.cjs /tmp/truacp/di
 COPY --chown=trustant:trustant truacp-runtime/extensions/trustant-runtime.ts /tmp/truacp/extensions/trustant-runtime.ts
 COPY --chown=trustant:trustant truacp-runtime/extensions/requirements.txt /tmp/truacp/extensions/requirements.txt
 RUN \
-    cd /tmp/truacp ;\
+    cd /tmp/truacp || exit 1 ;\
     sh setup.sh ;\
     test -x "$HOME/.local/bin/truacp" ;\
     test -x "$HOME/.local/bin/trustant-acp" ;\
