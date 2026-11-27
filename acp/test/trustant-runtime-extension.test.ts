@@ -30,6 +30,7 @@ import {
 	managedGeneratedArtifactBlockReason,
 	managedActionWasCreated,
 	managedMcpInvocation,
+	managedProjectTrustDecision,
 	managedRedeployVerificationBlockReason,
 	managedRepeatedStreamTextDetected,
 	managedSecretAccessBlockReason,
@@ -150,6 +151,28 @@ describe("Trustant Pi runtime extension", () => {
 		expect(manifest.requiredMcpServers).toEqual(["mongodb", "openserverless"]);
 		expect(pathIsWithin(workbench, nested)).toBe(true);
 		expect(pathIsWithin(workbench, join(root, "other"))).toBe(false);
+
+		// Project trust: only the host-declared workbench is trusted, and never
+		// persisted. A foreign folder, or a run without the managed marker, stays
+		// undecided so Pi keeps blocking project MCP servers there.
+		const managedEnv = {
+			TRUSTANT_MANAGED_RUNTIME: "1",
+			TRUSTANT_RUNTIME_CONFIG: manifestPath,
+		};
+		expect(managedProjectTrustDecision(workbench, managedEnv)).toEqual({
+			trusted: "yes",
+			remember: false,
+		});
+		expect(managedProjectTrustDecision(nested, managedEnv)).toEqual({
+			trusted: "yes",
+			remember: false,
+		});
+		expect(managedProjectTrustDecision(join(root, "other"), managedEnv)).toEqual(
+			{ trusted: "undecided" },
+		);
+		expect(managedProjectTrustDecision(workbench, {})).toEqual({
+			trusted: "undecided",
+		});
 		expect(trustantRuntimeSystemPrompt(manifest)).toContain(
 			"service MCPs as discovery and read-only verification",
 		);

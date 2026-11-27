@@ -89,6 +89,14 @@ workbench declares its servers in the project `.mcp.json`; the host therefore
 sets `mcpProjectServers: "allow"` in the typed `piLaunch` metadata and pi-acp
 passes `--mcp-project-servers allow` to Pi (checked in #65 with a synthetic MCP
 server in a TruACP session).
+Pi admits project servers only while it reports the project as trusted, and a
+workbench with project `.agents/skills` (or `.pi` resources) needs a trust
+decision that a headless RPC session cannot ask for; without one the servers
+were reported as blocked by project trust (#95). The managed Trustant extension
+therefore answers Pi's `project_trust` event with `yes` (`remember: false`, so
+nothing is written to Pi's trust store) only for a folder inside the workbench
+declared by the host manifest. Any other folder stays `undecided`, follows Pi's
+normal policy and keeps blocking project MCP servers.
 
 Upstream Pi AI 1.6.0 treats any failed turn mentioning 429 as transient, and
 Pi restarts it up to `settings.retry.maxRetries` times. Ollama Cloud uses HTTP

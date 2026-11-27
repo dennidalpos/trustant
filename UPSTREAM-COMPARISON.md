@@ -982,7 +982,7 @@ No file differs from the baseline: the directory is identical to the original gi
 
 ## Root repository against `upstream/main`
 
-- Merge base `b901510`; the fork has 362 commits upstream lacks, upstream has 22 the fork lacks.
+- Merge base `b901510`; the fork has 367 commits upstream lacks, upstream has 22 the fork lacks.
 - Files also changed upstream since the merge base are marked **conflict risk**.
 
 | File | St | +/- | Conflict risk | Latest fork commits touching it (the reason) |
@@ -1018,7 +1018,7 @@ No file differs from the baseline: the directory is identical to the original gi
 | `.gitmodules` | M | +0/-16 |  | c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>19f8d3e2 2026-09-24 branch<br>... and 5 more |
 | `.licenserc.yaml` | M | +7/-6 |  | c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>56225db7 2026-08-26 added license<br>... and 1 more |
 | `.sbcheck-ignore` | A | +108/-0 |  | 01481528 2026-11-27 sb check: ignore di un messaggio di commit storico<br>1dd0aa4f 2026-11-27 sb check: falsi positivi della storia rivisti<br>... and 1 more |
-| `AGENTS.md` | M | +38/-145 |  | db9a3add 2026-11-27 Update AGENTS.md<br>5ead7f64 2026-11-26 Rimuove i riferimenti all'ambiente di test privato dal repository<br>... and 31 more |
+| `AGENTS.md` | M | +42/-145 |  | 762496a4 2026-11-28 Refresh the managed SecondBrain block in AGENTS.md<br>db9a3add 2026-11-27 Update AGENTS.md<br>... and 32 more |
 | `AUDIT-2026-11-26.md` | A | +184/-0 |  | a0017e14 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b) |
 | `CHANGELOG.md` | A | +117/-0 |  | 5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>2a863657 2026-11-27 Document AI provider setup and production publishing<br>... and 15 more |
 | `CLAUDE.md` | M | +1/-258 | **yes** | 75b289dc 2026-11-25 Link SecondBrain 5: sb block in AGENTS.md, CLAUDE.md points to it, v4 files removed<br>3c49237a 2026-11-12 docs: consolidate agent instructions in AGENTS.md |
@@ -1073,7 +1073,7 @@ No file differs from the baseline: the directory is identical to the original gi
 | `launch_lifecycle_test.go` | M | +150/-0 |  | 728801cc 2026-11-26 Test: attesa piu' lunga per l'avvio del watcher node su runner ARM64<br>e89f1e06 2026-11-20 Serialize workspace updates and protect application runtimes |
 | `launch_progress_test.go` | M | +27/-9 |  | 7bbc2076 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS |
 | `legal/COMPONENTS.json` | A | +7869/-0 |  | a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>520933fd 2026-11-27 Legal: cli-table e redis-entraid nei registri, offerta sorgenti; CI su push e PR<br>... and 22 more |
-| `legal/IMAGE-v1.0.3.md` | A | +109/-0 |  | 5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>... and 3 more |
+| `legal/IMAGE-v1.0.3.md` | A | +124/-0 |  | e265902e 2026-11-27 Document Ollama in the historical Trustant image<br>5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>... and 4 more |
 | `legal/NOTICE.head` | M | +3/-0 |  | 520933fd 2026-11-27 Legal: cli-table e redis-entraid nei registri, offerta sorgenti; CI su push e PR |
 | `legal/REVIEW.md` | A | +159/-0 |  | a0017e14 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>482b764b 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>... and 7 more |
 | `legal/SOURCE-OFFER.md` | A | +46/-0 |  | 5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>... and 1 more |
@@ -1113,7 +1113,8 @@ No file differs from the baseline: the directory is identical to the original gi
 | `react-mcp/package-lock.json` | M | +52/-48 |  | 044b0e99 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102)<br>8b1c1091 2026-11-20 Update runtime dependencies and report development GUI readiness<br>... and 2 more |
 | `react-mcp/package.json` | M | +2/-2 |  | 044b0e99 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102)<br>8b1c1091 2026-11-20 Update runtime dependencies and report development GUI readiness |
 | `repo.go` | M | +162/-76 | **yes** | 3a86f6a5 2026-11-27 Ripulisci gli helper Go inutilizzati<br>8ceb7876 2026-11-26 Cancellazione app: rimuove la directory dei log runtime dell'app<br>... and 4 more |
-| `run.sh` | M | +49/-16 | **yes** | d0f10576 2026-11-25 Esporta TRUSTANT_AUTH_* da run.sh dopo aver caricato .env<br>0891295e 2026-11-25 Migra Air a build.entrypoint e salta ollama locale con endpoint remoto<br>... and 2 more |
+| `run.sh` | M | +73/-19 | **yes** | 5cf23167 2026-11-28 Tolerate a transient k3s restart in run.sh namespace check<br>d0f10576 2026-11-25 Esporta TRUSTANT_AUTH_* da run.sh dopo aver caricato .env<br>... and 3 more |
+| `run_k3s_ready_test.go` | A | +95/-0 |  | 5cf23167 2026-11-28 Tolerate a transient k3s restart in run.sh namespace check |
 | `runtime_log.go` | M | +11/-0 |  | 8ceb7876 2026-11-26 Cancellazione app: rimuove la directory dei log runtime dell'app |
 | `safefile.go` | A | +79/-0 |  | 5ef10797 2026-11-24 Estende le scritture senza symlink agli altri file del workbench<br>120c8c0d 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
 | `safefile_test.go` | A | +75/-0 |  | 120c8c0d 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
@@ -1128,7 +1129,7 @@ No file differs from the baseline: the directory is identical to the original gi
 | `skills_test.go` | A | +147/-0 |  | 478ec5e9 2026-11-24 Esegue l'escape di Host nella pagina errore e vincola la sorgente OPS_SKILLS (#114 #116 #123) |
 | `spec/0-preflight.md` | M | +17/-12 |  | 47353bbb 2026-11-21 Fix local links in Trustant specifications (#76)<br>8984b16e 2026-11-12 fix: recover provider setup and align routing documentation |
 | `spec/1-applist.md` | M | +59/-16 | **yes** | 5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 8 more |
-| `spec/1-index.md` | M | +21/-2 | **yes** | 2a863657 2026-11-27 Document AI provider setup and production publishing<br>68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 2 more |
+| `spec/1-index.md` | M | +27/-2 | **yes** | 0fb0ad01 2026-11-28 Require an explicit default model after Private AI discovery<br>2a863657 2026-11-27 Document AI provider setup and production publishing<br>... and 3 more |
 | `spec/11-files.md` | M | +1/-1 |  | 47fd99b1 2026-11-19 fix(files,proxy): stop caching the file tree and document the stream timeout chain |
 | `spec/12-terminal.md` | M | +2/-2 |  | 404894a4 2026-11-20 Improve mobile workbench controls and update Claude Code pin |
 | `spec/14-license.md` | M | +1/-1 | **yes** | 086b68d0 2026-11-21 Remove private workstation examples from current sources |
@@ -1158,7 +1159,7 @@ No file differs from the baseline: the directory is identical to the original gi
 | `spec/openserverless-instructions.md` | M | +33/-30 |  | cd545d1b 2026-11-26 Direttive app: sezione 'How the System Works' per orientare l'agente<br>0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>... and 2 more |
 | `spec/pi.md` | M | +26/-26 | **yes** | b8910a38 2026-11-21 Update Trustant tooling and inventory actions<br>3133d65b 2026-11-21 Distinguere il limite di sessione Ollama dai 429 transitori (#5)<br>... and 1 more |
 | `spec/provider-e2e-flow.svg` | D | +0/-52 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `spec/run.md` | M | +5/-2 | **yes** | 8b1c1091 2026-11-20 Update runtime dependencies and report development GUI readiness |
+| `spec/run.md` | M | +9/-2 | **yes** | 5cf23167 2026-11-28 Tolerate a transient k3s restart in run.sh namespace check<br>8b1c1091 2026-11-20 Update runtime dependencies and report development GUI readiness |
 | `spec/setup.md` | M | +48/-25 | **yes** | 2aa7d7f9 2026-11-24 Imposta go 1.27 con toolchain go1.27.4 e allinea setup.sh (#113)<br>c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 7 more |
 | `spec/start.md` | M | +41/-32 | **yes** | 5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>d29f1bb0 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42)<br>... and 7 more |
 | `spec/trustant-auth-flow.svg` | M | +1/-1 |  | 482b764b 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp |
@@ -1186,6 +1187,7 @@ No file differs from the baseline: the directory is identical to the original gi
 | `tests/issue98.spec.mjs` | D | +0/-1051 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
 | `tests/ollama-instances.test.mjs` | A | +238/-0 |  | 7f7a2874 2026-11-26 Ollama Instance: propone di aggiornare il preset Ollama host con IP WSL cambiato<br>33cca5c5 2026-11-25 Ollama Instance: rileva e propone l'Ollama dell'host (WSL, Lima)<br>... and 1 more |
 | `tests/ollama-local.test.mjs` | A | +149/-0 |  | 58b42099 2026-11-25 Aggiunge preset di istanze Ollama con interruttore locale/esterno e Refresh models per il Private AI<br>bf80f86d 2026-11-25 Aggiunge Start/Stop e stato dell'Ollama locale nella UI Private AI |
+| `tests/private-default-model.spec.mjs` | A | +93/-0 |  | 0fb0ad01 2026-11-28 Require an explicit default model after Private AI discovery |
 | `tests/test_legal_deps.py` | A | +80/-0 |  | f5ee4bce 2026-11-12 docs: refresh third-party licensing records |
 | `tests/uix02.spec.mjs` | A | +318/-0 |  | 68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>93ebe52d 2026-11-24 Completa il lotto Private AI e ripristina la scansione Go<br>... and 1 more |
 | `timeouts.go` | A | +55/-0 |  | 7287dd04 2026-11-25 Più tempo per i PC lenti e guida su Ollama |
@@ -1195,7 +1197,7 @@ No file differs from the baseline: the directory is identical to the original gi
 | `version.txt` | M | +1/-1 | **yes** | 93ebe52d 2026-11-24 Completa il lotto Private AI e ripristina la scansione Go<br>bd1d1307 2026-11-22 Rebuild ops from the CLI fork and bump Trustant to v1.1.3<br>... and 3 more |
 | `web/app.html` | M | +196/-149 | **yes** | dcb3f376 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>482b764b 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>... and 7 more |
 | `web/applist.html` | M | +310/-133 | **yes** | 5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>cbe741d8 2026-11-27 applist: evita l'autofill del browser nella ricerca app<br>... and 12 more |
-| `web/configure.html` | M | +317/-119 | **yes** | 68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>dcb3f376 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>... and 11 more |
+| `web/configure.html` | M | +329/-122 | **yes** | 0fb0ad01 2026-11-28 Require an explicit default model after Private AI discovery<br>68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 12 more |
 | `web/index.html` | M | +121/-88 | **yes** | 68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>bf80f86d 2026-11-25 Aggiunge Start/Stop e stato dell'Ollama locale nella UI Private AI<br>... and 6 more |
 | `web/js/bind.js` | M | +185/-7 |  | 066da171 2026-11-25 UI: menu accessibili, etichette dei campi e modelli di chat filtrati<br>d6f441cb 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip<br>... and 1 more |
 | `web/js/modal-a11y.js` | A | +134/-0 |  | baa0daf7 2026-11-20 Fix catalog failures and modal accessibility<br>5ea565ab 2026-11-18 fix(setup,web): confine OpenServerless prompt to trudev VMs and close UX residuals |

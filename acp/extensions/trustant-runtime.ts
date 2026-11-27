@@ -114,6 +114,10 @@ interface ExtensionContext {
 
 interface TrustantExtensionApi {
 	on(
+		event: "project_trust",
+		handler: (event: { cwd: string }) => ManagedProjectTrustDecision,
+	): void;
+	on(
 		event: "before_agent_start",
 		handler: (
 			event: BeforeAgentStartEvent,
@@ -256,6 +260,34 @@ function canonicalDirectory(path: string, field: string): string {
  * extension must not trust process cwd or a manifest that changed between
  * adapter startup and Pi loading.
  */
+export type ManagedProjectTrustDecision =
+	| { trusted: "yes"; remember: false }
+	| { trusted: "undecided" };
+
+/**
+ * Decide Pi's project trust for a managed launch.
+ *
+ * WHY: a workbench with project `.agents/skills` needs a trust decision, and a
+ * headless RPC session has nobody to ask, so Pi declined it and
+ * pi-mcp-adapter then blocked the host-owned servers ("blocked by project
+ * trust"). The host manifest names exactly the workbench it created, so only a
+ * cwd inside that workbench is trusted, and only for this process
+ * (`remember: false` writes nothing to Pi's trust store). Any other folder
+ * stays undecided and follows Pi's normal policy, so untrusted projects keep
+ * blocking project MCP servers.
+ */
+export function managedProjectTrustDecision(
+	cwd: string,
+	env: NodeJS.ProcessEnv = process.env,
+): ManagedProjectTrustDecision {
+	try {
+		loadTrustantRuntimeManifest(cwd, env);
+		return { trusted: "yes", remember: false };
+	} catch {
+		return { trusted: "undecided" };
+	}
+}
+
 export function loadTrustantRuntimeManifest(
 	workingDirectory = process.cwd(),
 	env: NodeJS.ProcessEnv = process.env,
@@ -1554,6 +1586,8 @@ export default function trustantRuntimeExtension(
 			};
 		},
 	});
+
+	pi.on("project_trust", (event) => managedProjectTrustDecision(event.cwd));
 
 	pi.on("before_provider_request", (event) =>
 		applyTrustantThinking(event.payload, readTrustantThinking()),
