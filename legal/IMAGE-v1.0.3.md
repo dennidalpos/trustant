@@ -1,9 +1,10 @@
 # Image qualification: trustant_v1.0.3_26.324.1910
 
-Date: 2026-11-26, updated 2026-11-27. This is a static, read-only analysis by
-digest: no container was started, nothing was deployed or published. Layers
-were downloaded to the ignored `tmp/` and each layer's SHA-256 was checked
-against its manifest. It is a technical inventory, not a legal opinion.
+Date: 2026-11-26, updated 2026-11-27. The inventory was collected from image
+layers by digest. Each downloaded layer's SHA-256 was checked against its
+manifest. The Ollama follow-up also ran the extracted amd64 client with
+`--version` in an isolated WSL directory. No container was started, and
+nothing was deployed or published.
 
 ## Digests
 
@@ -51,10 +52,9 @@ comes from the layer contents. It replaces the v1.0.2 digests recorded earlier.
    `npm` 11.19.1 Artistic-2.0, `spdx-exceptions` CC-BY-3.0 (attribution).
    Python: `mcp-server-milvus` and `redis-entraid` declare none; `pathspec`
    only by classifier (MPL-2.0).
-4. **Binaries.** The ollama (0.40.18 in DEPS), gh (2.105.0) and mcp-s3 (1.3.0)
-   versions in DEPS were not confirmed against the image binaries because
-   nothing was executed. The `trustant` binary has no DEPS row; its source is
-   this repository.
+4. **Binaries.** This image ships Ollama 0.32.14, gh 2.96.0 and mcp-s3 1.3.0.
+   The follow-ups below record the evidence for each version. The `trustant`
+   binary is built from this repository.
 
 ## Follow-up 2026-11-26 (amd64 layers re-read, nothing executed)
 
@@ -67,9 +67,8 @@ comes from the layer contents. It replaces the v1.0.2 digests recorded earlier.
 - `mcp-s3`: `go version -m` (reads the embedded build info, nothing executed)
   gives module `github.com/txn2/mcp-s3` v1.3.0, commit `872fa60a`, built with
   go1.26.4. This matches DEPS (1.3.0).
-- `ollama`: Go 1.26.0 build whose embedded info says `(devel)`, with no version
-  string recoverable from the binary. The shipped version stays unproven (DEPS
-  pins 0.40.18); confirm it from the image build log or by running the binary.
+- `ollama`: the embedded Go build info reports Go 1.26.0 and module version
+  `(devel)`. See the Ollama follow-up below for the client version.
 - Corresponding sources, from the pinned PyPI sdists: pglast 7.21
   (`pglast-7.21.tar.gz`, github.com/lelit/pglast), psycopg 3.3.x and
   psycopg-pool 3.3.3 (github.com/psycopg/psycopg), docstring-to-markdown 0.17
@@ -105,5 +104,21 @@ digests above, download and verify layers, scan tar members for
   [CREDITS](../CREDITS.md) and [NOTICE](../NOTICE) point to it.
 - For the later fork image `trustant_v1.1.4_26.331.1141`, the published-image
   smoke test verified gh 2.105.0, Ollama 0.40.18, and mcp-s3 1.3.0 against its
-  own DEPS on amd64 and arm64. The Ollama version in v1.0.3 remains unverified.
+  own DEPS on amd64 and arm64.
   [GitHub Actions run](https://github.com/dennidalpos/trustant/actions/runs/46064420486).
+
+## Ollama version verification 2026-11-27
+
+Both platform manifests listed above ship **Ollama 0.32.14**. The
+digest-verified layer containing `/etc/environment` records
+`OLLAMA_VERSION=0.32.14` on both architectures. Each extracted ELF contains
+the same version string, and the amd64 client reported `client version is
+0.32.14` when run with `--version` and `OLLAMA_HOST=127.0.0.1:1`. The arm64
+client was inspected statically. The Dockerfile at the v1.0.3 tag pins the
+same version and copies both the binary and the environment file from the
+installer stage.
+
+| Platform | Ollama layer digest | SHA-256 of `/usr/local/bin/ollama` |
+|---|---|---|
+| linux/amd64 | `sha256:6b227fb2809f7cbd17d74374b17322cbb84d66309e0e5d2d7b88fb9a260a1754` | `d0758d38ac5882a2c68fd930d0c1220af1952469fa9f30c268746d4021709bf4` |
+| linux/arm64 | `sha256:0becddbadad15ea9c5fc2c99793e5d4d64b3165b6cca8e1f694030d0abb4cd63` | `26f44ca89143f2326a3aad98b2cb5e8b5af9397aef7001cd8d022e90d6e0b55e` |
