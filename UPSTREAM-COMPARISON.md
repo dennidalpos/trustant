@@ -10,7 +10,7 @@ Scope: line diffs are reproduced for every vendored file except lockfiles and di
 
 | Path | Original gitlink | Fork now | Vendored baseline | Baseline against the original gitlink |
 |---|---|---|---|---|
-| `acp` | `afd72d7` | directory | `9786f79` | baseline is 1 commit(s) behind and 0 commit(s) ahead of it |
+| `acp` | `e7d98ed` | directory | `9786f79` | baseline is 1 commit(s) behind and 0 commit(s) ahead of it |
 | `mcp` | `baf1400` | directory | `baf1400` | same commit |
 | `oplugins` | `455258e` | directory | `27b281e` | baseline is 0 commit(s) behind and 47 commit(s) ahead of it |
 | `oplugins-truinst` | `c871b3d` | gitlink `b65d58d` | same | differs from the original gitlink |
@@ -22,130 +22,131 @@ Scope: line diffs are reproduced for every vendored file except lockfiles and di
 
 - Origin: https://github.com/trustant/trustant-acp
 - Baseline vendored by the fork: `9786f796380aa9b2000d8cebd913fa41150c89ed` (vendored 2026-11-19 (b06dc8d))
-- Gitlink in the original repository: `afd72d7aae12aa8e70c8159fc5923ef625ed8e93`; baseline is 1 commit(s) behind and 0 commit(s) ahead of it
-- Files changed since the baseline: 120; every other file is identical to the baseline.
+- Gitlink in the original repository: `e7d98ed165ef4f6fde8602e95d94c61b6bb3bb04`; baseline is 1 commit(s) behind and 0 commit(s) ahead of it
+- Files changed since the baseline: 121; every other file is identical to the baseline.
 
 | File | Status | +/- | Why |
 |---|---|---|---|
-| `.claude/skills/release-notes/SKILL.md` | removed | +0/-331 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin |
-| `.gitignore` | modified | +1/-2 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin |
+| `.claude/skills/release-notes/SKILL.md` | removed | +0/-331 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin |
+| `.gitignore` | modified | +1/-2 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin |
 | `.gitmodules` | removed | +0/-4 | (auto) changed by the vendoring commit itself (vendored 2026-11-19 (b06dc8d)): standalone-repository file dropped or replaced by the root equivalent |
 | `.licenserc.yaml` | removed | +0/-142 | (auto) changed by the vendoring commit itself (vendored 2026-11-19 (b06dc8d)): standalone-repository file dropped or replaced by the root equivalent |
-| `.vscode/extensions.json` | modified | +0/-1 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin |
-| `.vscode/settings.json` | modified | +0/-10 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin |
-| `AGENTS.md` | modified | +15/-319 | (auto) 707f7d9 2026-11-23 Documentazione acp: React 19 nella sezione Tech (#098); da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `ARCHITECTURE.md` | modified | +11/-387 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin |
-| `CLAUDE.md` | modified | +15/-319 | (auto) 707f7d9 2026-11-23 Documentazione acp: React 19 nella sezione Tech (#098); da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `.vscode/extensions.json` | modified | +0/-1 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin |
+| `.vscode/settings.json` | modified | +0/-10 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin |
+| `AGENTS.md` | modified | +15/-319 | (auto) 707f7d95 2026-11-23 Documentazione acp: React 19 nella sezione Tech (#098); da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `ARCHITECTURE.md` | modified | +11/-387 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin |
+| `CLAUDE.md` | modified | +15/-319 | (auto) 707f7d95 2026-11-23 Documentazione acp: React 19 nella sezione Tech (#098); da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
 | `CONTRIBUTING.md` | removed | +0/-24 | (auto) changed by the vendoring commit itself (vendored 2026-11-19 (b06dc8d)): standalone-repository file dropped or replaced by the root equivalent |
-| `LICENSE-Apache-2.0-obsidian-agent-client` | added | +202/-0 | (auto) d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `NOTICE` | modified | +8/-1 | (auto) d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `README.md` | modified | +79/-27 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; 2c36504 2026-11-20 Fix optional Obsidian tooling advisories; 8b1c109 2026-11-20 Update runtime dependencies and report development GUI readiness |
-| `SPEC.md` | modified | +88/-108 | (auto) f8f165c 2026-11-25 Aggiorna @agentclientprotocol/codex-acp a 2.12.0; e4d8961 2026-11-24 Corregge accessibilità di Inventario, Template e TruACP (UIX02); 044b0e9 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102); 6d3b735 2026-11-22 Migrate Pi to 1.6.0 with pi-mcp-adapter 7.0.1 and pi-web-access 0.48.0; ... and 8 more |
-| `UPSTREAM.md` | added | +68/-0 | (auto) a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b); b35ec05 2026-11-19 docs(legal): track vendored acp changes against the original submodule commits; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `esbuild.config.mjs` | removed | +0/-90 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `esbuild.web.mjs` | modified | +2/-2 | (auto) 8b1c109 2026-11-20 Update runtime dependencies and report development GUI readiness |
-| `eslint.config.mjs` | removed | +0/-42 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; 8b1c109 2026-11-20 Update runtime dependencies and report development GUI readiness; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `extensions/requirements.txt` | modified | +7/-7 | (auto) 4c9c653 2026-11-19 fix(deps): resolve Dependabot alerts in npm lockfiles and Python pins |
-| `extensions/trustant-runtime.ts` | modified | +13/-0 | (auto) 6d3b735 2026-11-22 Migrate Pi to 1.6.0 with pi-mcp-adapter 7.0.1 and pi-web-access 0.48.0 |
-| `manifest.json` | removed | +0/-11 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin |
-| `package-lock.json` | modified | +2267/-8852 | (auto) 044b0e9 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102); 9786b18 2026-11-23 Migrazione dipendenze passo 3: react 19 in acp (#098); bee1b82 2026-11-23 Migrazione dipendenze passo 1: tslib 2.9.1 in acp (#096); d767604 2026-11-23 Major fase 3: SDK ACP 2.9.1 e diff 9 in acp e pi-acp; ... and 7 more |
-| `package.json` | modified | +17/-33 | (auto) 044b0e9 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102); 9786b18 2026-11-23 Migrazione dipendenze passo 3: react 19 in acp (#098); bee1b82 2026-11-23 Migrazione dipendenze passo 1: tslib 2.9.1 in acp (#096); d767604 2026-11-23 Major fase 3: SDK ACP 2.9.1 e diff 9 in acp e pi-acp; ... and 9 more |
-| `pi-acp` | removed | +0/-1 | (auto) 63a1c0b 2026-11-23 Aggiornamento dipendenze: typescript-eslint 8.74.0 in pi-acp; 044b0e9 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102); ef31b95 2026-11-23 Migrazione dipendenze passo 2: eslint 10 in pi-acp (#097); d767604 2026-11-23 Major fase 3: SDK ACP 2.9.1 e diff 9 in acp e pi-acp; ... and 5 more |
-| `pi.integrity` | modified | +7/-6 | (auto) f8f165c 2026-11-25 Aggiorna @agentclientprotocol/codex-acp a 2.12.0; 6d3b735 2026-11-22 Migrate Pi to 1.6.0 with pi-mcp-adapter 7.0.1 and pi-web-access 0.48.0; b8910a3 2026-11-21 Update Trustant tooling and inventory actions; 01f73cf 2026-11-20 Update Trustant tooling and add Ollama import suggestions |
-| `pi.version` | modified | +11/-12 | (auto) f8f165c 2026-11-25 Aggiorna @agentclientprotocol/codex-acp a 2.12.0; 6d3b735 2026-11-22 Migrate Pi to 1.6.0 with pi-mcp-adapter 7.0.1 and pi-web-access 0.48.0; b8910a3 2026-11-21 Update Trustant tooling and inventory actions; 01f73cf 2026-11-20 Update Trustant tooling and add Ollama import suggestions |
-| `run.sh` | modified | +1/-1 | (auto) 8b1c109 2026-11-20 Update runtime dependencies and report development GUI readiness |
-| `server/acp-host.ts` | modified | +13/-0 | (auto) 6882ca3 2026-11-23 Qualificare e aggiornare Pi e le sue estensioni (#65); 01f73cf 2026-11-20 Update Trustant tooling and add Ollama import suggestions |
-| `server/claude-version.ts` | modified | +2/-1 | (auto) 404894a 2026-11-20 Improve mobile workbench controls and update Claude Code pin |
-| `server/config-store.ts` | modified | +2/-2 | (auto) 01f73cf 2026-11-20 Update Trustant tooling and add Ollama import suggestions |
-| `server/index.ts` | modified | +11/-5 | (auto) 8b1c109 2026-11-20 Update runtime dependencies and report development GUI readiness |
-| `server/managed-runtime.ts` | modified | +1/-1 | (auto) d767604 2026-11-23 Major fase 3: SDK ACP 2.9.1 e diff 9 in acp e pi-acp |
-| `server/session-host.ts` | modified | +25/-3 | (auto) b59b684 2026-11-21 Show live ACP tool output and align Node types |
-| `setup.md` | modified | +37/-24 | (auto) f8f165c 2026-11-25 Aggiorna @agentclientprotocol/codex-acp a 2.12.0; 6882ca3 2026-11-23 Qualificare e aggiornare Pi e le sue estensioni (#65); 6d3b735 2026-11-22 Migrate Pi to 1.6.0 with pi-mcp-adapter 7.0.1 and pi-web-access 0.48.0; b8910a3 2026-11-21 Update Trustant tooling and inventory actions; ... and 2 more |
-| `setup.sh` | modified | +102/-165 | (auto) 99bbcd9 2026-11-25 Non mette in stage i percorsi ignorati e completa le note di setup; 6d3b735 2026-11-22 Migrate Pi to 1.6.0 with pi-mcp-adapter 7.0.1 and pi-web-access 0.48.0; 3133d65 2026-11-21 Distinguere il limite di sessione Ollama dai 429 transitori (#5) |
-| `src/acp/acp-client.ts` | modified | +12/-1 | (auto) d767604 2026-11-23 Major fase 3: SDK ACP 2.9.1 e diff 9 in acp e pi-acp; 6882ca3 2026-11-23 Qualificare e aggiornare Pi e le sue estensioni (#65); b59b684 2026-11-21 Show live ACP tool output and align Node types; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/acp/acp-handler.ts` | modified | +7/-1 | (auto) d767604 2026-11-23 Major fase 3: SDK ACP 2.9.1 e diff 9 in acp e pi-acp; b59b684 2026-11-21 Show live ACP tool output and align Node types; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/acp/permission-handler.ts` | modified | +3/-1 | (auto) d767604 2026-11-23 Major fase 3: SDK ACP 2.9.1 e diff 9 in acp e pi-acp; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/acp/terminal-handler.ts` | modified | +2/-0 | (auto) d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/acp/type-converter.ts` | modified | +19/-12 | (auto) d767604 2026-11-23 Major fase 3: SDK ACP 2.9.1 e diff 9 in acp e pi-acp; b59b684 2026-11-21 Show live ACP tool output and align Node types; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/hooks/useAgent.ts` | removed | +0/-262 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/hooks/useAgentMessages.ts` | removed | +0/-528 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/hooks/useAgentSession.ts` | removed | +0/-571 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/hooks/useChatActions.ts` | removed | +0/-406 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/hooks/useHistoryModal.ts` | removed | +0/-236 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/hooks/useSessionHistory.ts` | removed | +0/-891 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/hooks/useSettings.ts` | removed | +0/-36 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/hooks/useSuggestions.ts` | removed | +0/-357 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `LICENSE-Apache-2.0-obsidian-agent-client` | added | +202/-0 | (auto) d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `NOTICE` | modified | +8/-1 | (auto) d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `README.md` | modified | +79/-27 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; 2c365043 2026-11-20 Fix optional Obsidian tooling advisories; 8b1c1091 2026-11-20 Update runtime dependencies and report development GUI readiness |
+| `SPEC.md` | modified | +89/-109 | Documents the shared favicon in the embedded browser bundle. |
+| `UPSTREAM.md` | added | +68/-0 | (auto) a0017e14 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b); b35ec054 2026-11-19 docs(legal): track vendored acp changes against the original submodule commits; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `esbuild.config.mjs` | removed | +0/-90 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `esbuild.web.mjs` | modified | +10/-9 | Embeds the shared Trustant favicon in the standalone browser bundle. |
+| `eslint.config.mjs` | removed | +0/-42 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; 8b1c1091 2026-11-20 Update runtime dependencies and report development GUI readiness; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `extensions/requirements.txt` | modified | +7/-7 | (auto) 4c9c653d 2026-11-19 fix(deps): resolve Dependabot alerts in npm lockfiles and Python pins |
+| `extensions/trustant-runtime.ts` | modified | +13/-0 | (auto) 6d3b7350 2026-11-22 Migrate Pi to 1.6.0 with pi-mcp-adapter 7.0.1 and pi-web-access 0.48.0 |
+| `manifest.json` | removed | +0/-11 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin |
+| `package-lock.json` | modified | +2267/-8852 | (auto) 044b0e99 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102); 9786b187 2026-11-23 Migrazione dipendenze passo 3: react 19 in acp (#098); bee1b82d 2026-11-23 Migrazione dipendenze passo 1: tslib 2.9.1 in acp (#096); d7676045 2026-11-23 Major fase 3: SDK ACP 2.9.1 e diff 9 in acp e pi-acp; ... and 7 more |
+| `package.json` | modified | +17/-33 | (auto) 044b0e99 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102); 9786b187 2026-11-23 Migrazione dipendenze passo 3: react 19 in acp (#098); bee1b82d 2026-11-23 Migrazione dipendenze passo 1: tslib 2.9.1 in acp (#096); d7676045 2026-11-23 Major fase 3: SDK ACP 2.9.1 e diff 9 in acp e pi-acp; ... and 9 more |
+| `pi-acp` | removed | +0/-1 | (auto) 3bcb5f66 2026-11-26 pi-acp: metadati del repository su trustant/pi-acp; 63a1c0bd 2026-11-23 Aggiornamento dipendenze: typescript-eslint 8.74.0 in pi-acp; 044b0e99 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102); ef31b952 2026-11-23 Migrazione dipendenze passo 2: eslint 10 in pi-acp (#097); ... and 6 more |
+| `pi.integrity` | modified | +7/-6 | (auto) f8f165cf 2026-11-25 Aggiorna @agentclientprotocol/codex-acp a 2.12.0; 6d3b7350 2026-11-22 Migrate Pi to 1.6.0 with pi-mcp-adapter 7.0.1 and pi-web-access 0.48.0; b8910a38 2026-11-21 Update Trustant tooling and inventory actions; 01f73cff 2026-11-20 Update Trustant tooling and add Ollama import suggestions |
+| `pi.version` | modified | +11/-12 | (auto) f8f165cf 2026-11-25 Aggiorna @agentclientprotocol/codex-acp a 2.12.0; 6d3b7350 2026-11-22 Migrate Pi to 1.6.0 with pi-mcp-adapter 7.0.1 and pi-web-access 0.48.0; b8910a38 2026-11-21 Update Trustant tooling and inventory actions; 01f73cff 2026-11-20 Update Trustant tooling and add Ollama import suggestions |
+| `run.sh` | modified | +1/-1 | (auto) 8b1c1091 2026-11-20 Update runtime dependencies and report development GUI readiness |
+| `server/acp-host.ts` | modified | +13/-0 | (auto) 6882ca35 2026-11-23 Qualificare e aggiornare Pi e le sue estensioni (#65); 01f73cff 2026-11-20 Update Trustant tooling and add Ollama import suggestions |
+| `server/claude-version.ts` | modified | +2/-1 | (auto) 404894a4 2026-11-20 Improve mobile workbench controls and update Claude Code pin |
+| `server/config-store.ts` | modified | +2/-2 | (auto) 01f73cff 2026-11-20 Update Trustant tooling and add Ollama import suggestions |
+| `server/index.ts` | modified | +11/-5 | (auto) 8b1c1091 2026-11-20 Update runtime dependencies and report development GUI readiness |
+| `server/managed-runtime.ts` | modified | +1/-1 | (auto) d7676045 2026-11-23 Major fase 3: SDK ACP 2.9.1 e diff 9 in acp e pi-acp |
+| `server/session-host.ts` | modified | +25/-3 | (auto) b59b684f 2026-11-21 Show live ACP tool output and align Node types |
+| `setup.md` | modified | +37/-24 | (auto) f8f165cf 2026-11-25 Aggiorna @agentclientprotocol/codex-acp a 2.12.0; 6882ca35 2026-11-23 Qualificare e aggiornare Pi e le sue estensioni (#65); 6d3b7350 2026-11-22 Migrate Pi to 1.6.0 with pi-mcp-adapter 7.0.1 and pi-web-access 0.48.0; b8910a38 2026-11-21 Update Trustant tooling and inventory actions; ... and 2 more |
+| `setup.sh` | modified | +102/-165 | (auto) 99bbcd9e 2026-11-25 Non mette in stage i percorsi ignorati e completa le note di setup; 6d3b7350 2026-11-22 Migrate Pi to 1.6.0 with pi-mcp-adapter 7.0.1 and pi-web-access 0.48.0; 3133d65b 2026-11-21 Distinguere il limite di sessione Ollama dai 429 transitori (#5) |
+| `src/acp/acp-client.ts` | modified | +12/-1 | (auto) d7676045 2026-11-23 Major fase 3: SDK ACP 2.9.1 e diff 9 in acp e pi-acp; 6882ca35 2026-11-23 Qualificare e aggiornare Pi e le sue estensioni (#65); b59b684f 2026-11-21 Show live ACP tool output and align Node types; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/acp/acp-handler.ts` | modified | +7/-1 | (auto) d7676045 2026-11-23 Major fase 3: SDK ACP 2.9.1 e diff 9 in acp e pi-acp; b59b684f 2026-11-21 Show live ACP tool output and align Node types; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/acp/permission-handler.ts` | modified | +3/-1 | (auto) d7676045 2026-11-23 Major fase 3: SDK ACP 2.9.1 e diff 9 in acp e pi-acp; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/acp/terminal-handler.ts` | modified | +2/-0 | (auto) d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/acp/type-converter.ts` | modified | +19/-12 | (auto) d7676045 2026-11-23 Major fase 3: SDK ACP 2.9.1 e diff 9 in acp e pi-acp; b59b684f 2026-11-21 Show live ACP tool output and align Node types; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/hooks/useAgent.ts` | removed | +0/-262 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/hooks/useAgentMessages.ts` | removed | +0/-528 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/hooks/useAgentSession.ts` | removed | +0/-571 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/hooks/useChatActions.ts` | removed | +0/-406 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/hooks/useHistoryModal.ts` | removed | +0/-236 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/hooks/useSessionHistory.ts` | removed | +0/-891 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/hooks/useSettings.ts` | removed | +0/-36 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/hooks/useSuggestions.ts` | removed | +0/-357 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
 | `src/main.ts => web/ToolOutputDisclosure.tsx` | ? | +10/-8 | (auto) changed by the vendoring commit itself (vendored 2026-11-19 (b06dc8d)): standalone-repository file dropped or replaced by the root equivalent |
-| `src/plugin.ts` | removed | +0/-1371 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/services/chat-exporter.ts` | removed | +0/-569 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/services/message-sender.ts` | removed | +0/-884 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/services/message-state.ts` | removed | +0/-392 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/services/session-helpers.ts` | removed | +0/-260 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/services/session-state.ts` | removed | +0/-169 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/services/session-storage.ts` | removed | +0/-354 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/services/settings-normalizer.ts` | removed | +0/-292 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/services/settings-service.ts` | removed | +0/-344 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/services/update-checker.ts` | removed | +0/-145 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/services/vault-service.ts` | removed | +0/-571 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/services/view-registry.ts` | removed | +0/-470 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/types/agent.ts` | removed | +0/-116 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/types/chat.ts` | modified | +2/-0 | (auto) d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/types/errors.ts` | modified | +2/-0 | (auto) d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/types/obsidian-internals.d.ts` | removed | +0/-31 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/types/session.ts` | modified | +6/-0 | (auto) b59b684 2026-11-21 Show live ACP tool output and align Node types; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/ChangeDirectoryModal.ts` | removed | +0/-154 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/ChatContext.ts` | removed | +0/-42 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/ChatHeader.tsx` | removed | +0/-312 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/ChatPanel.tsx` | removed | +0/-1324 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/ChatView.tsx` | removed | +0/-396 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/EditTitleModal.ts` | removed | +0/-162 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/ErrorBanner.tsx` | removed | +0/-121 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/FloatingButton.tsx` | removed | +0/-368 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/FloatingChatView.tsx` | removed | +0/-565 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/InputArea.tsx` | removed | +0/-1117 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/InputToolbar.tsx` | removed | +0/-359 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/MessageBubble.tsx` | removed | +0/-459 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/MessageList.tsx` | removed | +0/-338 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/PermissionBanner.tsx` | removed | +0/-99 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/SessionHistoryModal.tsx` | removed | +0/-745 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/SessionManagerView.tsx` | removed | +0/-250 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/SettingsTab.ts` | removed | +0/-1559 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/SuggestionPopup.tsx` | removed | +0/-155 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/TerminalBlock.tsx` | removed | +0/-124 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/ToolCallBlock.tsx` | removed | +0/-474 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/shared/AttachmentStrip.tsx` | removed | +0/-99 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/shared/IconButton.tsx` | removed | +0/-72 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/shared/MarkdownRenderer.tsx` | removed | +0/-120 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/ui/view-host.ts` | removed | +0/-73 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/utils/error-utils.ts` | modified | +2/-0 | (auto) d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/utils/logger.ts` | modified | +2/-0 | (auto) d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/utils/mention-parser.ts` | removed | +0/-146 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/utils/paths.ts` | modified | +2/-0 | (auto) d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/utils/platform.ts` | modified | +2/-0 | (auto) d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `src/utils/text.ts` | removed | +0/-31 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `styles.css` | removed | +0/-2330 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `test/acp-handler-activity.test.ts` | modified | +62/-1 | (auto) b59b684 2026-11-21 Show live ACP tool output and align Node types |
-| `test/claude-install.test.ts` | modified | +114/-5 | (auto) 404894a 2026-11-20 Improve mobile workbench controls and update Claude Code pin |
-| `test/managed-runtime.test.ts` | modified | +7/-5 | (auto) 6882ca3 2026-11-23 Qualificare e aggiornare Pi e le sue estensioni (#65); 8d2938d 2026-11-21 Compare canonical paths in the managed runtime test |
-| `test/modal.test.ts` | added | +58/-0 | (auto) ae0b3c7 2026-11-23 Accessibilita: modali di acp/web e stati dinamici di web/index.html |
-| `test/notebook-ui.test.ts` | modified | +3/-2 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin |
-| `test/pi-ai-retry-patch.test.ts` | added | +177/-0 | (auto) 6d3b735 2026-11-22 Migrate Pi to 1.6.0 with pi-mcp-adapter 7.0.1 and pi-web-access 0.48.0; 3133d65 2026-11-21 Distinguere il limite di sessione Ollama dai 429 transitori (#5) |
-| `test/platform.test.ts` | modified | +2/-0 | (auto) d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `test/provider-stream.integration.ts` | added | +178/-0 | (auto) b45002b 2026-11-19 chore: add repository lint and ACP streaming regression tests |
-| `test/setup-script.test.ts` | modified | +7/-18 | (auto) 6d3b735 2026-11-22 Migrate Pi to 1.6.0 with pi-mcp-adapter 7.0.1 and pi-web-access 0.48.0; 3133d65 2026-11-21 Distinguere il limite di sessione Ollama dai 429 transitori (#5) |
-| `test/stubs/obsidian.ts` | removed | +0/-31 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `test/trustant-runtime-extension.test.ts` | modified | +28/-0 | (auto) 6d3b735 2026-11-22 Migrate Pi to 1.6.0 with pi-mcp-adapter 7.0.1 and pi-web-access 0.48.0 |
-| `tsconfig.eslint.json` | removed | +0/-4 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin |
-| `tsconfig.json` | modified | +3/-3 | (auto) 19ef542 2026-11-23 Major fase 2: TypeScript 7.0.2 in acp, pi-acp e react-mcp restano su 5.9 (#92); da45f09 2026-11-21 Remove the legacy Obsidian plugin; 8b1c109 2026-11-20 Update runtime dependencies and report development GUI readiness |
-| `version-bump.mjs` | removed | +0/-35 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; d229ffe 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
-| `versions.json` | removed | +0/-4 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin |
-| `vitest.config.mts` | modified | +9/-12 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin; b45002b 2026-11-19 chore: add repository lint and ACP streaming regression tests |
-| `web/ChatApp.tsx` | modified | +493/-367 | (auto) e4d8961 2026-11-24 Corregge accessibilità di Inventario, Template e TruACP (UIX02); ae0b3c7 2026-11-23 Accessibilita: modali di acp/web e stati dinamici di web/index.html; b59b684 2026-11-21 Show live ACP tool output and align Node types; da45f09 2026-11-21 Remove the legacy Obsidian plugin; ... and 1 more |
-| `web/Modal.tsx` | added | +112/-0 | (auto) ae0b3c7 2026-11-23 Accessibilita: modali di acp/web e stati dinamici di web/index.html |
-| `web/NotebookNodeView.tsx` | modified | +7/-1 | (auto) b59b684 2026-11-21 Show live ACP tool output and align Node types |
-| `web/min-width-bridge.ts` | modified | +3/-3 | (auto) e4d8961 2026-11-24 Corregge accessibilità di Inventario, Template e TruACP (UIX02) |
-| `web/prompt-history.ts` | modified | +3/-5 | (auto) da45f09 2026-11-21 Remove the legacy Obsidian plugin |
-| `web/styles.css` | modified | +59/-8 | (auto) e4d8961 2026-11-24 Corregge accessibilità di Inventario, Template e TruACP (UIX02); b59b684 2026-11-21 Show live ACP tool output and align Node types |
+| `src/plugin.ts` | removed | +0/-1371 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/services/chat-exporter.ts` | removed | +0/-569 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/services/message-sender.ts` | removed | +0/-884 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/services/message-state.ts` | removed | +0/-392 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/services/session-helpers.ts` | removed | +0/-260 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/services/session-state.ts` | removed | +0/-169 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/services/session-storage.ts` | removed | +0/-354 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/services/settings-normalizer.ts` | removed | +0/-292 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/services/settings-service.ts` | removed | +0/-344 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/services/update-checker.ts` | removed | +0/-145 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/services/vault-service.ts` | removed | +0/-571 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/services/view-registry.ts` | removed | +0/-470 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/types/agent.ts` | removed | +0/-116 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/types/chat.ts` | modified | +2/-0 | (auto) d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/types/errors.ts` | modified | +2/-0 | (auto) d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/types/obsidian-internals.d.ts` | removed | +0/-31 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/types/session.ts` | modified | +6/-0 | (auto) b59b684f 2026-11-21 Show live ACP tool output and align Node types; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/ChangeDirectoryModal.ts` | removed | +0/-154 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/ChatContext.ts` | removed | +0/-42 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/ChatHeader.tsx` | removed | +0/-312 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/ChatPanel.tsx` | removed | +0/-1324 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/ChatView.tsx` | removed | +0/-396 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/EditTitleModal.ts` | removed | +0/-162 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/ErrorBanner.tsx` | removed | +0/-121 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/FloatingButton.tsx` | removed | +0/-368 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/FloatingChatView.tsx` | removed | +0/-565 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/InputArea.tsx` | removed | +0/-1117 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/InputToolbar.tsx` | removed | +0/-359 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/MessageBubble.tsx` | removed | +0/-459 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/MessageList.tsx` | removed | +0/-338 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/PermissionBanner.tsx` | removed | +0/-99 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/SessionHistoryModal.tsx` | removed | +0/-745 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/SessionManagerView.tsx` | removed | +0/-250 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/SettingsTab.ts` | removed | +0/-1559 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/SuggestionPopup.tsx` | removed | +0/-155 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/TerminalBlock.tsx` | removed | +0/-124 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/ToolCallBlock.tsx` | removed | +0/-474 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/shared/AttachmentStrip.tsx` | removed | +0/-99 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/shared/IconButton.tsx` | removed | +0/-72 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/shared/MarkdownRenderer.tsx` | removed | +0/-120 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/ui/view-host.ts` | removed | +0/-73 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/utils/error-utils.ts` | modified | +2/-0 | (auto) d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/utils/logger.ts` | modified | +2/-0 | (auto) d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/utils/mention-parser.ts` | removed | +0/-146 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/utils/paths.ts` | modified | +2/-0 | (auto) d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/utils/platform.ts` | modified | +2/-0 | (auto) d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `src/utils/text.ts` | removed | +0/-31 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `styles.css` | removed | +0/-2330 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `test/acp-handler-activity.test.ts` | modified | +62/-1 | (auto) b59b684f 2026-11-21 Show live ACP tool output and align Node types |
+| `test/claude-install.test.ts` | modified | +114/-5 | (auto) 404894a4 2026-11-20 Improve mobile workbench controls and update Claude Code pin |
+| `test/managed-runtime.test.ts` | modified | +7/-5 | (auto) 6882ca35 2026-11-23 Qualificare e aggiornare Pi e le sue estensioni (#65); 8d2938d6 2026-11-21 Compare canonical paths in the managed runtime test |
+| `test/modal.test.ts` | added | +58/-0 | (auto) ae0b3c74 2026-11-23 Accessibilita: modali di acp/web e stati dinamici di web/index.html |
+| `test/notebook-ui.test.ts` | modified | +3/-2 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin |
+| `test/pi-ai-retry-patch.test.ts` | added | +177/-0 | (auto) 6d3b7350 2026-11-22 Migrate Pi to 1.6.0 with pi-mcp-adapter 7.0.1 and pi-web-access 0.48.0; 3133d65b 2026-11-21 Distinguere il limite di sessione Ollama dai 429 transitori (#5) |
+| `test/platform.test.ts` | modified | +2/-0 | (auto) d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `test/provider-stream.integration.ts` | added | +178/-0 | (auto) b45002ba 2026-11-19 chore: add repository lint and ACP streaming regression tests |
+| `test/setup-script.test.ts` | modified | +7/-18 | (auto) 6d3b7350 2026-11-22 Migrate Pi to 1.6.0 with pi-mcp-adapter 7.0.1 and pi-web-access 0.48.0; 3133d65b 2026-11-21 Distinguere il limite di sessione Ollama dai 429 transitori (#5) |
+| `test/stubs/obsidian.ts` | removed | +0/-31 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `test/trustant-runtime-extension.test.ts` | modified | +28/-0 | (auto) 6d3b7350 2026-11-22 Migrate Pi to 1.6.0 with pi-mcp-adapter 7.0.1 and pi-web-access 0.48.0 |
+| `tsconfig.eslint.json` | removed | +0/-4 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin |
+| `tsconfig.json` | modified | +3/-3 | (auto) 19ef5423 2026-11-23 Major fase 2: TypeScript 7.0.2 in acp, pi-acp e react-mcp restano su 5.9 (#92); da45f098 2026-11-21 Remove the legacy Obsidian plugin; 8b1c1091 2026-11-20 Update runtime dependencies and report development GUI readiness |
+| `version-bump.mjs` | removed | +0/-35 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; d229ffe1 2026-11-19 docs(legal): attribute acp to obsidian-agent-client and track vendored changes |
+| `versions.json` | removed | +0/-4 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin |
+| `vitest.config.mts` | modified | +9/-12 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin; b45002ba 2026-11-19 chore: add repository lint and ACP streaming regression tests |
+| `web/ChatApp.tsx` | modified | +493/-367 | (auto) e4d8961b 2026-11-24 Corregge accessibilità di Inventario, Template e TruACP (UIX02); ae0b3c74 2026-11-23 Accessibilita: modali di acp/web e stati dinamici di web/index.html; b59b684f 2026-11-21 Show live ACP tool output and align Node types; da45f098 2026-11-21 Remove the legacy Obsidian plugin; ... and 1 more |
+| `web/Modal.tsx` | added | +112/-0 | (auto) ae0b3c74 2026-11-23 Accessibilita: modali di acp/web e stati dinamici di web/index.html |
+| `web/NotebookNodeView.tsx` | modified | +7/-1 | (auto) b59b684f 2026-11-21 Show live ACP tool output and align Node types |
+| `web/index.html` | modified | +1/-0 | Declares the embedded Trustant favicon for direct browser access. |
+| `web/min-width-bridge.ts` | modified | +3/-3 | (auto) e4d8961b 2026-11-24 Corregge accessibilità di Inventario, Template e TruACP (UIX02) |
+| `web/prompt-history.ts` | modified | +3/-5 | (auto) da45f098 2026-11-21 Remove the legacy Obsidian plugin |
+| `web/styles.css` | modified | +59/-8 | (auto) e4d8961b 2026-11-24 Corregge accessibilità di Inventario, Template e TruACP (UIX02); b59b684f 2026-11-21 Show live ACP tool output and align Node types |
 | `web/transport.ts` | modified | +32/-2 | (auto) changed by the vendoring commit itself (vendored 2026-11-19 (b06dc8d)): standalone-repository file dropped or replaced by the root equivalent |
 
 The `acp/` delta is too large to reproduce line by line. Per-file diff: `git diff 9786f796380aa9b2000d8cebd913fa41150c89ed^{tree} HEAD:acp -- <file>`.
@@ -163,7 +164,7 @@ The `acp/` delta is too large to reproduce line by line. Per-file diff: `git dif
 | `.github/workflows/github-release.yml` | removed | +0/-45 | Removed: release workflow of the standalone repository (unused inside this repository). |
 | `.github/workflows/npm-publish.yml` | removed | +0/-26 | Removed: npm publishing is not used; Trustant packages the source directly. |
 | `package-lock.json` | modified | +753/-749 | Lockfile regenerated for the same upgrade. |
-| `package.json` | modified | +8/-8 | Dependency bump for the SDK and Pi major upgrade (commit d767604, 'Major fase 3'); repository, bugs and homepage point to trustant/pi-acp, the fork's origin. |
+| `package.json` | modified | +11/-11 | Dependency bump for the SDK and Pi major upgrade (commit d767604, 'Major fase 3'); repository, bugs and homepage point to trustant/pi-acp, the fork's origin. |
 | `src/acp/agent.ts` | modified | +4/-6 | Adapted to the SDK compatibility layer. |
 | `src/acp/sdk-compat.ts` | added | +108/-0 | New file: compatibility layer for the ACP SDK 2.x API used by the fork. |
 | `src/acp/session.ts` | modified | +2/-3 | Adapted to the SDK compatibility layer. |
@@ -294,6 +295,19 @@ The `acp/` delta is too large to reproduce line by line. Per-file diff: `git dif
 #### `package.json`
 
 ```diff
+@@ -8,3 +8,3 @@
+     "type": "git",
+-    "url": "https://github.com/trustable-ai/pi-acp.git"
++    "url": "https://github.com/trustant/pi-acp.git"
+   },
+@@ -15,5 +15,5 @@
+   "bugs": {
+-    "url": "https://github.com/trustable-ai/pi-acp/issues"
++    "url": "https://github.com/trustant/pi-acp/issues"
+   },
+-  "homepage": "https://github.com/trustable-ai/pi-acp#readme",
++  "homepage": "https://github.com/trustant/pi-acp#readme",
+   "keywords": [
 @@ -48,15 +48,15 @@
    "dependencies": {
 -    "@agentclientprotocol/sdk": "^0.26.0",
@@ -570,7 +584,7 @@ The `acp/` delta is too large to reproduce line by line. Per-file diff: `git dif
 
 | File | Status | +/- | Why |
 |---|---|---|---|
-| `TRUSTANT-CHANGES.md` | added | +16/-0 | (auto) 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app; a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b) |
+| `TRUSTANT-CHANGES.md` | added | +16/-0 | (auto) 68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app; a0017e14 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b) |
 | `admin/docopts.md` | modified | +3/-2 | Documents the OPS_ADMIN_PASSWORD environment variable added to `admin adduser` (see opsfile.yml): the password no longer has to appear in the process list. Plus the Apache 4(b) modification notice. |
 | `admin/ingress/opsfile.yml` | modified | +3/-1 | Ingress deletion tolerates resources already removed so a retry can finish cleaning up the app. Includes the Apache 4(b) modification notice. |
 | `admin/opsfile.yml` | modified | +10/-3 | Security: `adduser` reads the password from OPS_ADMIN_PASSWORD when set (keeps it out of argv and the process list), falls back to the positional argument, then unsets the variable (commit a0bd211, #119). User deletion tolerates an already absent user. Includes the Apache 4(b) modification notice. |
@@ -870,7 +884,7 @@ No file differs from the baseline: the directory is identical to the original gi
 
 | File | Status | +/- | Why |
 |---|---|---|---|
-| `TRUSTANT-CHANGES.md` | added | +11/-0 | (auto) a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b) |
+| `TRUSTANT-CHANGES.md` | added | +11/-0 | (auto) a0017e14 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b) |
 | `package-lock.json` | modified | +47/-42 | Lockfile regenerated for the zod 4.6.7 update (commit d254cb9). |
 | `package.json` | modified | +2/-2 | Dependency update: zod 4.6.7 (commit d254cb9, Dependabot alerts). |
 | `requirements.txt` | modified | +7/-7 | Python pins updated for Dependabot alerts (certifi 2026.10.18, dnspython 2.9.2 and others; commit d254cb9). |
@@ -968,221 +982,226 @@ No file differs from the baseline: the directory is identical to the original gi
 
 ## Root repository against `upstream/main`
 
-- Merge base `b901510`; the fork has 346 commits upstream lacks, upstream has 20 the fork lacks.
+- Merge base `b901510`; the fork has 362 commits upstream lacks, upstream has 22 the fork lacks.
 - Files also changed upstream since the merge base are marked **conflict risk**.
 
 | File | St | +/- | Conflict risk | Latest fork commits touching it (the reason) |
 |---|---|---|---|---|
-| `.agents/skills/changelog-entry/SKILL.md` | A | +11/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
-| `.agents/skills/ci-failure-triage/SKILL.md` | A | +12/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
-| `.agents/skills/project-checks/SKILL.md` | A | +17/-0 |  | a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
-| `.agents/skills/repo-map/SKILL.md` | A | +32/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
-| `.agents/skills/review-checklist/SKILL.md` | A | +12/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
-| `.agents/skills/secondbrain-context/SKILL.md` | A | +10/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
-| `.air-deploy.toml` | M | +1/-1 |  | 0891295 2026-11-25 Migra Air a build.entrypoint e salta ollama locale con endpoint remoto |
-| `.air.toml` | M | +1/-1 |  | 0891295 2026-11-25 Migra Air a build.entrypoint e salta ollama locale con endpoint remoto |
-| `.claude/settings.json` | M | +0/-1 |  | 086b68d 2026-11-21 Remove private workstation examples from current sources |
-| `.claude/skills/changelog-entry/SKILL.md` | A | +11/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
-| `.claude/skills/ci-failure-triage/SKILL.md` | A | +12/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
-| `.claude/skills/project-checks/SKILL.md` | A | +17/-0 |  | a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
-| `.claude/skills/repo-map/SKILL.md` | A | +32/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
-| `.claude/skills/review-checklist/SKILL.md` | A | +12/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
-| `.claude/skills/secondbrain-context/SKILL.md` | A | +10/-0 |  | 8adb5f3 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
-| `.env.dist` | M | +3/-0 |  | 7287dd0 2026-11-25 Più tempo per i PC lenti e guida su Ollama |
-| `.gitattributes` | M | +2/-0 |  | f5ee4bc 2026-11-12 docs: refresh third-party licensing records |
-| `.github/CODEOWNERS` | A | +2/-0 |  | 2e5d430 2026-11-17 chore: security baseline (CODEOWNERS, Dependabot) (#1) |
-| `.github/ISSUE_TEMPLATE/bug_report.yml` | A | +39/-0 |  | f184fc4 2026-11-19 docs: add mermaid flows and community and security files |
-| `.github/ISSUE_TEMPLATE/config.yml` | A | +5/-0 |  | f1c3d85 2026-11-19 docs: add CREDITS.md and align directives and issue template link<br>f184fc4 2026-11-19 docs: add mermaid flows and community and security files |
-| `.github/ISSUE_TEMPLATE/feature_request.yml` | A | +16/-0 |  | f184fc4 2026-11-19 docs: add mermaid flows and community and security files |
-| `.github/PULL_REQUEST_TEMPLATE.md` | A | +16/-0 |  | f184fc4 2026-11-19 docs: add mermaid flows and community and security files |
-| `.github/dependabot.yml` | A | +14/-0 |  | 2e5d430 2026-11-17 chore: security baseline (CODEOWNERS, Dependabot) (#1) |
-| `.github/workflows/environments.yml` | A | +217/-0 |  | 035c701 2026-11-25 CI: workflow manuale per testare Ubuntu, macOS e Windows |
-| `.github/workflows/images.yml` | M | +6/-6 |  | bd1d130 2026-11-22 Rebuild ops from the CLI fork and bump Trustant to v1.1.3<br>f79ccec 2026-11-17 ci: pin actions to commit SHAs and set least-privilege permissions (images.yml) (#6) |
-| `.github/workflows/tests.yml` | A | +70/-0 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>bd1d130 2026-11-22 Rebuild ops from the CLI fork and bump Trustant to v1.1.3<br>... and 1 more |
-| `.gitignore` | M | +17/-0 |  | 8b094a3 2026-11-21 Keep machine-specific workspace data local<br>67db7e2 2026-11-20 Refresh npm dependencies and fix WSL startup<br>... and 2 more |
-| `.gitmodules` | M | +0/-16 |  | c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>19f8d3e 2026-09-24 branch<br>... and 5 more |
-| `.licenserc.yaml` | M | +7/-6 |  | c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>56225db 2026-08-26 added license<br>... and 1 more |
-| `.sbcheck-ignore` | A | +15/-0 |  | d29f1bb 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42) |
-| `AGENTS.md` | M | +37/-145 |  | 5ead7f6 2026-11-26 Rimuove i riferimenti all'ambiente di test privato dal repository<br>60d135e 2026-11-26 AGENTS.md: blocco SecondBrain aggiornato da sb start<br>... and 30 more |
-| `AUDIT-2026-11-26.md` | A | +184/-0 |  | a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b) |
-| `CHANGELOG.md` | A | +111/-0 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>... and 13 more |
-| `CLAUDE.md` | M | +1/-258 | **yes** | 75b289d 2026-11-25 Link SecondBrain 5: sb block in AGENTS.md, CLAUDE.md points to it, v4 files removed<br>3c49237 2026-11-12 docs: consolidate agent instructions in AGENTS.md |
-| `CONTRIBUTING.md` | M | +62/-6 |  | 93ebe52 2026-11-24 Completa il lotto Private AI e ripristina la scansione Go<br>c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 8 more |
-| `CREDITS.md` | A | +130/-0 |  | d8f11bf 2026-11-26 Legal: registri top-level, pi-acp su trustant/pi-acp, esiti immagine v1.0.3<br>cbe651c 2026-11-26 Legal: conferma del titolare sulle icone SVG inline non identiche a Heroicons<br>... and 17 more |
-| `DEPS` | M | +207/-150 |  | d8f11bf 2026-11-26 Legal: registri top-level, pi-acp su trustant/pi-acp, esiti immagine v1.0.3<br>128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>... and 20 more |
-| `LICENSE` | M | +73/-16 |  | d8f11bf 2026-11-26 Legal: registri top-level, pi-acp su trustant/pi-acp, esiti immagine v1.0.3<br>128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>... and 11 more |
-| `NOTICE` | M | +22202/-1507 |  | d8f11bf 2026-11-26 Legal: registri top-level, pi-acp su trustant/pi-acp, esiti immagine v1.0.3<br>128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>... and 16 more |
-| `README.md` | M | +192/-230 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>... and 41 more |
-| `SECURITY.md` | A | +36/-0 |  | f184fc4 2026-11-19 docs: add mermaid flows and community and security files |
-| `aaa.code-workspace` | M | +20/-26 |  | 8b094a3 2026-11-21 Keep machine-specific workspace data local |
-| `adduser_test.go` | A | +69/-0 |  | d29f1bb 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42)<br>a0bd211 2026-11-24 Passa la password di ops admin adduser per ambiente invece che da argv (#119) |
-| `auth.go` | M | +90/-9 |  | 482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>ceda923 2026-11-24 Chiave del limite di login affidabile dietro un proxy (#120) |
-| `auth_host.go` | A | +312/-0 |  | 1cf39de 2026-11-26 Auth: cookie di sessione host utilizzabile nell'iframe dell'assistente<br>482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp |
-| `auth_host_test.go` | A | +329/-0 |  | 1cf39de 2026-11-26 Auth: cookie di sessione host utilizzabile nell'iframe dell'assistente<br>482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp |
-| `auth_proxy_test.go` | A | +89/-0 |  | ceda923 2026-11-24 Chiave del limite di login affidabile dietro un proxy (#120) |
-| `auth_warning_test.go` | A | +20/-0 |  | 2daaf7e 2026-11-24 Avvisa all'avvio quando l'autenticazione e disattivata (#121) |
-| `bind.go` | M | +200/-70 |  | 7287dd0 2026-11-25 Più tempo per i PC lenti e guida su Ollama<br>d6f441c 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip<br>... and 4 more |
-| `bind_test.go` | M | +114/-0 |  | d6f441c 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip<br>01f73cf 2026-11-20 Update Trustant tooling and add Ollama import suggestions |
-| `biome.jsonc` | A | +55/-0 |  | b45002b 2026-11-19 chore: add repository lint and ACP streaming regression tests |
-| `build.sh` | M | +4/-0 |  | 27bacfe 2026-11-26 Ingress truacp-ing a 8910 via patch applicata dal build, senza push al submodulo |
-| `configure.go` | M | +369/-209 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>58b4209 2026-11-25 Aggiunge preset di istanze Ollama con interruttore locale/esterno e Refresh models per il Private AI<br>... and 8 more |
-| `configure_test.go` | M | +248/-5 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>9101e0e 2026-11-25 Configure: Save & Configure non chiede l'host con un'istanza Ollama attiva<br>... and 5 more |
-| `credits.go` | M | +1/-1 |  | d6f441c 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip |
-| `docs/README.md` | A | +35/-0 |  | 035c701 2026-11-25 CI: workflow manuale per testare Ubuntu, macOS e Windows<br>7287dd0 2026-11-25 Più tempo per i PC lenti e guida su Ollama<br>... and 1 more |
-| `docs/ci-environments.md` | A | +29/-0 |  | 99bbcd9 2026-11-25 Non mette in stage i percorsi ignorati e completa le note di setup<br>31e446f 2026-11-25 Docs: esito del primo run del workflow Environments e copertura mancante<br>... and 1 more |
-| `docs/how-it-works.md` | A | +136/-0 |  | 5ad82aa 2026-11-25 Aggiorna Ollama a 0.40.18 e aggiunge le guide in docs/ |
-| `docs/ollama.md` | A | +74/-0 |  | 7f7a287 2026-11-26 Ollama Instance: propone di aggiornare il preset Ollama host con IP WSL cambiato<br>33cca5c 2026-11-25 Ollama Instance: rileva e propone l'Ollama dell'host (WSL, Lima)<br>... and 2 more |
-| `docs/setup-macos.md` | A | +115/-0 |  | 87a8f0c 2026-11-26 Docs: OLLAMA_EXTERNAL, rilevamento host Ollama e rimozione degli e2e OpenCode<br>99bbcd9 2026-11-25 Non mette in stage i percorsi ignorati e completa le note di setup<br>... and 1 more |
-| `docs/setup-ubuntu.md` | A | +101/-0 |  | 87a8f0c 2026-11-26 Docs: OLLAMA_EXTERNAL, rilevamento host Ollama e rimozione degli e2e OpenCode<br>99bbcd9 2026-11-25 Non mette in stage i percorsi ignorati e completa le note di setup<br>... and 1 more |
-| `docs/setup-windows.md` | A | +139/-0 |  | 5ead7f6 2026-11-26 Rimuove i riferimenti all'ambiente di test privato dal repository<br>68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 2 more |
-| `docs/use-cases.md` | A | +178/-0 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>5ad82aa 2026-11-25 Aggiorna Ollama a 0.40.18 e aggiunge le guide in docs/ |
-| `envcrypt.env` | D | +0/-2 |  | 8b094a3 2026-11-21 Keep machine-specific workspace data local |
-| `envinject_test.go` | A | +128/-0 |  | b26271d 2026-11-24 Rifiuta caratteri di controllo nei file env e valida i nomi di appconfig (#124) |
-| `envsafe.go` | A | +39/-0 |  | b26271d 2026-11-24 Rifiuta caratteri di controllo nei file env e valida i nomi di appconfig (#124) |
-| `files.go` | M | +4/-0 |  | 47fd99b 2026-11-19 fix(files,proxy): stop caching the file tree and document the stream timeout chain |
-| `files_test.go` | M | +56/-0 |  | 47fd99b 2026-11-19 fix(files,proxy): stop caching the file tree and document the stream timeout chain |
-| `git.go` | M | +11/-3 | **yes** | cfc7b21 2026-11-24 Abilita la verifica della host key SSH per git (#117) |
-| `github.go` | M | +8/-8 |  | 7bbc207 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS |
-| `gitignore.go` | M | +2/-2 |  | 5ef1079 2026-11-24 Estende le scritture senza symlink agli altri file del workbench<br>120c8c0 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
-| `gitssh_test.go` | A | +41/-0 |  | cfc7b21 2026-11-24 Abilita la verifica della host key SSH per git (#117) |
-| `go.mod` | M | +4/-2 |  | 2aa7d7f 2026-11-24 Imposta go 1.27 con toolchain go1.27.4 e allinea setup.sh (#113)<br>b8910a3 2026-11-21 Update Trustant tooling and inventory actions |
-| `home_isolation_test.go` | A | +67/-0 |  | ba985db 2026-11-25 Ripristina main_test.go e sposta l'isolamento della home in un file proprio |
-| `image/Dockerfile` | M | +48/-15 |  | 5ad82aa 2026-11-25 Aggiorna Ollama a 0.40.18 e aggiunge le guide in docs/<br>837b4a1 2026-11-23 Fissa gli script di setup: g v1.8.0 con SHA-256 e Node 24 da repo apt firmato (#103)<br>... and 4 more |
-| `image/image.md` | M | +6/-6 |  | c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>b8910a3 2026-11-21 Update Trustant tooling and inventory actions |
-| `image/image.sh` | M | +8/-10 |  | c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink |
-| `image/ops-prereq-error.patch` | A | +84/-0 |  | bd1d130 2026-11-22 Rebuild ops from the CLI fork and bump Trustant to v1.1.3 |
-| `intro.png` | D | +-/-- |  | 086b68d 2026-11-21 Remove private workstation examples from current sources |
-| `launch.go` | M | +105/-50 | **yes** | 99bbcd9 2026-11-25 Non mette in stage i percorsi ignorati e completa le note di setup<br>7bbc207 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS<br>... and 5 more |
-| `launch_lifecycle_test.go` | M | +150/-0 |  | 728801c 2026-11-26 Test: attesa piu' lunga per l'avvio del watcher node su runner ARM64<br>e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
-| `launch_progress_test.go` | M | +27/-9 |  | 7bbc207 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS |
-| `legal/COMPONENTS.json` | A | +7805/-0 |  | d8f11bf 2026-11-26 Legal: registri top-level, pi-acp su trustant/pi-acp, esiti immagine v1.0.3<br>128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>... and 20 more |
-| `legal/IMAGE-v1.0.3.md` | A | +84/-0 |  | d8f11bf 2026-11-26 Legal: registri top-level, pi-acp su trustant/pi-acp, esiti immagine v1.0.3<br>2d90eee 2026-11-26 Legal: qualificazione parziale dell'immagine v1.0.3 per digest |
-| `legal/REVIEW.md` | A | +159/-0 |  | a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>... and 7 more |
-| `legal/VENDORED.md` | A | +545/-0 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>... and 22 more |
-| `legal/deps.manual.txt` | M | +49/-20 |  | d8f11bf 2026-11-26 Legal: registri top-level, pi-acp su trustant/pi-acp, esiti immagine v1.0.3<br>128cf99 2026-11-26 Legal: registra Heroicons v1 per le icone SVG inline e aggiorna il registro asset<br>... and 16 more |
-| `legal/deps.py` | M | +125/-25 |  | 058c9b2 2026-11-25 deps.py: usa la versione del toolchain Go per la licenza<br>bd1d130 2026-11-22 Rebuild ops from the CLI fork and bump Trustant to v1.1.3<br>... and 4 more |
-| `legal/licenses/OFL-1.1.txt` | A | +43/-0 |  | f5ee4bc 2026-11-12 docs: refresh third-party licensing records |
-| `legal/upstream_compare.py` | A | +296/-0 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b) |
-| `legal/vendored_changes.py` | A | +233/-0 |  | c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>b35ec05 2026-11-19 docs(legal): track vendored acp changes against the original submodule commits<br>... and 1 more |
-| `license.go` | M | +27/-36 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
-| `limitbody_test.go` | A | +62/-0 |  | 120c8c0 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
-| `main.go` | M | +56/-2 |  | 482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>58b4209 2026-11-25 Aggiunge preset di istanze Ollama con interruttore locale/esterno e Refresh models per il Private AI<br>... and 5 more |
-| `main_test.go` | M | +16/-4 |  | ba985db 2026-11-25 Ripristina main_test.go e sposta l'isolamento della home in un file proprio<br>fedf1ee 2026-11-25 Isola la home e la config Pi durante go test<br>... and 1 more |
-| `memory.go` | M | +6/-1 |  | 120c8c0 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
-| `memory_test.go` | A | +49/-0 |  | fc95422 2026-11-24 Allinea la documentazione al codice e aggiunge diagramma di routing |
-| `middleware.go` | M | +4/-2 |  | 482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>478ec5e 2026-11-24 Esegue l'escape di Host nella pagina errore e vincola la sorgente OPS_SKILLS (#114 #116 #123) |
-| `ollama_instances.go` | A | +464/-0 |  | 7f7a287 2026-11-26 Ollama Instance: propone di aggiornare il preset Ollama host con IP WSL cambiato<br>33cca5c 2026-11-25 Ollama Instance: rileva e propone l'Ollama dell'host (WSL, Lima)<br>... and 1 more |
-| `ollama_instances_test.go` | A | +315/-0 |  | 7f7a287 2026-11-26 Ollama Instance: propone di aggiornare il preset Ollama host con IP WSL cambiato<br>33cca5c 2026-11-25 Ollama Instance: rileva e propone l'Ollama dell'host (WSL, Lima)<br>... and 1 more |
-| `ollama_local.go` | A | +187/-0 |  | bf80f86 2026-11-25 Aggiunge Start/Stop e stato dell'Ollama locale nella UI Private AI |
-| `ollama_local_test.go` | A | +172/-0 |  | bf80f86 2026-11-25 Aggiunge Start/Stop e stato dell'Ollama locale nella UI Private AI |
-| `opencode_upgrade_plan.md` | M | +1/-1 |  | d9af289 2026-11-23 docs: note TruACP tests need Ubuntu, fix check script path in upgrade plan |
-| `openserverless-instructions.md` | M | +29/-0 |  | cd545d1 2026-11-26 Direttive app: sezione 'How the System Works' per orientare l'agente |
-| `opsdevel_test.go` | A | +25/-0 |  | c06abb1 2026-11-24 Avvia ops ide devel senza shell (#118) |
-| `package-lock.json` | M | +224/-30 |  | 67db7e2 2026-11-20 Refresh npm dependencies and fix WSL startup<br>b45002b 2026-11-19 chore: add repository lint and ACP streaming regression tests |
-| `package.json` | M | +7/-8 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>58b4209 2026-11-25 Aggiunge preset di istanze Ollama con interruttore locale/esterno e Refresh models per il Private AI<br>... and 4 more |
-| `patches/apply.sh` | A | +27/-0 |  | 27bacfe 2026-11-26 Ingress truacp-ing a 8910 via patch applicata dal build, senza push al submodulo |
-| `patches/oplugins-truinst-truacp-ingress.patch` | A | +39/-0 |  | 27bacfe 2026-11-26 Ingress truacp-ing a 8910 via patch applicata dal build, senza push al submodulo |
-| `predefined_env_test.go` | M | +54/-41 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
-| `preflight.go` | M | +19/-12 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
-| `prep.sh` | M | +1/-0 |  | b45002b 2026-11-19 chore: add repository lint and ACP streaming regression tests |
-| `provision.go` | M | +25/-25 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
-| `provision_test.go` | M | +5/-5 |  | d29f1bb 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42) |
-| `proxy_test.go` | A | +41/-0 |  | 47fd99b 2026-11-19 fix(files,proxy): stop caching the file tree and document the stream timeout chain |
-| `prune_test.go` | M | +276/-2 |  | 8ceb787 2026-11-26 Cancellazione app: rimuove la directory dei log runtime dell'app<br>68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 1 more |
-| `publish.go` | M | +45/-65 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
-| `publish_imports_test.go` | M | +135/-0 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
-| `react-mcp/package-lock.json` | M | +52/-48 |  | 044b0e9 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102)<br>8b1c109 2026-11-20 Update runtime dependencies and report development GUI readiness<br>... and 2 more |
-| `react-mcp/package.json` | M | +2/-2 |  | 044b0e9 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102)<br>8b1c109 2026-11-20 Update runtime dependencies and report development GUI readiness |
-| `repo.go` | M | +161/-57 | **yes** | 8ceb787 2026-11-26 Cancellazione app: rimuove la directory dei log runtime dell'app<br>68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 3 more |
-| `run.sh` | M | +49/-16 | **yes** | d0f1057 2026-11-25 Esporta TRUSTANT_AUTH_* da run.sh dopo aver caricato .env<br>0891295 2026-11-25 Migra Air a build.entrypoint e salta ollama locale con endpoint remoto<br>... and 2 more |
-| `runtime_log.go` | M | +11/-0 |  | 8ceb787 2026-11-26 Cancellazione app: rimuove la directory dei log runtime dell'app |
-| `safefile.go` | A | +79/-0 |  | 5ef1079 2026-11-24 Estende le scritture senza symlink agli altri file del workbench<br>120c8c0 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
-| `safefile_test.go` | A | +75/-0 |  | 120c8c0 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
-| `safefile_unix.go` | A | +21/-0 |  | 120c8c0 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
-| `safefile_windows.go` | A | +19/-0 |  | 120c8c0 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
-| `security_gaps_test.go` | A | +219/-0 |  | 478ec5e 2026-11-24 Esegue l'escape di Host nella pagina errore e vincola la sorgente OPS_SKILLS (#114 #116 #123)<br>c7ff349 2026-11-24 Aggiunge test per sessione, logout e routing per hostname |
-| `setup.sh` | M | +73/-22 | **yes** | 2aa7d7f 2026-11-24 Imposta go 1.27 con toolchain go1.27.4 e allinea setup.sh (#113)<br>c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 20 more |
-| `setup_test.go` | M | +246/-41 |  | 5ead7f6 2026-11-26 Rimuove i riferimenti all'ambiente di test privato dal repository<br>0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>... and 6 more |
-| `shared.go` | M | +42/-35 |  | b26271d 2026-11-24 Rifiuta caratteri di controllo nei file env e valida i nomi di appconfig (#124)<br>5ef1079 2026-11-24 Estende le scritture senza symlink agli altri file del workbench<br>... and 1 more |
-| `shared_test.go` | M | +2/-2 |  | d29f1bb 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42) |
-| `skills.go` | M | +78/-7 |  | 11f03a7 2026-11-24 Allinea SkillInfo con gofmt e salta il test invoke su Windows (#125 #126)<br>478ec5e 2026-11-24 Esegue l'escape di Host nella pagina errore e vincola la sorgente OPS_SKILLS (#114 #116 #123)<br>... and 1 more |
-| `skills_test.go` | A | +147/-0 |  | 478ec5e 2026-11-24 Esegue l'escape di Host nella pagina errore e vincola la sorgente OPS_SKILLS (#114 #116 #123) |
-| `spec/0-preflight.md` | M | +17/-12 |  | 47353bb 2026-11-21 Fix local links in Trustant specifications (#76)<br>8984b16 2026-11-12 fix: recover provider setup and align routing documentation |
-| `spec/1-applist.md` | M | +56/-15 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>... and 7 more |
-| `spec/1-index.md` | M | +20/-1 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>baa0daf 2026-11-20 Fix catalog failures and modal accessibility<br>... and 1 more |
-| `spec/11-files.md` | M | +1/-1 |  | 47fd99b 2026-11-19 fix(files,proxy): stop caching the file tree and document the stream timeout chain |
-| `spec/12-terminal.md` | M | +2/-2 |  | 404894a 2026-11-20 Improve mobile workbench controls and update Claude Code pin |
-| `spec/14-license.md` | M | +1/-1 | **yes** | 086b68d 2026-11-21 Remove private workstation examples from current sources |
-| `spec/15-starters.md` | M | +2/-2 |  | 47353bb 2026-11-21 Fix local links in Trustant specifications (#76) |
+| `.agents/skills/changelog-entry/SKILL.md` | A | +11/-0 |  | 8adb5f33 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
+| `.agents/skills/ci-failure-triage/SKILL.md` | A | +12/-0 |  | 8adb5f33 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
+| `.agents/skills/project-checks/SKILL.md` | A | +17/-0 |  | a0017e14 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>8adb5f33 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
+| `.agents/skills/repo-map/SKILL.md` | A | +32/-0 |  | 8adb5f33 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
+| `.agents/skills/review-checklist/SKILL.md` | A | +12/-0 |  | 8adb5f33 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
+| `.agents/skills/secondbrain-context/SKILL.md` | A | +10/-0 |  | 8adb5f33 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
+| `.air-deploy.toml` | M | +1/-1 |  | 0891295e 2026-11-25 Migra Air a build.entrypoint e salta ollama locale con endpoint remoto |
+| `.air.toml` | M | +1/-1 |  | 0891295e 2026-11-25 Migra Air a build.entrypoint e salta ollama locale con endpoint remoto |
+| `.claude/settings.json` | M | +0/-1 | **yes** | 086b68d0 2026-11-21 Remove private workstation examples from current sources |
+| `.claude/skills/changelog-entry/SKILL.md` | A | +11/-0 |  | 8adb5f33 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
+| `.claude/skills/ci-failure-triage/SKILL.md` | A | +12/-0 |  | 8adb5f33 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
+| `.claude/skills/project-checks/SKILL.md` | A | +17/-0 |  | a0017e14 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>8adb5f33 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
+| `.claude/skills/repo-map/SKILL.md` | A | +32/-0 |  | 8adb5f33 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
+| `.claude/skills/review-checklist/SKILL.md` | A | +12/-0 |  | 8adb5f33 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
+| `.claude/skills/secondbrain-context/SKILL.md` | A | +10/-0 |  | 8adb5f33 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
+| `.env.dist` | M | +3/-0 |  | 7287dd04 2026-11-25 Più tempo per i PC lenti e guida su Ollama |
+| `.gitattributes` | M | +2/-0 |  | f5ee4bce 2026-11-12 docs: refresh third-party licensing records |
+| `.github/CODEOWNERS` | A | +2/-0 |  | 2e5d430f 2026-11-17 chore: security baseline (CODEOWNERS, Dependabot) (#1) |
+| `.github/ISSUE_TEMPLATE/bug_report.yml` | A | +39/-0 |  | f184fc4c 2026-11-19 docs: add mermaid flows and community and security files |
+| `.github/ISSUE_TEMPLATE/config.yml` | A | +5/-0 |  | f1c3d85e 2026-11-19 docs: add CREDITS.md and align directives and issue template link<br>f184fc4c 2026-11-19 docs: add mermaid flows and community and security files |
+| `.github/ISSUE_TEMPLATE/feature_request.yml` | A | +16/-0 |  | f184fc4c 2026-11-19 docs: add mermaid flows and community and security files |
+| `.github/PULL_REQUEST_TEMPLATE.md` | A | +16/-0 |  | f184fc4c 2026-11-19 docs: add mermaid flows and community and security files |
+| `.github/dependabot.yml` | A | +14/-0 |  | 2e5d430f 2026-11-17 chore: security baseline (CODEOWNERS, Dependabot) (#1) |
+| `.github/workflows/environments.yml` | A | +217/-0 |  | 035c701f 2026-11-25 CI: workflow manuale per testare Ubuntu, macOS e Windows |
+| `.github/workflows/image-smoke.yml` | A | +141/-0 |  | a914d6cc 2026-11-27 Add native smoke tests for the published Trustant image |
+| `.github/workflows/images.yml` | M | +12/-6 |  | 2691b0c1 2026-11-27 images.yml: repository per l'immagine configurabile con la variabile TRUSTANT_IMAGE<br>bd1d1307 2026-11-22 Rebuild ops from the CLI fork and bump Trustant to v1.1.3<br>... and 1 more |
+| `.github/workflows/tests.yml` | A | +77/-0 |  | 520933fd 2026-11-27 Legal: cli-table e redis-entraid nei registri, offerta sorgenti; CI su push e PR<br>0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>... and 2 more |
+| `.gitignore` | M | +17/-0 | **yes** | 8b094a3e 2026-11-21 Keep machine-specific workspace data local<br>67db7e2f 2026-11-20 Refresh npm dependencies and fix WSL startup<br>... and 2 more |
+| `.gitmodules` | M | +0/-16 |  | c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>19f8d3e2 2026-09-24 branch<br>... and 5 more |
+| `.licenserc.yaml` | M | +7/-6 |  | c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>56225db7 2026-08-26 added license<br>... and 1 more |
+| `.sbcheck-ignore` | A | +108/-0 |  | 01481528 2026-11-27 sb check: ignore di un messaggio di commit storico<br>1dd0aa4f 2026-11-27 sb check: falsi positivi della storia rivisti<br>... and 1 more |
+| `AGENTS.md` | M | +38/-145 |  | db9a3add 2026-11-27 Update AGENTS.md<br>5ead7f64 2026-11-26 Rimuove i riferimenti all'ambiente di test privato dal repository<br>... and 31 more |
+| `AUDIT-2026-11-26.md` | A | +184/-0 |  | a0017e14 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b) |
+| `CHANGELOG.md` | A | +117/-0 |  | 5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>2a863657 2026-11-27 Document AI provider setup and production publishing<br>... and 15 more |
+| `CLAUDE.md` | M | +1/-258 | **yes** | 75b289dc 2026-11-25 Link SecondBrain 5: sb block in AGENTS.md, CLAUDE.md points to it, v4 files removed<br>3c49237a 2026-11-12 docs: consolidate agent instructions in AGENTS.md |
+| `CONTRIBUTING.md` | M | +62/-6 |  | 93ebe52d 2026-11-24 Completa il lotto Private AI e ripristina la scansione Go<br>c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 8 more |
+| `CREDITS.md` | A | +133/-0 |  | 520933fd 2026-11-27 Legal: cli-table e redis-entraid nei registri, offerta sorgenti; CI su push e PR<br>d8f11bf9 2026-11-26 Legal: registri top-level, pi-acp su trustant/pi-acp, esiti immagine v1.0.3<br>... and 18 more |
+| `DEPS` | M | +211/-150 |  | a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>520933fd 2026-11-27 Legal: cli-table e redis-entraid nei registri, offerta sorgenti; CI su push e PR<br>... and 22 more |
+| `LICENSE` | M | +75/-16 |  | a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>520933fd 2026-11-27 Legal: cli-table e redis-entraid nei registri, offerta sorgenti; CI su push e PR<br>... and 13 more |
+| `NOTICE` | M | +22587/-1499 |  | a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>520933fd 2026-11-27 Legal: cli-table e redis-entraid nei registri, offerta sorgenti; CI su push e PR<br>... and 18 more |
+| `README.md` | M | +198/-230 |  | 3a86f6a5 2026-11-27 Ripulisci gli helper Go inutilizzati<br>68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 42 more |
+| `SECURITY.md` | A | +36/-0 |  | f184fc4c 2026-11-19 docs: add mermaid flows and community and security files |
+| `aaa.code-workspace` | M | +20/-26 | **yes** | 8b094a3e 2026-11-21 Keep machine-specific workspace data local |
+| `adduser_test.go` | A | +69/-0 |  | d29f1bb0 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42)<br>a0bd2117 2026-11-24 Passa la password di ops admin adduser per ambiente invece che da argv (#119) |
+| `auth.go` | M | +92/-11 |  | 3a86f6a5 2026-11-27 Ripulisci gli helper Go inutilizzati<br>482b764b 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>... and 1 more |
+| `auth_host.go` | A | +312/-0 |  | 3a86f6a5 2026-11-27 Ripulisci gli helper Go inutilizzati<br>1cf39dec 2026-11-26 Auth: cookie di sessione host utilizzabile nell'iframe dell'assistente<br>... and 1 more |
+| `auth_host_test.go` | A | +329/-0 |  | 1cf39dec 2026-11-26 Auth: cookie di sessione host utilizzabile nell'iframe dell'assistente<br>482b764b 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp |
+| `auth_proxy_test.go` | A | +89/-0 |  | ceda923a 2026-11-24 Chiave del limite di login affidabile dietro un proxy (#120) |
+| `auth_warning_test.go` | A | +20/-0 |  | 2daaf7e2 2026-11-24 Avvisa all'avvio quando l'autenticazione e disattivata (#121) |
+| `bind.go` | M | +200/-70 |  | 7287dd04 2026-11-25 Più tempo per i PC lenti e guida su Ollama<br>d6f441cb 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip<br>... and 4 more |
+| `bind_test.go` | M | +114/-0 |  | d6f441cb 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip<br>01f73cff 2026-11-20 Update Trustant tooling and add Ollama import suggestions |
+| `biome.jsonc` | A | +55/-0 |  | b45002ba 2026-11-19 chore: add repository lint and ACP streaming regression tests |
+| `build.sh` | M | +4/-0 |  | 27bacfea 2026-11-26 Ingress truacp-ing a 8910 via patch applicata dal build, senza push al submodulo |
+| `configure.go` | M | +376/-227 | **yes** | 3a86f6a5 2026-11-27 Ripulisci gli helper Go inutilizzati<br>68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 9 more |
+| `configure_test.go` | M | +253/-10 | **yes** | 3a86f6a5 2026-11-27 Ripulisci gli helper Go inutilizzati<br>68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 6 more |
+| `credits.go` | M | +1/-1 |  | d6f441cb 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip |
+| `docs/README.md` | A | +36/-0 |  | 2a863657 2026-11-27 Document AI provider setup and production publishing<br>035c701f 2026-11-25 CI: workflow manuale per testare Ubuntu, macOS e Windows<br>... and 2 more |
+| `docs/ci-environments.md` | A | +29/-0 |  | 99bbcd9e 2026-11-25 Non mette in stage i percorsi ignorati e completa le note di setup<br>31e446fe 2026-11-25 Docs: esito del primo run del workflow Environments e copertura mancante<br>... and 1 more |
+| `docs/how-it-works.md` | A | +136/-0 |  | 5ad82aac 2026-11-25 Aggiorna Ollama a 0.40.18 e aggiunge le guide in docs/ |
+| `docs/ollama.md` | A | +74/-0 |  | 7f7a2874 2026-11-26 Ollama Instance: propone di aggiornare il preset Ollama host con IP WSL cambiato<br>33cca5c5 2026-11-25 Ollama Instance: rileva e propone l'Ollama dell'host (WSL, Lima)<br>... and 2 more |
+| `docs/publish-with-ai.md` | A | +77/-0 |  | 2a863657 2026-11-27 Document AI provider setup and production publishing |
+| `docs/setup-macos.md` | A | +115/-0 |  | 87a8f0ce 2026-11-26 Docs: OLLAMA_EXTERNAL, rilevamento host Ollama e rimozione degli e2e OpenCode<br>99bbcd9e 2026-11-25 Non mette in stage i percorsi ignorati e completa le note di setup<br>... and 1 more |
+| `docs/setup-ubuntu.md` | A | +101/-0 |  | 87a8f0ce 2026-11-26 Docs: OLLAMA_EXTERNAL, rilevamento host Ollama e rimozione degli e2e OpenCode<br>99bbcd9e 2026-11-25 Non mette in stage i percorsi ignorati e completa le note di setup<br>... and 1 more |
+| `docs/setup-windows.md` | A | +139/-0 |  | 5ead7f64 2026-11-26 Rimuove i riferimenti all'ambiente di test privato dal repository<br>68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 2 more |
+| `docs/use-cases.md` | A | +178/-0 |  | 68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>5ad82aac 2026-11-25 Aggiorna Ollama a 0.40.18 e aggiunge le guide in docs/ |
+| `envcrypt.env` | D | +0/-2 |  | 8b094a3e 2026-11-21 Keep machine-specific workspace data local |
+| `envdist_test.go` | M | +0/-28 |  | 3a86f6a5 2026-11-27 Ripulisci gli helper Go inutilizzati |
+| `envinject_test.go` | A | +128/-0 |  | b26271dc 2026-11-24 Rifiuta caratteri di controllo nei file env e valida i nomi di appconfig (#124) |
+| `envsafe.go` | A | +39/-0 |  | b26271dc 2026-11-24 Rifiuta caratteri di controllo nei file env e valida i nomi di appconfig (#124) |
+| `files.go` | M | +4/-0 |  | 47fd99b1 2026-11-19 fix(files,proxy): stop caching the file tree and document the stream timeout chain |
+| `files_test.go` | M | +56/-0 |  | 47fd99b1 2026-11-19 fix(files,proxy): stop caching the file tree and document the stream timeout chain |
+| `git.go` | M | +11/-3 | **yes** | cfc7b215 2026-11-24 Abilita la verifica della host key SSH per git (#117) |
+| `github.go` | M | +8/-8 |  | 7bbc2076 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS |
+| `gitignore.go` | M | +2/-2 |  | 5ef10797 2026-11-24 Estende le scritture senza symlink agli altri file del workbench<br>120c8c0d 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
+| `gitssh_test.go` | A | +41/-0 |  | cfc7b215 2026-11-24 Abilita la verifica della host key SSH per git (#117) |
+| `go.mod` | M | +4/-2 |  | 2aa7d7f9 2026-11-24 Imposta go 1.27 con toolchain go1.27.4 e allinea setup.sh (#113)<br>b8910a38 2026-11-21 Update Trustant tooling and inventory actions |
+| `home_isolation_test.go` | A | +67/-0 |  | ba985dbe 2026-11-25 Ripristina main_test.go e sposta l'isolamento della home in un file proprio |
+| `image/Dockerfile` | M | +81/-39 |  | 056900c8 2026-11-27 Dockerfile: Hadolint pulito (pipefail, no-install-recommends, WORKDIR, USER numerici)<br>5bda673a 2026-11-27 Dockerfile: apt-get e cd con uscita su errore (Hadolint)<br>... and 6 more |
+| `image/image.md` | M | +6/-6 |  | c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>b8910a38 2026-11-21 Update Trustant tooling and inventory actions |
+| `image/image.sh` | M | +9/-11 |  | f4eef0c4 2026-11-27 image.sh: repository dell'immagine da TRUSTANT_IMAGE come build.sh<br>c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink |
+| `image/ops-prereq-error.patch` | A | +84/-0 |  | bd1d1307 2026-11-22 Rebuild ops from the CLI fork and bump Trustant to v1.1.3 |
+| `intro.png` | D | +-/-- |  | 086b68d0 2026-11-21 Remove private workstation examples from current sources |
+| `launch.go` | M | +106/-84 | **yes** | 3a86f6a5 2026-11-27 Ripulisci gli helper Go inutilizzati<br>99bbcd9e 2026-11-25 Non mette in stage i percorsi ignorati e completa le note di setup<br>... and 6 more |
+| `launch_lifecycle_test.go` | M | +150/-0 |  | 728801cc 2026-11-26 Test: attesa piu' lunga per l'avvio del watcher node su runner ARM64<br>e89f1e06 2026-11-20 Serialize workspace updates and protect application runtimes |
+| `launch_progress_test.go` | M | +27/-9 |  | 7bbc2076 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS |
+| `legal/COMPONENTS.json` | A | +7869/-0 |  | a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>520933fd 2026-11-27 Legal: cli-table e redis-entraid nei registri, offerta sorgenti; CI su push e PR<br>... and 22 more |
+| `legal/IMAGE-v1.0.3.md` | A | +109/-0 |  | 5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>... and 3 more |
+| `legal/NOTICE.head` | M | +3/-0 |  | 520933fd 2026-11-27 Legal: cli-table e redis-entraid nei registri, offerta sorgenti; CI su push e PR |
+| `legal/REVIEW.md` | A | +159/-0 |  | a0017e14 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>482b764b 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>... and 7 more |
+| `legal/SOURCE-OFFER.md` | A | +46/-0 |  | 5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>... and 1 more |
+| `legal/VENDORED.md` | A | +546/-0 |  | 5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 23 more |
+| `legal/deps.manual.txt` | M | +53/-20 |  | a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>520933fd 2026-11-27 Legal: cli-table e redis-entraid nei registri, offerta sorgenti; CI su push e PR<br>... and 18 more |
+| `legal/deps.py` | M | +125/-25 |  | 058c9b2d 2026-11-25 deps.py: usa la versione del toolchain Go per la licenza<br>bd1d1307 2026-11-22 Rebuild ops from the CLI fork and bump Trustant to v1.1.3<br>... and 4 more |
+| `legal/licenses/OFL-1.1.txt` | A | +43/-0 |  | f5ee4bce 2026-11-12 docs: refresh third-party licensing records |
+| `legal/upstream_compare.py` | A | +299/-0 |  | 5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>3bcb5f66 2026-11-26 pi-acp: metadati del repository su trustant/pi-acp<br>... and 2 more |
+| `legal/vendored_changes.py` | A | +233/-0 |  | c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>b35ec054 2026-11-19 docs(legal): track vendored acp changes against the original submodule commits<br>... and 1 more |
+| `license.go` | M | +27/-36 |  | e89f1e06 2026-11-20 Serialize workspace updates and protect application runtimes |
+| `limitbody_test.go` | A | +62/-0 |  | 120c8c0d 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
+| `main.go` | M | +56/-2 |  | 482b764b 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>58b42099 2026-11-25 Aggiunge preset di istanze Ollama con interruttore locale/esterno e Refresh models per il Private AI<br>... and 5 more |
+| `main_test.go` | M | +16/-4 |  | ba985dbe 2026-11-25 Ripristina main_test.go e sposta l'isolamento della home in un file proprio<br>fedf1ee9 2026-11-25 Isola la home e la config Pi durante go test<br>... and 1 more |
+| `memory.go` | M | +6/-1 |  | 120c8c0d 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
+| `memory_test.go` | A | +49/-0 |  | fc95422d 2026-11-24 Allinea la documentazione al codice e aggiunge diagramma di routing |
+| `middleware.go` | M | +19/-9 |  | a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>482b764b 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>... and 1 more |
+| `ollama_instances.go` | A | +464/-0 |  | 7f7a2874 2026-11-26 Ollama Instance: propone di aggiornare il preset Ollama host con IP WSL cambiato<br>33cca5c5 2026-11-25 Ollama Instance: rileva e propone l'Ollama dell'host (WSL, Lima)<br>... and 1 more |
+| `ollama_instances_test.go` | A | +315/-0 |  | 7f7a2874 2026-11-26 Ollama Instance: propone di aggiornare il preset Ollama host con IP WSL cambiato<br>33cca5c5 2026-11-25 Ollama Instance: rileva e propone l'Ollama dell'host (WSL, Lima)<br>... and 1 more |
+| `ollama_local.go` | A | +187/-0 |  | bf80f86d 2026-11-25 Aggiunge Start/Stop e stato dell'Ollama locale nella UI Private AI |
+| `ollama_local_test.go` | A | +172/-0 |  | bf80f86d 2026-11-25 Aggiunge Start/Stop e stato dell'Ollama locale nella UI Private AI |
+| `opencode_upgrade_plan.md` | M | +1/-1 |  | d9af2891 2026-11-23 docs: note TruACP tests need Ubuntu, fix check script path in upgrade plan |
+| `openserverless-instructions.md` | M | +29/-0 |  | cd545d1b 2026-11-26 Direttive app: sezione 'How the System Works' per orientare l'agente |
+| `opsdevel_test.go` | A | +25/-0 |  | c06abb1d 2026-11-24 Avvia ops ide devel senza shell (#118) |
+| `package-lock.json` | M | +224/-30 |  | 67db7e2f 2026-11-20 Refresh npm dependencies and fix WSL startup<br>b45002ba 2026-11-19 chore: add repository lint and ACP streaming regression tests |
+| `package.json` | M | +7/-8 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>58b42099 2026-11-25 Aggiunge preset di istanze Ollama con interruttore locale/esterno e Refresh models per il Private AI<br>... and 4 more |
+| `patches/apply.sh` | A | +27/-0 |  | 27bacfea 2026-11-26 Ingress truacp-ing a 8910 via patch applicata dal build, senza push al submodulo |
+| `patches/oplugins-truinst-truacp-ingress.patch` | A | +39/-0 |  | 27bacfea 2026-11-26 Ingress truacp-ing a 8910 via patch applicata dal build, senza push al submodulo |
+| `predefined_env_test.go` | M | +54/-41 |  | e89f1e06 2026-11-20 Serialize workspace updates and protect application runtimes |
+| `preflight.go` | M | +19/-25 |  | 3a86f6a5 2026-11-27 Ripulisci gli helper Go inutilizzati<br>e89f1e06 2026-11-20 Serialize workspace updates and protect application runtimes |
+| `prep.sh` | M | +1/-0 |  | b45002ba 2026-11-19 chore: add repository lint and ACP streaming regression tests |
+| `provision.go` | M | +25/-25 |  | e89f1e06 2026-11-20 Serialize workspace updates and protect application runtimes |
+| `provision_test.go` | M | +5/-5 |  | d29f1bb0 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42) |
+| `proxy_test.go` | A | +41/-0 |  | 47fd99b1 2026-11-19 fix(files,proxy): stop caching the file tree and document the stream timeout chain |
+| `prune_test.go` | M | +276/-2 |  | 8ceb7876 2026-11-26 Cancellazione app: rimuove la directory dei log runtime dell'app<br>68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 1 more |
+| `publish.go` | M | +45/-65 |  | e89f1e06 2026-11-20 Serialize workspace updates and protect application runtimes |
+| `publish_imports_test.go` | M | +135/-0 |  | e89f1e06 2026-11-20 Serialize workspace updates and protect application runtimes |
+| `react-mcp/package-lock.json` | M | +52/-48 |  | 044b0e99 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102)<br>8b1c1091 2026-11-20 Update runtime dependencies and report development GUI readiness<br>... and 2 more |
+| `react-mcp/package.json` | M | +2/-2 |  | 044b0e99 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102)<br>8b1c1091 2026-11-20 Update runtime dependencies and report development GUI readiness |
+| `repo.go` | M | +162/-76 | **yes** | 3a86f6a5 2026-11-27 Ripulisci gli helper Go inutilizzati<br>8ceb7876 2026-11-26 Cancellazione app: rimuove la directory dei log runtime dell'app<br>... and 4 more |
+| `run.sh` | M | +49/-16 | **yes** | d0f10576 2026-11-25 Esporta TRUSTANT_AUTH_* da run.sh dopo aver caricato .env<br>0891295e 2026-11-25 Migra Air a build.entrypoint e salta ollama locale con endpoint remoto<br>... and 2 more |
+| `runtime_log.go` | M | +11/-0 |  | 8ceb7876 2026-11-26 Cancellazione app: rimuove la directory dei log runtime dell'app |
+| `safefile.go` | A | +79/-0 |  | 5ef10797 2026-11-24 Estende le scritture senza symlink agli altri file del workbench<br>120c8c0d 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
+| `safefile_test.go` | A | +75/-0 |  | 120c8c0d 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
+| `safefile_unix.go` | A | +21/-0 |  | 120c8c0d 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
+| `safefile_windows.go` | A | +19/-0 |  | 120c8c0d 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
+| `security_gaps_test.go` | A | +219/-0 |  | 478ec5e9 2026-11-24 Esegue l'escape di Host nella pagina errore e vincola la sorgente OPS_SKILLS (#114 #116 #123)<br>c7ff349e 2026-11-24 Aggiunge test per sessione, logout e routing per hostname |
+| `setup.sh` | M | +73/-22 | **yes** | 2aa7d7f9 2026-11-24 Imposta go 1.27 con toolchain go1.27.4 e allinea setup.sh (#113)<br>c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 20 more |
+| `setup_test.go` | M | +246/-41 |  | 5ead7f64 2026-11-26 Rimuove i riferimenti all'ambiente di test privato dal repository<br>0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>... and 6 more |
+| `shared.go` | M | +43/-36 |  | 3a86f6a5 2026-11-27 Ripulisci gli helper Go inutilizzati<br>b26271dc 2026-11-24 Rifiuta caratteri di controllo nei file env e valida i nomi di appconfig (#124)<br>... and 2 more |
+| `shared_test.go` | M | +2/-2 |  | d29f1bb0 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42) |
+| `skills.go` | M | +78/-7 |  | 11f03a74 2026-11-24 Allinea SkillInfo con gofmt e salta il test invoke su Windows (#125 #126)<br>478ec5e9 2026-11-24 Esegue l'escape di Host nella pagina errore e vincola la sorgente OPS_SKILLS (#114 #116 #123)<br>... and 1 more |
+| `skills_test.go` | A | +147/-0 |  | 478ec5e9 2026-11-24 Esegue l'escape di Host nella pagina errore e vincola la sorgente OPS_SKILLS (#114 #116 #123) |
+| `spec/0-preflight.md` | M | +17/-12 |  | 47353bbb 2026-11-21 Fix local links in Trustant specifications (#76)<br>8984b16e 2026-11-12 fix: recover provider setup and align routing documentation |
+| `spec/1-applist.md` | M | +59/-16 | **yes** | 5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 8 more |
+| `spec/1-index.md` | M | +21/-2 | **yes** | 2a863657 2026-11-27 Document AI provider setup and production publishing<br>68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 2 more |
+| `spec/11-files.md` | M | +1/-1 |  | 47fd99b1 2026-11-19 fix(files,proxy): stop caching the file tree and document the stream timeout chain |
+| `spec/12-terminal.md` | M | +2/-2 |  | 404894a4 2026-11-20 Improve mobile workbench controls and update Claude Code pin |
+| `spec/14-license.md` | M | +1/-1 | **yes** | 086b68d0 2026-11-21 Remove private workstation examples from current sources |
+| `spec/15-starters.md` | M | +2/-2 |  | 47353bbb 2026-11-21 Fix local links in Trustant specifications (#76) |
 | `spec/16-tutorial.md` | M | +1/-1 |  |  |
-| `spec/17-proxy.md` | M | +24/-0 |  | b45002b 2026-11-19 chore: add repository lint and ACP streaming regression tests<br>47fd99b 2026-11-19 fix(files,proxy): stop caching the file tree and document the stream timeout chain |
-| `spec/18-shared.md` | M | +3/-2 |  | e89f1e0 2026-11-20 Serialize workspace updates and protect application runtimes |
-| `spec/2-repo.md` | M | +18/-10 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>a0bd211 2026-11-24 Passa la password di ops admin adduser per ambiente invece che da argv (#119)<br>... and 1 more |
-| `spec/20-legal.md` | M | +64/-4 |  | d8f11bf 2026-11-26 Legal: registri top-level, pi-acp su trustant/pi-acp, esiti immagine v1.0.3<br>a0017e1 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>... and 2 more |
-| `spec/2a-config.md` | M | +141/-29 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>... and 9 more |
-| `spec/3-app.md` | M | +13/-5 | **yes** | dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>e4d8961 2026-11-24 Corregge accessibilità di Inventario, Template e TruACP (UIX02)<br>... and 1 more |
-| `spec/4-launch.md` | M | +37/-19 | **yes** | 7287dd0 2026-11-25 Più tempo per i PC lenti e guida su Ollama<br>a0bd211 2026-11-24 Passa la password di ops admin adduser per ambiente invece che da argv (#119)<br>... and 6 more |
-| `spec/6-publish.md` | M | +9/-2 |  | dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>cfc7b21 2026-11-24 Abilita la verifica della host key SSH per git (#117)<br>... and 1 more |
-| `spec/7-skills.md` | M | +31/-5 |  | 478ec5e 2026-11-24 Esegue l'escape di Host nella pagina errore e vincola la sorgente OPS_SKILLS (#114 #116 #123)<br>cfc7b21 2026-11-24 Abilita la verifica della host key SSH per git (#117)<br>... and 1 more |
-| `spec/8-e2e.md` | M | +19/-445 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>ac83f52 2026-11-25 Spec: marca come rimosse le sezioni e2e e guardrail legate a OpenCode<br>... and 2 more |
-| `spec/application-test-completion-gate.md` | M | +63/-154 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>ac83f52 2026-11-25 Spec: marca come rimosse le sezioni e2e e guardrail legate a OpenCode<br>... and 1 more |
-| `spec/authentication.md` | M | +123/-6 |  | 1cf39de 2026-11-26 Auth: cookie di sessione host utilizzabile nell'iframe dell'assistente<br>482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>... and 5 more |
-| `spec/build.md` | M | +53/-30 |  | 27bacfe 2026-11-26 Ingress truacp-ing a 8910 via patch applicata dal build, senza push al submodulo<br>2aa7d7f 2026-11-24 Imposta go 1.27 con toolchain go1.27.4 e allinea setup.sh (#113)<br>... and 6 more |
-| `spec/credit_check.md` | M | +3/-3 |  | 47353bb 2026-11-21 Fix local links in Trustant specifications (#76) |
-| `spec/issue98-action-workflow-e2e.svg` | D | +0/-50 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `spec/issue98-auth-e2e.svg` | D | +0/-33 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `spec/issue98-compaction-e2e.svg` | D | +0/-49 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `spec/issue98-e2e-flow.svg` | D | +0/-68 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `spec/issue98-session-enforcement-flow.svg` | D | +0/-58 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `spec/notebook.md` | M | +2/-0 | **yes** | db6c998 2026-11-20 Improve inventory and template settings accessibility |
-| `spec/opencode-guardrail-flow.svg` | D | +0/-47 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `spec/openserverless-instructions.md` | M | +33/-30 |  | cd545d1 2026-11-26 Direttive app: sezione 'How the System Works' per orientare l'agente<br>0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>... and 2 more |
-| `spec/pi.md` | M | +26/-26 | **yes** | b8910a3 2026-11-21 Update Trustant tooling and inventory actions<br>3133d65 2026-11-21 Distinguere il limite di sessione Ollama dai 429 transitori (#5)<br>... and 1 more |
-| `spec/provider-e2e-flow.svg` | D | +0/-52 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `spec/run.md` | M | +5/-2 | **yes** | 8b1c109 2026-11-20 Update runtime dependencies and report development GUI readiness |
-| `spec/setup.md` | M | +48/-25 | **yes** | 2aa7d7f 2026-11-24 Imposta go 1.27 con toolchain go1.27.4 e allinea setup.sh (#113)<br>c41c63c 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 7 more |
-| `spec/start.md` | M | +35/-32 | **yes** | d29f1bb 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42)<br>f5ef96b 2026-11-25 start.sh: OLLAMA_EXTERNAL=1 salta l'installazione del servizio Ollama locale<br>... and 6 more |
-| `spec/trustant-auth-flow.svg` | M | +1/-1 |  | 482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp |
-| `spec/trustant-pi-runtime.md` | M | +5/-6 |  | b8910a3 2026-11-21 Update Trustant tooling and inventory actions |
-| `spec/user_provisioning.md` | M | +1/-1 |  | 086b68d 2026-11-21 Remove private workstation examples from current sources |
-| `start.ps1` | M | +5/-8 |  | 8b1c109 2026-11-20 Update runtime dependencies and report development GUI readiness |
-| `start.sh` | M | +27/-25 | **yes** | d29f1bb 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42)<br>87a8f0c 2026-11-26 Docs: OLLAMA_EXTERNAL, rilevamento host Ollama e rimozione degli e2e OpenCode<br>... and 4 more |
-| `start_script_test.go` | M | +21/-0 |  | f5ef96b 2026-11-25 start.sh: OLLAMA_EXTERNAL=1 salta l'installazione del servizio Ollama locale<br>8b1c109 2026-11-20 Update runtime dependencies and report development GUI readiness |
-| `terminal.go` | M | +7/-7 |  | 7bbc207 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS |
-| `tests/applist-labels.test.mjs` | A | +35/-0 |  | dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49) |
-| `tests/e2e_action_workflow.sh` | D | +0/-37 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `tests/e2e_auth.sh` | D | +0/-39 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `tests/e2e_compaction.sh` | D | +0/-30 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `tests/e2e_issue98.sh` | D | +0/-106 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `tests/e2e_ollama_cloud_app.sh` | D | +0/-23 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `tests/e2e_private_app.sh` | D | +0/-23 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `tests/e2e_provider_common.sh` | D | +0/-360 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `tests/e2e_provider_common_test.sh` | D | +0/-202 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `tests/e2e_regolo_app.sh` | D | +0/-23 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `tests/import-suggestions.spec.mjs` | A | +92/-0 |  | 01f73cf 2026-11-20 Update Trustant tooling and add Ollama import suggestions |
-| `tests/inventory-terminal.spec.mjs` | A | +87/-0 |  | 404894a 2026-11-20 Improve mobile workbench controls and update Claude Code pin |
-| `tests/issue98-e2e.md` | D | +0/-175 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `tests/issue98-session-tree.mjs` | D | +0/-51 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `tests/issue98-session-tree.test.mjs` | D | +0/-46 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `tests/issue98.spec.mjs` | D | +0/-1051 |  | 0384ee0 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
-| `tests/ollama-instances.test.mjs` | A | +238/-0 |  | 7f7a287 2026-11-26 Ollama Instance: propone di aggiornare il preset Ollama host con IP WSL cambiato<br>33cca5c 2026-11-25 Ollama Instance: rileva e propone l'Ollama dell'host (WSL, Lima)<br>... and 1 more |
-| `tests/ollama-local.test.mjs` | A | +149/-0 |  | 58b4209 2026-11-25 Aggiunge preset di istanze Ollama con interruttore locale/esterno e Refresh models per il Private AI<br>bf80f86 2026-11-25 Aggiunge Start/Stop e stato dell'Ollama locale nella UI Private AI |
-| `tests/test_legal_deps.py` | A | +80/-0 |  | f5ee4bc 2026-11-12 docs: refresh third-party licensing records |
-| `tests/uix02.spec.mjs` | A | +318/-0 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>93ebe52 2026-11-24 Completa il lotto Private AI e ripristina la scansione Go<br>... and 1 more |
-| `timeouts.go` | A | +55/-0 |  | 7287dd0 2026-11-25 Più tempo per i PC lenti e guida su Ollama |
-| `timeouts_test.go` | A | +45/-0 |  | 7287dd0 2026-11-25 Più tempo per i PC lenti e guida su Ollama |
-| `tools/lint.mjs` | A | +104/-0 |  | b45002b 2026-11-19 chore: add repository lint and ACP streaming regression tests |
-| `truacp_runtime_test.go` | M | +1/-1 |  | 482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp |
-| `version.txt` | M | +1/-1 | **yes** | 93ebe52 2026-11-24 Completa il lotto Private AI e ripristina la scansione Go<br>bd1d130 2026-11-22 Rebuild ops from the CLI fork and bump Trustant to v1.1.3<br>... and 3 more |
-| `web/app.html` | M | +196/-149 | **yes** | dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>482b764 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>... and 7 more |
-| `web/applist.html` | M | +307/-130 | **yes** | dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>066da17 2026-11-25 UI: menu accessibili, etichette dei campi e modelli di chat filtrati<br>... and 10 more |
-| `web/configure.html` | M | +317/-119 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>... and 11 more |
-| `web/index.html` | M | +121/-88 | **yes** | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>bf80f86 2026-11-25 Aggiunge Start/Stop e stato dell'Ollama locale nella UI Private AI<br>... and 6 more |
-| `web/js/bind.js` | M | +185/-7 |  | 066da17 2026-11-25 UI: menu accessibili, etichette dei campi e modelli di chat filtrati<br>d6f441c 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip<br>... and 1 more |
-| `web/js/modal-a11y.js` | A | +134/-0 |  | baa0daf 2026-11-20 Fix catalog failures and modal accessibility<br>5ea565a 2026-11-18 fix(setup,web): confine OpenServerless prompt to trudev VMs and close UX residuals |
-| `web/js/ollama-instances.js` | A | +351/-0 |  | dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>7f7a287 2026-11-26 Ollama Instance: propone di aggiornare il preset Ollama host con IP WSL cambiato<br>... and 2 more |
-| `web/js/ollama-local.js` | A | +131/-0 |  | 58b4209 2026-11-25 Aggiunge preset di istanze Ollama con interruttore locale/esterno e Refresh models per il Private AI<br>bf80f86 2026-11-25 Aggiunge Start/Stop e stato dell'Ollama locale nella UI Private AI |
-| `web/js/toolbar-collapse.js` | M | +1/-1 |  | 404894a 2026-11-20 Improve mobile workbench controls and update Claude Code pin |
-| `web/trustant-ui.css` | M | +254/-14 |  | 68d0a47 2026-11-26 Corregge configurazione modelli e cancellazione app<br>dcb3f37 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>... and 9 more |
-| `web/wa-trustant.jpeg` | D | +-/-- |  | 086b68d 2026-11-21 Remove private workstation examples from current sources |
-| `workbench_symlink_test.go` | A | +70/-0 |  | 5ef1079 2026-11-24 Estende le scritture senza symlink agli altri file del workbench |
+| `spec/17-proxy.md` | M | +24/-0 |  | b45002ba 2026-11-19 chore: add repository lint and ACP streaming regression tests<br>47fd99b1 2026-11-19 fix(files,proxy): stop caching the file tree and document the stream timeout chain |
+| `spec/18-shared.md` | M | +3/-2 |  | e89f1e06 2026-11-20 Serialize workspace updates and protect application runtimes |
+| `spec/2-repo.md` | M | +18/-10 | **yes** | 68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>a0bd2117 2026-11-24 Passa la password di ops admin adduser per ambiente invece che da argv (#119)<br>... and 1 more |
+| `spec/20-legal.md` | M | +64/-4 |  | d8f11bf9 2026-11-26 Legal: registri top-level, pi-acp su trustant/pi-acp, esiti immagine v1.0.3<br>a0017e14 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>... and 2 more |
+| `spec/2a-config.md` | M | +141/-29 | **yes** | 68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>dcb3f376 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>... and 9 more |
+| `spec/3-app.md` | M | +13/-5 | **yes** | dcb3f376 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>e4d8961b 2026-11-24 Corregge accessibilità di Inventario, Template e TruACP (UIX02)<br>... and 1 more |
+| `spec/4-launch.md` | M | +37/-19 | **yes** | 7287dd04 2026-11-25 Più tempo per i PC lenti e guida su Ollama<br>a0bd2117 2026-11-24 Passa la password di ops admin adduser per ambiente invece che da argv (#119)<br>... and 6 more |
+| `spec/6-publish.md` | M | +9/-2 |  | dcb3f376 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>cfc7b215 2026-11-24 Abilita la verifica della host key SSH per git (#117)<br>... and 1 more |
+| `spec/7-skills.md` | M | +31/-5 |  | 478ec5e9 2026-11-24 Esegue l'escape di Host nella pagina errore e vincola la sorgente OPS_SKILLS (#114 #116 #123)<br>cfc7b215 2026-11-24 Abilita la verifica della host key SSH per git (#117)<br>... and 1 more |
+| `spec/8-e2e.md` | M | +19/-445 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>ac83f527 2026-11-25 Spec: marca come rimosse le sezioni e2e e guardrail legate a OpenCode<br>... and 2 more |
+| `spec/application-test-completion-gate.md` | M | +63/-154 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>ac83f527 2026-11-25 Spec: marca come rimosse le sezioni e2e e guardrail legate a OpenCode<br>... and 1 more |
+| `spec/authentication.md` | M | +123/-6 |  | 1cf39dec 2026-11-26 Auth: cookie di sessione host utilizzabile nell'iframe dell'assistente<br>482b764b 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>... and 5 more |
+| `spec/build.md` | M | +53/-30 |  | 27bacfea 2026-11-26 Ingress truacp-ing a 8910 via patch applicata dal build, senza push al submodulo<br>2aa7d7f9 2026-11-24 Imposta go 1.27 con toolchain go1.27.4 e allinea setup.sh (#113)<br>... and 6 more |
+| `spec/credit_check.md` | M | +3/-3 |  | 47353bbb 2026-11-21 Fix local links in Trustant specifications (#76) |
+| `spec/issue98-action-workflow-e2e.svg` | D | +0/-50 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `spec/issue98-auth-e2e.svg` | D | +0/-33 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `spec/issue98-compaction-e2e.svg` | D | +0/-49 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `spec/issue98-e2e-flow.svg` | D | +0/-68 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `spec/issue98-session-enforcement-flow.svg` | D | +0/-58 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `spec/notebook.md` | M | +2/-0 | **yes** | db6c9983 2026-11-20 Improve inventory and template settings accessibility |
+| `spec/opencode-guardrail-flow.svg` | D | +0/-47 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `spec/openserverless-instructions.md` | M | +33/-30 |  | cd545d1b 2026-11-26 Direttive app: sezione 'How the System Works' per orientare l'agente<br>0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>... and 2 more |
+| `spec/pi.md` | M | +26/-26 | **yes** | b8910a38 2026-11-21 Update Trustant tooling and inventory actions<br>3133d65b 2026-11-21 Distinguere il limite di sessione Ollama dai 429 transitori (#5)<br>... and 1 more |
+| `spec/provider-e2e-flow.svg` | D | +0/-52 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `spec/run.md` | M | +5/-2 | **yes** | 8b1c1091 2026-11-20 Update runtime dependencies and report development GUI readiness |
+| `spec/setup.md` | M | +48/-25 | **yes** | 2aa7d7f9 2026-11-24 Imposta go 1.27 con toolchain go1.27.4 e allinea setup.sh (#113)<br>c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 7 more |
+| `spec/start.md` | M | +41/-32 | **yes** | 5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>d29f1bb0 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42)<br>... and 7 more |
+| `spec/trustant-auth-flow.svg` | M | +1/-1 |  | 482b764b 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp |
+| `spec/trustant-pi-runtime.md` | M | +5/-6 |  | b8910a38 2026-11-21 Update Trustant tooling and inventory actions |
+| `spec/user_provisioning.md` | M | +1/-1 |  | 086b68d0 2026-11-21 Remove private workstation examples from current sources |
+| `start.ps1` | M | +5/-8 |  | 8b1c1091 2026-11-20 Update runtime dependencies and report development GUI readiness |
+| `start.sh` | M | +36/-28 | **yes** | 5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>d29f1bb0 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42)<br>... and 5 more |
+| `start_script_test.go` | M | +21/-0 |  | f5ef96bb 2026-11-25 start.sh: OLLAMA_EXTERNAL=1 salta l'installazione del servizio Ollama locale<br>8b1c1091 2026-11-20 Update runtime dependencies and report development GUI readiness |
+| `terminal.go` | M | +7/-7 |  | 7bbc2076 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS |
+| `tests/applist-labels.test.mjs` | A | +35/-0 |  | dcb3f376 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49) |
+| `tests/e2e_action_workflow.sh` | D | +0/-37 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `tests/e2e_auth.sh` | D | +0/-39 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `tests/e2e_compaction.sh` | D | +0/-30 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `tests/e2e_issue98.sh` | D | +0/-106 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `tests/e2e_ollama_cloud_app.sh` | D | +0/-23 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `tests/e2e_private_app.sh` | D | +0/-23 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `tests/e2e_provider_common.sh` | D | +0/-360 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `tests/e2e_provider_common_test.sh` | D | +0/-202 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `tests/e2e_regolo_app.sh` | D | +0/-23 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `tests/import-suggestions.spec.mjs` | A | +92/-0 |  | 01f73cff 2026-11-20 Update Trustant tooling and add Ollama import suggestions |
+| `tests/inventory-terminal.spec.mjs` | A | +87/-0 |  | 404894a4 2026-11-20 Improve mobile workbench controls and update Claude Code pin |
+| `tests/issue98-e2e.md` | D | +0/-175 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `tests/issue98-session-tree.mjs` | D | +0/-51 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `tests/issue98-session-tree.test.mjs` | D | +0/-46 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `tests/issue98.spec.mjs` | D | +0/-1051 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
+| `tests/ollama-instances.test.mjs` | A | +238/-0 |  | 7f7a2874 2026-11-26 Ollama Instance: propone di aggiornare il preset Ollama host con IP WSL cambiato<br>33cca5c5 2026-11-25 Ollama Instance: rileva e propone l'Ollama dell'host (WSL, Lima)<br>... and 1 more |
+| `tests/ollama-local.test.mjs` | A | +149/-0 |  | 58b42099 2026-11-25 Aggiunge preset di istanze Ollama con interruttore locale/esterno e Refresh models per il Private AI<br>bf80f86d 2026-11-25 Aggiunge Start/Stop e stato dell'Ollama locale nella UI Private AI |
+| `tests/test_legal_deps.py` | A | +80/-0 |  | f5ee4bce 2026-11-12 docs: refresh third-party licensing records |
+| `tests/uix02.spec.mjs` | A | +318/-0 |  | 68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>93ebe52d 2026-11-24 Completa il lotto Private AI e ripristina la scansione Go<br>... and 1 more |
+| `timeouts.go` | A | +55/-0 |  | 7287dd04 2026-11-25 Più tempo per i PC lenti e guida su Ollama |
+| `timeouts_test.go` | A | +45/-0 |  | 7287dd04 2026-11-25 Più tempo per i PC lenti e guida su Ollama |
+| `tools/lint.mjs` | A | +104/-0 |  | b45002ba 2026-11-19 chore: add repository lint and ACP streaming regression tests |
+| `truacp_runtime_test.go` | M | +1/-1 |  | 482b764b 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp |
+| `version.txt` | M | +1/-1 | **yes** | 93ebe52d 2026-11-24 Completa il lotto Private AI e ripristina la scansione Go<br>bd1d1307 2026-11-22 Rebuild ops from the CLI fork and bump Trustant to v1.1.3<br>... and 3 more |
+| `web/app.html` | M | +196/-149 | **yes** | dcb3f376 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>482b764b 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>... and 7 more |
+| `web/applist.html` | M | +310/-133 | **yes** | 5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>cbe741d8 2026-11-27 applist: evita l'autofill del browser nella ricerca app<br>... and 12 more |
+| `web/configure.html` | M | +317/-119 | **yes** | 68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>dcb3f376 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>... and 11 more |
+| `web/index.html` | M | +121/-88 | **yes** | 68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>bf80f86d 2026-11-25 Aggiunge Start/Stop e stato dell'Ollama locale nella UI Private AI<br>... and 6 more |
+| `web/js/bind.js` | M | +185/-7 |  | 066da171 2026-11-25 UI: menu accessibili, etichette dei campi e modelli di chat filtrati<br>d6f441cb 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip<br>... and 1 more |
+| `web/js/modal-a11y.js` | A | +134/-0 |  | baa0daf7 2026-11-20 Fix catalog failures and modal accessibility<br>5ea565ab 2026-11-18 fix(setup,web): confine OpenServerless prompt to trudev VMs and close UX residuals |
+| `web/js/ollama-instances.js` | A | +351/-0 |  | dcb3f376 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>7f7a2874 2026-11-26 Ollama Instance: propone di aggiornare il preset Ollama host con IP WSL cambiato<br>... and 2 more |
+| `web/js/ollama-local.js` | A | +131/-0 |  | 58b42099 2026-11-25 Aggiunge preset di istanze Ollama con interruttore locale/esterno e Refresh models per il Private AI<br>bf80f86d 2026-11-25 Aggiunge Start/Stop e stato dell'Ollama locale nella UI Private AI |
+| `web/js/toolbar-collapse.js` | M | +1/-1 |  | 404894a4 2026-11-20 Improve mobile workbench controls and update Claude Code pin |
+| `web/trustant-ui.css` | M | +254/-14 |  | 68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>dcb3f376 2026-11-26 UI/UX: lotto verificato di correzioni a lista, configurazione ed editor (#49)<br>... and 9 more |
+| `web/wa-trustant.jpeg` | D | +-/-- |  | 086b68d0 2026-11-21 Remove private workstation examples from current sources |
+| `workbench_symlink_test.go` | A | +70/-0 |  | 5ef10797 2026-11-24 Estende le scritture senza symlink agli altri file del workbench |
