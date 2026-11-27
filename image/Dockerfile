@@ -40,14 +40,14 @@ ARG TARGETARCH
 ARG OLLAMA_VERSION
 
 # install ollama
-USER root
+# The base image already runs as root; this intermediate stage never ships.
+# WHY ca-certificates: curl only recommends it, and --no-install-recommends
+# would otherwise leave the HTTPS download below without a trust store.
+# hadolint ignore=DL3008
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl zstd
 
-RUN apt-get update && apt-get install -y curl zstd
-
-RUN curl -fsSL https://ollama.com/install.sh >ollama.sh
-RUN env OLLAMA_VERSION=${OLLAMA_VERSION} bash ollama.sh
-
-RUN \
+RUN curl -fsSL https://ollama.com/install.sh >ollama.sh && \
+    env OLLAMA_VERSION=${OLLAMA_VERSION} bash ollama.sh && \
     echo "OLLAMA_VERSION=${OLLAMA_VERSION}" >>/etc/environment
 
 ########################################################## stage1-root
@@ -58,7 +58,9 @@ ARG MILVUS_MCP_REF
 ARG GH_VERSION
 ARG GH_SHA_AMD64
 ARG GH_SHA_ARM64
-USER root
+# pipefail: a failing download feeding a pipe must fail the build. The stages
+# below inherit this shell.
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # collecting
 COPY --from=loader /etc/environment /etc/environment
@@ -68,6 +70,9 @@ COPY --from=loader /usr/local/lib/ollama/*.so* /usr/local/lib/ollama/
 COPY --from=loader /usr/local/lib/ollama/llama-server /usr/local/lib/ollama/
 
 ENV DEBIAN_FRONTEND=noninteractive
+# WHY no apt version pins (DL3008): the base image is a floating ubuntu:24.04, so
+# `pkg=version` pins stop resolving as soon as the archive supersedes them.
+# hadolint ignore=DL3008
 RUN \
     apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -76,13 +81,14 @@ RUN \
         python-is-python3 python3-pip python3-pytest python3-dotenv \
         postgresql-client-16 redis-tools rclone  && \
     curl -fsSL -o /tmp/nodesource.key https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key && \
-    gpg --show-keys --with-colons /tmp/nodesource.key | grep -q '^fpr:::::::::6F71F525282841EEDAF851B42F59B5F99B1BE0B4:' && \
+    gpg --show-keys --with-colons /tmp/nodesource.key >/tmp/nodesource.fpr && \
+    grep -q '^fpr:::::::::6F71F525282841EEDAF851B42F59B5F99B1BE0B4:' /tmp/nodesource.fpr && \
     install -d -m 0755 /etc/apt/keyrings && \
     gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg /tmp/nodesource.key && \
-    rm -f /tmp/nodesource.key && \
+    rm -f /tmp/nodesource.key /tmp/nodesource.fpr && \
     echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_24.x nodistro main" \
         > /etc/apt/sources.list.d/nodesource.list && \
-    apt-get update && apt-get -y install nodejs && \
+    apt-get update && apt-get -y install --no-install-recommends nodejs && \
     rm -rf /var/lib/apt/lists/*
 
 RUN \
@@ -121,6 +127,8 @@ RUN \
 # OpenCode. Keep this in step with setup.sh.
 # WHY the pglast override: postgres-mcp 0.3.0 pins pglast==7.2.0, which was
 # deleted from PyPI (only 7.20+ remain); 7.21 keeps the same 7.x API (issue #24).
+# $extra is deliberately unquoted: it holds several uv arguments.
+# hadolint ignore=SC2086
 RUN set -eu ;\
     echo 'pglast==7.21' > /tmp/uv-overrides.txt ;\
     curl -LsSf https://astral.sh/uv/install.sh | \
@@ -161,16 +169,16 @@ COPY trustant-react-mcp /tmp/trustant-react-mcp
 # The language server needs the JavaScript tsserver shipped with TypeScript 6.
 RUN set -eu ;\
     npm install -g typescript-language-server@6.1.0 typescript@6.0.3 tsx@4.23.15 mongodb-mcp-server@1.9.0 ;\
-    cd /tmp/openserverless-mcp && npm pack --pack-destination /tmp ;\
+    npm pack --pack-destination /tmp /tmp/openserverless-mcp ;\
     npm install -g /tmp/openserverless-mcp-*.tgz ;\
-    cd /tmp/trustant-react-mcp && npm pack --pack-destination /tmp ;\
+    npm pack --pack-destination /tmp /tmp/trustant-react-mcp ;\
     npm install -g /tmp/trustant-react-mcp-*.tgz ;\
-    cd / ;\
     rm -rf /tmp/openserverless-mcp /tmp/openserverless-mcp-*.tgz /tmp/trustant-react-mcp /tmp/trustant-react-mcp-*.tgz ;\
     rm -rf /var/lib/apt/lists/* ;\
     npm cache clean --force ;\
-    export VER=1.3.0 ARCH="$(dpkg --print-architecture)" ;\
-    curl -sL https://github.com/txn2/mcp-s3/releases/download/v${VER}/mcp-s3_${VER}_linux_${ARCH}.tar.gz |\
+    VER=1.3.0 ;\
+    ARCH="$(dpkg --print-architecture)" ;\
+    curl -sL "https://github.com/txn2/mcp-s3/releases/download/v${VER}/mcp-s3_${VER}_linux_${ARCH}.tar.gz" |\
     tar -C /usr/local/bin -xzvf -  mcp-s3
 
 ENTRYPOINT ["tini", "--"]
@@ -180,16 +188,14 @@ ENTRYPOINT ["tini", "--"]
 FROM stage1-root AS stage2-user
 ARG TARGETARCH
 
-# install cli tools
-USER root
-
+# install cli tools (stage1-root already runs as root)
 RUN \
     useradd -d /home/trustant -u 769 -s /bin/bash -m trustant ;\
     echo 'trustant ALL=(ALL:ALL) NOPASSWD: ALL' >>/etc/sudoers
 
 ENV HOME=/home/trustant
 WORKDIR /home/trustant
-USER trustant
+USER 769
 
 COPY --from=ops-build --chown=trustant:trustant /out/ops /home/trustant/.local/bin/ops
 
@@ -211,12 +217,13 @@ COPY --chown=trustant:trustant truacp-runtime/pi-acp-package.tgz /tmp/truacp/pi-
 COPY --chown=trustant:trustant truacp-runtime/dist-bin/truacp.cjs /tmp/truacp/dist-bin/truacp.cjs
 COPY --chown=trustant:trustant truacp-runtime/extensions/trustant-runtime.ts /tmp/truacp/extensions/trustant-runtime.ts
 COPY --chown=trustant:trustant truacp-runtime/extensions/requirements.txt /tmp/truacp/extensions/requirements.txt
+WORKDIR /tmp/truacp
 RUN \
-    cd /tmp/truacp || exit 1 ;\
     sh setup.sh ;\
     test -x "$HOME/.local/bin/truacp" ;\
     test -x "$HOME/.local/bin/trustant-acp" ;\
     rm -rf /tmp/truacp
+WORKDIR /home/trustant
 
 # workspace
 #
@@ -251,7 +258,11 @@ BASHRC
 
 ########################################################## stage3-app
 # start
-USER root
+# start.sh / supervisord must run as root: start.sh chowns $HOME and
+# supervisord (user=root) drops privilege per-program. Final user MUST be root,
+# so DL3002 is waived. Numeric 0 is root (DL3066).
+# hadolint ignore=DL3002
+USER 0
 RUN \
     if [ -x /usr/local/bin/mcp-s3 ] && [ ! -x /usr/local/bin/mcp-s3-real ]; then \
         mv /usr/local/bin/mcp-s3 /usr/local/bin/mcp-s3-real; \
@@ -271,7 +282,5 @@ COPY --chown=trustant:trustant trustant.json trustant.json
 # staged into image/ by build.sh / hotfix.sh). See spec/20-legal.md.
 COPY LICENSE NOTICE DEPS /usr/share/doc/trustant/
 
-# start.sh / supervisord must run as root: start.sh chowns $HOME and
-# supervisord (user=root) drops privilege per-program. Final user MUST be root.
-USER root
+# The final user stays root (see stage3-app above).
 WORKDIR /home/trustant
