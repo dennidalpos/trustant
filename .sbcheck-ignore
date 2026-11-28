@@ -106,3 +106,4 @@ bec632f01de13873 cert-manager webhook annotation, not a credential (upstream man
 fe0c19d057cb44ca AWS documentation example key (EXAMPLE suffix), upstream OpenWhisk sample, historical
 cdb4c4320a734f0a public project contact, fixture or upstream author metadata (historical)
 0b7515781de9c70c historical commit message mentioning the container user home /home/trustable, not personal data
+14b4e45eabb63f37 public project contact (Nuvolaris Inc, CLA requests) in the vendored oplugins-truinst CONTRIBUTING.md, same text as the root file
