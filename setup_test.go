@@ -221,7 +221,8 @@ jq() {
         *) return 1 ;;
     esac
 }
-export -f seq sleep curl jq
+prune_stale_hostport_chains() { :; }
+export -f seq sleep curl jq prune_stale_hostport_chains
 `
 	for _, tc := range []struct {
 		response, message string

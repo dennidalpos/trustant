@@ -7585,27 +7585,6 @@
       ]
     },
     {
-      "section": "submodule",
-      "name": "oplugins-truinst",
-      "version": "main@b65d58d49a3a",
-      "license": "AGPL-3.0-or-later",
-      "homepage": "https://github.com/trustant/oplugins-truinst",
-      "revision": "b65d58d49a3a83740f5d8ac895ea622a8559ee7e",
-      "source": "path:oplugins-truinst",
-      "status": "license-files-collected",
-      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices. Review corresponding/covered source and any replacement or relinking requirements.",
-      "evidence": [
-        {
-          "file": "LICENSE",
-          "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
-        },
-        {
-          "file": "NOTICE",
-          "sha256": "719d7eb171cea2836eb3b9fbf8da1d8070ab753ff3e764a56330cb3d692a9fc8"
-        }
-      ]
-    },
-    {
       "section": "vendored",
       "name": "acp (TruACP)",
       "version": "vendored",
@@ -7686,6 +7665,26 @@
         {
           "file": "NOTICE",
           "sha256": "ebd0d018a0e5b843c9b7cd6d24eee3228d8bb84c7651d08a8174b74320e1242f"
+        }
+      ]
+    },
+    {
+      "section": "vendored",
+      "name": "oplugins-truinst (formerly a gitlink, baseline b65d58d)",
+      "version": "b65d58d",
+      "license": "AGPL-3.0-or-later",
+      "homepage": "https://github.com/trustant/oplugins-truinst",
+      "source": "path:oplugins-truinst",
+      "status": "license-files-collected",
+      "obligation": "Review the SPDX expression; preserve applicable license and attribution notices. Review corresponding/covered source and any replacement or relinking requirements.",
+      "evidence": [
+        {
+          "file": "LICENSE",
+          "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+        },
+        {
+          "file": "NOTICE",
+          "sha256": "719d7eb171cea2836eb3b9fbf8da1d8070ab753ff3e764a56330cb3d692a9fc8"
         }
       ]
     },

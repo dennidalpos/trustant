@@ -58,6 +58,8 @@ VENDORED = [
      "56d349b6174e53707723ed839c252995122dc46d", "Apache-2.0", "see skills/LICENSE"),
     ("mcp", "openserverless-mcp", "https://github.com/trustant/openserverless-mcp.git",
      "baf14007f9106cfd63b1396fd5d374f7dd9b7537", "Apache-2.0", "Copyright 2024 The Apache Software Foundation"),
+    ("oplugins-truinst", "oplugins-truinst", "https://github.com/trustant/oplugins-truinst.git",
+     "b65d58d49a3a83740f5d8ac895ea622a8559ee7e", "AGPL-3.0-or-later", "Copyright 2025-2026 Nuvolaris Inc"),
 ]
 
 

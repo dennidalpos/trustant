@@ -58,9 +58,11 @@ COMPONENTS = [
      "56d349b6174e53707723ed839c252995122dc46d", "c41c63c^", "vendored 2026-11-24 (c41c63c)"),
     ("mcp", "https://github.com/trustant/openserverless-mcp",
      "baf14007f9106cfd63b1396fd5d374f7dd9b7537", "c41c63c^", "vendored 2026-11-24 (c41c63c)"),
+    ("oplugins-truinst", "https://github.com/trustant/oplugins-truinst",
+     "b65d58d49a3a83740f5d8ac895ea622a8559ee7e", "HEAD", "vendored 2026-11-28, Trustant-owned AGPL-3.0-or-later release repository"),
 ]
 LOCAL_TAG = {"oplugins": "vendor/oplugins-baseline", "skills": "vendor/skills-baseline",
-             "mcp": "vendor/mcp-baseline"}
+             "mcp": "vendor/mcp-baseline", "oplugins-truinst": "vendor/oplugins-truinst-baseline"}
 
 # Why each modified file differs from the baseline. Key: "<component>/<file>".
 REASONS = {
@@ -76,6 +78,9 @@ REASONS = {
     "oplugins/prereq.yml": "Supply chain: the new `download-verified` task pins and sha256-verifies the Linux Kubernetes tool downloads instead of fetching them unchecked. Fork note added in the header.",
     "oplugins/setup/kubernetes/DEBUG.txt": "Only the Apache 4(b) modification notice in the first line; the whole file shows as changed because its line endings differ from the baseline (CRLF/LF).",
     "oplugins/util/upload/.env.test": "Removed: a test environment file that should not be vendored (not needed by the Trustant build).",
+    "oplugins-truinst/trustant/ingress.md": "Security: the instruction that generates the ingresses sends truacp.miniops.me to port 8910 (the Trustant server, which proxies to TruACP on 4096 and checks the host session when local authentication is on) instead of exposing TruACP on 4096 directly. Previously kept as patches/oplugins-truinst-truacp-ingress.patch (applied by patches/apply.sh); now committed in the file itself.",
+    "oplugins-truinst/trustant/nginx.yaml": "Security: the truacp-ing ingress backend port is 8910 instead of 4096, so truacp.$DOMAIN goes through the Trustant host session gate (middleware.go, hostGate \"truacp\"). Matches ingress.md.",
+    "oplugins-truinst/trustant/traefik.yaml": "Security: same change as nginx.yaml for the Traefik ingress: truacp-ing backend port 8910 instead of 4096.",
     "mcp/package.json": "Dependency update: zod 4.6.7 (commit d254cb9, Dependabot alerts).",
     "mcp/package-lock.json": "Lockfile regenerated for the zod 4.6.7 update (commit d254cb9).",
     "mcp/requirements.txt": "Python pins updated for Dependabot alerts (certifi 2026.10.18, dnspython 2.9.2 and others; commit d254cb9).",
@@ -220,7 +225,7 @@ def root_section():
     revision = git("log", "-1", "--format=%H", "HEAD", "--", ".", report).strip()
     base = git("merge-base", revision, UPSTREAM).strip()
     ahead, behind = git("rev-list", "--left-right", "--count", revision + "..." + UPSTREAM).split()
-    excl = [":!" + c[0] for c in COMPONENTS if "/" not in c[0]] + [":!oplugins-truinst", report]
+    excl = [":!" + c[0] for c in COMPONENTS if "/" not in c[0]] + [report]
     numstat = git("diff", "--numstat", base, revision, "--", ".", *excl).splitlines()
     status = {}
     for line in git("diff", "--name-status", base, revision, "--", ".", *excl).splitlines():

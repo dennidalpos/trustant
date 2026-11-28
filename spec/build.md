@@ -76,16 +76,13 @@ would be orphaned. It writes `_build.txt`, compiles both arches, stages
 registry push from that explicit `--push` argument, not by sniffing
 `GITHUB_ACTIONS`: the caller knows which it wants.
 
-Note that updating `opsroot.json` only records the tag locally. Pushing the
-`oplugins-truinst` submodule is what actually ships a version, and that requires
-explicit user authorization.
-
-Local changes to `oplugins-truinst` are not pushed (the submodule is a release
-repository). They are kept as `patches/oplugins-truinst-*.patch` and applied by
-`patches/apply.sh`, which `build.sh` runs before `undeploy`/`redeploy`. The script
-is idempotent, never commits, and fails if a patch no longer applies. Current
-patch: `truacp-ing` forwards to port 8910 so the Trustant server checks the host
-session (spec/authentication.md) instead of exposing TruACP on 4096 directly.
+Note that updating `opsroot.json` only records the tag in the working tree.
+`oplugins-truinst/` is a normal directory of this repository (formerly a
+release-repository gitlink), so the file ships with the commit that `publish.sh`
+pushes; there is no separate plugin-repo push and no `patches/` directory. The
+`truacp-ing` ingress forwards to port 8910 so the Trustant server checks the host
+session (spec/authentication.md) instead of exposing TruACP on 4096 directly; that
+change lives directly in `oplugins-truinst/trustant/{ingress.md,nginx.yaml,traefik.yaml}`.
 
 ## Container runtime
 
@@ -290,13 +287,12 @@ Publishing environment:
 - `TRUSTANT_PUBLISH_BRANCH`: branch ref updated by `publish.sh`, defaulting to
   the current branch. Release branches can publish to `main` with
   `TRUSTANT_PUBLISH_BRANCH=main ./publish.sh`.
-  After image CI succeeds, `publish.sh` may push `oplugins-truinst`, but any push
-  to `oplugins`, `oplugins-truinst`, or another plugin repo
-  requires explicit user authorization first. If there are no local changes in
-  that subrepo it skips the commit step and only pushes.
+  `publish.sh` pushes once (HEAD and tags). `oplugins-truinst/` is part of this
+  repository, so it no longer commits or pushes a second repository; a push to
+  any other plugin repo requires explicit user authorization first.
 Every build updates `oplugins-truinst/opsroot.json`, so the deployment plugin and
 the running cluster always agree on which image was built. Recording the tag is
-local; publishing it is a separate, authorization-gated push of the submodule.
+in the working tree; it is published with the commit that `publish.sh` pushes.
 
 ## Hotfix builds
 
@@ -373,8 +369,8 @@ tree.
 keeps pointing at the base, which is what lets the next hotfix chain off it —
 and it is also why the rollout cannot go through the deployment plugin:
 `ops truinst trustant redeploy` resolves the image from `opsroot.json` and would
-roll out the *base*, not the hotfix. Making redeploy work would mean dirtying the
-`oplugins-truinst` submodule on every hotfix.
+roll out the *base*, not the hotfix. Making redeploy work would mean dirtying
+`oplugins-truinst/opsroot.json` on every hotfix.
 
 So `--build` patches the StatefulSet directly:
 
@@ -390,7 +386,7 @@ stays true there.
 **The patch is not durable.** The next `ops truinst trustant redeploy`, or any
 `deploy` from the plugin, reverts the StatefulSet to the opsroot image. A hotfix
 is a live patch, not a release; shipping one for real is still `build.sh --build`
-plus an authorized `oplugins-truinst` push. `hotfix.sh` says so in its own output.
+plus `publish.sh`. `hotfix.sh` says so in its own output.
 
 Shipping the image reuses `build.sh`'s host split, with one difference: there is
 **no** `undeploy` and **no** `ctr images prune --all`. `build.sh` prunes to
@@ -406,11 +402,10 @@ way to tell from `/api/version` whether the hotfix is actually running.
 ### Publishing a hotfix
 
 `publish.sh` reports whether it is watching a hotfix or a full image, and on a
-hotfix tag it does **not touch `oplugins-truinst` at all** — not the `cd`, not the
-commit, not the push. `hotfix.sh` never writes `opsroot.json`, so a
-`git commit -a` there could only sweep up unrelated dirty files in that submodule
-under a message naming the hotfix tag, and the push is exactly the plugin-repo push
-that requires explicit authorization.
+hotfix tag it exits before the closing message about `opsroot.json`:
+`hotfix.sh` never writes `opsroot.json`, so there is nothing to promote and
+`opsroot.json` keeps pointing at the base image. `publish.sh` has no
+`oplugins-truinst` step at all (it is a directory of this repository).
 
 Note that `publish.sh` pushes with `--tags`, i.e. every local tag. The
 single-tag invariant above is what keeps that to one CI build, and it is why the
@@ -435,11 +430,11 @@ The classification happens in a step, not in `on:`, because the
 `push: tags: ['*_*_*']` filter matches both `..._2118` and `..._2118-1` and GHA
 globs have no `[0-9]` character classes.
 
-The checkout must set `submodules: recursive`: `opsroot.json` lives in the
-`oplugins-truinst` submodule, and without it the hotfix path cannot resolve its
-base image. That submodule is private, but it is in the same org as this repo
-(`trustant`), so the job's own `GITHUB_TOKEN` reaches it and **no PAT is
-involved**. It is the only submodule; `mcp/`, `oplugins/` and `skills/` are vendored.
+The checkout needs no `submodules:` option: `opsroot.json` lives in
+`oplugins-truinst/`, a tracked directory of this repository, so the hotfix path
+resolves its base image from the plain checkout and **no PAT is involved**. The
+repository has no submodules; `mcp/`, `oplugins/`, `skills/` and
+`oplugins-truinst/` are vendored.
 
 The GHCR login uses that same `GITHUB_TOKEN`: the image publishes to
 `ghcr.io/trustant/trustant`, the org that owns this repo, so the `packages:

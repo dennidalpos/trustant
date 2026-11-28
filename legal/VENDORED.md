@@ -383,6 +383,23 @@ Listed as a count only; every tracked file not named above is identical to upstr
 
 Listed as a count only; every tracked file not named above is identical to upstream.
 
+## `oplugins-truinst/`: oplugins-truinst
+
+- Upstream: https://github.com/trustant/oplugins-truinst
+- Baseline revision: `b65d58d49a3a83740f5d8ac895ea622a8559ee7e`
+- License: AGPL-3.0-or-later, Copyright 2025-2026 Nuvolaris Inc
+- Files: 15 unmodified, 3 modified, 0 added, 0 removed upstream files
+
+### Modified (3)
+
+- `trustant/ingress.md`
+- `trustant/nginx.yaml`
+- `trustant/traefik.yaml`
+
+### Unmodified (15)
+
+Listed as a count only; every tracked file not named above is identical to upstream.
+
 ## Delta against the original submodules
 
 If the submodules are ever restored, these are the changes made since they were

@@ -27,8 +27,15 @@ All notable changes to Trustant are listed here. The latest release tag is
   and `mcp/` (trustant/openserverless-mcp) are now vendored directories instead
   of Git submodules. Their `LICENSE` and `NOTICE` files are unchanged and their
   differences from the upstream baselines are tracked in
-  [legal/VENDORED.md](legal/VENDORED.md). `oplugins-truinst` remains the only
-  submodule because the release scripts push to it.
+  [legal/VENDORED.md](legal/VENDORED.md).
+- `oplugins-truinst/` is vendored too: the gitlink and `.gitmodules` are gone, so
+  the repository has no submodules. The baseline is b65d58d (tag
+  `vendor/oplugins-truinst-baseline`); the only change is `truacp-ing` forwarding
+  to port 8910, so the host session gate applies. `patches/` is removed,
+  `publish.sh` no longer pushes a second repository and `images.yml` fetches no
+  submodules. The external trustant/oplugins-truinst repository is no longer
+  updated from here. Changes are listed line by line in
+  [UPSTREAM-COMPARISON.md](UPSTREAM-COMPARISON.md).
 - `oplugins/prereq.yml` carries the pinned and verified Linux provisioning tool
   downloads (helm 3.22.1, kubectl 1.33.13, kind 0.33.0, yq 4.54.3).
 - `start.sh` and `setup.sh` no longer initialise `mcp` as a submodule and only

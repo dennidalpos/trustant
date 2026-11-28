@@ -28,16 +28,16 @@ v1 outline icons (MIT, Copyright (c) 2020 Refactoring UI Inc.), inlined as SVG i
 JetBrains Mono (SIL OFL-1.1) are loaded from Google Fonts at runtime and are not
 bundled.
 
-## Submodules
+## Vendored directories
 
 | Component | License | Source |
 |---|---|---|
 | `mcp` (OpenServerless MCP) | Apache-2.0 | https://github.com/trustant/openserverless-mcp |
 | `oplugins` (OpenServerless tasks) | Apache-2.0 | https://github.com/trustable-ai/openserverless-task |
-| `oplugins-truinst` | AGPL-3.0-or-later | https://github.com/trustant/oplugins-truinst |
+| `oplugins-truinst` (Trustant-owned, formerly a gitlink) | AGPL-3.0-or-later | https://github.com/trustant/oplugins-truinst |
 | `skills` | Apache-2.0 | https://github.com/trustable-ai/skills |
 
-The Apache-2.0 components (`mcp`, `oplugins`, `skills`) are vendored in this repository (formerly gitlinks; per-file changes in [legal/VENDORED.md](legal/VENDORED.md)) and keep their own LICENSE and
+`oplugins-truinst` is AGPL-3.0-or-later like this project and keeps its own LICENSE and NOTICE (Copyright 2025-2026 Nuvolaris Inc). The Apache-2.0 components (`mcp`, `oplugins`, `skills`) are vendored in this repository (formerly gitlinks; per-file changes in [legal/VENDORED.md](legal/VENDORED.md)) and keep their own LICENSE and
 NOTICE files and carry no AGPL headers.
 
 For vendored sources, upstream attribution is in [acp/UPSTREAM.md](acp/UPSTREAM.md)

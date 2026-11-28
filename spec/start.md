@@ -468,7 +468,7 @@ from `image/Dockerfile`.
 
 This applies to provisioning flows that execute `setup.sh` (fresh VM creation).
 
-All sources (this repo and its `oplugins-truinst` submodule) are public: `start.sh` needs no
+All sources (this repo, including `oplugins-truinst/`) are public: `start.sh` needs no
 GitHub token and performs no `gh` login or git credential-helper setup. The
 default final step is `./run.sh`
 inside the VM (foreground, `limactl shell` in the mounted repo dir, as the
@@ -797,9 +797,11 @@ image types). `start.ps1` re-checks `start.sh` for CR bytes before provisioning
 anything and aborts with the renormalization commands if any are found.
 
 That covers this repository and nothing else: **`.gitattributes` does not cross a
-submodule boundary.** The only remaining submodule, `oplugins-truinst`, is its
-own repository with its own working tree and attributes, so Git for Windows'
-system-config `core.autocrlf=true` still checks it out as CRLF. The symptom is not the usual
+submodule boundary.** `oplugins-truinst` used to be the last submodule (its own
+repository, working tree and attributes), so Git for Windows' system-config
+`core.autocrlf=true` checked it out as CRLF. It is now a directory of this
+repository and follows the root `.gitattributes`; the step below stays as a
+guard and is a no-op while no submodule is initialized. The symptom is not the usual
 `syntax error near unexpected token` — a CRLF *shebang* makes bash report the
 interpreter as missing:
 

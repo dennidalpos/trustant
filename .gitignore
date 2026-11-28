@@ -27,6 +27,8 @@ trustant-doctor.txt
 opencode.json
 _build.txt
 Trustant
+# Case-insensitive checkouts (Windows) would also ignore the vendored plugin directory.
+!/oplugins-truinst/trustant/
 /dist/
 /data/
 /opencode.sh

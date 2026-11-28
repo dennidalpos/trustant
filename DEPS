@@ -63,30 +63,19 @@ Work Sans       Google Fonts (unpinned)  OFL-1.1  https://github.com/weiweihuang
 Directories that are plain files of this repository (not submodules), so
 the repository commit pins them. Image inclusion depends on the build path.
 
-NAME                                                    VERSION            LICENSE            HOMEPAGE
-----                                                    -------            -------            --------
-acp (TruACP)                                            vendored           AGPL-3.0-or-later  https://github.com/dennidalpos/trustant
-mcp (openserverless-mcp)                                main               Apache-2.0         https://github.com/trustant/openserverless-mcp
-obsidian-agent-client (origin of acp, upstream 0.11.0)  0.11.0             Apache-2.0         https://github.com/RAIT-09/obsidian-agent-client
-oplugins (openserverless-task)                          0.9.0              Apache-2.0         https://github.com/trustable-ai/openserverless-task
-pi-acp (fork, vendored in acp/pi-acp)                   0.0.31-trustant.1  MIT                https://github.com/trustant/pi-acp
-pi-acp (upstream svkozak/pi-acp, base of the fork)      0.0.31             MIT                https://github.com/svkozak/pi-acp
-skills                                                  main               Apache-2.0         https://github.com/trustable-ai/skills
+NAME                                                     VERSION            LICENSE            HOMEPAGE
+----                                                     -------            -------            --------
+acp (TruACP)                                             vendored           AGPL-3.0-or-later  https://github.com/dennidalpos/trustant
+mcp (openserverless-mcp)                                 main               Apache-2.0         https://github.com/trustant/openserverless-mcp
+obsidian-agent-client (origin of acp, upstream 0.11.0)   0.11.0             Apache-2.0         https://github.com/RAIT-09/obsidian-agent-client
+oplugins (openserverless-task)                           0.9.0              Apache-2.0         https://github.com/trustable-ai/openserverless-task
+oplugins-truinst (formerly a gitlink, baseline b65d58d)  b65d58d            AGPL-3.0-or-later  https://github.com/trustant/oplugins-truinst
+pi-acp (fork, vendored in acp/pi-acp)                    0.0.31-trustant.1  MIT                https://github.com/trustant/pi-acp
+pi-acp (upstream svkozak/pi-acp, base of the fork)       0.0.31             MIT                https://github.com/svkozak/pi-acp
+skills                                                   main               Apache-2.0         https://github.com/trustable-ai/skills
 
 
-5. GIT SUBMODULES
-=================
-
-Sources tracked by this repository. Image inclusion depends on the
-build or runtime path; these entries do not assert that every submodule
-is copied into the image.
-
-NAME              VERSION            LICENSE            HOMEPAGE
-----              -------            -------            --------
-oplugins-truinst  main@b65d58d49a3a  AGPL-3.0-or-later  https://github.com/trustant/oplugins-truinst
-
-
-6. TRUACP (acp) - NPM PRODUCTION DEPENDENCIES
+5. TRUACP (acp) - NPM PRODUCTION DEPENDENCIES
 =============================================
 
 Full production tree of acp/package-lock.json, bundled into truacp.cjs
@@ -204,7 +193,7 @@ zod                                                4.6.7    MIT           https:
 zwitch                                             2.0.4    MIT           https://www.npmjs.com/package/zwitch
 
 
-7. PI-ACP (acp/pi-acp) - NPM PRODUCTION DEPENDENCIES
+6. PI-ACP (acp/pi-acp) - NPM PRODUCTION DEPENDENCIES
 ====================================================
 
 Full production tree of acp/pi-acp/package-lock.json.
@@ -215,7 +204,7 @@ NAME                      VERSION  LICENSE     HOMEPAGE
 zod                       4.6.7    MIT         https://www.npmjs.com/package/zod
 
 
-8. OPENSERVERLESS-MCP (mcp) - NPM PRODUCTION DEPENDENCIES
+7. OPENSERVERLESS-MCP (mcp) - NPM PRODUCTION DEPENDENCIES
 =========================================================
 
 Full production tree of mcp/package-lock.json, installed globally in the
@@ -318,7 +307,7 @@ zod                        4.6.7    MIT           https://www.npmjs.com/package/
 zod-to-json-schema         3.25.2   ISC           https://www.npmjs.com/package/zod-to-json-schema
 
 
-9. TRUSTANT-REACT-MCP (react-mcp) - NPM PRODUCTION DEPENDENCIES
+8. TRUSTANT-REACT-MCP (react-mcp) - NPM PRODUCTION DEPENDENCIES
 ===============================================================
 
 Full production tree of react-mcp/package-lock.json, installed globally
@@ -422,8 +411,8 @@ zod                        4.6.7    MIT           https://www.npmjs.com/package/
 zod-to-json-schema         3.25.2   ISC           https://www.npmjs.com/package/zod-to-json-schema
 
 
-10. CONTAINER IMAGE - UBUNTU 24.04 PACKAGES
-===========================================
+9. CONTAINER IMAGE - UBUNTU 24.04 PACKAGES
+==========================================
 
 Installed with apt in image/Dockerfile. Each package's full copyright and
 license statement ships in the image at /usr/share/doc/<package>/copyright.
@@ -457,7 +446,7 @@ vim                         distro   Vim                                      ht
 zstd (build stage only)     distro   BSD-3-Clause OR GPL-2.0-only             https://github.com/facebook/zstd
 
 
-11. CONTAINER IMAGE - DOWNLOADED BINARIES AND RUNTIMES
+10. CONTAINER IMAGE - DOWNLOADED BINARIES AND RUNTIMES
 ======================================================
 
 Downloaded by image/Dockerfile (and by start.sh/setup.sh in the dev VM).
@@ -486,7 +475,7 @@ sha1cd (ops dependency)                  0.7.0                               Apa
 uv (/usr/bin/uv)                         latest                              Apache-2.0 OR MIT         https://github.com/astral-sh/uv
 
 
-12. OPS PREREQUISITES (oplugins/prereq.yml)
+11. OPS PREREQUISITES (oplugins/prereq.yml)
 ===========================================
 
 Binaries `ops` downloads into ~/.ops/<os>-<arch>/bin on first run, in the
@@ -506,7 +495,7 @@ uv                  0.7.19   Apache-2.0 OR MIT                                  
 yq                  4.54.3   MIT                                                           https://github.com/mikefarah/yq
 
 
-13. HOST-SPECIFIC OPS PREREQUISITES
+12. HOST-SPECIFIC OPS PREREQUISITES
 ===================================
 
 Referenced by the cross-platform ops sources; not shipped in the Linux
@@ -517,7 +506,7 @@ NAME                VERSION  LICENSE   HOMEPAGE
 zip (Windows only)  3.0-1    Info-ZIP  https://infozip.sourceforge.net
 
 
-14. CONTAINER IMAGE - GLOBAL NPM INSTALLS
+13. CONTAINER IMAGE - GLOBAL NPM INSTALLS
 =========================================
 
 Coding agents pinned in acp/pi.version plus the tools installed by
@@ -541,7 +530,7 @@ typescript                                   6.0.3    Apache-2.0          https:
 typescript-language-server                   6.1.0    Apache-2.0 AND MIT  https://github.com/typescript-language-server/typescript-language-server
 
 
-15. CONTAINER IMAGE - PYTHON TOOLS (uv tool install)
+14. CONTAINER IMAGE - PYTHON TOOLS (uv tool install)
 ====================================================
 
 Each tool runs in its own uv-managed virtualenv under /opt/uv/tools.
@@ -563,7 +552,7 @@ redis-mcp-server                                       0.5.1    MIT             
 yapf                                                   latest   Apache-2.0                                        https://github.com/google/yapf
 
 
-16. PYTHON PACKAGES FOR USER APPS (acp/extensions/requirements.txt)
+15. PYTHON PACKAGES FOR USER APPS (acp/extensions/requirements.txt)
 ===================================================================
 
 Installed unmodified for the apps users build.
@@ -659,7 +648,7 @@ xxhash                4.0.1        BSD-2-Clause                                 
 zstandard             0.25.0       BSD-3-Clause                                        https://pypi.org/project/zstandard
 
 
-17. DEVELOPMENT ENVIRONMENT ONLY (NOT DISTRIBUTED)
+16. DEVELOPMENT ENVIRONMENT ONLY (NOT DISTRIBUTED)
 ==================================================
 
 Installed by start.sh / start.ps1 / setup.sh / run.sh on a developer

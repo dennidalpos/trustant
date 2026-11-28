@@ -1,4 +1,0 @@
-[submodule "oplugins-truinst"]
-	path = oplugins-truinst
-	url = https://github.com/trustant/oplugins-truinst
-        branch = main

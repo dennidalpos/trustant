@@ -17,7 +17,7 @@
 # Ship a rebuilt binary (plus start.sh, .env and trustant.json) on top of the
 # image already recorded in oplugins-truinst/opsroot.json.
 #
-# WHY: image/image.sh takes ~20 minutes -- submodule init, npm install/build for
+# WHY: image/image.sh takes ~20 minutes -- npm install/build for
 # acp, npm ci/test/build/pack for the nested pi-acp fork, and three
 # staged MCP context dirs, all before the first docker build line. When only the
 # Go binary, the container entrypoint, the image .env or the base trustant.json
@@ -43,7 +43,7 @@ base_tag() {
     ref="$(jq -r ".config.images.$KEY" "$OPSROOT")"
     if [ -z "$ref" ] || [ "$ref" = "null" ]; then
         echo "Cannot read .config.images.$KEY from $OPSROOT" >&2
-        echo "Is the oplugins-truinst submodule initialized?" >&2
+        echo "Is oplugins-truinst/opsroot.json present in the checkout?" >&2
         exit 1
     fi
     local tag="${ref##*:}"

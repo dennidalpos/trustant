@@ -5,8 +5,8 @@
 #
 # Scope: this repository, including the vendored acp/ directory (pi-acp is
 # excluded below). license-eye discovers files via `git ls-files`, which does
-# not descend into submodules, so the remaining Trustant-owned submodule
-# (oplugins-truinst) carries its own
+# not descend into submodules. oplugins-truinst (Trustant-owned, formerly a
+# submodule) is now part of this repository and carries its own
 # identical .licenserc.yaml and must be checked from inside it. The vendored `oplugins`
 # (trustable-ai/openserverless-task), `skills` and `mcp` (apache/openserverless-mcp) directories are
 # upstream Apache-2.0 projects with their own LICENSE/NOTICE and are excluded

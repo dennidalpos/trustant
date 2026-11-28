@@ -110,7 +110,7 @@ usage() {
     cat <<'USAGE'
 Usage: ./build.sh <mode> [--no-deploy]
 
-Builds the full Trustant image (~20 minutes: submodules, TruACP/pi-acp and the
+Builds the full Trustant image (~20 minutes: TruACP/pi-acp and the
 MCP stages). For a binary-only change see ./hotfix.sh, which layers onto the
 existing image in a minute or two.
 
@@ -225,10 +225,6 @@ if $NO_DEPLOY; then
     exit 0
 fi
 
-# Local changes to oplugins-truinst (e.g. truacp-ing on 8910) live in patches/;
-# apply them before the deployment plugin reads its manifests.
-bash patches/apply.sh
-
 if $MAC_VM; then
     # The VM cluster cannot see the local image store, so export and import.
     # Prune first: the VM disk is small and old images accumulate.
@@ -252,7 +248,7 @@ fi
 ops truinst trustant redeploy
 
 # Print where the deployed UI answers. The ingress serves it at
-# trustant.<apihost domain> (oplugins-truinst), so that is the URL on a real
+# trustant.<apihost domain> (oplugins-truinst/, part of this repository), so that is the URL on a real
 # cluster. A dev cluster's apihost is miniops.me, which resolves to 127.0.0.1
 # and so is only reachable on the k3s machine itself: there go through the
 # host-rewrite proxy start.sh deploys on :8080, at the address start.sh

@@ -7,7 +7,7 @@ Thanks for your interest in contributing to Trustant.
 **We cannot accept a pull request until a signed Contributor License Agreement
 (CLA) is on file for its author.** This applies to every contribution of any
 size, and to every repository in the Trustant project, including the
-`oplugins-truinst` submodule and the vendored `acp/`, `oplugins/`, `skills/` and `mcp/` directories.
+vendored `oplugins-truinst/`, `acp/`, `oplugins/`, `skills/` and `mcp/` directories.
 
 Trustant is released under the GNU Affero General Public License, version 3 or
 later (see [LICENSE](LICENSE)). Nuvolaris Inc also offers the software under
@@ -35,9 +35,8 @@ license-eye header fix     # add it to any file that lacks one
 ```
 
 Run it from the directory whose files you changed. license-eye discovers files
-with `git ls-files`, which does not descend into submodules, so the
-Trustant-owned `oplugins-truinst` submodule carries its own `.licenserc.yaml` and
-must be checked from inside it.
+with `git ls-files`. The Trustant-owned `oplugins-truinst/` directory carries its
+own `.licenserc.yaml`; run the check from inside it when you change its files.
 
 The vendored `oplugins/`, `skills/` and `mcp/` directories are upstream Apache-2.0 projects with their
 own LICENSE and NOTICE files. Do not add AGPL headers there.

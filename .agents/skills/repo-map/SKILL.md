@@ -17,7 +17,7 @@ Top-level folders (detected, may be incomplete):
 - `legal/`
 - `mcp/`
 - `oplugins/`
-- `oplugins-truinst/`
+- `oplugins-truinst/` (vendored, formerly a gitlink)
 - `react-mcp/`
 - `skills/`
 - `spec/`

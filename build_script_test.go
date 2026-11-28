@@ -205,43 +205,30 @@ func TestWorkflowDelegatesBuildsToScripts(t *testing.T) {
 			t.Errorf("images.yml must call %q", want)
 		}
 	}
-	// Without submodules the hotfix path cannot read opsroot.json at all.
-	// "recursive" also pulls the nested pi-acp fork the image build stages.
-	if !strings.Contains(workflow, "submodules: true") &&
-		!strings.Contains(workflow, "submodules: recursive") {
-		t.Error("images.yml must check out submodules; opsroot.json lives in oplugins-truinst")
+	// opsroot.json is a tracked file of this repository, not a submodule.
+	if strings.Contains(workflow, "submodules:") {
+		t.Error("images.yml must not fetch submodules; oplugins-truinst is part of this repository")
+	}
+	if _, err := os.Stat("oplugins-truinst/opsroot.json"); err != nil {
+		t.Errorf("the hotfix path reads oplugins-truinst/opsroot.json: %s", err)
 	}
 }
 
-// publish.sh must not touch oplugins-truinst on a hotfix tag — not the cd, not the
-// commit, not the push.
-//
-// Asserting only on the push line would pass while a stray `git commit -a`
-// still swept unrelated dirty files in that submodule under a message naming
-// the hotfix tag. The push is also exactly the unauthorized plugin-repo push the
-// repository guidelines forbid, so the whole block has to sit behind the
-// not-a-hotfix guard.
-func TestPublishNeverTouchesOpsrootForHotfix(t *testing.T) {
+// oplugins-truinst is a directory of this repository, so publish.sh must not
+// enter it or push a second repository: opsroot.json travels with the one push
+// of HEAD and tags (the former plugin-repo push needed its own authorization).
+func TestPublishDoesNotPushAPluginRepository(t *testing.T) {
 	content, err := os.ReadFile("publish.sh")
 	if err != nil {
 		t.Fatalf("read publish.sh: %s", err)
 	}
 	publish := string(content)
-
-	guard := strings.Index(publish, "if $HOTFIX; then")
-	if guard < 0 {
-		t.Fatal("publish.sh must branch on a hotfix tag before touching oplugins-truinst")
-	}
-	exit := strings.Index(publish[guard:], "exit 0")
-	if exit < 0 {
-		t.Fatal("publish.sh hotfix branch must exit before the oplugins-truinst block")
-	}
-
-	// Every oplugins-truinst command must live after the hotfix branch has exited.
-	limit := guard + exit
 	for _, forbidden := range []string{"cd oplugins-truinst", "git push origin main"} {
-		if at := strings.Index(publish, forbidden); at >= 0 && at < limit {
-			t.Errorf("%q is reachable on the hotfix path", forbidden)
+		if strings.Contains(publish, forbidden) {
+			t.Errorf("publish.sh must not contain %q", forbidden)
 		}
+	}
+	if n := strings.Count(publish, "git push "); n != 1 {
+		t.Errorf("publish.sh must push exactly once (HEAD and tags), found %d", n)
 	}
 }

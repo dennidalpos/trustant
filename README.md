@@ -101,11 +101,7 @@ flowchart TD
 
 The app workbench provides the assistant, preview, file viewer, terminal, and application configuration.
 
-`mcp/`, `oplugins/`, `skills/` and TruACP (`acp/`, including `acp/pi-acp/`) are part of this repository; only `oplugins-truinst` is a submodule. To populate it for repository work:
-
-```bash
-git submodule update --init --recursive
-```
+`mcp/`, `oplugins/`, `skills/` and TruACP (`acp/`, including `acp/pi-acp/`) and `oplugins-truinst/` are part of this repository; there are no submodules to initialize.
 
 Startup creates `.env` when it is absent; existing values are validated by setup. See [configuration](#configuration) before customizing it.
 
@@ -130,12 +126,11 @@ The `-k` startup option destroys the VM or unregisters the WSL distribution and 
 
 ### Update an existing checkout
 
-Stop the development loop and review local changes before updating. In the development environment, pull the branch you use, then refresh submodules and setup:
+Stop the development loop and review local changes before updating. In the development environment, pull the branch you use, then refresh setup:
 
 ```bash
 git status --short
-git pull --ff-only --recurse-submodules
-git submodule update --init --recursive
+git pull --ff-only
 ./setup.sh
 ./run.sh
 ```
@@ -268,7 +263,7 @@ The OpenCode cluster E2E scenarios were removed with the runtime; see the [E2E g
 
 ### Submodules and releases
 
-[.gitmodules](.gitmodules) declares one submodule, `oplugins-truinst`; `mcp`, `oplugins` and `skills` are vendored (see [legal/VENDORED.md](legal/VENDORED.md)). The TruACP runtime lives in [acp/](acp/), with its Pi ACP adapter in `acp/pi-acp/`; follow [acp/AGENTS.md](acp/AGENTS.md) there. Follow the submodule's own instructions for `oplugins-truinst`.
+The repository has no submodules: `mcp`, `oplugins`, `skills` and `oplugins-truinst` are vendored directories (see [legal/VENDORED.md](legal/VENDORED.md)). The TruACP runtime lives in [acp/](acp/), with its Pi ACP adapter in `acp/pi-acp/`; follow [acp/AGENTS.md](acp/AGENTS.md) there.
 
 Release tooling is documented in [spec/build.md](spec/build.md). `build.sh --tag` and `--build` can replace local tags, update `oplugins-truinst/opsroot.json`, and attempt a commit, including with `--no-deploy`. `hotfix.sh` can replace tags and patch the live StatefulSet; a regular redeploy restores the image from `opsroot.json`. Buildx modes push images, and `publish.sh` pushes Git refs. Review the script before using a release command.
 

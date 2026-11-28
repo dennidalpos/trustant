@@ -722,7 +722,7 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 ===============================================================================
 License: AGPL-3.0-or-later
 ===============================================================================
-Used by: acp (TruACP), oplugins-truinst
+Used by: acp (TruACP), oplugins-truinst (formerly a gitlink, baseline b65d58d)
 -------------------------------------------------------------------------------
 
 This is Trustant's own license; its full text is at the top of this file.

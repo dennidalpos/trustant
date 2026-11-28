@@ -39,14 +39,10 @@ jobs:
           swap-storage: true
 
       - name: Checkout sources
+        # opsroot.json lives in oplugins-truinst/, a normal directory of this
+        # repository; the hotfix path reads its base image from there. There
+        # are no submodules to fetch.
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          # opsroot.json lives in the oplugins-truinst submodule; the hotfix
-          # path reads its base image from there. That repo is private, but it
-          # is in this repo's own org (trustant), so the default GITHUB_TOKEN
-          # already reaches it -- no PAT is involved. Every other submodule is
-          # public.
-          submodules: recursive
 
       - name: Set up Go
         uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
