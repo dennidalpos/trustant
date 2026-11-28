@@ -468,13 +468,39 @@ la <a href="/">home</a> confronta Cloud AI, Sovereign AI e Private AI.</p>""",
 <p>Dopo la scelta, ogni pagina che presuppone un provider controlla <code>GET /api/configuration</code> e, se il campo <code>provider</code> manca, rimanda alla scelta. Se la versione dei modelli cambia, la pagina chiede di riselezionare il modello.
 Il riquadro dei crediti compare solo con il provider Trustant.</p>""",
     DEMO="",
-    RISULTATO="""<p>Un workspace con provider, modello e identità Git configurati e provati. Le app nuove ereditano queste impostazioni: il modello si legge, per esempio, nel benvenuto di TruChat.</p>""",
+    RISULTATO="""<p>Un workspace con provider, modello e identità Git configurati e provati. Le app nuove ereditano queste impostazioni: il modello si legge, per esempio, nel benvenuto di TruChat.</p>
+<p>Questa app è nata dallo <a href="trureact.html">starter React del catalogo</a>.</p>""",
     VERIFICA="",
     FONTI="spec/1-applist.md, spec/1-index.md, spec/2a-config.md, log del server",
     SCRIPT="")
 
+# ---------------------------------------------------------------- trureact
+TRUREACT = dict(
+    TITLE="Starter TruReact", TAG="Modalità · New application → starter del catalogo (trureact)",
+    H1="Partire dallo starter React",
+    LEAD="TruReact prepara un’app React con TypeScript e Vite. La Demo lo usa come base per guidaprovider.",
+    INTENTO="""<p>Scegli questo starter quando vuoi costruire un’interfaccia React. Lo starter include una home e una pagina per gli indirizzi sconosciuti. La guida sui provider è un esempio di contenuto aggiunto a quella base.</p>""",
+    TU="""<ol>
+<li>Apri <strong>Add App</strong> → <strong>New application</strong> e scegli <strong>trureact</strong> dal catalogo.</li>
+<li>Dai un nome all’app, premi <strong>Create</strong> e poi <strong>Edit</strong> per aprire il workbench.</li>
+<li>Modifica la home in <code>src/pages/Index.tsx</code> e controlla il risultato nell’anteprima.</li>
+</ol>""",
+    SOTTO="""<p>Trustant prepara il workbench al primo <strong>Edit</strong> e avvia il server Vite. I file principali dello starter sono:</p>
+<table><thead><tr><th>File o cartella</th><th>Ruolo</th></tr></thead><tbody>
+<tr><th scope="row"><code>src/main.tsx</code></th><td>Avvia React a partire da <code>index.html</code>.</td></tr>
+<tr><th scope="row"><code>src/App.tsx</code></th><td>Definisce le rotte dell’interfaccia.</td></tr>
+<tr><th scope="row"><code>vite.config.ts</code></th><td>Configura l’anteprima sulla porta <code>5173</code> e la build in <code>web/</code>.</td></tr>
+<tr><th scope="row"><code>public/</code></th><td>Contiene i file statici, come questa guida, che Vite copia nella build.</td></tr>
+<tr><th scope="row"><code>packages/</code></th><td>Ospita eventuali action OpenServerless. Nello starter contiene solo un segnaposto.</td></tr>
+</tbody></table>""",
+    DEMO="",
+    RISULTATO="""<p>La <a href="/">home di guidaprovider</a> mostra un’app costruita con lo starter. La <a href="guida.html">guida ai provider</a> descrive il flusso illustrato dall’app.</p>""",
+    VERIFICA="""<p>Nel workbench, esegui <code>npm run build</code> e controlla che <code>web/index.html</code> sia presente. Apri l’anteprima per verificare la home in React e ricarica questa pagina per controllare che il file statico venga servito.</p>""",
+    FONTI="sorgenti dello starter trureact, spec/4-launch.md, spec/15-starters.md",
+    SCRIPT="")
+
 # ---------------------------------------------------------------- write
-def render(app, d):
+def render(d):
     html = PAGE
     for k in ("TITLE", "TAG", "H1", "LEAD", "INTENTO", "TU", "SOTTO", "DEMO", "RISULTATO", "VERIFICA", "FONTI", "SCRIPT"):
         html = html.replace("@@%s@@" % k, d[k])
@@ -484,5 +510,7 @@ for app, d in PAGES.items():
     folder = os.path.join(OUT, app)
     os.makedirs(folder, exist_ok=True)
     with open(os.path.join(folder, "guida.html"), "w", encoding="utf-8") as f:
-        f.write(render(app, d))
+        f.write(render(d))
+with open(os.path.join(OUT, "guidaprovider", "trureact.html"), "w", encoding="utf-8") as f:
+    f.write(render(TRUREACT))
 print("generated", ", ".join(sorted(PAGES)))

@@ -47,5 +47,8 @@ for app in guidaprovider guidatruchat guidatemplate; do
   mkdir -p "$WB/$app/public"
   cp "$KIT/guide-kit.css" "$KIT/guide-kit.js" "$WB/$app/public/"
   cp "$GEN/$app/guida.html" "$WB/$app/public/guida.html"
+  if [ "$app" = guidaprovider ]; then
+    cp "$GEN/$app/trureact.html" "$WB/$app/public/"
+  fi
 done
 echo "installed into $WB"

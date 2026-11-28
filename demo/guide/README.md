@@ -21,6 +21,9 @@ same structure: Intento, Cosa fai tu, Cosa succede sotto, Risultato, Verifica da
 - `build_guides.py <out-dir>`: writes `<out-dir>/<app>/guida.html` from one template and the
   per-app content. Messages quoted in "Cosa succede sotto" come from the server log; the rest
   follows `spec/`.
+- `guidaprovider/trureact.html` is generated alongside the provider guide and linked from it.
+  It covers creating an app from the TruReact starter and shows where the React entry point,
+  Vite output and OpenServerless actions live.
 - `install.sh`: runs the generator and copies the pages and the kit into each workbench.
 
 ## Use

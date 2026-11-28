@@ -39,9 +39,10 @@
     var host = document.getElementById('gk-nav');
     if (!host) return;
     var cur = currentApp();
+    var isAppGuide = ['/', '/index.html', '/guida.html'].includes(location.pathname);
     var html = '<nav class="gk-nav" aria-label="Guide Trustant"><ul><li><strong>Guide Trustant</strong></li>';
     GUIDES.forEach(function (g) {
-      html += '<li><a href="' + esc(siblingUrl(g.app)) + '"' + (g.app === cur ? ' aria-current="page"' : '') + '>' + esc(g.label) + '</a></li>';
+      html += '<li><a href="' + esc(siblingUrl(g.app)) + '"' + (isAppGuide && g.app === cur ? ' aria-current="page"' : '') + '>' + esc(g.label) + '</a></li>';
     });
     host.innerHTML = html + '</ul></nav>';
   }
