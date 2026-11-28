@@ -39,3 +39,5 @@ Do not print the deploy output unfiltered, action parameters can contain tokens.
 The apps themselves are created from Trustant (Add App); a new app has no workbench until
 Edit is pressed in the app list. The links to `/guida.html` in the React apps' headers are
 small edits in the app sources and are not part of this kit.
+
+To rebuild the test apps with the assistant instead, see [PROMPTS.md](PROMPTS.md).
