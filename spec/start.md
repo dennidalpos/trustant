@@ -135,6 +135,16 @@ the node address already answers OpenWhisk. `setup.sh` step 7 therefore retries
 fails and OpenWhisk answers on the node address, the error says the svclb
 hostPort is not ready instead of reporting a generic unreachable apihost.
 
+The lag is not the only cause. A k3s crash or stop (package install, WSL2 VM
+stop) leaves the CNI hostPort chain of the dead svclb sandbox first in
+`CNI-HOSTPORT-DNAT`, so 127.0.0.1:80 is DNATed to a pod IP that no longer exists
+while the node address, served by kube-proxy, keeps answering. On a clean WSL2
+install this kept loopback refused for more than ten minutes and `start.sh`
+failed in `wait_for_openwhisk` (#93, #97). `start.sh` therefore runs
+`prune_stale_hostport_chains` first: it removes every hostPort chain whose
+sandbox is not Ready according to `k3s crictl pods --state ready`, and leaves the
+live chain alone.
+
 ## Networking (so the apihost is actually reachable)
 
 The VM gets two interfaces: lima0 (192.168.252.x, reachable from the macOS host)

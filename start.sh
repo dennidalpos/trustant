@@ -771,6 +771,30 @@ ensure_openserverless_proxy() {
   ok "host-rewrite proxy catch-all installed"
 }
 
+# Loopback :80 reaches traefik through the CNI hostPort chain of the svclb pod.
+# When k3s is stopped or crashes (package install, WSL2 VM stop), CNI never
+# removes the chain of the dead sandbox. The stale chain stays FIRST in
+# CNI-HOSTPORT-DNAT and DNATs 127.0.0.1:80 to a pod IP that no longer exists,
+# while the node address, served by kube-proxy, keeps working (#93, reproduced
+# on a clean WSL2 install: loopback refused for 10+ minutes). Drop every
+# hostPort chain whose sandbox is not Ready; the live chain is left untouched.
+prune_stale_hostport_chains() {
+  run_privileged <<'GUEST'
+live="$(k3s crictl pods --state ready -q --no-trunc 2>/dev/null || true)"
+[ -n "$live" ] || exit 0
+iptables -t nat -S CNI-HOSTPORT-DNAT 2>/dev/null | grep -E '^-A CNI-HOSTPORT-DNAT .*id: ' | while IFS= read -r rule; do
+  id="$(sed -n 's/.*id: \\"\([0-9a-f]\{64\}\)\\".*/\1/p' <<<"$rule")"
+  chain="$(grep -oE 'CNI-DN-[0-9a-f]+' <<<"$rule" | head -1)"
+  [ -n "$id" ] && [ -n "$chain" ] || continue
+  grep -qx "$id" <<<"$live" && continue
+  echo "removing stale hostPort chain $chain (sandbox $id)"
+  eval "iptables -t nat -D CNI-HOSTPORT-DNAT ${rule#-A CNI-HOSTPORT-DNAT }"
+  iptables -t nat -F "$chain" 2>/dev/null || true
+  iptables -t nat -X "$chain" 2>/dev/null || true
+done || true
+GUEST
+}
+
 # A ready k3s API and a present openserverless namespace do not mean OpenWhisk serves
 # requests yet — the controller comes up minutes later. Block here until the
 # apihost is actually usable, in two stages, so the failure says which one lost:
@@ -781,6 +805,7 @@ ensure_openserverless_proxy() {
 wait_for_openwhisk() {
   local where=" in the VM"
   if $NATIVE_LINUX; then where=""; fi
+  prune_stale_hostport_chains
   run_privileged <<'GUEST'
 grep -qE '\bminiops\.me\b' /etc/hosts || echo "127.0.0.1 miniops.me" >> /etc/hosts
 GUEST

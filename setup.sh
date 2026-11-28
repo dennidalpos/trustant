@@ -403,7 +403,7 @@ while :; do
     if [[ -n "$whisk_node_ip" ]]; then
       whisk_node_desc=$(curl -sL -m 5 -H "Host: ${APIHOST#*://}" "http://${whisk_node_ip}/api/info" 2>/dev/null | jq -r '.description' 2>/dev/null) || true
       if [[ "$whisk_node_desc" == "OpenWhisk" ]]; then
-        whisk_hint=" — OpenWhisk answers on the node address ${whisk_node_ip} but not through ${APIHOST}: the k3s svclb hostPort (loopback :80) is not ready, check 'k3s kubectl -n kube-system get pods | grep svclb'"
+        whisk_hint=" — OpenWhisk answers on the node address ${whisk_node_ip} but not through ${APIHOST}: the k3s svclb hostPort (loopback :80) is not ready or a stale CNI hostPort chain points at a dead pod (start.sh prunes these), check 'k3s kubectl -n kube-system get pods | grep svclb'"
       fi
     fi
     fail "Cannot reach OpenWhisk at ${APIHOST}/api/info after ${OPENWHISK_PROBE_TIMEOUT}s (got: ${WHISK_DESC:-no response})${whisk_hint}"

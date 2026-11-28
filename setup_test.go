@@ -1032,3 +1032,30 @@ func TestSetupScriptRetriesOpenWhiskProbeAndNamesDownPath(t *testing.T) {
 		t.Fatal("setup.sh must not probe OpenWhisk once without a timeout or retry")
 	}
 }
+
+// A k3s crash or stop leaves the CNI hostPort chain of the dead svclb sandbox
+// first in CNI-HOSTPORT-DNAT, which sends 127.0.0.1:80 to a pod IP that no
+// longer exists while the node address keeps working. start.sh must drop the
+// chains of sandboxes that are not Ready before it waits for OpenWhisk (#93).
+func TestStartScriptPrunesStaleHostPortChainsBeforeWaitingForOpenWhisk(t *testing.T) {
+	content, err := os.ReadFile("start.sh")
+	if err != nil {
+		t.Fatal(err)
+	}
+	script := string(content)
+	fn := strings.Index(script, "prune_stale_hostport_chains() {")
+	wait := strings.Index(script, "wait_for_openwhisk() {")
+	if fn < 0 || wait < 0 {
+		t.Fatal("start.sh must define prune_stale_hostport_chains and wait_for_openwhisk")
+	}
+	body := script[wait:]
+	end := strings.Index(body, "\n}\n")
+	if end < 0 || !strings.Contains(body[:end], "prune_stale_hostport_chains") {
+		t.Fatal("wait_for_openwhisk must prune stale hostPort chains before probing")
+	}
+	for _, want := range []string{"crictl pods --state ready", "CNI-HOSTPORT-DNAT", "iptables -t nat -X"} {
+		if !strings.Contains(script[fn:wait], want) {
+			t.Fatalf("prune_stale_hostport_chains must use %q", want)
+		}
+	}
+}
