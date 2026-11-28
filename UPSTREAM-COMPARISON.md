@@ -1035,7 +1035,7 @@ No file differs from the baseline: the directory is identical to the original gi
 | `.agents/skills/changelog-entry/SKILL.md` | A | +11/-0 |  | 8adb5f33 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
 | `.agents/skills/ci-failure-triage/SKILL.md` | A | +12/-0 |  | 8adb5f33 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
 | `.agents/skills/project-checks/SKILL.md` | A | +17/-0 |  | a0017e14 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>8adb5f33 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
-| `.agents/skills/repo-map/SKILL.md` | A | +32/-0 |  | 09fbe7f0 2026-11-28 tmp<br>8adb5f33 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
+| `.agents/skills/repo-map/SKILL.md` | A | +32/-0 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>8adb5f33 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
 | `.agents/skills/review-checklist/SKILL.md` | A | +12/-0 |  | 8adb5f33 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
 | `.agents/skills/secondbrain-context/SKILL.md` | A | +10/-0 |  | 8adb5f33 2026-11-25 Aggiunge le skill di progetto per gli agenti (.agents e .claude/skills) |
 | `.air-deploy.toml` | M | +1/-1 |  | 0891295e 2026-11-25 Migra Air a build.entrypoint e salta ollama locale con endpoint remoto |
@@ -1057,22 +1057,22 @@ No file differs from the baseline: the directory is identical to the original gi
 | `.github/dependabot.yml` | A | +14/-0 |  | 2e5d430f 2026-11-17 chore: security baseline (CODEOWNERS, Dependabot) (#1) |
 | `.github/workflows/environments.yml` | A | +217/-0 |  | 035c701f 2026-11-25 CI: workflow manuale per testare Ubuntu, macOS e Windows |
 | `.github/workflows/image-smoke.yml` | A | +141/-0 |  | a914d6cc 2026-11-27 Add native smoke tests for the published Trustant image |
-| `.github/workflows/images.yml` | M | +15/-13 |  | 09fbe7f0 2026-11-28 tmp<br>2691b0c1 2026-11-27 images.yml: repository per l'immagine configurabile con la variabile TRUSTANT_IMAGE<br>... and 2 more |
+| `.github/workflows/images.yml` | M | +15/-13 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>2691b0c1 2026-11-27 images.yml: repository per l'immagine configurabile con la variabile TRUSTANT_IMAGE<br>... and 2 more |
 | `.github/workflows/tests.yml` | A | +77/-0 |  | 520933fd 2026-11-27 Legal: cli-table e redis-entraid nei registri, offerta sorgenti; CI su push e PR<br>0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>... and 2 more |
-| `.gitignore` | M | +24/-0 | **yes** | 09fbe7f0 2026-11-28 tmp<br>2a461870 2026-11-28 Ignore local agent files in .gitignore<br>... and 4 more |
-| `.gitmodules` | D | +0/-20 |  | 09fbe7f0 2026-11-28 tmp<br>c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 6 more |
-| `.licenserc.yaml` | M | +7/-6 |  | 09fbe7f0 2026-11-28 tmp<br>c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 2 more |
+| `.gitignore` | M | +24/-0 | **yes** | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>2a461870 2026-11-28 Ignore local agent files in .gitignore<br>... and 4 more |
+| `.gitmodules` | D | +0/-20 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 6 more |
+| `.licenserc.yaml` | M | +7/-6 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 2 more |
 | `.sbcheck-ignore` | A | +108/-0 |  | 01481528 2026-11-27 sb check: ignore di un messaggio di commit storico<br>1dd0aa4f 2026-11-27 sb check: falsi positivi della storia rivisti<br>... and 1 more |
-| `AGENTS.md` | M | +42/-145 |  | 09fbe7f0 2026-11-28 tmp<br>762496a4 2026-11-28 Refresh the managed SecondBrain block in AGENTS.md<br>... and 33 more |
+| `AGENTS.md` | M | +42/-145 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>762496a4 2026-11-28 Refresh the managed SecondBrain block in AGENTS.md<br>... and 33 more |
 | `AUDIT-2026-11-26.md` | A | +184/-0 |  | a0017e14 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b) |
-| `CHANGELOG.md` | A | +124/-0 |  | 09fbe7f0 2026-11-28 tmp<br>5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>... and 16 more |
+| `CHANGELOG.md` | A | +124/-0 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>... and 16 more |
 | `CLAUDE.md` | M | +1/-258 | **yes** | 75b289dc 2026-11-25 Link SecondBrain 5: sb block in AGENTS.md, CLAUDE.md points to it, v4 files removed<br>3c49237a 2026-11-12 docs: consolidate agent instructions in AGENTS.md |
-| `CONTRIBUTING.md` | M | +61/-6 |  | 09fbe7f0 2026-11-28 tmp<br>93ebe52d 2026-11-24 Completa il lotto Private AI e ripristina la scansione Go<br>... and 9 more |
-| `CREDITS.md` | A | +133/-0 |  | 09fbe7f0 2026-11-28 tmp<br>520933fd 2026-11-27 Legal: cli-table e redis-entraid nei registri, offerta sorgenti; CI su push e PR<br>... and 19 more |
-| `DEPS` | M | +211/-150 |  | a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>520933fd 2026-11-27 Legal: cli-table e redis-entraid nei registri, offerta sorgenti; CI su push e PR<br>... and 22 more |
-| `LICENSE` | M | +75/-16 |  | a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>520933fd 2026-11-27 Legal: cli-table e redis-entraid nei registri, offerta sorgenti; CI su push e PR<br>... and 13 more |
-| `NOTICE` | M | +22587/-1499 |  | a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>520933fd 2026-11-27 Legal: cli-table e redis-entraid nei registri, offerta sorgenti; CI su push e PR<br>... and 18 more |
-| `README.md` | M | +194/-231 |  | 09fbe7f0 2026-11-28 tmp<br>3a86f6a5 2026-11-27 Ripulisci gli helper Go inutilizzati<br>... and 43 more |
+| `CONTRIBUTING.md` | M | +61/-6 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>93ebe52d 2026-11-24 Completa il lotto Private AI e ripristina la scansione Go<br>... and 9 more |
+| `CREDITS.md` | A | +133/-0 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>520933fd 2026-11-27 Legal: cli-table e redis-entraid nei registri, offerta sorgenti; CI su push e PR<br>... and 19 more |
+| `DEPS` | M | +200/-150 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>... and 23 more |
+| `LICENSE` | M | +76/-17 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>... and 14 more |
+| `NOTICE` | M | +22588/-1504 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>... and 19 more |
+| `README.md` | M | +194/-231 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>3a86f6a5 2026-11-27 Ripulisci gli helper Go inutilizzati<br>... and 43 more |
 | `SECURITY.md` | A | +36/-0 |  | f184fc4c 2026-11-19 docs: add mermaid flows and community and security files |
 | `aaa.code-workspace` | M | +20/-26 | **yes** | 8b094a3e 2026-11-21 Keep machine-specific workspace data local |
 | `adduser_test.go` | A | +69/-0 |  | d29f1bb0 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42)<br>a0bd2117 2026-11-24 Passa la password di ops admin adduser per ambiente invece che da argv (#119) |
@@ -1084,8 +1084,8 @@ No file differs from the baseline: the directory is identical to the original gi
 | `bind.go` | M | +200/-70 |  | 7287dd04 2026-11-25 Più tempo per i PC lenti e guida su Ollama<br>d6f441cb 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip<br>... and 4 more |
 | `bind_test.go` | M | +114/-0 |  | d6f441cb 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip<br>01f73cff 2026-11-20 Update Trustant tooling and add Ollama import suggestions |
 | `biome.jsonc` | A | +55/-0 |  | b45002ba 2026-11-19 chore: add repository lint and ACP streaming regression tests |
-| `build.sh` | M | +2/-2 |  | 09fbe7f0 2026-11-28 tmp<br>27bacfea 2026-11-26 Ingress truacp-ing a 8910 via patch applicata dal build, senza push al submodulo |
-| `build_script_test.go` | M | +15/-28 |  | 09fbe7f0 2026-11-28 tmp |
+| `build.sh` | M | +2/-2 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>27bacfea 2026-11-26 Ingress truacp-ing a 8910 via patch applicata dal build, senza push al submodulo |
+| `build_script_test.go` | M | +15/-28 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink |
 | `configure.go` | M | +376/-227 | **yes** | 3a86f6a5 2026-11-27 Ripulisci gli helper Go inutilizzati<br>68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 9 more |
 | `configure_test.go` | M | +253/-10 | **yes** | 3a86f6a5 2026-11-27 Ripulisci gli helper Go inutilizzati<br>68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 6 more |
 | `credits.go` | M | +1/-1 |  | d6f441cb 2026-11-24 Guida l'utente nei popup con preset, suggerimenti e tooltip |
@@ -1110,7 +1110,7 @@ No file differs from the baseline: the directory is identical to the original gi
 | `gitssh_test.go` | A | +41/-0 |  | cfc7b215 2026-11-24 Abilita la verifica della host key SSH per git (#117) |
 | `go.mod` | M | +4/-2 |  | 2aa7d7f9 2026-11-24 Imposta go 1.27 con toolchain go1.27.4 e allinea setup.sh (#113)<br>b8910a38 2026-11-21 Update Trustant tooling and inventory actions |
 | `home_isolation_test.go` | A | +67/-0 |  | ba985dbe 2026-11-25 Ripristina main_test.go e sposta l'isolamento della home in un file proprio |
-| `hotfix.sh` | M | +2/-2 |  | 09fbe7f0 2026-11-28 tmp |
+| `hotfix.sh` | M | +2/-2 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink |
 | `image/Dockerfile` | M | +81/-39 |  | 056900c8 2026-11-27 Dockerfile: Hadolint pulito (pipefail, no-install-recommends, WORKDIR, USER numerici)<br>5bda673a 2026-11-27 Dockerfile: apt-get e cd con uscita su errore (Hadolint)<br>... and 6 more |
 | `image/image.md` | M | +6/-6 |  | c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>b8910a38 2026-11-21 Update Trustant tooling and inventory actions |
 | `image/image.sh` | M | +9/-11 |  | f4eef0c4 2026-11-27 image.sh: repository dell'immagine da TRUSTANT_IMAGE come build.sh<br>c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink |
@@ -1119,17 +1119,17 @@ No file differs from the baseline: the directory is identical to the original gi
 | `launch.go` | M | +106/-84 | **yes** | 3a86f6a5 2026-11-27 Ripulisci gli helper Go inutilizzati<br>99bbcd9e 2026-11-25 Non mette in stage i percorsi ignorati e completa le note di setup<br>... and 6 more |
 | `launch_lifecycle_test.go` | M | +150/-0 |  | 728801cc 2026-11-26 Test: attesa piu' lunga per l'avvio del watcher node su runner ARM64<br>e89f1e06 2026-11-20 Serialize workspace updates and protect application runtimes |
 | `launch_progress_test.go` | M | +27/-9 |  | 7bbc2076 2026-11-25 Formatta i file Go, riscrive la spec del completion gate e rigenera DEPS |
-| `legal/COMPONENTS.json` | A | +7869/-0 |  | a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>520933fd 2026-11-27 Legal: cli-table e redis-entraid nei registri, offerta sorgenti; CI su push e PR<br>... and 22 more |
+| `legal/COMPONENTS.json` | A | +7868/-0 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>... and 23 more |
 | `legal/IMAGE-v1.0.3.md` | A | +124/-0 |  | e265902e 2026-11-27 Document Ollama in the historical Trustant image<br>5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>... and 4 more |
 | `legal/NOTICE.head` | M | +3/-0 |  | 520933fd 2026-11-27 Legal: cli-table e redis-entraid nei registri, offerta sorgenti; CI su push e PR |
 | `legal/REVIEW.md` | A | +159/-0 |  | a0017e14 2026-11-26 Legal: audit del fork, confronto con trustant/trustant e avvisi Apache 4(b)<br>482b764b 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>... and 7 more |
 | `legal/SOURCE-OFFER.md` | A | +46/-0 |  | 5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>... and 1 more |
-| `legal/VENDORED.md` | A | +546/-0 |  | 5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 23 more |
-| `legal/deps.manual.txt` | M | +54/-21 |  | 09fbe7f0 2026-11-28 tmp<br>a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>... and 19 more |
+| `legal/VENDORED.md` | A | +563/-0 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>... and 24 more |
+| `legal/deps.manual.txt` | M | +54/-21 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>a7298a98 2026-11-27 Proxy di sviluppo su ReverseProxy.Rewrite; legal: psycopg, apt senza copyright risolti<br>... and 19 more |
 | `legal/deps.py` | M | +125/-25 |  | 058c9b2d 2026-11-25 deps.py: usa la versione del toolchain Go per la licenza<br>bd1d1307 2026-11-22 Rebuild ops from the CLI fork and bump Trustant to v1.1.3<br>... and 4 more |
 | `legal/licenses/OFL-1.1.txt` | A | +43/-0 |  | f5ee4bce 2026-11-12 docs: refresh third-party licensing records |
-| `legal/upstream_compare.py` | A | +304/-0 |  | 09fbe7f0 2026-11-28 tmp<br>5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>... and 3 more |
-| `legal/vendored_changes.py` | A | +235/-0 |  | 09fbe7f0 2026-11-28 tmp<br>c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 2 more |
+| `legal/upstream_compare.py` | A | +304/-0 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>... and 3 more |
+| `legal/vendored_changes.py` | A | +235/-0 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 2 more |
 | `license.go` | M | +27/-36 |  | e89f1e06 2026-11-20 Serialize workspace updates and protect application runtimes |
 | `limitbody_test.go` | A | +62/-0 |  | 120c8c0d 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
 | `main.go` | M | +56/-2 |  | 482b764b 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>58b42099 2026-11-25 Aggiunge preset di istanze Ollama con interruttore locale/esterno e Refresh models per il Private AI<br>... and 5 more |
@@ -1154,7 +1154,7 @@ No file differs from the baseline: the directory is identical to the original gi
 | `proxy_test.go` | A | +41/-0 |  | 47fd99b1 2026-11-19 fix(files,proxy): stop caching the file tree and document the stream timeout chain |
 | `prune_test.go` | M | +276/-2 |  | 8ceb7876 2026-11-26 Cancellazione app: rimuove la directory dei log runtime dell'app<br>68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 1 more |
 | `publish.go` | M | +45/-65 |  | e89f1e06 2026-11-20 Serialize workspace updates and protect application runtimes |
-| `publish.sh` | M | +8/-15 |  | 09fbe7f0 2026-11-28 tmp |
+| `publish.sh` | M | +8/-15 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink |
 | `publish_imports_test.go` | M | +135/-0 |  | e89f1e06 2026-11-20 Serialize workspace updates and protect application runtimes |
 | `react-mcp/package-lock.json` | M | +52/-48 |  | 044b0e99 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102)<br>8b1c1091 2026-11-20 Update runtime dependencies and report development GUI readiness<br>... and 2 more |
 | `react-mcp/package.json` | M | +2/-2 |  | 044b0e99 2026-11-23 Aggiorna @types/node a 26 in acp, pi-acp e react-mcp; rimuove @tanstack/react-virtual inutilizzato da acp (#106, #102)<br>8b1c1091 2026-11-20 Update runtime dependencies and report development GUI readiness |
@@ -1168,12 +1168,12 @@ No file differs from the baseline: the directory is identical to the original gi
 | `safefile_windows.go` | A | +19/-0 |  | 120c8c0d 2026-11-24 Rende sicure le scritture nel workbench e limita il corpo delle richieste |
 | `security_gaps_test.go` | A | +219/-0 |  | 478ec5e9 2026-11-24 Esegue l'escape di Host nella pagina errore e vincola la sorgente OPS_SKILLS (#114 #116 #123)<br>c7ff349e 2026-11-24 Aggiunge test per sessione, logout e routing per hostname |
 | `setup.sh` | M | +98/-24 | **yes** | 2421fedc 2026-11-28 Prune stale CNI hostPort chains before waiting for OpenWhisk<br>e8025cbf 2026-11-28 Retry the OpenWhisk probe in setup.sh after a k3s restart<br>... and 22 more |
-| `setup_test.go` | M | +319/-41 |  | 4a5f5afa 2026-11-28 Prune stale CNI hostPort chains in run.sh after the namespace check<br>2421fedc 2026-11-28 Prune stale CNI hostPort chains before waiting for OpenWhisk<br>... and 9 more |
+| `setup_test.go` | M | +320/-41 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>4a5f5afa 2026-11-28 Prune stale CNI hostPort chains in run.sh after the namespace check<br>... and 10 more |
 | `shared.go` | M | +43/-36 |  | 3a86f6a5 2026-11-27 Ripulisci gli helper Go inutilizzati<br>b26271dc 2026-11-24 Rifiuta caratteri di controllo nei file env e valida i nomi di appconfig (#124)<br>... and 2 more |
 | `shared_test.go` | M | +2/-2 |  | d29f1bb0 2026-11-26 sb check: esempi neutri e eccezioni motivate per le segnalazioni preesistenti (#42) |
 | `skills.go` | M | +78/-7 |  | 11f03a74 2026-11-24 Allinea SkillInfo con gofmt e salta il test invoke su Windows (#125 #126)<br>478ec5e9 2026-11-24 Esegue l'escape di Host nella pagina errore e vincola la sorgente OPS_SKILLS (#114 #116 #123)<br>... and 1 more |
 | `skills_test.go` | A | +147/-0 |  | 478ec5e9 2026-11-24 Esegue l'escape di Host nella pagina errore e vincola la sorgente OPS_SKILLS (#114 #116 #123) |
-| `spec/0-preflight.md` | M | +16/-12 |  | 09fbe7f0 2026-11-28 tmp<br>47353bbb 2026-11-21 Fix local links in Trustant specifications (#76)<br>... and 1 more |
+| `spec/0-preflight.md` | M | +16/-12 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>47353bbb 2026-11-21 Fix local links in Trustant specifications (#76)<br>... and 1 more |
 | `spec/1-applist.md` | M | +59/-16 | **yes** | 5e217567 2026-11-27 Fix Trustant browser and development proxy behavior<br>68d0a473 2026-11-26 Corregge configurazione modelli e cancellazione app<br>... and 8 more |
 | `spec/1-index.md` | M | +27/-2 | **yes** | 0fb0ad01 2026-11-28 Require an explicit default model after Private AI discovery<br>2a863657 2026-11-27 Document AI provider setup and production publishing<br>... and 3 more |
 | `spec/11-files.md` | M | +1/-1 |  | 47fd99b1 2026-11-19 fix(files,proxy): stop caching the file tree and document the stream timeout chain |
@@ -1193,7 +1193,7 @@ No file differs from the baseline: the directory is identical to the original gi
 | `spec/8-e2e.md` | M | +19/-445 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>ac83f527 2026-11-25 Spec: marca come rimosse le sezioni e2e e guardrail legate a OpenCode<br>... and 2 more |
 | `spec/application-test-completion-gate.md` | M | +63/-154 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai<br>ac83f527 2026-11-25 Spec: marca come rimosse le sezioni e2e e guardrail legate a OpenCode<br>... and 1 more |
 | `spec/authentication.md` | M | +123/-6 |  | 1cf39dec 2026-11-26 Auth: cookie di sessione host utilizzabile nell'iframe dell'assistente<br>482b764b 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp<br>... and 5 more |
-| `spec/build.md` | M | +68/-50 |  | 09fbe7f0 2026-11-28 tmp<br>27bacfea 2026-11-26 Ingress truacp-ing a 8910 via patch applicata dal build, senza push al submodulo<br>... and 7 more |
+| `spec/build.md` | M | +68/-50 |  | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>27bacfea 2026-11-26 Ingress truacp-ing a 8910 via patch applicata dal build, senza push al submodulo<br>... and 7 more |
 | `spec/credit_check.md` | M | +3/-3 |  | 47353bbb 2026-11-21 Fix local links in Trustant specifications (#76) |
 | `spec/issue98-action-workflow-e2e.svg` | D | +0/-50 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
 | `spec/issue98-auth-e2e.svg` | D | +0/-33 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
@@ -1207,7 +1207,7 @@ No file differs from the baseline: the directory is identical to the original gi
 | `spec/provider-e2e-flow.svg` | D | +0/-52 |  | 0384ee00 2026-11-25 Rimuove gli script e2e OpenCode e documenta i riferimenti trustable-ai |
 | `spec/run.md` | M | +9/-2 | **yes** | 5cf23167 2026-11-28 Tolerate a transient k3s restart in run.sh namespace check<br>8b1c1091 2026-11-20 Update runtime dependencies and report development GUI readiness |
 | `spec/setup.md` | M | +48/-25 | **yes** | 2aa7d7f9 2026-11-24 Imposta go 1.27 con toolchain go1.27.4 e allinea setup.sh (#113)<br>c41c63c0 2026-11-24 Vendorizza oplugins, skills e mcp e rimuove i gitlink<br>... and 7 more |
-| `spec/start.md` | M | +66/-32 | **yes** | 09fbe7f0 2026-11-28 tmp<br>4a5f5afa 2026-11-28 Prune stale CNI hostPort chains in run.sh after the namespace check<br>... and 11 more |
+| `spec/start.md` | M | +66/-32 | **yes** | 35078e8f 2026-11-28 Vendor oplugins-truinst into the repository and drop the last gitlink<br>4a5f5afa 2026-11-28 Prune stale CNI hostPort chains in run.sh after the namespace check<br>... and 11 more |
 | `spec/trustant-auth-flow.svg` | M | +1/-1 |  | 482b764b 2026-11-26 Auth locale: sessione host-only per l'host dell'assistente truacp |
 | `spec/trustant-pi-runtime.md` | M | +5/-6 |  | b8910a38 2026-11-21 Update Trustant tooling and inventory actions |
 | `spec/user_provisioning.md` | M | +1/-1 |  | 086b68d0 2026-11-21 Remove private workstation examples from current sources |
