@@ -143,7 +143,9 @@ install this kept loopback refused for more than ten minutes and `start.sh`
 failed in `wait_for_openwhisk` (#93, #97). `start.sh` therefore runs
 `prune_stale_hostport_chains` first: it removes every hostPort chain whose
 sandbox is not Ready according to `k3s crictl pods --state ready`, and leaves the
-live chain alone.
+live chain alone. `run.sh` runs the same prune after its namespace check, because
+a k3s crash after provisioning leaves a stale chain again without passing through
+`start.sh` (#101).
 
 ## Networking (so the apihost is actually reachable)
 

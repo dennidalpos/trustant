@@ -252,6 +252,30 @@ while :; do
     sleep "$K3S_READY_INTERVAL"
 done
 
+# A crash or stop of k3s (or of the WSL2 VM) after provisioning leaves the CNI
+# hostPort chain of the dead svclb sandbox FIRST in CNI-HOSTPORT-DNAT, which
+# DNATs 127.0.0.1:80 to a pod IP that no longer exists while the node address
+# keeps working (#93, #97, #101). start.sh prunes it only at provisioning, so
+# prune here too; chains of sandboxes that are Ready are left untouched.
+prune_stale_hostport_chains() {
+    sudo -n bash -s <<'GUEST' || true
+command -v k3s >/dev/null 2>&1 || exit 0
+live="$(k3s crictl pods --state ready -q --no-trunc 2>/dev/null || true)"
+[ -n "$live" ] || exit 0
+iptables -t nat -S CNI-HOSTPORT-DNAT 2>/dev/null | grep -E '^-A CNI-HOSTPORT-DNAT .*id: ' | while IFS= read -r rule; do
+  id="$(sed -n 's/.*id: \\"\([0-9a-f]\{64\}\)\\".*/\1/p' <<<"$rule")"
+  chain="$(grep -oE 'CNI-DN-[0-9a-f]+' <<<"$rule" | head -1)"
+  [ -n "$id" ] && [ -n "$chain" ] || continue
+  grep -qx "$id" <<<"$live" && continue
+  echo "removing stale hostPort chain $chain (sandbox $id)"
+  eval "iptables -t nat -D CNI-HOSTPORT-DNAT ${rule#-A CNI-HOSTPORT-DNAT }"
+  iptables -t nat -F "$chain" 2>/dev/null || true
+  iptables -t nat -X "$chain" 2>/dev/null || true
+done || true
+GUEST
+}
+prune_stale_hostport_chains
+
 # 2c. Start one forwarder for the complete namespace. WHY: separate kubefwd
 # processes each allocate their first service to the same loopback address and
 # race for ports; trustant-svc is excluded because it would steal 8910/4096/5173.

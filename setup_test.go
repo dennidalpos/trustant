@@ -1037,6 +1037,29 @@ func TestSetupScriptRetriesOpenWhiskProbeAndNamesDownPath(t *testing.T) {
 // first in CNI-HOSTPORT-DNAT, which sends 127.0.0.1:80 to a pod IP that no
 // longer exists while the node address keeps working. start.sh must drop the
 // chains of sandboxes that are not Ready before it waits for OpenWhisk (#93).
+func TestRunScriptPrunesStaleHostPortChainsAfterNamespaceCheck(t *testing.T) {
+	content, err := os.ReadFile("run.sh")
+	if err != nil {
+		t.Fatal(err)
+	}
+	script := string(content)
+	ns := strings.Index(script, "kube get ns openserverless")
+	fn := strings.Index(script, "prune_stale_hostport_chains() {")
+	call := strings.Index(script, "\nprune_stale_hostport_chains\n")
+	fwd := strings.Index(script, "command -v kubefwd")
+	if ns < 0 || fn < 0 || call < 0 || fwd < 0 {
+		t.Fatal("run.sh must define and call prune_stale_hostport_chains")
+	}
+	if !(ns < fn && fn < call && call < fwd) {
+		t.Fatal("run.sh must prune after the namespace check and before kubefwd")
+	}
+	for _, want := range []string{"crictl pods --state ready", "CNI-HOSTPORT-DNAT", "iptables -t nat -X"} {
+		if !strings.Contains(script[fn:call], want) {
+			t.Fatalf("run.sh prune_stale_hostport_chains must use %q", want)
+		}
+	}
+}
+
 func TestStartScriptPrunesStaleHostPortChainsBeforeWaitingForOpenWhisk(t *testing.T) {
 	content, err := os.ReadFile("start.sh")
 	if err != nil {
