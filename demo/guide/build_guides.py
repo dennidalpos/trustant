@@ -262,7 +262,8 @@ Qui il template scelto è <strong>Document Ingest</strong> (TruIngest): carichi 
   "description": "Turn a PDF   into chunks"
 }</textarea>
 <div id="d-out" class="out" aria-live="polite"></div>""",
-    RISULTATO="""<p>Una copia completa di TruIngest: un’app React con azioni Python su OpenServerless, che porta un PDF attraverso cinque passi (Upload, Extract, Clean, Chunk, Export), uno alla volta e con il risultato di ognuno visibile. <a href="/">Aprila</a>; la guida che stai leggendo sta accanto, a <code>/guida.html</code>.</p>""",
+    RISULTATO="""<p>Una copia completa di TruIngest: un’app React con azioni Python su OpenServerless, che porta un PDF attraverso cinque passi (Upload, Extract, Clean, Chunk, Export), uno alla volta e con il risultato di ognuno visibile. <a href="/">Aprila</a>; la guida che stai leggendo sta accanto, a <code>/guida.html</code>.</p>
+<p class="note warn">Esito della prova (28 novembre 2026, PDF di due pagine senza dati riservati): Upload, Extract, Clean e Chunk sono riusciti e Chunk ha prodotto 18 parti. Extract chiama un servizio <strong>Tika</strong> raggiunto come <code>http://tika:9998</code> dentro il cluster: senza un servizio con quel nome il passo fallisce con «Failed to resolve 'tika'». Il testo va letto come UTF-8, altrimenti le lettere accentate risultano corrotte. Export richiede <code>OPENAI_API_KEY</code>, <code>OPENAI_MODEL</code>, <code>OPENAI_BASE_URL</code> e <code>S3_PUBLIC</code>: sono dati tuoi, inseriti dall’Env dell’app, e non fanno parte di questa guida; Export non è stato provato.</p>""",
     VERIFICA="",
     FONTI="spec/15-starters.md, spec/1-applist.md, README dell’app",
     SCRIPT="""<script>
